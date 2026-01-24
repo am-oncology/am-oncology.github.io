@@ -91,3 +91,24 @@ footer .hosting-credit a:hover {
   text-decoration: underline;
   color: #0f2a44; /* Your navy theme color */
 }
+
+/* Mobile Optimisation */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 20px; /* Smaller text for small screens */
+  }
+
+  nav a {
+    display: inline-block;
+    margin-bottom: 10px; /* Stack links slightly if they wrap */
+  }
+
+  main {
+    margin: 20px auto; /* Reduce top margin on mobile */
+  }
+
+  blockquote {
+    font-size: 1rem;
+    padding: 15px;
+  }
+}
