@@ -75,3 +75,19 @@ footer {
   margin-top: 60px; /* More breathing room */
   border-top: 1px solid #ddd;
 }
+
+footer .hosting-credit {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+}
+
+footer .hosting-credit a {
+  color: #666;
+  text-decoration: none;
+}
+
+footer .hosting-credit a:hover {
+  text-decoration: underline;
+  color: #0f2a44; /* Your navy theme color */
+}
