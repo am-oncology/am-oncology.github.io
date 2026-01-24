@@ -1,9 +1,13 @@
+/* 1. GLOBAL STYLES */
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1.6;
   color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 header {
@@ -33,17 +37,21 @@ main {
   max-width: 900px;
   margin: 40px auto;
   padding: 0 20px;
+  flex: 1; /* Pushes footer to bottom */
 }
 
-h2 {
+h2, h3 {
   color: #0f2a44;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
   margin-top: 30px;
 }
 
-/* --- Content Sections --- */
+/* Use this class for underlined headings on About/Contact pages */
+.section-heading {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
 
+/* 2. CONTENT COMPONENTS */
 section {
   margin-bottom: 30px;
 }
@@ -66,81 +74,9 @@ blockquote {
   border-left: 5px solid #0f2a44;
 }
 
-/* --- Contact & Emergency Notice Styles --- */
-
-.emergency-notice {
-  background-color: #fff5f5; /* Light red/pink alert color */
-  border: 1px solid #feb2b2;
-  padding: 20px;
-  border-radius: 5px;
-  margin-bottom: 30px;
-}
-
-.emergency-notice h3 {
-  color: #c53030; /* Bold red for the safety warning */
-  margin-top: 0;
-}
-
-.contact-card {
-  background: #f8fafc; /* Professional light grey-blue */
-  border: 1px solid #e2e8f0;
-  padding: 25px;
-  border-radius: 8px;
-  margin: 20px 0;
-}
-
-.contact-card h3, .contact-card p {
-  margin-top: 0;
-}
-
-/* --- Footer --- */
-
-footer {
-  background: #f4f4f4;
-  text-align: center;
-  padding: 15px;
-  font-size: 14px;
-  margin-top: 60px;
-  border-top: 1px solid #ddd;
-}
-
-footer .hosting-credit {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #888;
-}
-
-footer .hosting-credit a {
-  color: #666;
-  text-decoration: none;
-}
-
-/* --- Mobile Optimisation --- */
-
-@media (max-width: 600px) {
-  header h1 {
-    font-size: 20px;
-  }
-
-  nav a {
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-
-  main {
-    margin: 20px auto;
-  }
-
-  blockquote {
-    font-size: 1rem;
-    padding: 15px;
-  }
-}
-
-/* --- Home Page Layout --- */
-
+/* 3. HOME PAGE SPECIFIC */
 .hero-section {
-  padding: 60px 0;
+  padding: 40px 0;
   text-align: center;
   border-bottom: 1px solid #eee;
   margin-bottom: 40px;
@@ -148,19 +84,9 @@ footer .hosting-credit a {
 
 .hero-section h2 {
   font-size: 2.2rem;
-  color: #0f2a44;
-  border-bottom: none; /* Hero title doesn't need the line */
-  margin-bottom: 15px;
+  margin-top: 0;
 }
 
-.hero-section p {
-  font-size: 1.2rem;
-  color: #555;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-/* Features Grid (The Three Pillars) */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -176,12 +102,6 @@ footer .hosting-credit a {
   text-align: center;
 }
 
-.feature-item h3 {
-  color: #0f2a44;
-  font-size: 1.1rem;
-}
-
-/* Call to Action Box */
 .cta-box {
   background: #0f2a44;
   color: white;
@@ -190,10 +110,7 @@ footer .hosting-credit a {
   text-align: center;
 }
 
-.cta-box h3 {
-  color: white;
-  margin-top: 0;
-}
+.cta-box h3 { color: white; margin-top: 0; }
 
 .button-link {
   display: inline-block;
@@ -206,6 +123,47 @@ footer .hosting-credit a {
   margin-top: 10px;
 }
 
-.button-link:hover {
-  background: #e2e8f0;
+/* 4. CONTACT & EMERGENCY */
+.emergency-notice {
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.emergency-notice h3 { color: #c53030; margin-top: 0; }
+
+.contact-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 25px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+/* 5. FOOTER */
+footer {
+  background: #f4f4f4;
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  border-top: 1px solid #ddd;
+}
+
+footer a {
+  color: #666;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* 6. MOBILE OPTIMISATION */
+@media (max-width: 600px) {
+  header h1 { font-size: 20px; }
+  .hero-section h2 { font-size: 1.8rem; }
+  nav a { display: inline-block; margin-bottom: 10px; }
+  main { margin: 20px auto; }
 }
