@@ -15,6 +15,8 @@ header {
 header h1 {
   margin: 0;
   font-size: 26px;
+  /* Added a little bottom margin to separate name from nav */
+  margin-bottom: 15px; 
 }
 
 nav a {
@@ -36,6 +38,33 @@ main {
 
 h2 {
   color: #0f2a44;
+  border-bottom: 2px solid #eee; /* Adds a subtle line under headings */
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+/* --- New styles for the About & Contact sections --- */
+
+section {
+  margin-bottom: 30px;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+blockquote {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #444;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f9f9f9;
+  border-left: 5px solid #0f2a44; /* Uses your theme color */
 }
 
 footer {
@@ -43,6 +72,6 @@ footer {
   text-align: center;
   padding: 15px;
   font-size: 14px;
-  margin-top: 40px;
+  margin-top: 60px; /* More breathing room */
+  border-top: 1px solid #ddd;
 }
-
