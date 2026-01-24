@@ -15,7 +15,6 @@ header {
 header h1 {
   margin: 0;
   font-size: 26px;
-  /* Added a little bottom margin to separate name from nav */
   margin-bottom: 15px; 
 }
 
@@ -38,12 +37,12 @@ main {
 
 h2 {
   color: #0f2a44;
-  border-bottom: 2px solid #eee; /* Adds a subtle line under headings */
+  border-bottom: 2px solid #eee;
   padding-bottom: 10px;
   margin-top: 30px;
 }
 
-/* --- New styles for the About & Contact sections --- */
+/* --- Content Sections --- */
 
 section {
   margin-bottom: 30px;
@@ -64,15 +63,44 @@ blockquote {
   margin: 20px 0;
   padding: 20px;
   background: #f9f9f9;
-  border-left: 5px solid #0f2a44; /* Uses your theme color */
+  border-left: 5px solid #0f2a44;
 }
+
+/* --- Contact & Emergency Notice Styles --- */
+
+.emergency-notice {
+  background-color: #fff5f5; /* Light red/pink alert color */
+  border: 1px solid #feb2b2;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.emergency-notice h3 {
+  color: #c53030; /* Bold red for the safety warning */
+  margin-top: 0;
+}
+
+.contact-card {
+  background: #f8fafc; /* Professional light grey-blue */
+  border: 1px solid #e2e8f0;
+  padding: 25px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.contact-card h3, .contact-card p {
+  margin-top: 0;
+}
+
+/* --- Footer --- */
 
 footer {
   background: #f4f4f4;
   text-align: center;
   padding: 15px;
   font-size: 14px;
-  margin-top: 60px; /* More breathing room */
+  margin-top: 60px;
   border-top: 1px solid #ddd;
 }
 
@@ -87,24 +115,20 @@ footer .hosting-credit a {
   text-decoration: none;
 }
 
-footer .hosting-credit a:hover {
-  text-decoration: underline;
-  color: #0f2a44; /* Your navy theme color */
-}
+/* --- Mobile Optimisation --- */
 
-/* Mobile Optimisation */
 @media (max-width: 600px) {
   header h1 {
-    font-size: 20px; /* Smaller text for small screens */
+    font-size: 20px;
   }
 
   nav a {
     display: inline-block;
-    margin-bottom: 10px; /* Stack links slightly if they wrap */
+    margin-bottom: 10px;
   }
 
   main {
-    margin: 20px auto; /* Reduce top margin on mobile */
+    margin: 20px auto;
   }
 
   blockquote {
