@@ -10,16 +10,17 @@ body {
   min-height: 100vh;
 }
 
+/* The Dark Blue Top Section */
 header {
   background: #0f2a44;
   color: white;
-  padding: 20px;
+  padding: 30px 20px;
 }
 
 header h1 {
   margin: 0;
   font-size: 26px;
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 nav a {
@@ -34,47 +35,17 @@ nav a:hover {
 }
 
 main {
-  max-width: 900px;
+  max-width: 1000px; /* Slightly wider for the 3 boxes */
   margin: 40px auto;
   padding: 0 20px;
-  flex: 1; /* Pushes footer to bottom */
+  flex: 1;
 }
 
 h2, h3 {
   color: #0f2a44;
-  margin-top: 30px;
 }
 
-/* Use this class for underlined headings on About/Contact pages */
-.section-heading {
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-}
-
-/* 2. CONTENT COMPONENTS */
-section {
-  margin-bottom: 30px;
-}
-
-ul {
-  padding-left: 20px;
-}
-
-li {
-  margin-bottom: 10px;
-}
-
-blockquote {
-  font-style: italic;
-  font-size: 1.1rem;
-  color: #444;
-  margin: 20px 0;
-  padding: 20px;
-  background: #f9f9f9;
-  border-left: 5px solid #0f2a44;
-}
-
-/* 3. HOME PAGE SPECIFIC */
+/* 2. HOME PAGE LAYOUT */
 .hero-section {
   padding: 40px 0;
   text-align: center;
@@ -87,27 +58,31 @@ blockquote {
   margin-top: 0;
 }
 
+/* THE THREE BOXES SIDE-BY-SIDE */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
-  margin-bottom: 50px;
+  margin: 40px 0;
 }
 
 .feature-item {
   background: #fdfdfd;
-  padding: 20px;
-  border: 1px solid #f0f0f0;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle lift */
 }
 
+/* 3. CALL TO ACTION BOX (Navy) */
 .cta-box {
   background: #0f2a44;
   color: white;
   padding: 35px;
   border-radius: 10px;
   text-align: center;
+  margin: 40px 0;
 }
 
 .cta-box h3 { color: white; margin-top: 0; }
@@ -116,54 +91,37 @@ blockquote {
   display: inline-block;
   background: white;
   color: #0f2a44;
-  padding: 10px 20px;
+  padding: 12px 25px;
   border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
-/* 4. CONTACT & EMERGENCY */
-.emergency-notice {
-  background-color: #fff5f5;
-  border: 1px solid #feb2b2;
-  padding: 20px;
-  border-radius: 5px;
-  margin-bottom: 30px;
+/* 4. PROFESSIONAL STANDARDS & LINKS */
+.section-heading {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
 }
 
-.emergency-notice h3 { color: #c53030; margin-top: 0; }
-
-.contact-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  padding: 25px;
-  border-radius: 8px;
-  margin: 20px 0;
+main a {
+  color: #0f2a44;
+  text-decoration: underline;
 }
 
 /* 5. FOOTER */
 footer {
   background: #f4f4f4;
   text-align: center;
-  padding: 20px;
+  padding: 30px 20px;
   font-size: 14px;
   border-top: 1px solid #ddd;
 }
 
-footer a {
-  color: #666;
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
-}
-
-/* 6. MOBILE OPTIMISATION */
+/* 6. MOBILE FIXES */
 @media (max-width: 600px) {
   header h1 { font-size: 20px; }
-  .hero-section h2 { font-size: 1.8rem; }
-  nav a { display: inline-block; margin-bottom: 10px; }
-  main { margin: 20px auto; }
+  .features-grid {
+    grid-template-columns: 1fr; /* Stack on mobile */
+  }
 }
