@@ -147,3 +147,40 @@ footer {
   nav { margin-top: 15px; }
   .hero-section h2 { font-size: 1.8rem; }
 }
+
+/* 10. PHILOSOPHY OF CARE / QUOTE STYLING */
+blockquote {
+  position: relative;
+  margin: 20px 0;
+  padding: 30px 40px;
+  background-color: #f8fafc; /* A very subtle grey-blue to contrast the white card */
+  border-left: 6px solid #0f2a44; /* Your brand navy color */
+  border-radius: 0 8px 8px 0;
+  font-family: "Georgia", serif; /* Serif font makes quotes feel more personal/human */
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: #2d3748;
+}
+
+/* The decorative opening quote mark */
+blockquote::before {
+  content: "\201C"; /* Unicode double quote */
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  font-size: 4rem;
+  color: #0f2a44;
+  opacity: 0.1; /* Keeps it subtle so it doesn't distract from the text */
+}
+
+/* Styling for the attribution (the doctor's name) */
+blockquote cite {
+  display: block;
+  margin-top: 15px;
+  font-family: 'Segoe UI', sans-serif; /* Switch back to your clean sans-serif */
+  font-style: normal;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #4a5568;
+}
