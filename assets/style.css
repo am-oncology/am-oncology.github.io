@@ -184,3 +184,38 @@ blockquote cite {
   font-size: 1rem;
   color: #4a5568;
 }
+
+/* 11. EMERGENCY BOX STYLING */
+.emergency-notice {
+  /* A very pale red background that is still easy to read text on */
+  background-color: #fff2f2;
+  /* A thick, dark red accent border on the left side to grab attention */
+  border-left: 8px solid #d32f2f;
+  padding: 25px;
+  /* Adds a subtle shadow to lift it off the page slightly */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 30px;
+}
+
+/* Make the heading red to match */
+.emergency-notice h3 {
+  color: #c62828;
+  margin-top: 0;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Adds a warning icon automatically before the heading text */
+.emergency-notice h3::before {
+  content: "⚠️";
+  font-size: 1.5rem;
+  margin-right: 12px;
+}
+
+/* Makes the vital phone numbers/actions pop even more within the text */
+.emergency-notice strong {
+  color: #b71c1c;
+  font-weight: 700;
+}
