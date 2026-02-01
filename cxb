@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact X-ray Brachytherapy (CXB) - Papillon | Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="CXB.html">CXB</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+</main>
+
+<footer>
+  <p>&copy; 2026 AM Oncology. This website does not replace professional medical advice.</p>
+  <p>
+    <a href="privacy.html">Privacy Policy</a> | 
+    <span>Powered by GitHub Pages</span>
+  </p>
+</footer>
+
+</body>
+</html>
