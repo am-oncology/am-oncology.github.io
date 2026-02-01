@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CXB | Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+  <title>Papillon CXB | Dr [Firstname] [Lastname] | Clinical Oncologist</title>
   <link rel="stylesheet" href="assets/style.css">
   <style>
     .calc-container { max-width: 900px; margin: 40px auto; padding: 0 20px; color: #000; }
@@ -37,8 +37,8 @@
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
-    <a href="CXB.html">CXB</a>
-    <a href="contact.html">About</a>
+    <a href="cxb.html">CXB</a>
+    <a href="contact.html">Contact</a>
   </nav>
 </header>
 
@@ -153,8 +153,8 @@ function generateSchedule() {
   } else {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
     events.push({ d: base, msg: "Start EBRT", type: "high" });
-    events.push({ d: addDays(base, 21), msg: "Rectoscopy (LumenEye)" });
-    events.push({ d: addDays(base, 28), msg: "MRI Pelvis" });
+    events.push({ d: addDays(base, 21), msg: "Rectoscopy" });
+    events.push({ d: addDays(base, 28), msg: "Week Commencing: MRI Pelvis" });
     let ebEnd = addDays(base, 32); // Friday
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
     events.push({ d: getNextTuesday(ebEnd), msg: "CRC MDT Review", type: "mdt" });
