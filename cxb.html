@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Papillon CXB | Dr [Firstname] [Lastname]</title>
+  <title>CXB | Dr [Firstname] [Lastname] | Clinical Oncologist</title>
   <link rel="stylesheet" href="assets/style.css">
   <style>
     .calc-container { max-width: 900px; margin: 40px auto; padding: 0 20px; color: #000; }
@@ -34,12 +34,17 @@
 
 <header>
   <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
-  <nav><a href="index.html">Home</a><a href="about.html">About</a><a href="CXB.html">CXB</a></nav>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="CXB.html">CXB</a>
+    <a href="contact.html">About</a>
+  </nav>
 </header>
 
 <main class="calc-container">
   <section class="hero-section">
-    <h2>Papillon Contact X-ray Brachytherapy (CXB) Pathway Planner</h2>
+    <h2>Papillon (CXB) Pathway Planner</h2>
     <p>Select tumour size and treatment start date to generate a clinical timeline.</p>
   </section>
 
@@ -107,6 +112,14 @@ function addDays(date, days) {
   return result;
 }
 
+// Logic to find the next Tuesday after a specific date
+function getNextTuesday(date) {
+  let d = new Date(date);
+  let day = d.getDay();
+  let diff = (day <= 2) ? (2 - day) : (9 - day);
+  return addDays(d, diff);
+}
+
 function generateSchedule() {
   const startDateVal = document.getElementById('start-date').value;
   const isSmall = document.getElementById('small').checked;
@@ -117,44 +130,45 @@ function generateSchedule() {
   let base = new Date(startDateVal);
   let events = [];
 
-  const addPapCycle = (startDate, weekNum) => {
+  const addPapCycle = (startDate, sessionNum) => {
     events.push({ d: addDays(startDate, -3), msg: "Start Low Residue Diet" });
     events.push({ d: addDays(startDate, -1), msg: "Take Picolax Bowel Prep" });
-    events.push({ d: startDate, msg: `Papillon Session ${weekNum === 1 || weekNum === 8 ? '1' : (weekNum === 3 || weekNum === 10 ? '2' : '3')}`, type: "high" });
+    events.push({ d: startDate, msg: `Papillon Session ${sessionNum}`, type: "high" });
   };
 
   if (isSmall) {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour < 3cm";
     addPapCycle(base, 1);
-    addPapCycle(addDays(base, 14), 3);
+    addPapCycle(addDays(base, 14), 2);
     events.push({ d: addDays(base, 21), msg: "Week Commencing: Planning CT Scan" });
-    addPapCycle(addDays(base, 28), 5);
+    addPapCycle(addDays(base, 28), 3);
     let ebStart = addDays(base, 42);
     events.push({ d: ebStart, msg: "Start EBRT", type: "high" });
-    let ebEnd = addDays(ebStart, 32); 
+    let ebEnd = addDays(ebStart, 32); // Finishes on a Friday
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
-    let scanDate = addDays(ebEnd, 84);
-    events.push({ d: scanDate, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ d: addDays(scanDate, 8), msg: "CRC MDT Review", type: "mdt" });
+    let scanWeekStart = addDays(ebEnd, 84); // 12 weeks after Friday
+    events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
+    events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
 
   } else {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
     events.push({ d: base, msg: "Start EBRT", type: "high" });
     events.push({ d: addDays(base, 21), msg: "Rectoscopy (LumenEye)" });
     events.push({ d: addDays(base, 28), msg: "MRI Pelvis" });
-    let ebEnd = addDays(base, 32);
+    let ebEnd = addDays(base, 32); // Friday
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
-    events.push({ d: addDays(base, 36), msg: "CRC MDT Review", type: "mdt" });
+    events.push({ d: getNextTuesday(ebEnd), msg: "CRC MDT Review", type: "mdt" });
     
-    let p1 = addDays(ebEnd, 21);
-    addPapCycle(p1, 8);
-    addPapCycle(addDays(p1, 14), 10);
+    // CXB 1 starts 3rd Monday after EBRT finish (Friday + 17 days)
+    let p1 = addDays(ebEnd, 17);
+    addPapCycle(p1, 1);
+    addPapCycle(addDays(p1, 14), 2);
     let p3 = addDays(p1, 28);
-    addPapCycle(p3, 12);
+    addPapCycle(p3, 3);
     
-    let scanDate = addDays(p3, 84);
-    events.push({ d: scanDate, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ d: addDays(scanDate, 8), msg: "CRC MDT Review", type: "mdt" });
+    let scanWeekStart = addDays(p3, 84);
+    events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
+    events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
   }
 
   events.forEach(e => {
