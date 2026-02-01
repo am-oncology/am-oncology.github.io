@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CXB Pathway Planner | Dr [Firstname] [Lastname]</title>
+  <title>Papillon CXB | Dr [Firstname] [Lastname]</title>
   <link rel="stylesheet" href="assets/style.css">
   <style>
     .calc-container { max-width: 900px; margin: 40px auto; padding: 0 20px; color: #000; }
+    .hero-section { margin-bottom: 20px; }
     .input-box { background: #fff; padding: 25px; border-radius: 12px; border: 2px solid #0f2a44; margin-bottom: 30px; }
     
     .result-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border: 1px solid #000; }
     .result-table th { background: #0f2a44; color: white; padding: 12px; text-align: left; text-transform: uppercase; font-size: 0.8rem; border: 1px solid #000; }
     .result-table td { padding: 12px; border: 1px solid #000; vertical-align: top; color: #000; }
     
-    .week-col { font-weight: bold; width: 60px; text-align: center; }
-    .date-col { width: 180px; font-weight: bold; }
-    .location-tag { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+    .date-col { width: 220px; font-weight: bold; }
     
     /* High contrast for printing */
     .highlight-row { background: #eef6ff !important; font-weight: bold; }
@@ -23,9 +22,9 @@
     .holiday-tag { color: #d00; font-weight: bold; font-size: 0.75rem; display: block; margin-top: 4px; }
 
     @media print {
-      header, footer, .input-box, button { display: none !important; }
+      header, footer, .input-box, .hero-section button { display: none !important; }
       .calc-container { max-width: 100%; margin: 0; }
-      .result-table { font-size: 0.9rem; width: 100%; }
+      .result-table { font-size: 0.95rem; width: 100%; }
       .result-table th { background: #eee !important; color: #000 !important; }
       .mdt-row { background: #eee !important; }
     }
@@ -34,11 +33,16 @@
 <body>
 
 <header>
-  <h1>Dr [Firstname] [Lastname] | CXB Planner</h1>
+  <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
   <nav><a href="index.html">Home</a><a href="about.html">About</a><a href="CXB.html">CXB</a></nav>
 </header>
 
 <main class="calc-container">
+  <section class="hero-section">
+    <h2>Papillon Contact X-ray Brachytherapy (CXB) Pathway Planner</h2>
+    <p>Select tumour size and treatment start date to generate a clinical timeline.</p>
+  </section>
+
   <div class="input-box">
     <h3 style="margin-top:0;">1. Select Tumour Size</h3>
     <input type="radio" name="size" id="small" value="small" checked> <label for="small">Tumour < 3cm (Direct CXB)</label><br>
@@ -60,9 +64,7 @@
     <table class="result-table">
       <thead>
         <tr>
-          <th>Week</th>
           <th>Date</th>
-          <th>Location</th>
           <th>Instruction / Action</th>
         </tr>
       </thead>
@@ -116,52 +118,50 @@ function generateSchedule() {
   let events = [];
 
   const addPapCycle = (startDate, weekNum) => {
-    events.push({ w: `Wk ${weekNum}`, d: addDays(startDate, -3), loc: "Home", msg: "Start Low Residue Diet" });
-    events.push({ w: `Wk ${weekNum}`, d: addDays(startDate, -1), loc: "Home", msg: "Take Picolax Bowel Prep" });
-    events.push({ w: `Wk ${weekNum}`, d: startDate, loc: "Hospital", msg: `Papillon Session ${weekNum === 1 || weekNum === 8 ? '1' : (weekNum === 3 || weekNum === 10 ? '2' : '3')}`, type: "high" });
+    events.push({ d: addDays(startDate, -3), msg: "Start Low Residue Diet" });
+    events.push({ d: addDays(startDate, -1), msg: "Take Picolax Bowel Prep" });
+    events.push({ d: startDate, msg: `Papillon Session ${weekNum === 1 || weekNum === 8 ? '1' : (weekNum === 3 || weekNum === 10 ? '2' : '3')}`, type: "high" });
   };
 
   if (isSmall) {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour < 3cm";
     addPapCycle(base, 1);
     addPapCycle(addDays(base, 14), 3);
-    events.push({ w: "Wk 4", d: addDays(base, 21), loc: "Hospital", msg: "Week Commencing: Planning CT Scan" });
+    events.push({ d: addDays(base, 21), msg: "Week Commencing: Planning CT Scan" });
     addPapCycle(addDays(base, 28), 5);
     let ebStart = addDays(base, 42);
-    events.push({ w: "Wk 7", d: ebStart, loc: "Hospital", msg: "Start EBRT", type: "high" });
+    events.push({ d: ebStart, msg: "Start EBRT", type: "high" });
     let ebEnd = addDays(ebStart, 32); 
-    events.push({ w: "Wk 11", d: ebEnd, loc: "Hospital", msg: "Finish EBRT", type: "high" });
+    events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
     let scanDate = addDays(ebEnd, 84);
-    events.push({ w: "Wk 23", d: scanDate, loc: "Hospital", msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ w: "Wk 24", d: addDays(scanDate, 8), loc: "Hospital", msg: "CRC MDT Review", type: "mdt" });
+    events.push({ d: scanDate, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
+    events.push({ d: addDays(scanDate, 8), msg: "CRC MDT Review", type: "mdt" });
 
   } else {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
-    events.push({ w: "Wk 1", d: base, loc: "Hospital", msg: "Start EBRT", type: "high" });
-    events.push({ w: "Wk 4", d: addDays(base, 21), loc: "Hospital", msg: "Rectoscopy (LumenEye)" });
-    events.push({ w: "Wk 5", d: addDays(base, 28), loc: "Hospital", msg: "MRI Pelvis" });
+    events.push({ d: base, msg: "Start EBRT", type: "high" });
+    events.push({ d: addDays(base, 21), msg: "Rectoscopy (LumenEye)" });
+    events.push({ d: addDays(base, 28), msg: "MRI Pelvis" });
     let ebEnd = addDays(base, 32);
-    events.push({ w: "Wk 5", d: ebEnd, loc: "Hospital", msg: "Finish EBRT", type: "high" });
-    events.push({ w: "Wk 6", d: addDays(base, 36), loc: "Hospital", msg: "CRC MDT Review", type: "mdt" });
+    events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
+    events.push({ d: addDays(base, 36), msg: "CRC MDT Review", type: "mdt" });
     
-    let p1 = addDays(ebEnd, 21); // Starts 3rd Monday after EBRT finishes Friday
+    let p1 = addDays(ebEnd, 21);
     addPapCycle(p1, 8);
     addPapCycle(addDays(p1, 14), 10);
     let p3 = addDays(p1, 28);
     addPapCycle(p3, 12);
     
     let scanDate = addDays(p3, 84);
-    events.push({ w: "Wk 24", d: scanDate, loc: "Hospital", msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ w: "Wk 25", d: addDays(scanDate, 8), loc: "Hospital", msg: "CRC MDT Review", type: "mdt" });
+    events.push({ d: scanDate, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
+    events.push({ d: addDays(scanDate, 8), msg: "CRC MDT Review", type: "mdt" });
   }
 
   events.forEach(e => {
     let f = formatDate(e.d);
     let rowClass = e.type === 'high' ? 'highlight-row' : (e.type === 'mdt' ? 'mdt-row' : '');
     body.innerHTML += `<tr class="${rowClass}">
-      <td class="week-col">${e.w}</td>
       <td class="date-col">${f.text}${f.holiday ? '<span class="holiday-tag">Adjusted to Tuesday (Bank Hol)</span>' : ''}</td>
-      <td class="location-tag">${e.loc}</td>
       <td style="font-weight: ${e.type === 'high' ? 'bold' : 'normal'}">${e.msg}</td>
     </tr>`;
   });
