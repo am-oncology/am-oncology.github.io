@@ -3,8 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact X-ray Brachytherapy (CXB) - Papillon | Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+  <title>Contact X-ray Brachytherapy (CXB) - Papillon | Dr [Firstname] [Lastname]</title>
   <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* Specific styles for the CXB Planning Tool */
+    .calc-container { max-width: 850px; margin: 40px auto; padding: 0 20px; }
+    .input-box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; border-left: 5px solid #0f2a44; }
+    .result-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .result-table th, .result-table td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+    .result-table th { background: #0f2a44; color: white; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+    .highlight-row { background: #f0f7ff; font-weight: bold; color: #2c5282; border-left: 4px solid #63b3ed; }
+    .mdt-row { background: #fffaf0; font-weight: bold; border-left: 4px solid #f6ad55; }
+    .holiday-note { color: #c53030; font-size: 0.8rem; font-weight: normal; display: block; margin-top: 4px; }
+    .prep-item { color: #718096; font-style: italic; font-size: 0.95rem; }
+    
+    @media print {
+      header, footer, .input-box, .hero-section button { display: none; }
+      .calc-container { margin: 0; width: 100%; }
+      .result-table { box-shadow: none; border: 1px solid #eee; }
+    }
+  </style>
 </head>
 <body>
 
@@ -18,7 +36,49 @@
   </nav>
 </header>
 
-<main>
+<main class="calc-container">
+  <section class="hero-section">
+    <h2>Papillon (CXB) Pathway Planner</h2>
+    <p>Use this tool to generate a clinical timeline for Papillon treatment and External Beam Radiotherapy (EBRT).</p>
+  </section>
+
+  <div class="input-box">
+    <label><strong>1. Select Tumour Size:</strong></label><br><br>
+    <input type="radio" name="size" id="small" value="small" checked> <label for="small">Under 3cm (Primary CXB Path)</label><br>
+    <input type="radio" name="size" id="large" value="large"> <label for="large">Over 3cm (Downsizing EBRT Path)</label>
+    
+    <br><br>
+    <label for="start-date"><strong>2. Select Start Date (Monday):</strong></label><br>
+    <input type="date" id="start-date" style="padding:12px; width:100%; margin-top:10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: inherit;">
+    
+    <button onclick="generateSchedule()" class="button-link" style="width:100%; border:none; margin-top:25px; cursor:pointer; font-size: 1rem; background-color: #0f2a44; color: white;">Generate Full Timeline</button>
+  </div>
+
+  <div id="schedule-output" style="display:none;">
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <h3 id="pathway-title" style="margin:0;">Treatment Timeline</h3>
+      <button onclick="window.print()" style="background:#edf2f7; color:#2d3748; border:none; padding:8px 15px; border-radius:6px; cursor:pointer; font-weight:600;">🖨️ Print for Patient</button>
+    </div>
+    
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th style="width: 35%;">Date</th>
+          <th>Clinical Action / Preparation</th>
+        </tr>
+      </thead>
+      <tbody id="timeline-body"></tbody>
+    </table>
+    
+    <p style="font-size: 11px; color: #a0aec0; margin-top: 20px;">
+      * Disclaimer: This schedule is an estimate. Dates are subject to machine availability and clinical review. Bank Holiday shifts are calculated automatically.
+    </p>
+  </div>
+  
+  <section style="margin-top: 50px;">
+    <h3>About Contact X-ray Brachytherapy (Papillon)</h3>
+    <p>[Add your CXB information and clinical details here later.]</p>
+  </section>
 </main>
 
 <footer>
@@ -28,6 +88,118 @@
     <span>Powered by GitHub Pages</span>
   </p>
 </footer>
+
+<script>
+// UK Bank Holidays 2026-2027
+const bankHolidays = [
+    "2026-01-01", "2026-04-03", "2026-04-06", "2026-05-04", "2026-05-25", "2026-08-31", "2026-12-25", "2026-12-28",
+    "2027-01-01", "2027-03-26", "2027-03-29", "2027-05-03", "2027-05-31", "2027-08-30", "2027-12-27", "2027-12-28"
+];
+
+function formatDate(date) {
+    let d = new Date(date);
+    let dateStr = d.toISOString().split('T')[0];
+    let isShifted = false;
+
+    if (bankHolidays.includes(dateStr) && d.getDay() === 1) {
+        d.setDate(d.getDate() + 1);
+        isShifted = true;
+    }
+
+    let display = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    return { text: display, isHoliday: isShifted };
+}
+
+function addDays(date, days) {
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+function generateSchedule() {
+    const startDateVal = document.getElementById('start-date').value;
+    const isSmall = document.getElementById('small').checked;
+    const body = document.getElementById('timeline-body');
+    if (!startDateVal) return alert("Please select a valid start date.");
+
+    body.innerHTML = "";
+    let base = new Date(startDateVal);
+    let events = [];
+
+    if (isSmall) {
+        document.getElementById('pathway-title').innerText = "Timeline: < 3cm (Primary CXB)";
+        
+        // PAP 1
+        events.push({ d: addDays(base, -3), msg: "Start Low Residue Diet", type: "prep" });
+        events.push({ d: addDays(base, -1), msg: "Take Enemas", type: "prep" });
+        events.push({ d: base, msg: "Papillon Session 1", type: "high" });
+
+        // PAP 2
+        let p2 = addDays(base, 14);
+        events.push({ d: addDays(p2, -3), msg: "Start Low Residue Diet", type: "prep" });
+        events.push({ d: p2, msg: "Papillon Session 2", type: "high" });
+
+        // Week Between
+        events.push({ d: addDays(base, 21), msg: "Week Commencing: Planning CT Scan", type: "note" });
+
+        // PAP 3
+        let p3 = addDays(base, 28);
+        events.push({ d: addDays(p3, -3), msg: "Start Low Residue Diet", type: "prep" });
+        events.push({ d: p3, msg: "Papillon Session 3", type: "high" });
+
+        // EBRT
+        let ebrtStart = addDays(p3, 14);
+        events.push({ d: ebrtStart, msg: "Start EBRT (25 Fractions / 5 Weeks)", type: "high" });
+        let ebrtEnd = addDays(ebrtStart, 32); 
+        events.push({ d: ebrtEnd, msg: "Completion of EBRT Course", type: "high" });
+
+        // Follow up (12w after last EBRT)
+        let scans = addDays(ebrtEnd, 12 * 7);
+        events.push({ d: scans, msg: "12-Week Scans: CT CAP, MRI Pelvis, Flexi Sig", type: "high" });
+        events.push({ d: addDays(scans, 8), msg: "Week 13: CRC MDT Review (Tuesday)", type: "mdt" });
+
+    } else {
+        document.getElementById('pathway-title').innerText = "Timeline: > 3cm (EBRT Downsizing)";
+        
+        events.push({ d: base, msg: "Start EBRT (25 Fractions / 5 Weeks)", type: "high" });
+        events.push({ d: addDays(base, 21), msg: "Week 4: Rectoscopy (LumenEye Review)", type: "note" });
+        events.push({ d: addDays(base, 28), msg: "Week 5: MRI Pelvis", type: "note" });
+        let ebrtEnd = addDays(base, 32);
+        events.push({ d: ebrtEnd, msg: "Completion of EBRT Course", type: "high" });
+
+        // MDT Week (Tuesday of Week 6)
+        events.push({ d: addDays(base, 36), msg: "Colorectal MDT Meeting Review (Tuesday)", type: "mdt" });
+
+        let cxbStart = addDays(ebrtEnd, 21);
+        events.push({ d: addDays(cxbStart, -3), msg: "Start Low Residue Diet", type: "prep" });
+        events.push({ d: addDays(cxbStart, -1), msg: "Take Enemas", type: "prep" });
+        events.push({ d: cxbStart, msg: "Papillon Session 1", type: "high" });
+
+        let cxbFinal = addDays(cxbStart, 28);
+        events.push({ d: cxbFinal, msg: "Final Papillon Session", type: "high" });
+
+        let scans = addDays(cxbFinal, 12 * 7);
+        events.push({ d: scans, msg: "12-Week Scans: CT CAP, MRI Pelvis, Flexi Sig", type: "high" });
+        events.push({ d: addDays(scans, 8), msg: "Week 13: CRC MDT Review (Tuesday)", type: "mdt" });
+    }
+
+    events.forEach(e => {
+        let f = formatDate(e.d);
+        let rowClass = "";
+        if (e.type === 'high') rowClass = "highlight-row";
+        if (e.type === 'mdt') rowClass = "mdt-row";
+        if (e.type === 'prep') rowClass = "prep-item";
+
+        let row = `<tr class="${rowClass}">
+            <td>${f.text} ${f.isHoliday ? '<span class="holiday-note">⚠️ Adjusted for Bank Holiday</span>' : ''}</td>
+            <td>${e.msg}</td>
+        </tr>`;
+        body.innerHTML += row;
+    });
+
+    document.getElementById('schedule-output').style.display = 'block';
+}
+</script>
 
 </body>
 </html>
