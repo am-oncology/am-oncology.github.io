@@ -44,7 +44,7 @@
 
 <main class="calc-container">
   <section class="hero-section">
-    <h2>Papillon (CXB) Pathway Planner</h2>
+    <h2>Papillon Contact X-ray Brachytherapy (CXB) Pathway Planner</h2>
     <p>Select tumour size and treatment start date to generate a clinical timeline.</p>
   </section>
 
@@ -153,7 +153,7 @@ function generateSchedule() {
   } else {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
     events.push({ d: base, msg: "Start EBRT", type: "high" });
-    events.push({ d: addDays(base, 21), msg: "Rectoscopy" });
+    events.push({ d: addDays(base, 21), msg: "Proctoscopy" });
     events.push({ d: addDays(base, 28), msg: "Week Commencing: MRI Pelvis" });
     let ebEnd = addDays(base, 32); // Friday
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
