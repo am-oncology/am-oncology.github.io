@@ -112,7 +112,6 @@ function addDays(date, days) {
   return result;
 }
 
-// Logic to find the next Tuesday after a specific date
 function getNextTuesday(date) {
   let d = new Date(date);
   let day = d.getDay();
@@ -140,27 +139,38 @@ function generateSchedule() {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour < 3cm";
     addPapCycle(base, 1);
     addPapCycle(addDays(base, 14), 2);
-    events.push({ d: addDays(base, 21), msg: "Week Commencing: Planning CT Scan" });
-    addPapCycle(addDays(base, 28), 3);
-    let ebStart = addDays(base, 42);
+    
+    // Fraction 3 + Planning CT in same week
+    let pap3Date = addDays(base, 28);
+    events.push({ d: pap3Date, msg: "Week Commencing: Planning CT Scan" });
+    addPapCycle(pap3Date, 3);
+    
+    // EBRT starts 3rd Monday after Fraction 3 (21 days)
+    let ebStart = addDays(pap3Date, 21);
     events.push({ d: ebStart, msg: "Start EBRT", type: "high" });
-    let ebEnd = addDays(ebStart, 32); // Finishes on a Friday
+    let ebEnd = addDays(ebStart, 32); 
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
-    let scanWeekStart = addDays(ebEnd, 84); // 12 weeks after Friday
+    
+    let scanWeekStart = addDays(ebEnd, 84);
     events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
     events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
 
   } else {
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
     events.push({ d: base, msg: "Start EBRT", type: "high" });
-    events.push({ d: addDays(base, 21), msg: "Proctoscopy" });
-    events.push({ d: addDays(base, 28), msg: "Week Commencing: MRI Pelvis" });
-    let ebEnd = addDays(base, 32); // Friday
+    let ebEnd = addDays(base, 32); // Friday finish
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
-    events.push({ d: getNextTuesday(ebEnd), msg: "CRC MDT Review", type: "mdt" });
     
-    // CXB 1 starts 3rd Monday after EBRT finish (Friday + 17 days)
-    let p1 = addDays(ebEnd, 17);
+    // Week 4 post-EBRT: MRI and Proctoscopy
+    let postEbrtWk4 = addDays(ebEnd, 24); // Friday to Monday (3) + 3 weeks (21) = 24
+    events.push({ d: postEbrtWk4, msg: "Week Commencing: Proctoscopy and MRI Pelvis" });
+    
+    // Week 5 post-EBRT: MDT
+    let postEbrtWk5 = addDays(postEbrtWk4, 7);
+    events.push({ d: getNextTuesday(postEbrtWk5), msg: "CRC MDT Review", type: "mdt" });
+    
+    // Week 6 post-EBRT: Papillon Start
+    let p1 = addDays(postEbrtWk4, 14);
     addPapCycle(p1, 1);
     addPapCycle(addDays(p1, 14), 2);
     let p3 = addDays(p1, 28);
@@ -170,6 +180,8 @@ function generateSchedule() {
     events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
     events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
   }
+
+  events.sort((a, b) => a.d - b.d); // Ensure chronological order
 
   events.forEach(e => {
     let f = formatDate(e.d);
