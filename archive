@@ -1,0 +1,68 @@
+index archive
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="cxb.html">CXB</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero-section">
+    <h2>Clinical Oncology</h2>
+    <p>[Information].</p>
+  </section>
+
+  <div class="features-grid">
+    <div class="feature-item">
+      <h3>Radiotherapy</h3>
+      <p>[Information1].</p>
+    </div>
+    <div class="feature-item">
+      <h3>Systemic Anti-Cancer Therapy</h3>
+      <p>[Information2].</p>
+    </div>
+    <div class="feature-item">
+      <h3>Miscellaneous</h3>
+      <p>[Information3].</p>
+    </div>
+  </div>
+
+  <section class="cta-box">
+    <h3>Subspecialties</h3>
+    <p>Non-surgical management of [CancerType1] and [CancerType2] cancers.</p>
+    <a href="about.html" class="button-link">View Professional Profile &rarr;</a>
+  </section>
+
+  <section>
+    <h3 style="border-bottom: 2px solid #edf2f7; padding-bottom: 10px;">Professional Standards</h3>
+    <p>
+      GMC reference number [GMC number]. 
+    </p>
+    <p>[Additional professional information].</p>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2026 AM Oncology. This website does not replace professional medical advice.</p>
+  <p>
+    <a href="privacy.html">Privacy Policy</a> | 
+    <span>Powered by GitHub Pages</span>
+  </p>
+</footer>
+
+</body>
+</html>
