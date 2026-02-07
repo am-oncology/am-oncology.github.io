@@ -3,62 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+  <title>Dr [Firstname] [Lastname] | Consultant Clinical Oncologist</title>
   <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* --- NEW STYLES FOR IMAGES --- */
+    
+    /* 1. Hero Section with Background Image */
+    .hero-section {
+      /* This layers a dark blue tint over the image so text is readable */
+      background: linear-gradient(rgba(15, 42, 68, 0.85), rgba(15, 42, 68, 0.7)), 
+                  url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1600'); 
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 40px;
+    }
+
+    .hero-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    .hero-section p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+
+    /* 2. Feature Grid & Card Images */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 0 20px;
+      max-width: 1200px;
+      margin: 0 auto 60px auto;
+    }
+
+    .feature-item {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden; /* Ensures image corners stay rounded */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    /* The Image inside the card */
+    .feature-img {
+      width: 100%;
+      height: 200px; /* Fixed height for consistency */
+      object-fit: cover; /* Smart cropping */
+      border-bottom: 4px solid #0f2a44; /* Brand color accent line */
+    }
+
+    .feature-content {
+      padding: 25px;
+    }
+
+    .feature-item h3 {
+      color: #0f2a44;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* 3. CTA Box Polish */
+    .cta-box {
+      background: #f7fafc;
+      border: 2px solid #0f2a44;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 60px auto;
+    }
+
+    .button-link {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 12px 24px;
+      background-color: #0f2a44;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .button-link:hover {
+      background-color: #2c5282;
+    }
+    
+    /* Ensure Footer stays spaced */
+    footer {
+      margin-top: 60px;
+      padding: 40px 20px;
+      background: #0f2a44;
+      color: white;
+      text-align: center;
+    }
+    
+    footer a { color: #cbd5e0; }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="cxb.html">CXB</a>
+<header style="background: white; padding: 20px; border-bottom: 1px solid #eee; text-align: center;">
+  <h1 style="color: #0f2a44; margin: 0; font-size: 1.5rem;">Dr [Firstname] [Lastname] | Consultant Clinical Oncologist</h1>
+  <nav style="margin-top: 15px;">
+    <a href="index.html" style="margin: 0 15px; text-decoration: none; color: #0f2a44; font-weight: bold;">Home</a>
+    <a href="about.html" style="margin: 0 15px; text-decoration: none; color: #555;">About</a>
+    <a href="contact.html" style="margin: 0 15px; text-decoration: none; color: #555;">Contact</a>
+    <a href="cxb.html" style="margin: 0 15px; text-decoration: none; color: #555;">CXB</a>
   </nav>
 </header>
 
 <main>
   <section class="hero-section">
-    <h2>Clinical Oncology</h2>
-    <p>[Information].</p>
+    <h2>Advanced Oncological Care</h2>
+    <p>Specialising in Colorectal, Anal, and Neuro-oncology. Providing compassionate, precision-led treatment plans for every patient.</p>
   </section>
 
   <div class="features-grid">
+    
     <div class="feature-item">
-      <h3>Radiotherapy</h3>
-      <p>[Information1].</p>
+      <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800" alt="Linear Accelerator Radiotherapy" class="feature-img">
+      <div class="feature-content">
+        <h3>Radiotherapy</h3>
+        <p>State-of-the-art external beam radiotherapy (EBRT), including IMRT and VMAT techniques. Precision targeting to maximise tumour control while sparing healthy tissue.</p>
+      </div>
     </div>
+
     <div class="feature-item">
-      <h3>Systemic Anti-Cancer Therapy</h3>
-      <p>[Information2].</p>
+      <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800" alt="Chemotherapy Infusion" class="feature-img">
+      <div class="feature-content">
+        <h3>Systemic Therapy</h3>
+        <p>Comprehensive medical management including chemotherapy, immunotherapy, and targeted biological agents. Delivered in dedicated, comfortable day-care units.</p>
+      </div>
     </div>
+
     <div class="feature-item">
-      <h3>Miscellaneous</h3>
-      <p>[Information3].</p>
+      <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=80&w=800" alt="Medical Consultation" class="feature-img">
+      <div class="feature-content">
+        <h3>Consultation & Follow-up</h3>
+        <p>Dedicated survivorship support, symptom control, and long-term surveillance. Focusing on quality of life throughout the treatment pathway.</p>
+      </div>
     </div>
+  
   </div>
 
   <section class="cta-box">
-    <h3>Subspecialties</h3>
-    <p>Non-surgical management of [CancerType1] and [CancerType2] cancers.</p>
+    <h3>Clinical Focus</h3>
+    <p>Expert non-surgical management of <strong>Lower GI (Colorectal & Anal)</strong> and <strong>Brain (Neuro-oncology & SRS)</strong> cancers.</p>
     <a href="about.html" class="button-link">View Professional Profile &rarr;</a>
   </section>
 
-  <section>
-    <h3 style="border-bottom: 2px solid #edf2f7; padding-bottom: 10px;">Professional Standards</h3>
+  <section style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h3 style="border-bottom: 2px solid #edf2f7; padding-bottom: 10px; color: #0f2a44;">Professional Standards</h3>
     <p>
-      GMC reference number [GMC number]. 
+      <strong>GMC Reference Number:</strong> [1234567]<br>
+      Member of the Royal College of Radiologists (RCR).
     </p>
-    <p>[Additional professional information].</p>
   </section>
 </main>
 
 <footer>
-  <p>&copy; 2026 AM Oncology. This website does not replace professional medical advice.</p>
+  <p>&copy; 2026 Dr [Lastname] Oncology. This website does not replace professional medical advice.</p>
   <p>
-    <a href="privacy.html">Privacy Policy</a> | 
-    <span>Powered by GitHub Pages</span>
+    <a href="privacy.html" style="color: #a0aec0; text-decoration: none;">Privacy Policy</a> | 
+    <span style="color: #718096;">Based in London & Essex</span>
   </p>
 </footer>
 
