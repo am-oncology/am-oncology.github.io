@@ -3,8 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Firstname Lastname | Clinical Oncologist</title>
+  <title>Dr Firstname Lastname | Clinical Oncology</title>
   <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* Global Styles */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; color: #333; line-height: 1.6; }
+
+    /* Header - Restored to Navy Blue */
+    header { background: #0f2a44; color: white; padding: 25px 0; text-align: center; }
+    header h1 { margin: 0; font-size: 1.8rem; }
+    nav { margin-top: 15px; }
+    nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
+    nav a:hover { color: #cbd5e0; }
+
+    /* Hero Box with Forest Background and Navy Overlay */
+    .hero-section {
+      position: relative;
+      /* The gradient creates a navy tint so white text is legible over the forest image */
+      background: linear-gradient(rgba(15, 42, 68, 0.8), rgba(15, 42, 68, 0.7)), 
+                  url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1470&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+    }
+    .hero-section h2 { font-size: 2.5rem; margin-bottom: 10px; }
+    .hero-section p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+
+    /* Features Grid */
+    .features-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+      gap: 30px; 
+      padding: 50px 20px; 
+      max-width: 1200px; 
+      margin: 0 auto; 
+    }
+    .feature-item { 
+      background: #fff; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+      border: 1px solid #e2e8f0;
+    }
+    .feature-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 4px solid #0f2a44; }
+    .feature-content { padding: 20px; }
+    .feature-content h3 { color: #0f2a44; margin-top: 0; }
+
+    /* CTA Box - Fixed for Readability */
+    .cta-box { 
+      background: #f1f5f9; 
+      padding: 50px 20px; 
+      text-align: center; 
+      margin: 40px 20px; 
+      border-radius: 12px; 
+      border: 2px solid #0f2a44;
+    }
+    .cta-box h3, .cta-box p { color: #0f2a44; } /* Dark text on light background */
+    
+    .button-link { 
+      display: inline-block; 
+      margin-top: 20px; 
+      padding: 12px 30px; 
+      background: #0f2a44; 
+      color: #fff !important; 
+      text-decoration: none; 
+      border-radius: 6px; 
+      font-weight: bold; 
+    }
+    .button-link:hover { background: #1a3a5a; }
+
+    /* Footer */
+    footer { background: #f8fafc; padding: 40px 20px; text-align: center; border-top: 1px solid #e2e8f0; }
+  </style>
 </head>
 <body>
 
@@ -21,38 +93,38 @@
 <main>
   <section class="hero-section">
     <h2>Clinical Oncology</h2>
-    <p>Information</p>
+    <p>Info</p>
   </section>
 
   <div class="features-grid">
     <div class="feature-item">
-      <img src="" alt="Linac" class="feature-img">
+      <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800" alt="Linac" class="feature-img">
       <div class="feature-content">
         <h3>Radiotherapy</h3>
-        <p>Information</p>
+        <p>Info</p>
       </div>
     </div>
 
     <div class="feature-item">
-      <img src="" alt="Chemotherapy" class="feature-img">
+      <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=800" alt="Chemotherapy" class="feature-img">
       <div class="feature-content">
         <h3>Systemic Anti-Cancer Therapy</h3>
-        <p>Information</p>
+        <p>Info</p>
       </div>
     </div>
 
     <div class="feature-item">
-      <img src="" alt="Medical" class="feature-img">
+      <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=80&w=800" alt="Medical" class="feature-img">
       <div class="feature-content">
         <h3>Miscellaneous</h3>
-        <p>Information</p>
+        <p>Info</p>
       </div>
     </div>
   </div>
 
   <section class="cta-box">
     <h3>Clinical</h3>
-    <p>Management of <strong>Cancer1</strong> and <strong>Cancer2</strong> cancers.</p>
+    <p>Management of <strong>cancer1</strong> and <strong>cancer2</strong> cancers.</p>
     <a href="about.html" class="button-link">View Professional Profile &rarr;</a>
   </section>
 </main>
