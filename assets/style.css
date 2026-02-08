@@ -1,22 +1,16 @@
 /* 1. GLOBAL STYLES & ANIMATIONS */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Cleaner modern font */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1.6;
   color: #333;
-  background-color: #f0f4f8; /* Soft background to make white boxes 'pop' */
+  background-color: #f0f4f8;
 }
 
 /* 2. STICKY HEADER */
@@ -24,7 +18,7 @@ header {
   background: #0f2a44;
   color: white;
   padding: 15px 5%;
-  position: sticky; /* This keeps it at the top */
+  position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -33,11 +27,7 @@ header {
   align-items: center;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 20px;
-  letter-spacing: 0.5px;
-}
+header h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
 
 nav a {
   color: white;
@@ -48,41 +38,39 @@ nav a {
   transition: color 0.3s;
 }
 
-nav a:hover {
-  color: #a0aec0;
-}
+nav a:hover { color: #a0aec0; text-decoration: underline; }
 
-/* 3. MAIN CONTENT CONTAINER */
+/* 3. MAIN CONTENT */
 main {
   max-width: 1100px;
   margin: 40px auto;
   padding: 0 20px;
 }
 
-/* 4. THE BOX/CARD EFFECT FOR SECTIONS */
 section, .feature-item, .cta-box {
   background: white;
   padding: 30px;
   margin-bottom: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  animation: fadeInUp 0.6s ease-out both; /* The 'jazzy' entrance */
+  animation: fadeInUp 0.6s ease-out both;
 }
 
-/* 5. HERO SECTION */
+/* 4. HERO SECTION */
 .hero-section {
   text-align: center;
-  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  /* Merged the dark overlay logic from the HTML style */
+  background: linear-gradient(rgba(15, 42, 68, 0.85), rgba(15, 42, 68, 0.7)), url(''); 
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 80px 20px;
   border: 1px solid #e2e8f0;
 }
 
-.hero-section h2 {
-  color: #0f2a44;
-  font-size: 2.5rem;
-  margin-top: 0;
-}
+.hero-section h2 { font-size: 2.5rem; margin-top: 0; color: #fff; }
 
-/* 6. THE 3-BOX GRID */
+/* 5. THE 3-BOX GRID & CARDS */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -91,26 +79,32 @@ section, .feature-item, .cta-box {
 }
 
 .feature-item {
-  margin-bottom: 0; /* Override section margin */
+  padding: 0; /* Removed padding to allow image to flush to edges */
+  overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #edf2f7;
 }
 
 .feature-item:hover {
-  transform: translateY(-10px); /* Lifts up on hover */
+  transform: translateY(-10px);
   box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-  border-color: #cbd5e0;
 }
 
-.feature-item h3 {
-  color: #2c5282;
-  margin-top: 0;
+.feature-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 4px solid #0f2a44;
 }
 
-/* 7. NAVY CTA BOX */
+.feature-content { padding: 25px; }
+.feature-item h3 { color: #2c5282; margin-top: 0; }
+
+/* 6. CTA BOX */
 .cta-box {
   background: #0f2a44;
   color: white;
+  text-align: center;
 }
 
 .cta-box h3 { color: #ebf8ff; }
@@ -118,104 +112,31 @@ section, .feature-item, .cta-box {
 .button-link {
   display: inline-block;
   background: #63b3ed;
-  color: white;
+  color: white !important;
   padding: 12px 30px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
   transition: background 0.3s;
+  margin-top: 15px;
 }
 
-.button-link:hover {
-  background: #4299e1;
-}
+.button-link:hover { background: #4299e1; }
 
-/* 8. FOOTER */
+/* 7. FOOTER */
 footer {
   text-align: center;
   padding: 40px 20px;
-  color: #718096;
+  background: #0f2a44;
+  color: #cbd5e0;
   font-size: 13px;
 }
 
-/* 9. MOBILE FIXES */
+footer a { color: #fff; text-decoration: none; }
+
+/* 8. MOBILE FIXES */
 @media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    text-align: center;
-  }
+  header { flex-direction: column; text-align: center; }
   nav { margin-top: 15px; }
   .hero-section h2 { font-size: 1.8rem; }
-}
-
-/* 10. PHILOSOPHY OF CARE / QUOTE STYLING */
-blockquote {
-  position: relative;
-  margin: 20px 0;
-  padding: 30px 40px;
-  background-color: #f8fafc; /* A very subtle grey-blue to contrast the white card */
-  border-left: 6px solid #0f2a44; /* Your brand navy color */
-  border-radius: 0 8px 8px 0;
-  font-family: "Georgia", serif; /* Serif font makes quotes feel more personal/human */
-  font-style: italic;
-  font-size: 1.25rem;
-  line-height: 1.7;
-  color: #2d3748;
-}
-
-/* The decorative opening quote mark */
-blockquote::before {
-  content: "\201C"; /* Unicode double quote */
-  position: absolute;
-  top: -5px;
-  left: 10px;
-  font-size: 4rem;
-  color: #0f2a44;
-  opacity: 0.1; /* Keeps it subtle so it doesn't distract from the text */
-}
-
-/* Styling for the attribution (the doctor's name) */
-blockquote cite {
-  display: block;
-  margin-top: 15px;
-  font-family: 'Segoe UI', sans-serif; /* Switch back to your clean sans-serif */
-  font-style: normal;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #4a5568;
-}
-
-/* 11. EMERGENCY BOX STYLING */
-.emergency-notice {
-  /* A very pale red background that is still easy to read text on */
-  background-color: #fff2f2;
-  /* A thick, dark red accent border on the left side to grab attention */
-  border-left: 8px solid #d32f2f;
-  padding: 25px;
-  /* Adds a subtle shadow to lift it off the page slightly */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  border-radius: 0 8px 8px 0;
-  margin-bottom: 30px;
-}
-
-/* Make the heading red to match */
-.emergency-notice h3 {
-  color: #c62828;
-  margin-top: 0;
-  font-size: 1.4rem;
-  display: flex;
-  align-items: center;
-}
-
-/* Adds a warning icon automatically before the heading text */
-.emergency-notice h3::before {
-  content: "⚠️";
-  font-size: 1.5rem;
-  margin-right: 12px;
-}
-
-/* Makes the vital phone numbers/actions pop even more within the text */
-.emergency-notice strong {
-  color: #b71c1c;
-  font-weight: 700;
 }
