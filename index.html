@@ -1,149 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dr Firstname Lastname | Clinical Oncology</title>
-  <link rel="stylesheet" href="assets/style.css">
-  <style>
-    /* Global Styles */
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; color: #333; line-height: 1.6; }
-
-    /* Header - Navy Blue */
-    header { background: #0f2a44; color: white; padding: 25px 0; text-align: center; }
-    header h1 { margin: 0; font-size: 1.8rem; }
-    nav { margin-top: 15px; }
-    nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
-    nav a:hover { color: #cbd5e0; }
-
-    /* Hero Box */
-    .hero-section {
-      position: relative;
-      background: linear-gradient(rgba(15, 42, 68, 0.8), rgba(15, 42, 68, 0.7)), 
-                  url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1470&auto=format&fit=crop');
-      background-size: cover;
-      background-position: center;
-      color: white;
-      padding: 100px 20px;
-      text-align: center;
-    }
-    .hero-section h2 { font-size: 2.5rem; margin-bottom: 10px; }
-    .hero-section p { font-size: 1.2rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
-
-    /* Features Grid */
-    .features-grid { 
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-      gap: 30px; 
-      padding: 50px 20px; 
-      max-width: 1200px; 
-      margin: 0 auto; 
-    }
-    .feature-item { 
-      background: #fff; 
-      border-radius: 12px; 
-      overflow: hidden; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      border: 1px solid #e2e8f0;
-    }
-    /* Added object-position: top to reveal the sun flare in the radiotherapy image */
-    .feature-img { width: 100%; height: 200px; object-fit: cover; object-position: top; border-bottom: 4px solid #0f2a44; }
-    .feature-content { padding: 20px; }
-    .feature-content h3 { color: #0f2a44; margin-top: 0; }
-
-    /* NEW REFINED CTA BOX STYLE */
-    .cta-box { 
-      background: #ffffff; 
-      padding: 40px; 
-      text-align: center; 
-      max-width: 700px; /* Narrower width */
-      margin: 60px auto; /* Centered with vertical spacing */
-      border-radius: 8px; 
-      border: 1px solid #e2e8f0;
-      border-left: 6px solid #0f2a44; /* Added executive blue accent */
-      box-shadow: 0 10px 25px rgba(15, 42, 68, 0.08); /* Soft professional shadow */
-      transition: transform 0.3s ease;
-    }
-    .cta-box:hover {
-      transform: translateY(-3px); /* Subtle interaction */
-    }
-    .cta-box h3 { color: #0f2a44; font-size: 1.6rem; margin-top: 0; }
-    .cta-box p { color: #4a5568; font-size: 1.1rem; }
-    
-    .button-link { 
-      display: inline-block; 
-      margin-top: 15px; 
-      padding: 14px 35px; 
-      background: #0f2a44; 
-      color: #fff !important; 
-      text-decoration: none; 
-      border-radius: 4px; 
-      font-weight: bold; 
-      letter-spacing: 0.5px;
-    }
-    .button-link:hover { background: #1a3a5a; }
-
-    /* Footer */
-    footer { background: #f8fafc; padding: 40px 20px; text-align: center; border-top: 1px solid #e2e8f0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr [Firstname] [Lastname] | Clinical Oncologist</title>
+    <meta name="description" content="Professional profile and clinical oncology services of Dr [Lastname], specialising in [Cancer1] and [Cancer2].">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <header>
-  <h1>Dr Firstname Lastname | Clinical Oncologist</h1>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-    <a href="cxb.html">CXB</a>
-  </nav>
+    <h1>Dr [Firstname] [Lastname]</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="cxb.html">CXB Planner</a>
+    </nav>
 </header>
 
 <main>
-  <section class="hero-section">
-    <h2>Clinical Oncology</h2>
-    <p>Info</p>
-  </section>
+    <section class="hero-banner" style="background: linear-gradient(rgba(15, 42, 68, 0.8), rgba(15, 42, 68, 0.8)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1470&auto=format&fit=crop'); background-size: cover; color: white; text-align: center; padding: 100px 20px; border-radius: 12px;">
+        <h2>Clinical Oncology</h2>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Dedicated to providing evidence-based care in radiotherapy and systemic anti-cancer therapies.</p>
+    </section>
 
-  <div class="features-grid">
-    <div class="feature-item">
-      <img src="https://images.unsplash.com/photo-1606150717578-567569be9d24?q=80&w=764&auto=format&fit=crop&sat=-100" alt="Linac" class="feature-img">
-      <div class="feature-content">
-        <h3>Radiotherapy</h3>
-        <p>Info</p>
-      </div>
+    <div class="card-grid" style="margin-top: 2rem;">
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1606150717578-567569be9d24?q=80&w=764&auto=format&fit=crop&sat=-100" alt="Radiotherapy Linac">
+            <div class="card-body">
+                <h3>Radiotherapy</h3>
+                <p>Information about radiotherapy services and techniques.</p>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1437624155766-b64bf17eb2ce?q=80&w=1170&auto=format&fit=crop&sat=-100" alt="Systemic Therapy">
+            <div class="card-body">
+                <h3>SACT</h3>
+                <p>Information regarding Systemic Anti-Cancer Therapies (Chemotherapy, Immunotherapy, etc).</p>
+            </div>
+        </article>
+
+        <article class="card">
+            <img src="https://images.unsplash.com/photo-1641712695162-884b8cf773bb?q=80&w=735&auto=format&fit=crop&sat=-100" alt="Clinical Excellence">
+            <div class="card-body">
+                <h3>Miscellaneous</h3>
+                <p>Further clinical information and patient resources.</p>
+            </div>
+        </article>
     </div>
 
-    <div class="feature-item">
-      <img src="https://images.unsplash.com/photo-1437624155766-b64bf17eb2ce?q=80&w=1170&auto=format&fit=crop&sat=-100" alt="Chemotherapy" class="feature-img">
-      <div class="feature-content">
-        <h3>Systemic Anti-Cancer Therapy</h3>
-        <p>Info</p>
-      </div>
-    </div>
-
-    <div class="feature-item">
-      <img src="https://images.unsplash.com/photo-1641712695162-884b8cf773bb?q=80&w=735&auto=format&fit=crop&sat=-100" alt="Medical" class="feature-img">
-      <div class="feature-content">
-        <h3>Miscellaneous</h3>
-        <p>Info</p>
-      </div>
-    </div>
-  </div>
-
-  <section class="cta-box">
-    <h3>Clinical</h3>
-    <p>Management of <strong>cancer1</strong> and <strong>cancer2</strong> cancers.</p>
-    <a href="about.html" class="button-link">View Professional Profile &rarr;</a>
-  </section>
+    <section class="cta-banner" style="text-align: center; border-left: 6px solid #0f2a44;">
+        <h3>Clinical Practice</h3>
+        <p>Specialising in the management of <strong>[Cancer1]</strong> and <strong>[Cancer2]</strong> cancers.</p>
+        <a href="about.html" class="button-link">View Professional Profile</a>
+    </section>
 </main>
 
 <footer>
-  <p>&copy; 2026 AM Oncology. This website does not replace professional medical advice.</p>
-  <p style="font-size: 11px; margin-top: 10px;">
-    <a href="privacy.html" style="color: #888; text-decoration: none; margin-right: 15px;">Privacy Policy</a>
-    <span style="color: #888;">Powered & Secured by <a href="https://pages.github.com/" target="_blank" style="color: #888; text-decoration: none;">GitHub Pages</a></span>
-  </p>
+    <p>&copy; 2026 AM Oncology. This website does not replace professional medical advice.</p>
+    <p style="font-size: 11px;">
+        <a href="privacy.html">Privacy Policy</a> | 
+        Powered by <a href="https://pages.github.com/">GitHub Pages</a>
+    </p>
 </footer>
 
 </body>
