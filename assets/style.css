@@ -1,38 +1,4 @@
-/* Update the Hero Section */
-.hero-banner {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 400px;
-    background: linear-gradient(rgba(15, 42, 68, 0.8), rgba(15, 42, 68, 0.8)), 
-                url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1470&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    color: #ffffff; /* Explicit white for all text in hero */
-    text-align: center;
-    padding: 60px 20px;
-    border-radius: 12px;
-}
-
-.hero-banner h2 {
-    color: #ffffff !important; /* Forces visibility */
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-/* Fix the spacing for the Practice Box */
-.cta-banner {
-    margin-top: 4rem; /* Creates the professional gap */
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    border-left: 8px solid #0f2a44;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
-
-/* 1. VARIABLES & CORE STYLES */
+/* 1. GLOBAL VARIABLES & BASE STYLES */
 :root {
   --primary-navy: #0f2a44;
   --secondary-blue: #2c5282;
@@ -54,7 +20,7 @@ body {
   background-color: var(--bg-light);
 }
 
-/* 2. LAYOUT COMPONENTS */
+/* 2. HEADER & NAVIGATION */
 header {
   background: var(--primary-navy);
   color: var(--white);
@@ -81,6 +47,7 @@ nav a {
 
 nav a:hover { opacity: 0.8; text-decoration: underline; }
 
+/* 3. LAYOUT CONTAINERS */
 main {
   max-width: 1000px;
   margin: 2rem auto;
@@ -95,24 +62,32 @@ section {
   box-shadow: var(--shadow);
 }
 
-/* 3. TYPOGRAPHY & BUTTONS */
-h2, h3 { color: var(--primary-navy); margin-top: 0; }
-p { margin-bottom: 1rem; }
-
-.button-link {
-  display: inline-block;
-  background: var(--primary-navy);
-  color: var(--white) !important;
-  padding: 0.75rem 1.5rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: transform 0.1s;
+/* 4. HERO SECTION */
+.hero-banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px; 
+  background: linear-gradient(rgba(15, 42, 68, 0.8), rgba(15, 42, 68, 0.8)), 
+              url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1470&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: var(--white);
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 12px;
+  margin-bottom: 2rem;
 }
 
-.button-link:hover { transform: translateY(-1px); background: #1a3a5a; }
+.hero-banner h2 {
+  color: var(--white) !important;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
 
-/* 4. CLINICAL TOOLS */
+/* 5. COMPONENTS */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -129,18 +104,47 @@ p { margin-bottom: 1rem; }
 .card img { width: 100%; height: 200px; object-fit: cover; }
 .card-body { padding: 1.5rem; }
 
-/* 5. FOOTER */
-footer {
+.cta-banner {
+  margin-top: 4rem; 
+  background: var(--white);
+  padding: 40px;
+  border-radius: 12px;
+  border-left: 8px solid var(--primary-navy);
+  box-shadow: var(--shadow);
   text-align: center;
-  padding: 3rem 1.5rem;
-  background: #edf2f7;
-  color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
-/* 6. MOBILE RESPONSIVENESS */
+/* 6. TYPOGRAPHY & BUTTONS */
+h2, h3 { color: var(--primary-navy); margin-top: 0; }
+p { margin-bottom: 1rem; }
+
+.button-link {
+  display: inline-block;
+  background: var(--primary-navy);
+  color: var(--white) !important;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.1s;
+}
+
+.button-link:hover { transform: translateY(-1px); background: #1a3a5a; }
+
+/* 7. FOOTER */
+footer {
+  text-align: center;
+  padding: 1.5rem; 
+  background: #edf2f7;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 8. MOBILE RESPONSIVENESS */
 @media (max-width: 768px) {
   header { flex-direction: column; text-align: center; padding: 1rem; }
   nav { margin-top: 1rem; }
   nav a { margin: 0 0.5rem; }
+  .hero-banner h2 { font-size: 2rem; }
 }
