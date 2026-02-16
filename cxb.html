@@ -6,15 +6,28 @@
     <title>CXB Pathway Planner</title>
     <link rel="stylesheet" href="assets/style.css">
     <style>
-        /* Tool-specific print logic */
+        /* Pro Print Logic */
         @media print {
-            header, footer, .input-box, button { display: none !important; }
+            header, footer, .input-box, .no-print, button { display: none !important; }
             main { margin: 0; padding: 0; }
-            .result-table { width: 100%; border: 1px solid #000; }
+            body::before {
+                content: "Patient Name / ID: __________________________";
+                display: block;
+                margin-bottom: 20px;
+                font-size: 14pt;
+                font-weight: bold;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+            }
+            .result-table { width: 100%; border: 1px solid #000; color: black !important; }
+            .highlight-row { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
         }
-        /* Highlight specific rows */
+
+        /* Tooltip styling */
+        abbr { text-decoration: underline dotted; cursor: help; }
         .highlight-row { background-color: #e6fffa; }
         .mdt-row { background-color: #fffaf0; }
+        .button-group { display: flex; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -35,7 +48,7 @@
         <p>Clinical timeline generator for patients undergoing Contact X-ray Brachytherapy (CXB).</p>
     </section>
 
-    <section class="input-box" style="background: #f8fafc; border: 1px solid #0f2a44;">
+    <section class="input-box" style="background: #f8fafc; border: 1px solid #0f2a44; padding: 20px; border-radius: 8px;">
         <div class="card-grid">
             <div>
                 <h3>1. Tumour Size</h3>
@@ -54,7 +67,10 @@
     <div id="schedule-output" style="display:none; margin-top: 2rem;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h3 id="pathway-title">Schedule</h3>
-            <button onclick="window.print()" class="button-link" style="background: #2d3748;">Print Schedule</button>
+            <div class="button-group">
+                <button onclick="downloadICS()" class="button-link" style="background: #2d3748;">Add to Calendar (.ics)</button>
+                <button onclick="window.print()" class="button-link" style="background: #4a5568;">Print Schedule</button>
+            </div>
         </div>
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background: white;">
             <thead>
@@ -77,14 +93,24 @@
 </footer>
 
 <script>
-const bankHolidays = ["2026-04-06", "2026-05-04", "2026-05-25", "2026-08-31", "2027-03-29", "2027-05-03", "2027-05-31", "2027-08-30"];
+let bankHolidays = [];
+let currentEvents = []; // Global store for Calendar export
 
-// UPDATED: Allows Monday (1) or Tuesday (2)
+// 1. DYNAMIC BANK HOLIDAYS: Fetch from Gov.uk API
+fetch('https://www.gov.uk/bank-holidays.json')
+  .then(res => res.json())
+  .then(data => {
+      bankHolidays = data['england-and-wales'].events.map(e => e.date);
+  })
+  .catch(() => {
+      // Fallback dates if API fails
+      bankHolidays = ["2026-04-06", "2026-05-04", "2026-05-25", "2026-08-31"];
+  });
+
 function validateDay(input) {
   const date = new Date(input.value);
-  const warning = document.getElementById('day-warning');
   const day = date.getDay();
-  
+  const warning = document.getElementById('day-warning');
   if (day !== 1 && day !== 2) {
     warning.style.display = 'block';
     input.value = "";
@@ -93,29 +119,20 @@ function validateDay(input) {
   }
 }
 
-function formatDate(date) {
-  let d = new Date(date);
-  let dateStr = d.toISOString().split('T')[0];
-  let isShifted = false;
-  // Simple check for Bank Holidays causing shift
-  if (bankHolidays.includes(dateStr)) {
-      // If it's a Bank Holiday, move to next day? 
-      // (Simplified logic: usually moves Mon -> Tue)
-      if(d.getDay() === 1) { 
-          d.setDate(d.getDate() + 1);
-          isShifted = true;
-      }
-  }
-  return { 
-    text: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
-    holiday: isShifted 
-  };
-}
-
 function addDays(date, days) {
   let result = new Date(date);
+  // 3. DST SAFETY: Force calculations to noon
+  result.setHours(12, 0, 0, 0);
   result.setDate(result.getDate() + days);
   return result;
+}
+
+function getNextMonday(date) {
+    let d = new Date(date);
+    let day = d.getDay();
+    let diff = (8 - day) % 7;
+    if (diff === 0) diff = 7;
+    return addDays(d, diff);
 }
 
 function getNextTuesday(date) {
@@ -125,15 +142,18 @@ function getNextTuesday(date) {
   return addDays(d, diff);
 }
 
-// Helper to find the next Monday from a given date
-function getNextMonday(date) {
-    let d = new Date(date);
-    let day = d.getDay();
-    // If Sunday(0) -> +1, If Fri(5) -> +3, If Sat(6) -> +2
-    let diff = (8 - day) % 7; 
-    if (diff === 0) diff = 7; // If already Monday, get next Monday? Or current? 
-    // Context implies finding the start of the next working week
-    return addDays(d, diff);
+function formatDate(date) {
+  let d = new Date(date);
+  let dateStr = d.toISOString().split('T')[0];
+  let isShifted = false;
+  if (bankHolidays.includes(dateStr) && d.getDay() === 1) {
+    d.setDate(d.getDate() + 1);
+    isShifted = true;
+  }
+  return { 
+    text: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
+    holiday: isShifted 
+  };
 }
 
 function generateSchedule() {
@@ -143,97 +163,93 @@ function generateSchedule() {
   if (!startDateVal) return;
 
   body.innerHTML = "";
+  currentEvents = [];
   let base = new Date(startDateVal);
-  let events = [];
+  base.setHours(12, 0, 0, 0);
 
-  // Helper to add standard Papillon prep/treatment days
   const addPapCycle = (startDate, sessionNum) => {
-    events.push({ d: addDays(startDate, -3), msg: "Start Low Residue Diet" });
-    events.push({ d: addDays(startDate, -1), msg: "Take Picolax Bowel Prep" });
-    events.push({ d: startDate, msg: `Papillon Session ${sessionNum}`, type: "high" });
+    currentEvents.push({ d: addDays(startDate, -3), msg: "Start Low Residue Diet" });
+    currentEvents.push({ d: addDays(startDate, -1), msg: "Take Picolax Bowel Prep" });
+    currentEvents.push({ d: startDate, msg: `Papillon Session ${sessionNum}`, type: "high" });
   };
 
   if (isSmall) {
-    // --- PATHWAY: < 3cm ---
     document.getElementById('pathway-title').innerText = "Timeline: Tumour < 3cm";
-    
-    // Fraction 1
     addPapCycle(base, 1);
-    
-    // Fraction 2 (2 weeks later)
     addPapCycle(addDays(base, 14), 2);
     
-    // Fraction 3 (4 weeks from start)
     let pap3Date = addDays(base, 28);
     addPapCycle(pap3Date, 3);
     
-    // Planning CT: Same week as Fraction 3, but visually below it.
-    // We add 1 hour to the date object so the sort function places it after the treatment slot.
+    // CT Scan below Fraction 3
     let ctDate = new Date(pap3Date);
-    ctDate.setHours(12); 
-    events.push({ d: ctDate, msg: "Week Commencing: Planning CT Scan" });
+    ctDate.setHours(14); // Ensures sort order puts it after treatment
+    currentEvents.push({ d: ctDate, msg: "Week Commencing: Planning <abbr title='Computed Tomography'>CT</abbr> Scan" });
     
-    // EBRT starts 2 WEEKS after CXB Fraction 3
+    // EBRT starts 2w after CXB
     let ebStart = addDays(pap3Date, 14);
-    events.push({ d: ebStart, msg: "Start EBRT", type: "high" });
-    
+    currentEvents.push({ d: ebStart, msg: "Start <abbr title='External Beam Radiotherapy'>EBRT</abbr>", type: "high" });
     let ebEnd = addDays(ebStart, 32); 
-    events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
+    currentEvents.push({ d: ebEnd, msg: "Finish <abbr title='External Beam Radiotherapy'>EBRT</abbr>", type: "high" });
     
-    // Surveillance
     let scanWeekStart = addDays(ebEnd, 84);
-    events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
+    currentEvents.push({ d: scanWeekStart, msg: "Week Commencing: <abbr title='Chest, Abdomen, Pelvis'>CT CAP</abbr>, <abbr title='Magnetic Resonance Imaging'>MRI</abbr> Pelvis and Flexi Sig" });
+    currentEvents.push({ d: getNextTuesday(scanWeekStart), msg: "<abbr title='Multidisciplinary Team'>MDT</abbr> Review", type: "mdt" });
 
   } else {
-    // --- PATHWAY: > 3cm ---
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
-    
-    // Start EBRT
-    events.push({ d: base, msg: "Start EBRT", type: "high" });
-    
-    // End EBRT (Approx 5 weeks / 25 fractions + weekends)
+    currentEvents.push({ d: base, msg: "Start <abbr title='External Beam Radiotherapy'>EBRT</abbr>", type: "high" });
     let ebEnd = addDays(base, 32); 
-    events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
+    currentEvents.push({ d: ebEnd, msg: "Finish <abbr title='External Beam Radiotherapy'>EBRT</abbr>", type: "high" });
     
-    // REMOVED: Intermediate Restaging MRI/MDT here
-    
-    // CXB Start: Monday, 3 weeks after EBRT finishes.
-    // Logic: Find the Monday of the week following EBRT end, then add 21 days (3 weeks gap).
+    // CXB starts Monday 3w after EBRT finish (approx 17-24 days later depending on Fri finish)
     let nextMon = getNextMonday(ebEnd);
-    let cxbStart = addDays(nextMon, 14); // 14 days from the next Monday = 3 week gap from Friday finish
+    let cxbStart = addDays(nextMon, 14); 
     
-    // Fraction 1
     addPapCycle(cxbStart, 1);
-    
-    // Fraction 2
     addPapCycle(addDays(cxbStart, 14), 2);
-    
-    // Fraction 3
     let p3 = addDays(cxbStart, 28);
     addPapCycle(p3, 3);
     
-    // Surveillance (12 weeks after CXB ends)
     let scanWeekStart = addDays(p3, 84);
-    events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
-    events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
+    currentEvents.push({ d: scanWeekStart, msg: "Week Commencing: <abbr title='Chest, Abdomen, Pelvis'>CT CAP</abbr>, <abbr title='Magnetic Resonance Imaging'>MRI</abbr> Pelvis and Flexi Sig" });
+    currentEvents.push({ d: getNextTuesday(scanWeekStart), msg: "<abbr title='Multidisciplinary Team'>MDT</abbr> Review", type: "mdt" });
   }
 
-  // Sort by date
-  events.sort((a, b) => a.d - b.d);
+  currentEvents.sort((a, b) => a.d - b.d);
 
-  // Render Rows
-  events.forEach(e => {
+  currentEvents.forEach(e => {
     let f = formatDate(e.d);
     let rowClass = e.type === 'high' ? 'highlight-row' : (e.type === 'mdt' ? 'mdt-row' : '');
-    
     body.innerHTML += `<tr class="${rowClass}">
-      <td class="date-col">${f.text}${f.holiday ? '<span class="holiday-tag">Adjusted to Tuesday (Bank Hol)</span>' : ''}</td>
+      <td>${f.text}${f.holiday ? ' <small>(Bank Holiday Adj.)</small>' : ''}</td>
       <td style="font-weight: ${e.type === 'high' ? 'bold' : 'normal'}">${e.msg}</td>
     </tr>`;
   });
-  
   document.getElementById('schedule-output').style.display = 'block';
+}
+
+// 5. CALENDAR EXPORT (.ics)
+function downloadICS() {
+    if (currentEvents.length === 0) return;
+    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//AMOncology//CXBPlanner//EN\n";
+    currentEvents.forEach(e => {
+        let d = new Date(e.d);
+        let dateStr = d.toISOString().replace(/-|:|\.\d\d\d/g, "").substring(0, 8);
+        let cleanMsg = e.msg.replace(/<[^>]*>?/gm, ''); // Remove HTML tags
+        icsContent += "BEGIN:VEVENT\n";
+        icsContent += `DTSTART;VALUE=DATE:${dateStr}\n`;
+        icsContent += `SUMMARY:${cleanMsg}\n`;
+        icsContent += "END:VEVENT\n";
+    });
+    icsContent += "END:VCALENDAR";
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute('download', 'CXB_Treatment_Schedule.ics');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 </script>
 </body>
