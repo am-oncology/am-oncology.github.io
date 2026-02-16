@@ -12,6 +12,9 @@
             main { margin: 0; padding: 0; }
             .result-table { width: 100%; border: 1px solid #000; }
         }
+        /* Highlight specific rows */
+        .highlight-row { background-color: #e6fffa; }
+        .mdt-row { background-color: #fffaf0; }
     </style>
 </head>
 <body>
@@ -41,8 +44,8 @@
             </div>
             <div>
                 <h3>2. Treatment Start Date</h3>
-                <input type="date" id="start-date" onchange="validateMonday(this)" style="padding: 10px; width: 100%;">
-                <p id="monday-warning" style="color:red; display:none; font-size: 0.8rem;">⚠️ Please select a Monday.</p>
+                <input type="date" id="start-date" onchange="validateDay(this)" style="padding: 10px; width: 100%;">
+                <p id="day-warning" style="color:red; display:none; font-size: 0.8rem;">⚠️ Please select a Monday or Tuesday.</p>
             </div>
         </div>
         <button onclick="generateSchedule()" class="button-link" style="width: 100%; border: none; cursor: pointer; margin-top: 20px;">Generate Patient Schedule</button>
@@ -76,10 +79,13 @@
 <script>
 const bankHolidays = ["2026-04-06", "2026-05-04", "2026-05-25", "2026-08-31", "2027-03-29", "2027-05-03", "2027-05-31", "2027-08-30"];
 
-function validateMonday(input) {
+// UPDATED: Allows Monday (1) or Tuesday (2)
+function validateDay(input) {
   const date = new Date(input.value);
-  const warning = document.getElementById('monday-warning');
-  if (date.getDay() !== 1) {
+  const warning = document.getElementById('day-warning');
+  const day = date.getDay();
+  
+  if (day !== 1 && day !== 2) {
     warning.style.display = 'block';
     input.value = "";
   } else {
@@ -91,9 +97,14 @@ function formatDate(date) {
   let d = new Date(date);
   let dateStr = d.toISOString().split('T')[0];
   let isShifted = false;
-  if (bankHolidays.includes(dateStr) && d.getDay() === 1) {
-    d.setDate(d.getDate() + 1);
-    isShifted = true;
+  // Simple check for Bank Holidays causing shift
+  if (bankHolidays.includes(dateStr)) {
+      // If it's a Bank Holiday, move to next day? 
+      // (Simplified logic: usually moves Mon -> Tue)
+      if(d.getDay() === 1) { 
+          d.setDate(d.getDate() + 1);
+          isShifted = true;
+      }
   }
   return { 
     text: d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }),
@@ -114,6 +125,17 @@ function getNextTuesday(date) {
   return addDays(d, diff);
 }
 
+// Helper to find the next Monday from a given date
+function getNextMonday(date) {
+    let d = new Date(date);
+    let day = d.getDay();
+    // If Sunday(0) -> +1, If Fri(5) -> +3, If Sat(6) -> +2
+    let diff = (8 - day) % 7; 
+    if (diff === 0) diff = 7; // If already Monday, get next Monday? Or current? 
+    // Context implies finding the start of the next working week
+    return addDays(d, diff);
+}
+
 function generateSchedule() {
   const startDateVal = document.getElementById('start-date').value;
   const isSmall = document.getElementById('small').checked;
@@ -124,6 +146,7 @@ function generateSchedule() {
   let base = new Date(startDateVal);
   let events = [];
 
+  // Helper to add standard Papillon prep/treatment days
   const addPapCycle = (startDate, sessionNum) => {
     events.push({ d: addDays(startDate, -3), msg: "Start Low Residue Diet" });
     events.push({ d: addDays(startDate, -1), msg: "Take Picolax Bowel Prep" });
@@ -131,61 +154,85 @@ function generateSchedule() {
   };
 
   if (isSmall) {
+    // --- PATHWAY: < 3cm ---
     document.getElementById('pathway-title').innerText = "Timeline: Tumour < 3cm";
+    
+    // Fraction 1
     addPapCycle(base, 1);
+    
+    // Fraction 2 (2 weeks later)
     addPapCycle(addDays(base, 14), 2);
     
-    // Fraction 3 + Planning CT in same week
+    // Fraction 3 (4 weeks from start)
     let pap3Date = addDays(base, 28);
-    events.push({ d: pap3Date, msg: "Week Commencing: Planning CT Scan" });
     addPapCycle(pap3Date, 3);
     
-    // EBRT starts 3rd Monday after Fraction 3 (21 days)
-    let ebStart = addDays(pap3Date, 21);
+    // Planning CT: Same week as Fraction 3, but visually below it.
+    // We add 1 hour to the date object so the sort function places it after the treatment slot.
+    let ctDate = new Date(pap3Date);
+    ctDate.setHours(12); 
+    events.push({ d: ctDate, msg: "Week Commencing: Planning CT Scan" });
+    
+    // EBRT starts 2 WEEKS after CXB Fraction 3
+    let ebStart = addDays(pap3Date, 14);
     events.push({ d: ebStart, msg: "Start EBRT", type: "high" });
+    
     let ebEnd = addDays(ebStart, 32); 
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
     
+    // Surveillance
     let scanWeekStart = addDays(ebEnd, 84);
     events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
     events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
 
   } else {
+    // --- PATHWAY: > 3cm ---
     document.getElementById('pathway-title').innerText = "Timeline: Tumour > 3cm";
+    
+    // Start EBRT
     events.push({ d: base, msg: "Start EBRT", type: "high" });
-    let ebEnd = addDays(base, 32); // Friday finish
+    
+    // End EBRT (Approx 5 weeks / 25 fractions + weekends)
+    let ebEnd = addDays(base, 32); 
     events.push({ d: ebEnd, msg: "Finish EBRT", type: "high" });
     
-    // Week 4 post-EBRT: MRI and Proctoscopy
-    let postEbrtWk4 = addDays(ebEnd, 24); // Friday to Monday (3) + 3 weeks (21) = 24
-    events.push({ d: postEbrtWk4, msg: "Week Commencing: Proctoscopy and MRI Pelvis" });
+    // REMOVED: Intermediate Restaging MRI/MDT here
     
-    // Week 5 post-EBRT: MDT
-    let postEbrtWk5 = addDays(postEbrtWk4, 7);
-    events.push({ d: getNextTuesday(postEbrtWk5), msg: "CRC MDT Review", type: "mdt" });
+    // CXB Start: Monday, 3 weeks after EBRT finishes.
+    // Logic: Find the Monday of the week following EBRT end, then add 21 days (3 weeks gap).
+    let nextMon = getNextMonday(ebEnd);
+    let cxbStart = addDays(nextMon, 14); // 14 days from the next Monday = 3 week gap from Friday finish
     
-    // Week 6 post-EBRT: Papillon Start
-    let p1 = addDays(postEbrtWk4, 14);
-    addPapCycle(p1, 1);
-    addPapCycle(addDays(p1, 14), 2);
-    let p3 = addDays(p1, 28);
+    // Fraction 1
+    addPapCycle(cxbStart, 1);
+    
+    // Fraction 2
+    addPapCycle(addDays(cxbStart, 14), 2);
+    
+    // Fraction 3
+    let p3 = addDays(cxbStart, 28);
     addPapCycle(p3, 3);
     
+    // Surveillance (12 weeks after CXB ends)
     let scanWeekStart = addDays(p3, 84);
     events.push({ d: scanWeekStart, msg: "Week Commencing: CT CAP, MRI Pelvis and Flexi Sig" });
     events.push({ d: getNextTuesday(scanWeekStart), msg: "CRC MDT Review", type: "mdt" });
   }
 
-  events.sort((a, b) => a.d - b.d); // Ensure chronological order
+  // Sort by date
+  events.sort((a, b) => a.d - b.d);
 
+  // Render Rows
   events.forEach(e => {
     let f = formatDate(e.d);
     let rowClass = e.type === 'high' ? 'highlight-row' : (e.type === 'mdt' ? 'mdt-row' : '');
+    
     body.innerHTML += `<tr class="${rowClass}">
       <td class="date-col">${f.text}${f.holiday ? '<span class="holiday-tag">Adjusted to Tuesday (Bank Hol)</span>' : ''}</td>
       <td style="font-weight: ${e.type === 'high' ? 'bold' : 'normal'}">${e.msg}</td>
     </tr>`;
   });
+  
   document.getElementById('schedule-output').style.display = 'block';
 }
 </script>
