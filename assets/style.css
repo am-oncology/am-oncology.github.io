@@ -310,3 +310,95 @@ footer {
   
   .intro-text p { font-size: 1.1rem; }
 }
+
+/* --- ADD TO BOTTOM OF assets/style.css --- */
+
+/* Page Headers (Smaller than Home Hero) */
+.page-header {
+  background: var(--navy-primary);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.page-header h1 { color: white; margin: 0; }
+
+/* About Page Layout */
+.bio-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Text takes 2/3, Image takes 1/3 */
+  gap: 3rem;
+  align-items: start;
+  margin-bottom: 4rem;
+}
+.bio-image-placeholder {
+  background: #e2e8f0;
+  height: 400px;
+  width: 100%;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-style: italic;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Styled Lists for Qualifications */
+.qualifications-list {
+  list-style: none;
+  padding: 0;
+}
+.qualifications-list li {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+}
+.qualifications-list li:last-child { border-bottom: none; }
+.qualifications-list strong { color: var(--navy-primary); }
+
+/* Contact Page Styles */
+.alert-box {
+  background-color: #fef2f2;
+  border-left: 5px solid #ef4444; /* Medical Red */
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-bottom: 3rem;
+  color: #991b1b;
+}
+.alert-box h3 { color: #991b1b; font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; align-items: center; }
+.alert-box h3::before {
+  content: '!';
+  display: inline-block;
+  width: 24px; height: 24px;
+  background: #ef4444; color: white;
+  text-align: center; line-height: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+.location-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid #e2e8f0;
+}
+.location-card address {
+  font-style: normal;
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .bio-grid { grid-template-columns: 1fr; } /* Stack on mobile */
+  .bio-image-placeholder { order: -1; margin-bottom: 2rem; height: 300px; } /* Image on top */
+}
