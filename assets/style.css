@@ -1,12 +1,11 @@
-/* 1. GLOBAL VARIABLES & RESET */
+/* 1. GLOBAL VARIABLES */
 :root {
-  /* Updated Palette - "Harley Street" Professional */
-  --navy-dark: #0A1929;     /* Deepest Navy for text/headings */
-  --navy-primary: #183B56;  /* Primary brand color */
-  --teal-accent: #3E8E95;   /* Medical/Trust accent color */
-  --gold-accent: #C5A065;   /* Subtle luxury accent for borders/active states */
+  --navy-dark: #0A1929;     
+  --navy-primary: #183B56;  
+  --teal-accent: #3E8E95;   
+  --gold-accent: #C5A065;  
   
-  --bg-body: #FAFAFA;       /* Warm white, easier on eyes than pure white */
+  --bg-body: #FAFAFA;      
   --bg-white: #FFFFFF;
   
   --text-main: #334155;
@@ -24,13 +23,12 @@
 body {
   font-family: var(--font-body);
   margin: 0;
-  line-height: 1.7; /* Increased for readability */
+  line-height: 1.7;
   color: var(--text-main);
   background-color: var(--bg-body);
   font-size: 16px;
 }
 
-/* Utility Container to center content comfortably */
 .container {
   max-width: 1100px;
   margin: 0 auto;
@@ -44,7 +42,7 @@ h1, h2, h3 {
   line-height: 1.2;
 }
 
-/* 2. TOP BAR (Contact Info) */
+/* 2. TOP BAR */
 .top-bar {
   background-color: var(--navy-dark);
   color: #fff;
@@ -64,15 +62,15 @@ h1, h2, h3 {
 }
 .contact-links a:hover { opacity: 1; text-decoration: underline; }
 
-/* 3. HEADER & NAV */
+/* 3. HEADER */
 header {
-  background: rgba(255, 255, 255, 0.95); /* Slight transparency */
+  background: rgba(255, 255, 255, 0.95); 
   border-bottom: 1px solid #e2e8f0;
   padding: 1rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  backdrop-filter: blur(5px); /* Modern frosted glass effect */
+  backdrop-filter: blur(5px); 
 }
 
 .header-flex {
@@ -110,7 +108,6 @@ nav a:hover, nav a.active {
   color: var(--navy-primary);
 }
 
-/* Underline animation for nav links */
 nav a::after {
   content: '';
   display: block;
@@ -135,7 +132,7 @@ nav a.tool-link:hover {
   background: var(--text-light);
   color: white;
 }
-nav a.tool-link::after { display: none; } /* Remove underline for button */
+nav a.tool-link::after { display: none; } 
 
 
 /* 4. MAIN LAYOUT */
@@ -158,7 +155,7 @@ main {
   padding: 6rem 3rem;
   margin-bottom: 3rem;
   box-shadow: var(--shadow-soft);
-  text-align: left; /* Aligned left looks more professional for long text */
+  text-align: left; 
 }
 
 .hero-content { max-width: 700px; }
@@ -176,11 +173,10 @@ main {
   font-weight: 300;
 }
 
-/* Buttons */
 .btn {
   display: inline-block;
   padding: 0.8rem 1.8rem;
-  border-radius: 4px; /* Slight rounding, not full pill */
+  border-radius: 4px; 
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s ease;
@@ -206,7 +202,7 @@ main {
   background-color: rgba(255,255,255,0.1);
 }
 
-/* 6. INTRO TEXT */
+/* 6. INTRO */
 .intro-text {
   text-align: center;
   max-width: 800px;
@@ -219,7 +215,7 @@ main {
 /* 7. CARDS */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Slightly wider cards */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
   gap: 2rem;
 }
 
@@ -229,7 +225,7 @@ main {
   overflow: hidden;
   box-shadow: var(--shadow-soft);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-top: 4px solid transparent; /* Prepare for hover effect */
+  border-top: 4px solid transparent; 
 }
 
 .card:hover {
@@ -248,7 +244,7 @@ main {
   object-fit: cover;
   transition: transform 0.5s ease;
 }
-.card:hover img { transform: scale(1.05); } /* Subtle zoom on hover */
+.card:hover img { transform: scale(1.05); } 
 
 .card-body { padding: 2rem; }
 .card-body h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
@@ -274,7 +270,7 @@ main {
   position: relative;
   overflow: hidden;
 }
-/* A decorative side accent */
+
 .cta-banner::before {
   content: '';
   position: absolute;
@@ -298,7 +294,7 @@ footer {
 
 /* 10. MOBILE RESPONSIVENESS */
 @media (max-width: 768px) {
-  .top-bar { display: none; } /* Hide top bar on mobile to save space */
+  .top-bar { display: none; } 
   
   .header-flex { flex-direction: column; text-align: center; }
   
@@ -311,9 +307,6 @@ footer {
   .intro-text p { font-size: 1.1rem; }
 }
 
-/* --- ADD TO BOTTOM OF assets/style.css --- */
-
-/* Page Headers (Smaller than Home Hero) */
 .page-header {
   background: var(--navy-primary);
   color: white;
@@ -323,10 +316,9 @@ footer {
 }
 .page-header h1 { color: white; margin: 0; }
 
-/* About Page Layout */
 .bio-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Text takes 2/3, Image takes 1/3 */
+  grid-template-columns: 2fr 1fr; 
   gap: 3rem;
   align-items: start;
   margin-bottom: 4rem;
@@ -344,7 +336,6 @@ footer {
   box-shadow: var(--shadow-soft);
 }
 
-/* Styled Lists for Qualifications */
 .qualifications-list {
   list-style: none;
   padding: 0;
@@ -358,10 +349,9 @@ footer {
 .qualifications-list li:last-child { border-bottom: none; }
 .qualifications-list strong { color: var(--navy-primary); }
 
-/* Contact Page Styles */
 .alert-box {
   background-color: #fef2f2;
-  border-left: 5px solid #ef4444; /* Medical Red */
+  border-left: 5px solid #ef4444;
   padding: 1.5rem;
   border-radius: 4px;
   margin-bottom: 3rem;
@@ -399,6 +389,6 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .bio-grid { grid-template-columns: 1fr; } /* Stack on mobile */
-  .bio-image-placeholder { order: -1; margin-bottom: 2rem; height: 300px; } /* Image on top */
+  .bio-grid { grid-template-columns: 1fr; } 
+  .bio-image-placeholder { order: -1; margin-bottom: 2rem; height: 300px; } 
 }
