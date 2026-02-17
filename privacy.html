@@ -3,32 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy</title>
+    <title>Privacy Policy & Legal Disclaimer | Dr Firstname Lastname</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="assets/style.css">
+
+    <style>
+        /* Minimal "Document" Styling for Legal Pages */
+        .legal-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 20px;
+        }
+
+        .legal-header {
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+        }
+
+        .legal-content h2 {
+            font-size: 1.2rem;
+            color: var(--navy-primary);
+            margin-top: 2rem;
+            border-left: 3px solid var(--teal-accent);
+            padding-left: 10px;
+        }
+
+        .legal-content p, .legal-content li {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .legal-content ul {
+            padding-left: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .disclaimer-box {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-top: 3rem;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
+
 <body>
 
 <header>
-    <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
-    <nav><a href="index.html">Home</a></nav>
+    <div class="container header-flex">
+        <div class="brand">
+            <a href="index.html" style="text-decoration:none;">
+                <h1>Dr [Firstname] [Lastname]</h1>
+            </a>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </div>
 </header>
 
 <main>
-    <section>
-        <h2>Privacy & Data Protection</h2>
-        <p>Last updated: January 2026</p>
-        <h3>1. Data Processing</h3>
-        <p>This website is a professional information resource. We do not collect personal data via cookies or tracking pixels.</p>
-        <h3>2. Hosting</h3>
-        <p>This site is hosted by GitHub Pages. Technical logs (IP addresses) may be processed by GitHub for security and service stability. This is governed by the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy Statement</a>.</p>
-        <h3>3. Clinical Information</h3>
-        <p>Please do not send sensitive clinical information via general email. Professional clinical correspondence should be conducted via secure NHS channels.</p>
-    </section>
-</main>
+    <article class="legal-container">
+        
+        <div class="legal-header">
+            <h1 style="margin:0; font-size: 2rem;">Privacy Policy & Legal Disclaimer</h1>
+            <p style="color: var(--text-light); margin-top: 0.5rem;">Last Updated: January 2026</p>
+        </div>
 
-<footer>
-    <p>&copy; 2026 AM Oncology. Compliant with UK GDPR.</p>
-</footer>
+        <section class="legal-content">
+            
+            <p>This privacy policy sets out how the private practice of Dr [Firstname] [Lastname] uses and protects any information that you give when you use this website.</p>
 
-</body>
-</html>
+            <h2>1. Data Controller</h2>
+            <p>For the purposes of the UK General Data Protection Regulation (UK GDPR), the Data Controller is:</p>
+            <p>
+                <strong>Dr [Firstname] [Lastname]</strong><br>
+                Consultant Clinical Oncologist<br>
+                [Clinic Address / Secretary Address]<br>
+                Email: <a href="mailto:secretary@example.com">secretary@example.com</a>
+            </p>
+
+            <h2>2. What Data We Collect</h2>
+            <p>This website is intended for informational purposes.
