@@ -3,73 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr [Firstname] [Lastname] | Clinical Oncologist</title>
-    <meta name="description" content="Professional profile of Dr [Lastname], Consultant Clinical Oncologist specialising in [Cancer1] and [Cancer2].">
+    <title>Dr [Firstname] [Lastname] | Consultant Clinical Oncologist</title>
+    <meta name="description" content="Information">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    <link rel="apple-touch-icon" href="assets/favicon.png">
-</head>
+    </head>
     
 <body>
+
+<div class="top-bar">
+    <div class="container">
+        <span>Contact details (does this need to be here?)</span>
+        <div class="contact-links">
+            <a href="mailto:secretary@example.com">secretary@example.com</a>
+            <span>|</span>
+            <a href="tel:+442070000000">020 0000 0000</a>
+        </div>
+    </div>
+</div>
+
 <header>
-    <h1>Dr [Firstname] [Lastname] | Clinical Oncologist</h1>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="cxb.html">CXB Planner</a>
-    </nav>
+    <div class="container header-flex">
+        <div class="brand">
+            <h1>Dr [Firstname] [Lastname]</h1>
+            <span class="subtitle">Consultant Clinical Oncologist</span>
+        </div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="cxb.html" class="tool-link">CXB Planner</a>
+        </nav>
+    </div>
 </header>
 
 <main>
     <section class="hero-banner">
-        <h2>Clinical Oncology</h2>
-        <p style="font-size: 1.25rem; max-width: 800px; opacity: 0.95;">
-            [Information].
-        </p>
+        <div class="hero-content">
+            <h2>Specialist Care in Clinical Oncology</h2>
+            <p class="hero-lead">
+                Providing evidence-based, compassionate treatment for [Cancer Type 1] and [Cancer Type 2] cancers.
+            </p>
+            <div class="hero-buttons">
+                <a href="contact.html" class="btn btn-primary">Make an Enquiry</a>
+                <a href="about.html" class="btn btn-secondary">Read Biography</a>
+            </div>
+        </div>
     </section>
 
-    <div class="card-grid" style="margin-top: 3rem;">
+    <section class="intro-text">
+        <h3>A Patient-Centred Approach</h3>
+        <p>[Short paragraph about your philosophy. e.g. "Navigating a cancer diagnosis is challenging. My practice focuses on precision medicine combined with holistic patient support..."]</p>
+    </section>
+
+    <div class="card-grid">
         <article class="card">
-            <img src="https://images.unsplash.com/photo-1606150717578-567569be9d24?q=80&w=764&auto=format&fit=crop&sat=-100" alt="Radiotherapy Equipment">
+            <div class="card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1606150717578-567569be9d24?q=80&w=764&auto=format&fit=crop&sat=-100" alt="Radiotherapy Treatment">
+            </div>
             <div class="card-body">
                 <h3>Radiotherapy</h3>
-                <p>[Information]..</p>
+                <p>[Placeholder for details on VMAT, IMRT, or SABR techniques used].</p>
+                <a href="#" class="text-link">Learn more &rarr;</a>
             </div>
         </article>
 
         <article class="card">
-            <img src="https://images.unsplash.com/photo-1437624155766-b64bf17eb2ce?q=80&w=1170&auto=format&fit=crop&sat=-100" alt="Systemic Therapy">
+            <div class="card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop&sat=-100" alt="Systemic Therapy">
+            </div>
             <div class="card-body">
-                <h3>SACT</h3>
-                <p>[Information].</p>
+                <h3>Systemic Therapy</h3>
+                <p>[Placeholder for details on Immunotherapy, Chemotherapy, and Targeted Agents].</p>
+                <a href="#" class="text-link">Learn more &rarr;</a>
             </div>
         </article>
 
         <article class="card">
-            <img src="https://images.unsplash.com/photo-1641712695162-884b8cf773bb?q=80&w=735&auto=format&fit=crop&sat=-100" alt="Medical Documentation">
+            <div class="card-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1170&auto=format&fit=crop&sat=-100" alt="Research and Trials">
+            </div>
             <div class="card-body">
                 <h3>Miscellaneous</h3>
-                <p>[Information].</p>
+                <p>[Placeholder for ?to be determined].</p>
+                <a href="#" class="text-link">View Publications &rarr;</a>
             </div>
         </article>
     </div>
 
     <section class="cta-banner">
-        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
-            <h3>Clinical</h3>
-            <p>Information about <strong>[Cancer1]</strong> and <strong>[Cancer2]</strong> cancers.</p>
-            <a href="about.html" class="button-link" style="margin-top: 20px;">View Full Information &rarr;</a>
+        <div class="cta-content">
+            <h3>Referrals</h3>
+            <p>Accepting referrals for <strong>[Cancer1]</strong> and <strong>[Cancer2]</strong>.</p>
+            <a href="contact.html" class="btn btn-primary">Contact Secretary</a>
         </div>
     </section>
 </main>
 
 <footer>
-    <p>&copy; 2026 AM Oncology. This website is for professional information and does not replace medical advice.</p>
-    <p style="font-size: 0.75rem; margin-top: 15px; opacity: 0.7;">
-        <a href="privacy.html" style="color: inherit;">Privacy Policy</a> | 
-        Maintained via <a href="https://pages.github.com/" style="color: inherit;">GitHub Pages</a>
-    </p>
+    <div class="container">
+        <div class="footer-info">
+            <p><strong>Dr [Firstname] [Lastname]</strong><br>
+            Consultant Clinical Oncologist<br>
+            GMC Number: []</p>
+        </div>
+        <div class="footer-legal">
+            <p>&copy; 2026 AM Oncology. This website is for information only.</p>
+            <p><a href="privacy.html">Privacy Policy</a> | <a href="#">Cookie Policy</a></p>
+        </div>
+    </div>
 </footer>
 
 </body>
