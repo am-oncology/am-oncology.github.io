@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Fees Estimator</title>
+    <title>Practice Fee Calculator</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -608,8 +608,8 @@
 <header>
     <div class="header-inner">
         <a class="brand" href="index.html">
-            <span class="brand-name">AM Oncology</span>
-            <span class="brand-tag">Practice Tools</span>
+            <span class="brand-name">Clinical Oncology</span>
+            <span class="brand-tag">Tools & Calculators</span>
         </a>
         <nav>
             <a href="index.html">Home</a>
@@ -621,8 +621,8 @@
 <!-- ── HERO ─────────────────────────────────────────────────────────── -->
 <div class="page-hero">
     <div class="hero-inner">
-        <div class="hero-eyebrow">Clinical Oncology · Private Practice</div>
-        <h1 class="hero-title">Practice Fees Estimator</h1>
+        <div class="hero-eyebrow">Clinical Oncology</div>
+        <h1 class="hero-title">Practice Fees Calculator</h1>
         <p class="hero-sub">Model insurer coverage, patient top-ups, and net income for individual episodes of care.</p>
         <div class="hero-note">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -692,6 +692,23 @@
                             <div class="row-status" id="sf-np"></div>
                         </div>
                     </div>
+                    <!-- New Patient Remote -->
+                    <div class="fee-row" id="row-np-remote">
+                        <div>
+                            <span class="row-label">New Patient Consultation (Remote)</span>
+                            <span class="row-code">20355</span>
+                        </div>
+                        <select class="row-select" id="sel-np-remote" onchange="toggleInput(this,'inp-np-remote','np-remote')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-np-remote" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-np-remote"></div>
+                        </div>
+                    </div>
                     <!-- Follow-Up -->
                     <div class="fee-row" id="row-fu">
                         <div>
@@ -711,6 +728,27 @@
                                 <input class="multi-input" type="number" id="multi-fu" value="1" min="1" max="99" oninput="calculateTotal()">
                             </div>
                             <div class="row-status" id="sf-fu"></div>
+                        </div>
+                    </div>
+                    <!-- Follow-Up Remote -->
+                    <div class="fee-row" id="row-fu-remote">
+                        <div>
+                            <span class="row-label">Follow-Up Consultation (Remote)</span>
+                            <span class="row-code">20365</span>
+                        </div>
+                        <select class="row-select" id="sel-fu-remote" onchange="toggleInput(this,'inp-fu-remote','fu-remote')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-fu-remote" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× visits</span>
+                                <input class="multi-input" type="number" id="multi-fu-remote" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-fu-remote"></div>
                         </div>
                     </div>
                     <!-- Inpatient -->
@@ -734,23 +772,6 @@
                             <div class="row-status" id="sf-ip"></div>
                         </div>
                     </div>
-                    <!-- Telephone -->
-                    <div class="fee-row" id="row-tel">
-                        <div>
-                            <span class="row-label">Telephone / Video Consult</span>
-                            <span class="row-code">20320</span>
-                        </div>
-                        <select class="row-select" id="sel-tel" onchange="toggleInput(this,'inp-tel','tel')">
-                            <option value="none">— Add —</option>
-                            <option value="standard">Standard fee</option>
-                            <option value="custom">Custom fee</option>
-                        </select>
-                        <div class="row-input-wrap">
-                            <span class="row-input-prefix">£</span>
-                            <input class="row-input" type="number" id="inp-tel" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
-                            <div class="row-status" id="sf-tel"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -767,8 +788,21 @@
                     <span class="panel-toggle">▾</span>
                 </div>
                 <div class="panel-body">
+                    <div class="fee-row" id="row-cplx-sup">
+                        <div><span class="row-label">Clinical Supervision — Complex RT Planning</span><span class="row-code">X6930</span></div>
+                        <select class="row-select" id="sel-cplx-sup" onchange="toggleInput(this,'inp-cplx-sup','cplx-sup')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-cplx-sup" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-cplx-sup"></div>
+                        </div>
+                    </div>
                     <div class="fee-row" id="row-imrt">
-                        <div><span class="row-label">IMRT / VMAT Inverse Plan</span><span class="row-code">X6005</span></div>
+                        <div><span class="row-label">IMRT / VMAT — Inverse Planning Preparation <span style="font-size:0.75rem;color:#94a3b8;">(rotational, e.g. RapidArc)</span></span><span class="row-code">X6772</span></div>
                         <select class="row-select" id="sel-imrt" onchange="toggleInput(this,'inp-imrt','imrt')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -781,7 +815,7 @@
                         </div>
                     </div>
                     <div class="fee-row" id="row-sabr">
-                        <div><span class="row-label">SABR Planning</span><span class="row-code">X6002</span></div>
+                        <div><span class="row-label">SABR / SBRT Planning</span><span class="row-code">X6002</span></div>
                         <select class="row-select" id="sel-sabr" onchange="toggleInput(this,'inp-sabr','sabr')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -793,8 +827,21 @@
                             <div class="row-status" id="sf-sabr"></div>
                         </div>
                     </div>
+                    <div class="fee-row" id="row-srs-plan">
+                        <div><span class="row-label">SRS Planning — GammaKnife / SRT / SBRT</span><span class="row-code">X6950</span></div>
+                        <select class="row-select" id="sel-srs-plan" onchange="toggleInput(this,'inp-srs-plan','srs-plan')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-srs-plan" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-srs-plan"></div>
+                        </div>
+                    </div>
                     <div class="fee-row" id="row-fwd">
-                        <div><span class="row-label">Complex Forward Plan (3D)</span><span class="row-code">X6004</span></div>
+                        <div><span class="row-label">Complex Forward Plan (3D CRT)</span><span class="row-code">X6004</span></div>
                         <select class="row-select" id="sel-fwd" onchange="toggleInput(this,'inp-fwd','fwd')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -819,18 +866,7 @@
                             <div class="row-status" id="sf-simp-plan"></div>
                         </div>
                     </div>
-                    <div class="fee-row" id="row-proton">
-                        <div><span class="row-label">Proton Beam Planning</span><span class="row-code">X6010</span></div>
-                        <select class="row-select" id="sel-proton" onchange="toggleInput(this,'inp-proton','proton')">
-                            <option value="none">— Add —</option>
-                            <option value="standard">Standard fee</option>
-                            <option value="custom">Custom fee</option>
-                        </select>
-                        <div class="row-input-wrap">
-                            <span class="row-input-prefix">£</span>
-                            <input class="row-input" type="number" id="inp-proton" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
-                            <div class="row-status" id="sf-proton"></div>
-                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -848,9 +884,9 @@
                     <span class="panel-toggle">▾</span>
                 </div>
                 <div class="panel-body">
-                    <p class="section-note">Standard rate shown is per fraction. Enter a custom total or use the multiplier for a full course value.</p>
+                    <p class="section-note">Standard rate shown is per fraction unless otherwise noted. Use the multiplier for full course value, or select Custom total.</p>
                     <div class="fee-row" id="row-rt-cplx">
-                        <div><span class="row-label">Complex (IMRT / VMAT)</span><span class="row-code">X7001</span></div>
+                        <div><span class="row-label">Complex Tx — IMRT / VMAT (per fraction)</span><span class="row-code">X7005</span></div>
                         <select class="row-select" id="sel-rt-cplx" onchange="toggleInput(this,'inp-rt-cplx','rt-cplx')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard (per #)</option>
@@ -867,7 +903,7 @@
                         </div>
                     </div>
                     <div class="fee-row" id="row-rt-sabr">
-                        <div><span class="row-label">SABR Delivery</span><span class="row-code">X7004</span></div>
+                        <div><span class="row-label">SABR / SBRT Delivery (per fraction)</span><span class="row-code">X7002</span></div>
                         <select class="row-select" id="sel-rt-sabr" onchange="toggleInput(this,'inp-rt-sabr','rt-sabr')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard (per #)</option>
@@ -883,8 +919,64 @@
                             <div class="row-status" id="sf-rt-sabr"></div>
                         </div>
                     </div>
+                    <div class="fee-row" id="row-srt-cyberknife-1">
+                        <div><span class="row-label">SRT — First / Sole Session <span style="font-size:0.75rem;color:#94a3b8;">(CyberKnife or similar)</span></span><span class="row-code">A1070</span></div>
+                        <select class="row-select" id="sel-srt-cyberknife-1" onchange="toggleInput(this,'inp-srt-cyberknife-1','srt-cyberknife-1')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-srt-cyberknife-1" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-srt-cyberknife-1"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-srt-cyberknife-2">
+                        <div><span class="row-label">SRT — 2nd to 5th Sessions, incl. adjustments <span style="font-size:0.75rem;color:#94a3b8;">(CyberKnife or similar)</span></span><span class="row-code">A1080</span></div>
+                        <select class="row-select" id="sel-srt-cyberknife-2" onchange="toggleInput(this,'inp-srt-cyberknife-2','srt-cyberknife-2')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard (per session)</option>
+                            <option value="custom">Custom total</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-srt-cyberknife-2" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× sessions</span>
+                                <input class="multi-input" type="number" id="multi-srt-cyberknife-2" value="1" min="1" max="4" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-srt-cyberknife-2"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-ebrt-15">
+                        <div><span class="row-label">EBRT Clinical Supervision — ≤15 fractions</span><span class="row-code">X0007</span></div>
+                        <select class="row-select" id="sel-ebrt-15" onchange="toggleInput(this,'inp-ebrt-15','ebrt-15')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-ebrt-15" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-ebrt-15"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-ebrt-30">
+                        <div><span class="row-label">EBRT Clinical Supervision — 16–30 fractions</span><span class="row-code">X0008</span></div>
+                        <select class="row-select" id="sel-ebrt-30" onchange="toggleInput(this,'inp-ebrt-30','ebrt-30')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-ebrt-30" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-ebrt-30"></div>
+                        </div>
+                    </div>
                     <div class="fee-row" id="row-rt-simp">
-                        <div><span class="row-label">Simple / Palliative Tx</span><span class="row-code">X7002</span></div>
+                        <div><span class="row-label">Simple / Palliative Tx (per fraction)</span><span class="row-code">X7001</span></div>
                         <select class="row-select" id="sel-rt-simp" onchange="toggleInput(this,'inp-rt-simp','rt-simp')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard (per #)</option>
@@ -900,17 +992,71 @@
                             <div class="row-status" id="sf-rt-simp"></div>
                         </div>
                     </div>
-                    <div class="fee-row" id="row-brachytherapy">
-                        <div><span class="row-label">Brachytherapy (HDR)</span><span class="row-code">X7010</span></div>
-                        <select class="row-select" id="sel-brachytherapy" onchange="toggleInput(this,'inp-brachytherapy','brachytherapy')">
+                </div>
+            </div>
+
+            <!-- BRACHYTHERAPY -->
+            <div class="panel" id="panel-brachy">
+                <div class="panel-header" onclick="togglePanel('panel-brachy')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#fdf2f8;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" fill="#be185d"/><circle cx="8" cy="8" r="6" stroke="#be185d" stroke-width="1.5" stroke-dasharray="3 2"/></svg>
+                        </div>
+                        <span class="panel-title">Brachytherapy</span>
+                        <span class="panel-count" id="count-brachy">0 selected</span>
+                    </div>
+                    <span class="panel-toggle">▾</span>
+                </div>
+                <div class="panel-body">
+                    <div class="fee-row" id="row-brachy-plan">
+                        <div><span class="row-label">Brachytherapy Planning — Interstitial / Intracavitary</span><span class="row-code">X6008</span></div>
+                        <select class="row-select" id="sel-brachy-plan" onchange="toggleInput(this,'inp-brachy-plan','brachy-plan')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
                             <option value="custom">Custom fee</option>
                         </select>
                         <div class="row-input-wrap">
                             <span class="row-input-prefix">£</span>
-                            <input class="row-input" type="number" id="inp-brachytherapy" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
-                            <div class="row-status" id="sf-brachytherapy"></div>
+                            <input class="row-input" type="number" id="inp-brachy-plan" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-brachy-plan"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-hdr">
+                        <div><span class="row-label">HDR Brachytherapy — Clinical Supervision</span><span class="row-code">X6581</span></div>
+                        <select class="row-select" id="sel-hdr" onchange="toggleInput(this,'inp-hdr','hdr')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard (per fraction)</option>
+                            <option value="custom">Custom total</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-hdr" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× fractions</span>
+                                <input class="multi-input" type="number" id="multi-hdr" value="1" min="1" max="20" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-hdr"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-papillon">
+                        <div>
+                            <span class="row-label">Low-Energy Contact X-ray Brachytherapy <span style="font-size:0.75rem;color:#94a3b8;">(Papillon technique — early rectal cancer)</span></span>
+                            <span class="row-code">X6008</span>
+                            <div style="font-size:0.7rem;color:#94a3b8;margin-top:3px;">Note: OPCS-4 X65.8 / Y89.8 for NHS coding; use X6008 for private insurer planning supervision claim</div>
+                        </div>
+                        <select class="row-select" id="sel-papillon" onchange="toggleInput(this,'inp-papillon','papillon')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-papillon" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× sessions</span>
+                                <input class="multi-input" type="number" id="multi-papillon" value="1" min="1" max="10" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-papillon"></div>
                         </div>
                     </div>
                 </div>
@@ -929,8 +1075,42 @@
                     <span class="panel-toggle">▾</span>
                 </div>
                 <div class="panel-body">
+                    <div class="fee-row" id="row-c1">
+                        <div><span class="row-label">Chemo / SACT Supervision — 0–7 days</span><span class="row-code">X0001</span></div>
+                        <select class="row-select" id="sel-c1" onchange="toggleInput(this,'inp-c1','c1')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c1" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c1" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c1"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-c2">
+                        <div><span class="row-label">Chemo / SACT Supervision — 1–14 days</span><span class="row-code">X0002</span></div>
+                        <select class="row-select" id="sel-c2" onchange="toggleInput(this,'inp-c2','c2')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c2" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c2" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c2"></div>
+                        </div>
+                    </div>
                     <div class="fee-row" id="row-c3">
-                        <div><span class="row-label">Chemo Supervision (1–21 day)</span><span class="row-code">X0003</span></div>
+                        <div><span class="row-label">Chemo / SACT Supervision — 1–21 days</span><span class="row-code">X0003</span></div>
                         <select class="row-select" id="sel-c3" onchange="toggleInput(this,'inp-c3','c3')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -947,7 +1127,7 @@
                         </div>
                     </div>
                     <div class="fee-row" id="row-c4">
-                        <div><span class="row-label">Chemo Supervision (1–28 day)</span><span class="row-code">X0004</span></div>
+                        <div><span class="row-label">Chemo / SACT Supervision — 1–28 days</span><span class="row-code">X0004</span></div>
                         <select class="row-select" id="sel-c4" onchange="toggleInput(this,'inp-c4','c4')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -963,8 +1143,25 @@
                             <div class="row-status" id="sf-c4"></div>
                         </div>
                     </div>
+                    <div class="fee-row" id="row-c5">
+                        <div><span class="row-label">Chemo / SACT Supervision — 1–56 days</span><span class="row-code">X0005</span></div>
+                        <select class="row-select" id="sel-c5" onchange="toggleInput(this,'inp-c5','c5')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c5" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c5" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c5"></div>
+                        </div>
+                    </div>
                     <div class="fee-row" id="row-c-oral">
-                        <div><span class="row-label">Oral Chemo Supervision</span><span class="row-code">X0005</span></div>
+                        <div><span class="row-label">Oral Chemotherapy Supervision</span><span class="row-code">X0005</span></div>
                         <select class="row-select" id="sel-c-oral" onchange="toggleInput(this,'inp-c-oral','c-oral')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -981,7 +1178,7 @@
                         </div>
                     </div>
                     <div class="fee-row" id="row-c-inj">
-                        <div><span class="row-label">Single SC / IV (e.g. Denosumab)</span><span class="row-code">X0002</span></div>
+                        <div><span class="row-label">Single SC / IV Injection <span style="font-size:0.75rem;color:#94a3b8;">(e.g. Denosumab, Zoledronate)</span></span><span class="row-code">X0002</span></div>
                         <select class="row-select" id="sel-c-inj" onchange="toggleInput(this,'inp-c-inj','c-inj')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -998,7 +1195,7 @@
                         </div>
                     </div>
                     <div class="fee-row" id="row-immunotherapy">
-                        <div><span class="row-label">Immunotherapy Supervision</span><span class="row-code">X0008</span></div>
+                        <div><span class="row-label">Immunotherapy Supervision</span><span class="row-code">X0004</span></div>
                         <select class="row-select" id="sel-immunotherapy" onchange="toggleInput(this,'inp-immunotherapy','immunotherapy')">
                             <option value="none">— Add —</option>
                             <option value="standard">Standard fee</option>
@@ -1102,38 +1299,57 @@
 <script>
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
-// Insurer maxima (2025-26 estimates). Key = row id.
-// Structure: { bupa, axa, vitality, aviva, cigna }
+// Insurer maxima (2025-26 London estimates). Keys = row ids.
+// CCSD codes confirmed via BUPA Finder & CCSD schedule publications.
+// These are estimates only — verify with your insurer schedule.
 const STANDARDS = {
-    'np':            { bupa:250,  axa:240,  vitality:250, aviva:230, cigna:220, label:'New Patient Consultation' },
-    'fu':            { bupa:150,  axa:145,  vitality:150, aviva:140, cigna:130, label:'Follow-Up Consultation' },
-    'ip':            { bupa:100,  axa:95,   vitality:100, aviva:90,  cigna:90,  label:'Inpatient Care (Daily)' },
-    'tel':           { bupa:100,  axa:100,  vitality:100, aviva:95,  cigna:90,  label:'Telephone / Video Consult' },
-    'imrt':          { bupa:1000, axa:975,  vitality:1000, aviva:950, cigna:900, label:'IMRT / VMAT Planning' },
-    'sabr':          { bupa:1350, axa:1300, vitality:1350, aviva:1250,cigna:1200, label:'SABR Planning' },
-    'fwd':           { bupa:800,  axa:780,  vitality:800,  aviva:760, cigna:740, label:'Complex 3D Plan' },
-    'simp-plan':     { bupa:450,  axa:440,  vitality:450,  aviva:420, cigna:400, label:'Simple Forward Plan' },
-    'proton':        { bupa:1800, axa:1750, vitality:1800, aviva:1700,cigna:1650,label:'Proton Beam Planning' },
-    'rt-cplx':       { bupa:150,  axa:145,  vitality:150,  aviva:140, cigna:135, label:'Complex Tx (per #)' },
-    'rt-sabr':       { bupa:250,  axa:240,  vitality:250,  aviva:235, cigna:225, label:'SABR Delivery (per #)' },
-    'rt-simp':       { bupa:80,   axa:75,   vitality:80,   aviva:70,  cigna:70,  label:'Simple/Palliative Tx (per #)' },
-    'brachytherapy': { bupa:600,  axa:580,  vitality:600,  aviva:560, cigna:540, label:'Brachytherapy (HDR)' },
-    'c3':            { bupa:375,  axa:360,  vitality:375,  aviva:350, cigna:340, label:'Chemo Supervision 1-21d' },
-    'c4':            { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:450, label:'Chemo Supervision 1-28d' },
-    'c-oral':        { bupa:200,  axa:195,  vitality:200,  aviva:185, cigna:180, label:'Oral Chemo Supervision' },
-    'c-inj':         { bupa:100,  axa:95,   vitality:100,  aviva:90,  cigna:85,  label:'Single SC/IV Injection' },
-    'immunotherapy': { bupa:550,  axa:530,  vitality:550,  aviva:510, cigna:490, label:'Immunotherapy Supervision' },
+    // ── Consultations & Inpatient
+    'np':               { bupa:250,  axa:240,  vitality:250,  aviva:230, cigna:220, label:'New Patient Consultation (20300)' },
+    'np-remote':        { bupa:200,  axa:195,  vitality:200,  aviva:185, cigna:180, label:'New Patient — Remote (20355)' },
+    'fu':               { bupa:150,  axa:145,  vitality:150,  aviva:140, cigna:130, label:'Follow-Up Consultation (20310)' },
+    'fu-remote':        { bupa:120,  axa:115,  vitality:120,  aviva:110, cigna:105, label:'Follow-Up — Remote (20365)' },
+    'ip':               { bupa:100,  axa:95,   vitality:100,  aviva:90,  cigna:90,  label:'Inpatient Care — Daily (20330)' },
+    // ── RT Planning (Ch 20)
+    'cplx-sup':         { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:440, label:'Complex RT Planning Supervision (X6930)' },
+    'imrt':             { bupa:1000, axa:975,  vitality:1000, aviva:950, cigna:900, label:'IMRT/VMAT Inverse Planning (X6772)' },
+    'sabr':             { bupa:1350, axa:1300, vitality:1350, aviva:1250,cigna:1200,label:'SABR/SBRT Planning (X6002)' },
+    'srs-plan':         { bupa:1350, axa:1300, vitality:1350, aviva:1250,cigna:1200,label:'SRS Planning — GammaKnife/SRT (X6950)' },
+    'fwd':              { bupa:800,  axa:780,  vitality:800,  aviva:760, cigna:740, label:'Complex 3D CRT Plan (X6004)' },
+    'simp-plan':        { bupa:450,  axa:440,  vitality:450,  aviva:420, cigna:400, label:'Simple Forward Plan (X6003)' },
+    'proton':           { bupa:1800, axa:1750, vitality:1800, aviva:1700,cigna:1650,label:'Proton Beam Therapy Planning (X6010)' },
+    // ── RT Delivery (Ch 20)
+    'rt-cplx':          { bupa:150,  axa:145,  vitality:150,  aviva:140, cigna:135, label:'Complex Tx IMRT/VMAT per # (X7005)' },
+    'rt-sabr':          { bupa:250,  axa:240,  vitality:250,  aviva:235, cigna:225, label:'SABR/SBRT Delivery per # (X7002)' },
+    'srt-cyberknife-1': { bupa:1200, axa:1150, vitality:1200, aviva:1100,cigna:1050,label:'SRT 1st/Sole Session CyberKnife (A1070)' },
+    'srt-cyberknife-2': { bupa:800,  axa:775,  vitality:800,  aviva:750, cigna:720, label:'SRT 2nd–5th Sessions CyberKnife (A1080)' },
+    'ebrt-15':          { bupa:350,  axa:340,  vitality:350,  aviva:330, cigna:315, label:'EBRT Supervision ≤15 fractions (X0007)' },
+    'ebrt-30':          { bupa:450,  axa:435,  vitality:450,  aviva:420, cigna:400, label:'EBRT Supervision 16–30 fractions (X0008)' },
+    'rt-simp':          { bupa:80,   axa:75,   vitality:80,   aviva:70,  cigna:70,  label:'Simple/Palliative Tx per # (X7001)' },
+    // ── Brachytherapy
+    'brachy-plan':      { bupa:600,  axa:580,  vitality:600,  aviva:560, cigna:540, label:'Brachytherapy Planning (X6008)' },
+    'hdr':              { bupa:350,  axa:340,  vitality:350,  aviva:325, cigna:310, label:'HDR Brachytherapy per fraction (X6581)' },
+    'papillon':         { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:440, label:'Papillon Contact X-ray Brachytherapy (X6008)' },
+    // ── Systemic Therapy (Ch 18)
+    'c1':               { bupa:250,  axa:240,  vitality:250,  aviva:235, cigna:225, label:'Chemo/SACT Supervision 0–7d (X0001)' },
+    'c2':               { bupa:300,  axa:290,  vitality:300,  aviva:280, cigna:270, label:'Chemo/SACT Supervision 1–14d (X0002)' },
+    'c3':               { bupa:375,  axa:360,  vitality:375,  aviva:350, cigna:340, label:'Chemo/SACT Supervision 1–21d (X0003)' },
+    'c4':               { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:450, label:'Chemo/SACT Supervision 1–28d (X0004)' },
+    'c5':               { bupa:650,  axa:625,  vitality:650,  aviva:610, cigna:590, label:'Chemo/SACT Supervision 1–56d (X0005)' },
+    'c-oral':           { bupa:200,  axa:195,  vitality:200,  aviva:185, cigna:180, label:'Oral Chemotherapy Supervision (X0005)' },
+    'c-inj':            { bupa:100,  axa:95,   vitality:100,  aviva:90,  cigna:85,  label:'Single SC/IV Injection (X0002)' },
+    'immunotherapy':    { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:440, label:'Immunotherapy Supervision (X0004)' },
 };
 
 // Rows that support multipliers
-const HAS_MULTI = ['fu','ip','rt-cplx','rt-sabr','rt-simp','c3','c4','c-oral','c-inj','immunotherapy'];
+const HAS_MULTI = ['fu','fu-remote','ip','rt-cplx','rt-sabr','srt-cyberknife-2','ebrt-15','ebrt-30','rt-simp','hdr','papillon','c1','c2','c3','c4','c5','c-oral','c-inj','immunotherapy'];
 
 // Panel → row ids map (for badge counters)
 const PANELS = {
-    'consult':  ['np','fu','ip','tel'],
-    'plan':     ['imrt','sabr','fwd','simp-plan','proton'],
-    'delivery': ['rt-cplx','rt-sabr','rt-simp','brachytherapy'],
-    'sys':      ['c3','c4','c-oral','c-inj','immunotherapy'],
+    'consult':  ['np','np-remote','fu','fu-remote','ip'],
+    'plan':     ['cplx-sup','imrt','sabr','srs-plan','fwd','simp-plan','proton'],
+    'delivery': ['rt-cplx','rt-sabr','srt-cyberknife-1','srt-cyberknife-2','ebrt-15','ebrt-30','rt-simp'],
+    'brachy':   ['brachy-plan','hdr','papillon'],
+    'sys':      ['c1','c2','c3','c4','c5','c-oral','c-inj','immunotherapy'],
 };
 
 let currentInsurer = 'bupa';
