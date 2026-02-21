@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Fees Estimator — AM Oncology</title>
+    <title>Practice Fees Calculator</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -610,8 +610,8 @@
 <header>
     <div class="header-inner">
         <a class="brand" href="index.html">
-            <span class="brand-name">AM Oncology</span>
-            <span class="brand-tag">Practice Tools</span>
+            <span class="brand-name">Clinical Oncology</span>
+            <span class="brand-tag">Tools & Calculators</span>
         </a>
         <nav>
             <a href="index.html">Home</a>
@@ -623,8 +623,8 @@
 <!-- ── HERO ─────────────────────────────────────────────────────────── -->
 <div class="page-hero">
     <div class="hero-inner">
-        <div class="hero-eyebrow">Clinical Oncology · Private Practice</div>
-        <h1 class="hero-title">Practice Fees Estimator</h1>
+        <div class="hero-eyebrow">Clinical Oncology</div>
+        <h1 class="hero-title">Practice Fees Calculator</h1>
         <p class="hero-sub">Model insurer coverage, patient top-ups, and net income for individual episodes of care.</p>
         <div class="hero-note">
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -1154,23 +1154,6 @@
                                 <input class="multi-input" type="number" id="multi-c4" value="1" min="1" max="99" oninput="calculateTotal()">
                             </div>
                             <div class="row-status" id="sf-c4"></div>
-                        </div>
-                    </div>
-                    <div class="fee-row" id="row-c5">
-                        <div><span class="row-label">Chemo / SACT Supervision — 1–56 days</span><span class="row-code">X0005</span></div>
-                        <select class="row-select" id="sel-c5" onchange="toggleInput(this,'inp-c5','c5')">
-                            <option value="none">— Add —</option>
-                            <option value="standard">Standard fee</option>
-                            <option value="custom">Custom fee</option>
-                        </select>
-                        <div class="row-input-wrap">
-                            <span class="row-input-prefix">£</span>
-                            <input class="row-input" type="number" id="inp-c5" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
-                            <div class="row-multi">
-                                <span class="multi-label">× cycles</span>
-                                <input class="multi-input" type="number" id="multi-c5" value="1" min="1" max="99" oninput="calculateTotal()">
-                            </div>
-                            <div class="row-status" id="sf-c5"></div>
                         </div>
                     </div>
                     <div class="fee-row" id="row-c-oral">
