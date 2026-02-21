@@ -3,408 +3,1302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Fees & Insurance Calculator</title>
-    
+    <title>Practice Fees Estimator — AM Oncology</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="assets/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* CALCULATOR SPECIFIC STYLES */
-        .calculator-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 3rem 20px;
+        /* ── TOKENS ─────────────────────────────────────────────────── */
+        :root {
+            --ink:        #0f1923;
+            --ink-mid:    #3d5166;
+            --ink-light:  #7a96ad;
+            --bg:         #f4f6f8;
+            --surface:    #ffffff;
+            --border:     #dce3ea;
+            --teal:       #0d7c78;
+            --teal-light: #e0f2f1;
+            --amber:      #b45309;
+            --amber-bg:   #fffbeb;
+            --red:        #c0392b;
+            --red-bg:     #fef2f2;
+            --green:      #1a7a4a;
+            --green-bg:   #f0fdf4;
+            --navy:       #0f2942;
+            --navy-mid:   #1a3c5e;
+            --white:      #ffffff;
+
+            --font-display: 'DM Serif Display', serif;
+            --font-body:    'DM Sans', sans-serif;
+            --font-mono:    'DM Mono', monospace;
+
+            --radius:     6px;
+            --radius-lg:  12px;
+            --shadow:     0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
+            --shadow-lg:  0 4px 24px rgba(0,0,0,0.12);
         }
 
-        .calc-panel {
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .calc-header {
-            background: var(--navy-primary);
-            color: white;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .calc-body { padding: 2rem; }
-
-        /* Sections */
-        .fee-section {
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 1.5rem;
-        }
-        .fee-section:last-child { border-bottom: none; }
-
-        .section-title {
-            font-size: 1.1rem;
-            color: var(--teal-accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        /* Grid Layout for Rows */
-        .fee-row {
-            display: grid;
-            grid-template-columns: 3fr 1fr 1fr 1fr 20px; /* Name | Mode | Fee | TopUp | Remove */
-            gap: 1.5rem;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px dashed #e2e8f0;
-        }
-        .fee-row:last-child { border-bottom: none; }
-        
-        .fee-row label { font-size: 0.95rem; color: var(--text-main); font-weight: 600; }
-        .code-badge {
-            background: #f1f5f9;
-            color: var(--text-light);
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 8px;
-            font-family: monospace;
-        }
-
-        /* Inputs */
-        select, input[type="number"] {
-            padding: 8px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            width: 100%;
+        /* ── RESET ───────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
             font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
         }
-        input[disabled] { background: #f8fafc; color: #94a3b8; }
 
-        /* The Summary Box (Sticky on Desktop) */
-        .summary-box {
-            background: var(--navy-dark);
-            color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            position: sticky;
-            bottom: 20px;
+        /* ── HEADER ──────────────────────────────────────────────────── */
+        header {
+            background: var(--navy);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding: 0 2rem;
         }
-        .summary-row {
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
+            height: 60px;
         }
-        .summary-total {
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 15px;
-            margin-top: 15px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--teal-accent);
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            text-decoration: none;
         }
-        .shortfall-alert {
-            background: #ef4444;
+        .brand-name {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            color: var(--white);
+            letter-spacing: 0.01em;
+        }
+        .brand-tag {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid rgba(13,124,120,0.5);
+            padding: 2px 7px;
+            border-radius: 3px;
+        }
+        nav { display: flex; gap: 0.25rem; }
+        nav a {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            transition: color 0.15s, background 0.15s;
+        }
+        nav a:hover { color: white; background: rgba(255,255,255,0.07); }
+        nav a.active { color: white; background: rgba(255,255,255,0.1); }
+
+        /* ── PAGE HERO ───────────────────────────────────────────────── */
+        .page-hero {
+            background: var(--navy);
+            padding: 2.5rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 80% 50%, rgba(13,124,120,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 0.5rem;
+        }
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
             color: white;
-            padding: 5px 10px;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .hero-sub {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.55);
+            max-width: 540px;
+        }
+        .hero-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            background: rgba(13,124,120,0.15);
+            border: 1px solid rgba(13,124,120,0.35);
+            color: #5dd4cf;
+            font-size: 0.78rem;
+            padding: 6px 12px;
             border-radius: 4px;
+        }
+        .hero-note svg { flex-shrink: 0; }
+
+        /* ── LAYOUT ──────────────────────────────────────────────────── */
+        .calc-wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        /* ── INSURER SELECTOR ────────────────────────────────────────── */
+        .insurer-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+        }
+        .insurer-bar label {
             font-size: 0.8rem;
             font-weight: 600;
-            display: none; /* Hidden unless needed */
+            color: var(--ink-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+        .insurer-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .insurer-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--ink-mid);
+            transition: all 0.15s;
+            user-select: none;
+        }
+        .insurer-pill:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+        .insurer-pill.active {
+            border-color: var(--teal);
+            background: var(--teal-light);
+            color: var(--teal);
+            font-weight: 600;
+        }
+        .insurer-pill .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.6;
+        }
+        .insurer-bar select {
+            margin-left: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 6px 10px;
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            color: var(--ink);
+            background: var(--bg);
+            cursor: pointer;
         }
 
-        /* Expenses Toggle */
-        .expense-toggle {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.2);
+        /* ── PANELS ──────────────────────────────────────────────────── */
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1.25rem;
+            background: #fafbfc;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+        .panel-header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .panel-icon {
+            width: 28px; height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .panel-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-mid);
+        }
+        .panel-count {
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--teal-light);
+            color: var(--teal);
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+        .panel-toggle {
+            font-size: 0.7rem;
+            color: var(--ink-light);
+            transition: transform 0.2s;
+        }
+        .panel.collapsed .panel-toggle { transform: rotate(-90deg); }
+        .panel-body { padding: 0; }
+        .panel.collapsed .panel-body { display: none; }
+
+        /* ── FEE ROWS ────────────────────────────────────────────────── */
+        .fee-row {
+            display: grid;
+            grid-template-columns: 1fr 170px 130px;
+            gap: 0.75rem;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid #f1f4f7;
+            transition: background 0.12s;
+        }
+        .fee-row:last-child { border-bottom: none; }
+        .fee-row:hover { background: #fafbfc; }
+        .fee-row.active-row { background: var(--teal-light); }
+        .fee-row.active-row:hover { background: #d4efed; }
+
+        .row-label { font-size: 0.875rem; color: var(--ink); font-weight: 500; }
+        .row-code {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--ink-light);
+            background: #f0f3f6;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-left: 6px;
+        }
+        .row-select {
+            padding: 7px 8px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            color: var(--ink);
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.15s;
+            width: 100%;
+        }
+        .row-select:focus { outline: none; border-color: var(--teal); }
+        .row-select.selected { border-color: var(--teal); background: var(--teal-light); }
+
+        .row-input-wrap { position: relative; }
+        .row-input-prefix {
+            position: absolute;
+            left: 9px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.82rem;
+            color: var(--ink-light);
+            font-weight: 500;
+            pointer-events: none;
+        }
+        .row-input {
+            padding: 7px 8px 7px 20px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--ink);
+            width: 100%;
+            transition: border-color 0.15s;
+        }
+        .row-input:focus { outline: none; border-color: var(--teal); }
+        .row-input:disabled { background: #f8fafc; color: #adb9c4; cursor: not-allowed; }
+        .row-input.custom-active { border-color: var(--amber); background: var(--amber-bg); }
+
+        .row-status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 3px;
+            text-align: right;
+            min-height: 14px;
+        }
+        .status-ok   { color: var(--green); }
+        .status-over { color: var(--red); }
+
+        /* ── MULTIPLIER BADGE ───────────────────────────────────────── */
+        .row-multi {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .multi-label { font-size: 0.68rem; color: var(--ink-light); }
+        .multi-input {
+            width: 48px;
+            padding: 2px 5px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--ink);
+            text-align: center;
+        }
+        .multi-input:focus { outline: none; border-color: var(--teal); }
+
+        /* ── SECTION NOTE ────────────────────────────────────────────── */
+        .section-note {
+            font-size: 0.75rem;
+            color: var(--ink-light);
+            padding: 0.5rem 1.25rem 0;
+            font-style: italic;
         }
 
-        @media (max-width: 768px) {
-            .fee-row { grid-template-columns: 1fr; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
-            .summary-box { position: static; }
+        /* ── SIDEBAR ─────────────────────────────────────────────────── */
+        .sidebar {
+            position: sticky;
+            top: 1.5rem;
+        }
+        .summary-card {
+            background: var(--navy);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+        }
+        .summary-head {
+            padding: 1.1rem 1.25rem 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .summary-head h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 400;
+            color: white;
+        }
+        .reset-btn {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: var(--font-body);
+        }
+        .reset-btn:hover { background: rgba(255,255,255,0.12); color: white; }
+
+        .summary-body { padding: 1.1rem 1.25rem; }
+        .sum-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+        .sum-label {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: 400;
+        }
+        .sum-val {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+        }
+        .sum-val.green { color: #4ade80; }
+        .sum-val.red   { color: #f87171; }
+        .sum-val.teal  { color: #2dd4bf; }
+
+        .sum-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            margin: 0.8rem 0;
+        }
+        .sum-gross {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .sum-gross-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+        .sum-gross-val {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            color: white;
+        }
+
+        /* Breakdown mini bar */
+        .coverage-bar {
+            margin: 1rem 0 0.5rem;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .coverage-fill {
+            height: 100%;
+            background: #4ade80;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .coverage-label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-align: right;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Expenses */
+        .expenses-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.1rem 1.25rem;
+            box-shadow: var(--shadow);
+        }
+        .expenses-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--ink-mid);
+            margin-bottom: 0.85rem;
+        }
+        .exp-field { margin-bottom: 0.75rem; }
+        .exp-label {
+            font-size: 0.75rem;
+            color: var(--ink-light);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .exp-input-wrap { position: relative; }
+        .exp-suffix {
+            position: absolute;
+            right: 9px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.78rem;
+            color: var(--ink-light);
+            pointer-events: none;
+        }
+        .exp-input {
+            width: 100%;
+            padding: 7px 30px 7px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--ink);
+            transition: border-color 0.15s;
+        }
+        .exp-input:focus { outline: none; border-color: var(--teal); }
+
+        .net-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 0.85rem;
+            border-top: 2px solid var(--border);
+        }
+        .net-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--ink-mid);
+        }
+        .net-val {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--teal);
+        }
+        .net-val.negative { color: var(--red); }
+
+        /* Itemised breakdown */
+        .breakdown-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .breakdown-head {
+            padding: 0.75rem 1rem;
+            background: #fafbfc;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--ink-light);
+        }
+        .breakdown-body { padding: 0.6rem; }
+        .bd-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0.5rem;
+            border-radius: 4px;
+        }
+        .bd-item:hover { background: #f8fafc; }
+        .bd-name { font-size: 0.78rem; color: var(--ink-mid); }
+        .bd-val  { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink); }
+        .bd-empty { font-size: 0.8rem; color: var(--ink-light); text-align: center; padding: 1rem; }
+
+        /* ── FOOTER ──────────────────────────────────────────────────── */
+        footer {
+            background: var(--navy);
+            padding: 1.2rem 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────────────────────── */
+        @media (max-width: 960px) {
+            .calc-grid { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .fee-row { grid-template-columns: 1fr; gap: 0.5rem; }
+            .hero-title { font-size: 1.5rem; }
+        }
+        @media (max-width: 600px) {
+            header { padding: 0 1rem; }
+            .calc-wrap { padding: 1.25rem 1rem 3rem; }
+            .page-hero { padding: 1.75rem 1rem 1.5rem; }
         }
     </style>
 </head>
-
 <body>
 
+<!-- ── HEADER ───────────────────────────────────────────────────────── -->
 <header>
-    <div class="container header-flex">
-        <div class="brand">
-            <a href="index.html" style="text-decoration:none;">
-                <h1>Clinical Oncology</h1>
-                <span class="subtitle">Tools & Calculatorst</span>
-            </a>
-        </div>
+    <div class="header-inner">
+        <a class="brand" href="index.html">
+            <span class="brand-name">AM Oncology</span>
+            <span class="brand-tag">Practice Tools</span>
+        </a>
         <nav>
             <a href="index.html">Home</a>
-            <a href="pmi.html" class="active tool-link">Fees Calculator</a>
+            <a href="pmi.html" class="active">Fees Calculator</a>
         </nav>
     </div>
 </header>
 
-<main>
-    <div class="calculator-container">
-        
-        <div style="margin-bottom: 2rem;">
-            <h1>Private Practice Fee Estimator</h1>
-            <p>Calculate estimated insurer coverage, patient shortfalls, and net practice income.</p>
-            <div style="background: #e0f2fe; padding: 10px 15px; border-radius: 4px; font-size: 0.9rem; color: #0369a1; border: 1px solid #bae6fd;">
-                <strong>Note:</strong> "Standard" fees below are based on typical London BUPA/AXA maxima (2025/26). "Custom" allows you to set your own private rates.
-            </div>
+<!-- ── HERO ─────────────────────────────────────────────────────────── -->
+<div class="page-hero">
+    <div class="hero-inner">
+        <div class="hero-eyebrow">Clinical Oncology · Private Practice</div>
+        <h1 class="hero-title">Practice Fees Estimator</h1>
+        <p class="hero-sub">Model insurer coverage, patient top-ups, and net income for individual episodes of care.</p>
+        <div class="hero-note">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4M8 5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Standard fees reflect typical London BUPA / AXA / Vitality maxima (2025–26). For guidance only.
         </div>
-
-        <div class="calc-panel">
-            <div class="calc-header">
-                <span>Procedure & Fee Selection</span>
-                <button onclick="resetCalc()" style="background:transparent; border:1px solid white; color:white; padding: 5px 10px; border-radius: 4px; cursor:pointer;">Reset</button>
-            </div>
-            
-            <div class="calc-body">
-                
-                <div class="fee-section">
-                    <div class="section-title">Consultations (Chapter 20)</div>
-                    
-                    <div class="fee-row">
-                        <label>New Patient Consultation <span class="code-badge">20300</span></label>
-                        <select onchange="toggleInput(this, 'np-fee', 250)">
-                            <option value="standard">Standard (£250)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="np-fee" value="250" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="np-sf">£0</div>
-                    </div>
-
-                    <div class="fee-row">
-                        <label>Follow-Up Consultation <span class="code-badge">20310</span></label>
-                        <select onchange="toggleInput(this, 'fu-fee', 150)">
-                            <option value="standard">Standard (£150)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="fu-fee" value="150" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="fu-sf">£0</div>
-                    </div>
-                </div>
-
-                <div class="fee-section">
-                    <div class="section-title">Radiotherapy Planning (Chapter 20)</div>
-                    
-                    <div class="fee-row">
-                        <label>IMRT/VMAT Inverse Planning <span class="code-badge">X6005</span></label>
-                        <select onchange="toggleInput(this, 'imrt-fee', 1000)">
-                            <option value="none">-- Not Selected --</option>
-                            <option value="standard">Standard (£1,000)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="imrt-fee" value="0" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="imrt-sf">£0</div>
-                    </div>
-
-                    <div class="fee-row">
-                        <label>SABR Planning <span class="code-badge">X6002</span></label>
-                        <select onchange="toggleInput(this, 'sabr-fee', 1350)">
-                            <option value="none">-- Not Selected --</option>
-                            <option value="standard">Standard (£1,350)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="sabr-fee" value="0" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="sabr-sf">£0</div>
-                    </div>
-                    
-                    <div class="fee-row">
-                        <label>Complex Forward Planning <span class="code-badge">X6004</span></label>
-                        <select onchange="toggleInput(this, 'fwd-fee', 800)">
-                            <option value="none">-- Not Selected --</option>
-                            <option value="standard">Standard (£800)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="fwd-fee" value="0" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="fwd-sf">£0</div>
-                    </div>
-                </div>
-
-                <div class="fee-section">
-                    <div class="section-title">Systemic Therapy Supervision (Chapter 18)</div>
-                    
-                    <div class="fee-row">
-                        <label>Chemo Supervision (1-21 Days) <span class="code-badge">X0003</span></label>
-                        <select onchange="toggleInput(this, 'c3-fee', 375)">
-                            <option value="none">-- Not Selected --</option>
-                            <option value="standard">Standard (£375)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="c3-fee" value="0" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="c3-sf">£0</div>
-                    </div>
-
-                    <div class="fee-row">
-                        <label>Chemo Supervision (1-28 Days) <span class="code-badge">X0004</span></label>
-                        <select onchange="toggleInput(this, 'c4-fee', 500)">
-                            <option value="none">-- Not Selected --</option>
-                            <option value="standard">Standard (£500)</option>
-                            <option value="custom">Custom Fee</option>
-                        </select>
-                        <input type="number" id="c4-fee" value="0" disabled oninput="calculateTotal()">
-                        <div class="shortfall-display" id="c4-sf">£0</div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="summary-box">
-            <h2 style="margin-top:0; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px;">Financial Summary</h2>
-            
-            <div class="summary-row">
-                <span>Total Insurer Coverage:</span>
-                <span id="total-insurer">£0.00</span>
-            </div>
-            
-            <div class="summary-row" style="color: #fca5a5;">
-                <span>Total Patient Top-Up (Shortfall):</span>
-                <span id="total-shortfall">£0.00</span>
-            </div>
-
-            <div class="summary-total">
-                <div class="summary-row">
-                    <span>Gross Income:</span>
-                    <span id="total-gross">£0.00</span>
-                </div>
-            </div>
-
-            <div class="expense-toggle">
-                <h3 style="font-size: 1rem; margin-bottom: 10px;">Practice Expenses Deduction</h3>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                    <div>
-                        <label style="font-size:0.8rem; display:block; margin-bottom:5px;">Secretarial / Billing (%)</label>
-                        <input type="number" id="exp-sec" value="15" style="color:black;" oninput="calculateTotal()">
-                    </div>
-                    <div>
-                        <label style="font-size:0.8rem; display:block; margin-bottom:5px;">Room/Indemnity (Fixed £)</label>
-                        <input type="number" id="exp-fixed" value="70" style="color:black;" oninput="calculateTotal()">
-                    </div>
-                </div>
-
-                <div class="summary-row" style="font-weight: 700; color: #6ee7b7; font-size: 1.2rem; border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 10px;">
-                    <span>Net Income (Pre-Tax):</span>
-                    <span id="total-net">£0.00</span>
-                </div>
-            </div>
-        </div>
-
     </div>
+</div>
+
+<!-- ── MAIN ──────────────────────────────────────────────────────────── -->
+<main>
+<div class="calc-wrap">
+
+    <!-- Insurer selector -->
+    <div class="insurer-bar">
+        <label>Insurer Rates</label>
+        <div class="insurer-pills">
+            <div class="insurer-pill active" data-insurer="bupa" onclick="setInsurer(this)">
+                <span class="dot"></span>BUPA
+            </div>
+            <div class="insurer-pill" data-insurer="axa" onclick="setInsurer(this)">
+                <span class="dot"></span>AXA Health
+            </div>
+            <div class="insurer-pill" data-insurer="vitality" onclick="setInsurer(this)">
+                <span class="dot"></span>Vitality
+            </div>
+            <div class="insurer-pill" data-insurer="aviva" onclick="setInsurer(this)">
+                <span class="dot"></span>Aviva
+            </div>
+            <div class="insurer-pill" data-insurer="cigna" onclick="setInsurer(this)">
+                <span class="dot"></span>Cigna / WPA
+            </div>
+        </div>
+    </div>
+
+    <div class="calc-grid">
+
+        <!-- ── LEFT COLUMN ───────────────────────────────────────────── -->
+        <div>
+
+            <!-- CONSULTATIONS -->
+            <div class="panel" id="panel-consult">
+                <div class="panel-header" onclick="togglePanel('panel-consult')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#e0f2f1;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM6 8.5l1.5 1.5 3-3" stroke="#0d7c78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <span class="panel-title">Consultations &amp; Inpatient</span>
+                        <span class="panel-count" id="count-consult">0 selected</span>
+                    </div>
+                    <span class="panel-toggle">▾</span>
+                </div>
+                <div class="panel-body">
+                    <!-- New Patient -->
+                    <div class="fee-row" id="row-np">
+                        <div>
+                            <span class="row-label">New Patient Consultation</span>
+                            <span class="row-code">20300</span>
+                        </div>
+                        <select class="row-select" id="sel-np" onchange="toggleInput(this,'inp-np','np')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-np" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-np"></div>
+                        </div>
+                    </div>
+                    <!-- Follow-Up -->
+                    <div class="fee-row" id="row-fu">
+                        <div>
+                            <span class="row-label">Follow-Up Consultation</span>
+                            <span class="row-code">20310</span>
+                        </div>
+                        <select class="row-select" id="sel-fu" onchange="toggleInput(this,'inp-fu','fu')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-fu" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× visits</span>
+                                <input class="multi-input" type="number" id="multi-fu" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-fu"></div>
+                        </div>
+                    </div>
+                    <!-- Inpatient -->
+                    <div class="fee-row" id="row-ip">
+                        <div>
+                            <span class="row-label">Inpatient Care (Daily)</span>
+                            <span class="row-code">20330</span>
+                        </div>
+                        <select class="row-select" id="sel-ip" onchange="toggleInput(this,'inp-ip','ip')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-ip" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× days</span>
+                                <input class="multi-input" type="number" id="multi-ip" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-ip"></div>
+                        </div>
+                    </div>
+                    <!-- Telephone -->
+                    <div class="fee-row" id="row-tel">
+                        <div>
+                            <span class="row-label">Telephone / Video Consult</span>
+                            <span class="row-code">20320</span>
+                        </div>
+                        <select class="row-select" id="sel-tel" onchange="toggleInput(this,'inp-tel','tel')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-tel" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-tel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RT PLANNING -->
+            <div class="panel" id="panel-plan">
+                <div class="panel-header" onclick="togglePanel('panel-plan')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#fdf4ff;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#9333ea" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="#9333ea" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <span class="panel-title">RT Planning (Ch 20)</span>
+                        <span class="panel-count" id="count-plan">0 selected</span>
+                    </div>
+                    <span class="panel-toggle">▾</span>
+                </div>
+                <div class="panel-body">
+                    <div class="fee-row" id="row-imrt">
+                        <div><span class="row-label">IMRT / VMAT Inverse Plan</span><span class="row-code">X6005</span></div>
+                        <select class="row-select" id="sel-imrt" onchange="toggleInput(this,'inp-imrt','imrt')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-imrt" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-imrt"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-sabr">
+                        <div><span class="row-label">SABR Planning</span><span class="row-code">X6002</span></div>
+                        <select class="row-select" id="sel-sabr" onchange="toggleInput(this,'inp-sabr','sabr')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-sabr" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-sabr"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-fwd">
+                        <div><span class="row-label">Complex Forward Plan (3D)</span><span class="row-code">X6004</span></div>
+                        <select class="row-select" id="sel-fwd" onchange="toggleInput(this,'inp-fwd','fwd')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-fwd" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-fwd"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-simp-plan">
+                        <div><span class="row-label">Simple Forward Plan</span><span class="row-code">X6003</span></div>
+                        <select class="row-select" id="sel-simp-plan" onchange="toggleInput(this,'inp-simp-plan','simp-plan')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-simp-plan" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-simp-plan"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-proton">
+                        <div><span class="row-label">Proton Beam Planning</span><span class="row-code">X6010</span></div>
+                        <select class="row-select" id="sel-proton" onchange="toggleInput(this,'inp-proton','proton')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-proton" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-proton"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RT DELIVERY -->
+            <div class="panel" id="panel-delivery">
+                <div class="panel-header" onclick="togglePanel('panel-delivery')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#fff7ed;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="#ea580c" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="#ea580c"/></svg>
+                        </div>
+                        <span class="panel-title">RT Treatment Delivery (Ch 20)</span>
+                        <span class="panel-count" id="count-delivery">0 selected</span>
+                    </div>
+                    <span class="panel-toggle">▾</span>
+                </div>
+                <div class="panel-body">
+                    <p class="section-note">Standard rate shown is per fraction. Enter a custom total or use the multiplier for a full course value.</p>
+                    <div class="fee-row" id="row-rt-cplx">
+                        <div><span class="row-label">Complex (IMRT / VMAT)</span><span class="row-code">X7001</span></div>
+                        <select class="row-select" id="sel-rt-cplx" onchange="toggleInput(this,'inp-rt-cplx','rt-cplx')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard (per #)</option>
+                            <option value="custom">Custom total</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-rt-cplx" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× fractions</span>
+                                <input class="multi-input" type="number" id="multi-rt-cplx" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-rt-cplx"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-rt-sabr">
+                        <div><span class="row-label">SABR Delivery</span><span class="row-code">X7004</span></div>
+                        <select class="row-select" id="sel-rt-sabr" onchange="toggleInput(this,'inp-rt-sabr','rt-sabr')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard (per #)</option>
+                            <option value="custom">Custom total</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-rt-sabr" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× fractions</span>
+                                <input class="multi-input" type="number" id="multi-rt-sabr" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-rt-sabr"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-rt-simp">
+                        <div><span class="row-label">Simple / Palliative Tx</span><span class="row-code">X7002</span></div>
+                        <select class="row-select" id="sel-rt-simp" onchange="toggleInput(this,'inp-rt-simp','rt-simp')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard (per #)</option>
+                            <option value="custom">Custom total</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-rt-simp" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× fractions</span>
+                                <input class="multi-input" type="number" id="multi-rt-simp" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-rt-simp"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-brachytherapy">
+                        <div><span class="row-label">Brachytherapy (HDR)</span><span class="row-code">X7010</span></div>
+                        <select class="row-select" id="sel-brachytherapy" onchange="toggleInput(this,'inp-brachytherapy','brachytherapy')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-brachytherapy" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-status" id="sf-brachytherapy"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SYSTEMIC THERAPY -->
+            <div class="panel" id="panel-sys">
+                <div class="panel-header" onclick="togglePanel('panel-sys')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#eff6ff;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M4 8h8M8 4l4 4-4 4" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <span class="panel-title">Systemic Therapy (Ch 18)</span>
+                        <span class="panel-count" id="count-sys">0 selected</span>
+                    </div>
+                    <span class="panel-toggle">▾</span>
+                </div>
+                <div class="panel-body">
+                    <div class="fee-row" id="row-c3">
+                        <div><span class="row-label">Chemo Supervision (1–21 day)</span><span class="row-code">X0003</span></div>
+                        <select class="row-select" id="sel-c3" onchange="toggleInput(this,'inp-c3','c3')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c3" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c3" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c3"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-c4">
+                        <div><span class="row-label">Chemo Supervision (1–28 day)</span><span class="row-code">X0004</span></div>
+                        <select class="row-select" id="sel-c4" onchange="toggleInput(this,'inp-c4','c4')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c4" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c4" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c4"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-c-oral">
+                        <div><span class="row-label">Oral Chemo Supervision</span><span class="row-code">X0005</span></div>
+                        <select class="row-select" id="sel-c-oral" onchange="toggleInput(this,'inp-c-oral','c-oral')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c-oral" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-c-oral" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c-oral"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-c-inj">
+                        <div><span class="row-label">Single SC / IV (e.g. Denosumab)</span><span class="row-code">X0002</span></div>
+                        <select class="row-select" id="sel-c-inj" onchange="toggleInput(this,'inp-c-inj','c-inj')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-c-inj" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× injections</span>
+                                <input class="multi-input" type="number" id="multi-c-inj" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-c-inj"></div>
+                        </div>
+                    </div>
+                    <div class="fee-row" id="row-immunotherapy">
+                        <div><span class="row-label">Immunotherapy Supervision</span><span class="row-code">X0008</span></div>
+                        <select class="row-select" id="sel-immunotherapy" onchange="toggleInput(this,'inp-immunotherapy','immunotherapy')">
+                            <option value="none">— Add —</option>
+                            <option value="standard">Standard fee</option>
+                            <option value="custom">Custom fee</option>
+                        </select>
+                        <div class="row-input-wrap">
+                            <span class="row-input-prefix">£</span>
+                            <input class="row-input" type="number" id="inp-immunotherapy" value="" disabled min="0" oninput="calculateTotal()" placeholder="0">
+                            <div class="row-multi">
+                                <span class="multi-label">× cycles</span>
+                                <input class="multi-input" type="number" id="multi-immunotherapy" value="1" min="1" max="99" oninput="calculateTotal()">
+                            </div>
+                            <div class="row-status" id="sf-immunotherapy"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /left col -->
+
+        <!-- ── SIDEBAR ────────────────────────────────────────────────── -->
+        <div class="sidebar">
+
+            <div class="summary-card">
+                <div class="summary-head">
+                    <h3>Summary</h3>
+                    <button class="reset-btn" onclick="resetCalc()">↺ Reset</button>
+                </div>
+                <div class="summary-body">
+                    <div class="sum-row">
+                        <span class="sum-label">Insurer Pays</span>
+                        <span class="sum-val green" id="total-insurer">£0.00</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sum-label">Patient Top-Up</span>
+                        <span class="sum-val red" id="total-shortfall">£0.00</span>
+                    </div>
+
+                    <div class="coverage-bar">
+                        <div class="coverage-fill" id="coverage-fill" style="width:0%"></div>
+                    </div>
+                    <div class="coverage-label" id="coverage-label">0% insurer-covered</div>
+
+                    <hr class="sum-divider">
+                    <div class="sum-gross">
+                        <span class="sum-gross-label">Gross Fees</span>
+                        <span class="sum-gross-val" id="total-gross">£0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expenses-card">
+                <div class="expenses-title">Deductions</div>
+
+                <div class="exp-field">
+                    <label class="exp-label">Secretarial / PA (%)</label>
+                    <div class="exp-input-wrap">
+                        <input class="exp-input" type="number" id="exp-sec" value="15" min="0" max="100" oninput="calculateTotal()">
+                        <span class="exp-suffix">%</span>
+                    </div>
+                </div>
+                <div class="exp-field">
+                    <label class="exp-label">Room / Facility (fixed)</label>
+                    <div class="exp-input-wrap">
+                        <input class="exp-input" type="number" id="exp-fixed" value="50" min="0" oninput="calculateTotal()">
+                        <span class="exp-suffix">£</span>
+                    </div>
+                </div>
+                <div class="exp-field">
+                    <label class="exp-label">MDT / Admin (%)</label>
+                    <div class="exp-input-wrap">
+                        <input class="exp-input" type="number" id="exp-mdt" value="0" min="0" max="100" oninput="calculateTotal()">
+                        <span class="exp-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="net-row">
+                    <span class="net-label">Est. Net Profit</span>
+                    <span class="net-val" id="total-net">£0.00</span>
+                </div>
+            </div>
+
+            <!-- Breakdown -->
+            <div class="breakdown-card">
+                <div class="breakdown-head">Line Items</div>
+                <div class="breakdown-body" id="breakdown-body">
+                    <div class="bd-empty">No procedures selected yet.</div>
+                </div>
+            </div>
+
+        </div><!-- /sidebar -->
+
+    </div><!-- /calc-grid -->
+</div><!-- /calc-wrap -->
 </main>
 
 <footer>
-    <div class="container">
-        <p>&copy; 2026 AM Oncology. For internal practice use only.</p>
-    </div>
+    &copy; 2026 AM Oncology &nbsp;·&nbsp; For internal practice use only. All fees are estimates only and not a guarantee of insurer reimbursement.
 </footer>
 
 <script>
-    // Standard Insurer Maxima (Approximate London 2026 Rates)
-    const STANDARDS = {
-        'np-fee': 250,
-        'fu-fee': 150,
-        'imrt-fee': 1000,
-        'sabr-fee': 1350,
-        'fwd-fee': 800,
-        'c3-fee': 375,
-        'c4-fee': 500
-    };
+// ─── DATA ─────────────────────────────────────────────────────────────────────
 
-    function toggleInput(select, inputId, standardVal) {
-        const input = document.getElementById(inputId);
-        
-        if (select.value === 'standard') {
-            input.value = standardVal;
-            input.disabled = true;
-        } else if (select.value === 'none') {
-            input.value = 0;
-            input.disabled = true;
-        } else {
-            // Custom
-            input.disabled = false;
-            input.value = standardVal; // start them at standard for easier editing
-            input.focus();
+// Insurer maxima (2025-26 estimates). Key = row id.
+// Structure: { bupa, axa, vitality, aviva, cigna }
+const STANDARDS = {
+    'np':            { bupa:250,  axa:240,  vitality:250, aviva:230, cigna:220, label:'New Patient Consultation' },
+    'fu':            { bupa:150,  axa:145,  vitality:150, aviva:140, cigna:130, label:'Follow-Up Consultation' },
+    'ip':            { bupa:100,  axa:95,   vitality:100, aviva:90,  cigna:90,  label:'Inpatient Care (Daily)' },
+    'tel':           { bupa:100,  axa:100,  vitality:100, aviva:95,  cigna:90,  label:'Telephone / Video Consult' },
+    'imrt':          { bupa:1000, axa:975,  vitality:1000, aviva:950, cigna:900, label:'IMRT / VMAT Planning' },
+    'sabr':          { bupa:1350, axa:1300, vitality:1350, aviva:1250,cigna:1200, label:'SABR Planning' },
+    'fwd':           { bupa:800,  axa:780,  vitality:800,  aviva:760, cigna:740, label:'Complex 3D Plan' },
+    'simp-plan':     { bupa:450,  axa:440,  vitality:450,  aviva:420, cigna:400, label:'Simple Forward Plan' },
+    'proton':        { bupa:1800, axa:1750, vitality:1800, aviva:1700,cigna:1650,label:'Proton Beam Planning' },
+    'rt-cplx':       { bupa:150,  axa:145,  vitality:150,  aviva:140, cigna:135, label:'Complex Tx (per #)' },
+    'rt-sabr':       { bupa:250,  axa:240,  vitality:250,  aviva:235, cigna:225, label:'SABR Delivery (per #)' },
+    'rt-simp':       { bupa:80,   axa:75,   vitality:80,   aviva:70,  cigna:70,  label:'Simple/Palliative Tx (per #)' },
+    'brachytherapy': { bupa:600,  axa:580,  vitality:600,  aviva:560, cigna:540, label:'Brachytherapy (HDR)' },
+    'c3':            { bupa:375,  axa:360,  vitality:375,  aviva:350, cigna:340, label:'Chemo Supervision 1-21d' },
+    'c4':            { bupa:500,  axa:480,  vitality:500,  aviva:460, cigna:450, label:'Chemo Supervision 1-28d' },
+    'c-oral':        { bupa:200,  axa:195,  vitality:200,  aviva:185, cigna:180, label:'Oral Chemo Supervision' },
+    'c-inj':         { bupa:100,  axa:95,   vitality:100,  aviva:90,  cigna:85,  label:'Single SC/IV Injection' },
+    'immunotherapy': { bupa:550,  axa:530,  vitality:550,  aviva:510, cigna:490, label:'Immunotherapy Supervision' },
+};
+
+// Rows that support multipliers
+const HAS_MULTI = ['fu','ip','rt-cplx','rt-sabr','rt-simp','c3','c4','c-oral','c-inj','immunotherapy'];
+
+// Panel → row ids map (for badge counters)
+const PANELS = {
+    'consult':  ['np','fu','ip','tel'],
+    'plan':     ['imrt','sabr','fwd','simp-plan','proton'],
+    'delivery': ['rt-cplx','rt-sabr','rt-simp','brachytherapy'],
+    'sys':      ['c3','c4','c-oral','c-inj','immunotherapy'],
+};
+
+let currentInsurer = 'bupa';
+
+// ─── INSURER SWITCH ────────────────────────────────────────────────────────────
+function setInsurer(pill) {
+    document.querySelectorAll('.insurer-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    currentInsurer = pill.dataset.insurer;
+
+    // Update standard values for any rows set to 'standard'
+    Object.keys(STANDARDS).forEach(id => {
+        const sel = document.getElementById('sel-' + id);
+        if (sel && sel.value === 'standard') {
+            const inp = document.getElementById('inp-' + id);
+            if (inp) inp.value = STANDARDS[id][currentInsurer];
         }
-        calculateTotal();
-    }
-
-    function calculateTotal() {
-        let gross = 0;
-        let insurerTotal = 0;
-        let shortfallTotal = 0;
-
-        // Loop through all defined fee IDs
-        for (const [id, limit] of Object.entries(STANDARDS)) {
-            const input = document.getElementById(id);
-            const val = parseFloat(input.value) || 0;
-            const displaySf = document.getElementById(id.replace('-fee', '-sf'));
-
-            if (val > 0) {
-                gross += val;
-                
-                // Calculate Shortfall
-                if (val > limit) {
-                    let diff = val - limit;
-                    shortfallTotal += diff;
-                    insurerTotal += limit;
-                    displaySf.innerText = `+£${diff} Top-Up`;
-                    displaySf.style.color = '#dc2626'; // Red
-                    displaySf.style.fontSize = '0.8rem';
-                } else {
-                    insurerTotal += val;
-                    displaySf.innerText = 'Covered';
-                    displaySf.style.color = '#16a34a'; // Green
-                    displaySf.style.fontSize = '0.8rem';
-                }
-            } else {
-                displaySf.innerText = '';
-            }
-        }
-
-        // Expenses
-        const secPercent = parseFloat(document.getElementById('exp-sec').value) || 0;
-        const fixedExp = parseFloat(document.getElementById('exp-fixed').value) || 0;
-        
-        const secCost = gross * (secPercent / 100);
-        const totalExp = secCost + fixedExp;
-        const net = gross - totalExp;
-
-        // Update UI
-        document.getElementById('total-insurer').innerText = formatCurrency(insurerTotal);
-        document.getElementById('total-shortfall').innerText = formatCurrency(shortfallTotal);
-        document.getElementById('total-gross').innerText = formatCurrency(gross);
-        document.getElementById('total-net').innerText = formatCurrency(net);
-    }
-
-    function formatCurrency(num) {
-        return '£' + num.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    }
-
-    function resetCalc() {
-        const selects = document.querySelectorAll('select');
-        selects.forEach(s => {
-            s.value = s.options[0].value;
-            // Trigger change event to reset inputs
-            s.dispatchEvent(new Event('change')); 
-        });
-    }
-
-    // Initial Run
+    });
     calculateTotal();
-</script>
+}
 
+// ─── TOGGLE INPUT ──────────────────────────────────────────────────────────────
+function toggleInput(select, inputId, key) {
+    const inp  = document.getElementById(inputId);
+    const row  = document.getElementById('row-' + key);
+    const std  = STANDARDS[key][currentInsurer];
+
+    if (select.value === 'standard') {
+        inp.value    = std;
+        inp.disabled = true;
+        inp.classList.remove('custom-active');
+        select.classList.add('selected');
+        row.classList.add('active-row');
+    } else if (select.value === 'custom') {
+        inp.disabled = false;
+        inp.classList.add('custom-active');
+        if (!inp.value || inp.value == 0) inp.value = std;
+        inp.focus();
+        select.classList.add('selected');
+        row.classList.add('active-row');
+    } else {
+        inp.value    = '';
+        inp.disabled = true;
+        inp.classList.remove('custom-active');
+        select.classList.remove('selected');
+        row.classList.remove('active-row');
+    }
+    calculateTotal();
+}
+
+// ─── MAIN CALC ─────────────────────────────────────────────────────────────────
+function calculateTotal() {
+    let gross       = 0;
+    let insurerTotal = 0;
+    let shortfall   = 0;
+    const lineItems = [];
+
+    Object.keys(STANDARDS).forEach(id => {
+        const sel = document.getElementById('sel-' + id);
+        const inp = document.getElementById('inp-' + id);
+        const sfEl = document.getElementById('sf-' + id);
+        if (!sel || !inp) return;
+
+        const limit  = STANDARDS[id][currentInsurer];
+        const rawVal = parseFloat(inp.value) || 0;
+        const multi  = HAS_MULTI.includes(id) ? (parseInt(document.getElementById('multi-' + id)?.value) || 1) : 1;
+        const val    = rawVal * multi;
+
+        if (sel.value !== 'none' && rawVal > 0) {
+            gross += val;
+
+            const limitTotal = limit * multi;
+            if (val > limitTotal) {
+                const diff = val - limitTotal;
+                shortfall    += diff;
+                insurerTotal += limitTotal;
+                if (sfEl) sfEl.innerHTML = `<span class="status-over">+£${fmt(diff)} shortfall</span>`;
+            } else {
+                insurerTotal += val;
+                if (sfEl) sfEl.innerHTML = `<span class="status-ok">✓ Fully covered</span>`;
+            }
+
+            lineItems.push({ label: STANDARDS[id].label, val, multi });
+        } else {
+            if (sfEl) sfEl.innerHTML = '';
+        }
+    });
+
+    // Expenses
+    const secPct   = parseFloat(document.getElementById('exp-sec').value)   || 0;
+    const fixedExp = parseFloat(document.getElementById('exp-fixed').value) || 0;
+    const mdtPct   = parseFloat(document.getElementById('exp-mdt').value)   || 0;
+
+    const secCost = gross * (secPct / 100);
+    const mdtCost = gross * (mdtPct / 100);
+    const net     = gross - secCost - mdtCost - fixedExp;
+
+    // Update DOM
+    document.getElementById('total-insurer').textContent   = '£' + fmt(insurerTotal);
+    document.getElementById('total-shortfall').textContent = '£' + fmt(shortfall);
+    document.getElementById('total-gross').textContent     = '£' + fmt(gross);
+
+    const netEl = document.getElementById('total-net');
+    netEl.textContent = '£' + fmt(net);
+    netEl.classList.toggle('negative', net < 0);
+
+    // Coverage bar
+    const pct = gross > 0 ? Math.round((insurerTotal / gross) * 100) : 0;
+    document.getElementById('coverage-fill').style.width = pct + '%';
+    document.getElementById('coverage-label').textContent = pct + '% insurer-covered';
+
+    // Panel counts
+    Object.keys(PANELS).forEach(panelKey => {
+        const count = PANELS[panelKey].filter(id => {
+            const s = document.getElementById('sel-' + id);
+            return s && s.value !== 'none';
+        }).length;
+        const badge = document.getElementById('count-' + panelKey);
+        if (badge) {
+            badge.textContent = count > 0 ? `${count} selected` : '0 selected';
+            badge.style.display = count > 0 ? '' : 'none';
+        }
+    });
+
+    // Breakdown
+    const bd = document.getElementById('breakdown-body');
+    if (lineItems.length === 0) {
+        bd.innerHTML = '<div class="bd-empty">No procedures selected yet.</div>';
+    } else {
+        bd.innerHTML = lineItems.map(li => `
+            <div class="bd-item">
+                <span class="bd-name">${li.label}${li.multi > 1 ? ' ×' + li.multi : ''}</span>
+                <span class="bd-val">£${fmt(li.val)}</span>
+            </div>
+        `).join('');
+    }
+}
+
+function fmt(n) {
+    return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ─── PANEL COLLAPSE ────────────────────────────────────────────────────────────
+function togglePanel(id) {
+    document.getElementById(id).classList.toggle('collapsed');
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetCalc() {
+    document.querySelectorAll('.row-select').forEach(s => {
+        s.value = 'none';
+        s.classList.remove('selected');
+    });
+    document.querySelectorAll('.row-input').forEach(i => {
+        i.value = '';
+        i.disabled = true;
+        i.classList.remove('custom-active');
+    });
+    document.querySelectorAll('.multi-input').forEach(i => i.value = 1);
+    document.querySelectorAll('.fee-row').forEach(r => r.classList.remove('active-row'));
+    calculateTotal();
+}
+
+// Init
+calculateTotal();
+</script>
 </body>
 </html>
