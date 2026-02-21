@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Fees & Insurance Calculator</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/style.css">
 
+    <style>
+        /* CALCULATOR SPECIFIC STYLES */
+        .calculator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 20px;
+        }
+
+        .calc-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .calc-header {
+            background: var(--navy-primary);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calc-body { padding: 2rem; }
+
+        /* Sections */
+        .fee-section {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 1.5rem;
+        }
+        .fee-section:last-child { border-bottom: none; }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--teal-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        /* Grid Layout for Rows */
+        .fee-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 20px; /* Name | Mode | Fee | TopUp | Remove */
+            gap: 1.5rem;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .fee-row:last-child { border-bottom: none; }
+        
+        .fee-row label { font-size: 0.95rem; color: var(--text-main); font-weight: 600; }
+        .code-badge {
+            background: #f1f5f9;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-family: monospace;
+        }
+
+        /* Inputs */
+        select, input[type="number"] {
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 100%;
+            font-family: var(--font-body);
+        }
+        input[disabled] { background: #f8fafc; color: #94a3b8; }
+
+        /* The Summary Box (Sticky on Desktop) */
+        .summary-box {
+            background: var(--navy-dark);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            position: sticky;
+            bottom: 20px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .summary-total {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--teal-accent);
+        }
+        .shortfall-alert {
+            background: #ef4444;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: none; /* Hidden unless needed */
+        }
+
+        /* Expenses Toggle */
+        .expense-toggle {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .fee-row { grid-template-columns: 1fr; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
+            .summary-box { position: static; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container header-flex">
+        <div class="brand">
+            <a href="index.html" style="text-decoration:none;">
+                <h1>Dr [Firstname] [Lastname]</h1>
+                <span class="subtitle">Consultant Clinical Oncologist</span>
+            </a>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="pmi.html" class="active tool-link">Fees Calculator</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="calculator-container">
+        
+        <div style="margin-bottom: 2rem;">
+            <h1>Private Practice Fee Estimator</h1>
+            <p>Calculate estimated insurer coverage, patient shortfalls, and net practice income.</p>
+            <div style="background: #e0f2fe; padding: 10px 15px; border-radius: 4px; font-size: 0.9rem; color: #0369a1; border: 1px solid #bae6fd;">
+                <strong>Note:</strong> "Standard" fees below are based on typical London BUPA/AXA maxima (2025/26). "Custom" allows you to set your own private rates.
+            </div>
+        </div>
+
+        <div class="calc-panel">
+            <div class="calc-header">
+                <span>Procedure & Fee Selection</span>
+                <button onclick="resetCalc()" style="background:transparent; border:1px solid white; color:white; padding: 5px 10px; border-radius: 4px; cursor:pointer;">Reset</button>
+            </div>
+            
+            <div class="calc-body">
+                
+                <div class="fee-section">
+                    <div class="section-title">Consultations (Chapter 20)</div>
+                    
+                    <div class="fee-row">
+                        <label>New Patient Consultation <span class="code-badge">20300</span></label>
+                        <select onchange="toggleInput(this, 'np-fee', 250)">
+                            <option value="standard">Standard (£250)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="np-fee" value="250" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="np-sf">£0</div>
+                    </div>
+
+                    <div class="fee-row">
+                        <label>Follow-Up Consultation <span class="code-badge">20310</span></label>
+                        <select onchange="toggleInput(this, 'fu-fee', 150)">
+                            <option value="standard">Standard (£150)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="fu-fee" value="150" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="fu-sf">£0</div>
+                    </div>
+                </div>
+
+                <div class="fee-section">
+                    <div class="section-title">Radiotherapy Planning (Chapter 20)</div>
+                    
+                    <div class="fee-row">
+                        <label>IMRT/VMAT Inverse Planning <span class="code-badge">X6005</span></label>
+                        <select onchange="toggleInput(this, 'imrt-fee', 1000)">
+                            <option value="none">-- Not Selected --</option>
+                            <option value="standard">Standard (£1,000)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="imrt-fee" value="0" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="imrt-sf">£0</div>
+                    </div>
+
+                    <div class="fee-row">
+                        <label>SABR Planning <span class="code-badge">X6002</span></label>
+                        <select onchange="toggleInput(this, 'sabr-fee', 1350)">
+                            <option value="none">-- Not Selected --</option>
+                            <option value="standard">Standard (£1,350)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="sabr-fee" value="0" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="sabr-sf">£0</div>
+                    </div>
+                    
+                    <div class="fee-row">
+                        <label>Complex Forward Planning <span class="code-badge">X6004</span></label>
+                        <select onchange="toggleInput(this, 'fwd-fee', 800)">
+                            <option value="none">-- Not Selected --</option>
+                            <option value="standard">Standard (£800)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="fwd-fee" value="0" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="fwd-sf">£0</div>
+                    </div>
+                </div>
+
+                <div class="fee-section">
+                    <div class="section-title">Systemic Therapy Supervision (Chapter 18)</div>
+                    
+                    <div class="fee-row">
+                        <label>Chemo Supervision (1-21 Days) <span class="code-badge">X0003</span></label>
+                        <select onchange="toggleInput(this, 'c3-fee', 375)">
+                            <option value="none">-- Not Selected --</option>
+                            <option value="standard">Standard (£375)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="c3-fee" value="0" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="c3-sf">£0</div>
+                    </div>
+
+                    <div class="fee-row">
+                        <label>Chemo Supervision (1-28 Days) <span class="code-badge">X0004</span></label>
+                        <select onchange="toggleInput(this, 'c4-fee', 500)">
+                            <option value="none">-- Not Selected --</option>
+                            <option value="standard">Standard (£500)</option>
+                            <option value="custom">Custom Fee</option>
+                        </select>
+                        <input type="number" id="c4-fee" value="0" disabled oninput="calculateTotal()">
+                        <div class="shortfall-display" id="c4-sf">£0</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <h2 style="margin-top:0; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px;">Financial Summary</h2>
+            
+            <div class="summary-row">
+                <span>Total Insurer Coverage:</span>
+                <span id="total-insurer">£0.00</span>
+            </div>
+            
+            <div class="summary-row" style="color: #fca5a5;">
+                <span>Total Patient Top-Up (Shortfall):</span>
+                <span id="total-shortfall">£0.00</span>
+            </div>
+
+            <div class="summary-total">
+                <div class="summary-row">
+                    <span>Gross Income:</span>
+                    <span id="total-gross">£0.00</span>
+                </div>
+            </div>
+
+            <div class="expense-toggle">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;">Practice Expenses Deduction</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size:0.8rem; display:block; margin-bottom:5px;">Secretarial / Billing (%)</label>
+                        <input type="number" id="exp-sec" value="15" style="color:black;" oninput="calculateTotal()">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; display:block; margin-bottom:5px;">Room/Indemnity (Fixed £)</label>
+                        <input type="number" id="exp-fixed" value="70" style="color:black;" oninput="calculateTotal()">
+                    </div>
+                </div>
+
+                <div class="summary-row" style="font-weight: 700; color: #6ee7b7; font-size: 1.2rem; border-top: 1px dashed rgba(255,255,255,0.3); padding-top: 10px;">
+                    <span>Net Income (Pre-Tax):</span>
+                    <span id="total-net">£0.00</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2026 AM Oncology. For internal practice use only.</p>
+    </div>
+</footer>
+
+<script>
+    // Standard Insurer Maxima (Approximate London 2026 Rates)
+    const STANDARDS = {
+        'np-fee': 250,
+        'fu-fee': 150,
+        'imrt-fee': 1000,
+        'sabr-fee': 1350,
+        'fwd-fee': 800,
+        'c3-fee': 375,
+        'c4-fee': 500
+    };
+
+    function toggleInput(select, inputId, standardVal) {
+        const input = document.getElementById(inputId);
+        
+        if (select.value === 'standard') {
+            input.value = standardVal;
+            input.disabled = true;
+        } else if (select.value === 'none') {
+            input.value = 0;
+            input.disabled = true;
+        } else {
+            // Custom
+            input.disabled = false;
+            input.value = standardVal; // start them at standard for easier editing
+            input.focus();
+        }
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let gross = 0;
+        let insurerTotal = 0;
+        let shortfallTotal = 0;
+
+        // Loop through all defined fee IDs
+        for (const [id, limit] of Object.entries(STANDARDS)) {
+            const input = document.getElementById(id);
+            const val = parseFloat(input.value) || 0;
+            const displaySf = document.getElementById(id.replace('-fee', '-sf'));
+
+            if (val > 0) {
+                gross += val;
+                
+                // Calculate Shortfall
+                if (val > limit) {
+                    let diff = val - limit;
+                    shortfallTotal += diff;
+                    insurerTotal += limit;
+                    displaySf.innerText = `+£${diff} Top-Up`;
+                    displaySf.style.color = '#dc2626'; // Red
+                    displaySf.style.fontSize = '0.8rem';
+                } else {
+                    insurerTotal += val;
+                    displaySf.innerText = 'Covered';
+                    displaySf.style.color = '#16a34a'; // Green
+                    displaySf.style.fontSize = '0.8rem';
+                }
+            } else {
+                displaySf.innerText = '';
+            }
+        }
+
+        // Expenses
+        const secPercent = parseFloat(document.getElementById('exp-sec').value) || 0;
+        const fixedExp = parseFloat(document.getElementById('exp-fixed').value) || 0;
+        
+        const secCost = gross * (secPercent / 100);
+        const totalExp = secCost + fixedExp;
+        const net = gross - totalExp;
+
+        // Update UI
+        document.getElementById('total-insurer').innerText = formatCurrency(insurerTotal);
+        document.getElementById('total-shortfall').innerText = formatCurrency(shortfallTotal);
+        document.getElementById('total-gross').innerText = formatCurrency(gross);
+        document.getElementById('total-net').innerText = formatCurrency(net);
+    }
+
+    function formatCurrency(num) {
+        return '£' + num.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function resetCalc() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(s => {
+            s.value = s.options[0].value;
+            // Trigger change event to reset inputs
+            s.dispatchEvent(new Event('change')); 
+        });
+    }
+
+    // Initial Run
+    calculateTotal();
+</script>
+
+</body>
+</html>
