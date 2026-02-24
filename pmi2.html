@@ -231,7 +231,7 @@ const INSURER_LABELS = { bupa:'BUPA', axa:'AXA Health', vitality:'Vitality', avi
 const DATA = [
     {
         id: 'consult',
-        title: 'Consultations & Inpatient',
+        title: 'Consultations & Inpatient (Ch 1)',
         color: '#e0f2f1', iconColor: '#0d7c78',
         icon: '<path d="M8 1a7 7 0 100 14A7 7 0 008 1zM6 8.5l1.5 1.5 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
         items: [
@@ -251,28 +251,41 @@ const DATA = [
             { id: 'imrt', code: 'X6772', label: 'IMRT / VMAT Planning', fees: { bupa:1000, axa:975, vitality:1000, aviva:950, cigna:900 } },
             { id: 'cplx', code: 'X6930', label: '3D-CRT Planning', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
             { id: 'sabr', code: 'X6002', label: 'SABR / SBRT Planning', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } },
-            { id: 'srs', code: 'X6950', label: 'SRS Planning (GammaKnife/CyberKnife)', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } }
+            { id: 'srs', code: 'X6950', label: 'SRS Planning', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } }
         ]
     },
     {
         id: 'delivery',
-        title: 'Treatment Delivery',
+        title: 'Radiotherapy Delivery (Ch 20)',
         color: '#fff7ed', iconColor: '#ea580c',
         icon: '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/>',
         items: [
+            { id: 'ebrt1', code: 'X6581', label: 'Single Fraction Supervision (1 #)', fees: { bupa:350, axa:340, vitality:350, aviva:330, cigna:315 } },
             { id: 'ebrt15', code: 'X0007', label: 'EBRT Supervision (≤15 #)', fees: { bupa:350, axa:340, vitality:350, aviva:330, cigna:315 } },
-            { id: 'ebrt30', code: 'X0008', label: 'EBRT Supervision (16-30 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
+            { id: 'ebrt30', code: 'X0008', label: 'EBRT Supervision (16-30 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } },
+            { id: 'ebrt31', code: 'X0009', label: 'EBRT Supervision (≥31 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
+        ]
+    },
+    {
+        id: 'brachytherapy',
+        title: 'Brachytherapy (Ch 20)',
+        color: '#fff7ed', iconColor: '#ea580c',
+        icon: '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/>',
+        items: [
+            { id: 'cxb', code: 'BT253', label: 'Papillon CXB', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
         ]
     },
     {
         id: 'sys',
-        title: 'Systemic Therapy',
+        title: 'Systemic Therapy (Ch 18)',
         color: '#eff6ff', iconColor: '#2563eb',
         icon: '<path d="M4 8h8M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
         items: [
-            { id: 'c1', code: 'X0001', label: 'Chemotherapy Supervision (0-7d)', multi:'cycles', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
-            { id: 'c3', code: 'X0003', label: 'Chemotherapy Supervision (1-21d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
-            { id: 'imm', code: 'X0004', label: 'Immunotherapy Supervision', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } }
+            { id: 'c1', code: 'X0001', label: 'Chemotherapy/SACT Supervision (0-7d)', multi:'cycles', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
+            { id: 'c2', code: 'X0002', label: 'Chemotherapy/SACT Supervision (1-14d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
+            { id: 'c3', code: 'X0003', label: 'Chemotherapy/SACT Supervision (1-21d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
+            { id: 'c4', code: 'X0004', label: 'Chemotherapy/SACT Supervision (1-28d)', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
+            { id: 'c5', code: 'X0004', label: 'Chemotherapy/SACT Supervision (1-56d)', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } }
         ]
     }
 ];
