@@ -248,11 +248,10 @@ const DATA = [
         color: '#fdf4ff', iconColor: '#9333ea',
         icon: '<rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
         items: [
-            { id: 'cplx', code: 'X6930', label: 'Complex RT Planning Supervision', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
-            { id: 'imrt', code: 'X6772', label: 'IMRT / VMAT Inverse Planning', fees: { bupa:1000, axa:975, vitality:1000, aviva:950, cigna:900 } },
+            { id: 'imrt', code: 'X6772', label: 'IMRT / VMAT Planning', fees: { bupa:1000, axa:975, vitality:1000, aviva:950, cigna:900 } },
+            { id: 'cplx', code: 'X6930', label: '3D-CRT Planning', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
             { id: 'sabr', code: 'X6002', label: 'SABR / SBRT Planning', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } },
-            { id: 'srs', code: 'X6950', label: 'SRS Planning (Gamma/Cyber)', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } },
-            { id: 'proton', code: 'X6010', label: 'Proton Beam Planning', fees: { bupa:1800, axa:1750, vitality:1800, aviva:1700, cigna:1650 } }
+            { id: 'srs', code: 'X6950', label: 'SRS Planning (GammaKnife/CyberKnife)', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } }
         ]
     },
     {
@@ -261,8 +260,6 @@ const DATA = [
         color: '#fff7ed', iconColor: '#ea580c',
         icon: '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/>',
         items: [
-            { id: 'rt-cplx', code: 'X7005', label: 'Complex IMRT/VMAT (per #)', multi: 'fractions', fees: { bupa:150, axa:145, vitality:150, aviva:140, cigna:135 } },
-            { id: 'rt-sabr', code: 'X7002', label: 'SABR Delivery (per #)', multi: 'fractions', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
             { id: 'ebrt15', code: 'X0007', label: 'EBRT Supervision (≤15 #)', fees: { bupa:350, axa:340, vitality:350, aviva:330, cigna:315 } },
             { id: 'ebrt30', code: 'X0008', label: 'EBRT Supervision (16-30 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
         ]
@@ -273,8 +270,8 @@ const DATA = [
         color: '#eff6ff', iconColor: '#2563eb',
         icon: '<path d="M4 8h8M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
         items: [
-            { id: 'c1', code: 'X0001', label: 'Chemo Supervision (0-7d)', multi:'cycles', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
-            { id: 'c3', code: 'X0003', label: 'Chemo Supervision (1-21d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
+            { id: 'c1', code: 'X0001', label: 'Chemotherapy Supervision (0-7d)', multi:'cycles', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
+            { id: 'c3', code: 'X0003', label: 'Chemotherapy Supervision (1-21d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
             { id: 'imm', code: 'X0004', label: 'Immunotherapy Supervision', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } }
         ]
     }
