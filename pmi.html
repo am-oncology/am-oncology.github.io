@@ -3,624 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practice Fees Calculator</title>
+    <title>Practice Fees Calculator 2026</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* ── TOKENS & RESET ─────────────────────────────────────────── */
+        /* ── TOKENS ─────────────────────────────────────────────────── */
         :root {
-            --ink: #0f1923; --ink-mid: #3d5166; --ink-light: #7a96ad;
-            --bg: #f4f6f8; --surface: #ffffff; --border: #dce3ea;
-            --teal: #0d7c78; --teal-light: #e0f2f1;
-            --amber: #b45309; --amber-bg: #fffbeb;
-            --red: #c0392b; --red-bg: #fef2f2;
-            --green: #1a7a4a; --green-bg: #f0fdf4;
-            --navy: #0f2942; --navy-mid: #1a3c5e; --white: #ffffff;
+            --ink:        #0f1923;
+            --ink-mid:    #3d5166;
+            --ink-light:  #7a96ad;
+            --bg:         #f4f6f8;
+            --surface:    #ffffff;
+            --border:     #dce3ea;
+            --teal:       #0d7c78;
+            --teal-light: #e0f2f1;
+            --amber:      #b45309;
+            --amber-bg:   #fffbeb;
+            --red:        #c0392b;
+            --red-bg:     #fef2f2;
+            --green:      #1a7a4a;
+            --navy:       #0f2942;
+            --white:      #ffffff;
             --font-display: 'DM Serif Display', serif;
-            --font-body: 'DM Sans', sans-serif;
-            --font-mono: 'DM Mono', monospace;
-            --radius: 6px; --radius-lg: 12px;
-            --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
-            --shadow-lg: 0 4px 24px rgba(0,0,0,0.12);
+            --font-body:    'DM Sans', sans-serif;
+            --font-mono:    'DM Mono', monospace;
+            --radius-lg:  12px;
+            --shadow:     0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── RESET & BASE ───────────────────────────────────────────── */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.6; }
-
-        /* ── LAYOUT & HEADER ────────────────────────────────────────── */
-        header { background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.07); padding: 0 2rem; }
-        .header-inner { max-width: 1280px; margin: 0 auto; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-        .brand { display: flex; align-items: baseline; gap: 0.6rem; text-decoration: none; }
-        .brand-name { font-family: var(--font-display); font-size: 1.25rem; color: var(--white); }
-        .brand-tag { font-size: 0.7rem; font-weight: 500; color: var(--teal); border: 1px solid rgba(13,124,120,0.5); padding: 2px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; }
-        nav a { color: rgba(255,255,255,0.55); text-decoration: none; padding: 6px 14px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; transition: 0.2s; }
-        nav a.active, nav a:hover { color: white; background: rgba(255,255,255,0.1); }
-
-        .page-hero { background: var(--navy); padding: 2.5rem 2rem; position: relative; overflow: hidden; }
-        .page-hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 50%, rgba(13,124,120,0.15), transparent 70%); pointer-events: none; }
-        .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
-        .hero-title { font-family: var(--font-display); font-size: 2rem; color: white; margin-bottom: 0.5rem; }
-        .hero-sub { color: rgba(255,255,255,0.6); font-size: 0.95rem; }
-
-        /* ── CALCULATOR GRID ────────────────────────────────────────── */
-        .calc-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem; }
-        .calc-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; align-items: start; }
+        header { background: var(--navy); padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .brand-name { font-family: var(--font-display); font-size: 1.4rem; }
         
-        /* Insurer Selector */
-        .insurer-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow); }
-        .insurer-bar label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-mid); }
-        .insurer-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .insurer-pill { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: 0.2s; user-select: none; }
-        .insurer-pill:hover, .insurer-pill.active { border-color: var(--teal); background: var(--teal-light); color: var(--teal); }
-        .insurer-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0.6; }
-
-        /* Panels & Rows */
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 1.25rem; overflow: hidden; box-shadow: var(--shadow); transition: all 0.2s; }
-        .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
-        .panel-header:hover { background: #f1f5f9; }
-        .panel-left { display: flex; align-items: center; gap: 0.75rem; }
-        .panel-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .panel-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-mid); }
-        .panel-count { font-size: 0.7rem; font-weight: 600; background: var(--teal-light); color: var(--teal); padding: 2px 8px; border-radius: 10px; display: none; }
-        .panel-toggle { transition: transform 0.2s; color: var(--ink-light); }
+        /* ── LAYOUT ──────────────────────────────────────────────────── */
+        .calc-wrap { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: 1fr 340px; gap: 2rem; }
+        
+        /* ── PANELS ──────────────────────────────────────────────────── */
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
+        .panel-header { padding: 1rem; background: #fafbfc; border-bottom: 1px solid var(--border); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; color: var(--ink-mid); cursor: pointer; display: flex; justify-content: space-between; }
+        .panel-body { padding: 0.5rem 0; }
         .panel.collapsed .panel-body { display: none; }
-        .panel.collapsed .panel-toggle { transform: rotate(-90deg); }
-        .panel.collapsed .panel-header { border-bottom: none; }
 
-        /* Fee Rows */
-        .fee-row { display: grid; grid-template-columns: 1fr 160px 140px; gap: 1rem; align-items: center; padding: 0.75rem 1.25rem; border-bottom: 1px solid #f1f4f7; }
-        .fee-row:last-child { border-bottom: none; }
-        .fee-row.active-row { background: var(--teal-light); }
-        
-        .row-meta { display: flex; flex-direction: column; }
-        .row-label { font-size: 0.9rem; font-weight: 500; color: var(--ink); }
-        .row-code { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); background: #f0f3f6; padding: 2px 6px; border-radius: 3px; align-self: start; margin-top: 4px; }
-        
-        .row-select, .row-input { width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; outline: none; transition: 0.2s; }
-        .row-select:focus, .row-input:focus { border-color: var(--teal); }
-        .row-select.selected { border-color: var(--teal); background: white; font-weight: 600; }
-        
-        .input-group { position: relative; }
-        .prefix { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--ink-light); pointer-events: none; }
-        .row-input { padding-left: 20px; font-family: var(--font-mono); }
-        .row-input:disabled { background: #f8fafc; cursor: not-allowed; }
-        .row-input.custom { border-color: var(--amber); background: var(--amber-bg); }
+        /* ── ROWS ────────────────────────────────────────────────────── */
+        .fee-row { display: grid; grid-template-columns: 1fr 160px 120px; gap: 1rem; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f4f7; }
+        .row-label { font-size: 0.9rem; font-weight: 500; }
+        .row-code { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); background: #f0f3f6; padding: 2px 4px; border-radius: 3px; margin-left: 5px; }
+        .row-select, .row-input { padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; width: 100%; }
+        .row-input:disabled { background: #f8f9fa; color: #ccc; }
+        .multi-wrap { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 0.7rem; color: var(--ink-light); }
+        .multi-input { width: 45px; padding: 2px; text-align: center; }
 
-        .row-status { font-size: 0.7rem; font-weight: 600; text-align: right; margin-top: 4px; min-height: 1.2em; }
-        .status-ok { color: var(--green); }
-        .status-over { color: var(--red); }
-
-        .multiplier { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 0.75rem; color: var(--ink-light); justify-content: flex-end; }
-        .multiplier input { width: 45px; padding: 2px 4px; text-align: center; border: 1px solid var(--border); border-radius: 4px; }
-
-        /* ── SIDEBAR ────────────────────────────────────────────────── */
-        .sidebar { position: sticky; top: 1.5rem; }
-        .summary-card { background: var(--navy); border-radius: var(--radius-lg); padding: 1.5rem; color: white; margin-bottom: 1rem; box-shadow: var(--shadow-lg); }
-        .sum-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .sum-head h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; }
-        .reset-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+        /* ── SIDEBAR ─────────────────────────────────────────────────── */
+        .sidebar { position: sticky; top: 2rem; }
+        .summary-card { background: var(--navy); color: white; padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+        .summary-title { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+        .sum-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .sum-total { font-size: 1.8rem; font-family: var(--font-display); margin-top: 1rem; color: #2dd4bf; }
+        .reset-btn { width: 100%; margin-top: 1rem; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .reset-btn:hover { background: rgba(255,255,255,0.2); }
 
-        .sum-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .sum-val { font-family: var(--font-mono); font-weight: 500; }
-        .val-green { color: #4ade80; } .val-red { color: #f87171; }
+        .insurer-bar { background: white; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; display: flex; gap: 10px; border: 1px solid var(--border); align-items: center; }
+        .pill { padding: 6px 15px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .pill.active { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
         
-        .coverage-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin: 1rem 0 0.25rem; }
-        .coverage-fill { height: 100%; background: #4ade80; transition: width 0.3s; }
-        .coverage-text { font-size: 0.7rem; text-align: right; color: rgba(255,255,255,0.5); }
+        .facility-note { background: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: 8px; font-size: 0.8rem; color: #92400e; margin-top: 1rem; }
 
-        .sum-total { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 1rem; padding-top: 1rem; display: flex; justify-content: space-between; align-items: baseline; }
-        .sum-total-val { font-family: var(--font-display); font-size: 1.75rem; }
-
-        .expenses-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; box-shadow: var(--shadow); margin-bottom: 1rem; }
-        .exp-row { margin-bottom: 0.75rem; }
-        .exp-label { font-size: 0.75rem; color: var(--ink-light); display: block; margin-bottom: 4px; }
-        .exp-input-wrap { display: flex; align-items: center; position: relative; }
-        .exp-input-wrap input { width: 100%; padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-mono); }
-        .exp-suffix { position: absolute; right: 8px; font-size: 0.75rem; color: var(--ink-light); pointer-events: none; }
-        
-        .net-result { border-top: 2px solid var(--border); margin-top: 1rem; padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
-        .net-val { font-family: var(--font-display); font-size: 1.4rem; color: var(--teal); }
-
-        .breakdown-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 0.5rem; }
-        .bd-item { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 0.8rem; border-bottom: 1px solid #f1f4f7; }
-        .bd-item:last-child { border-bottom: none; }
-        .bd-empty { padding: 1rem; text-align: center; color: var(--ink-light); font-size: 0.8rem; }
-
-        /* Responsive */
-        @media (max-width: 900px) { .calc-grid { grid-template-columns: 1fr; } .sidebar { position: static; } }
-        @media (max-width: 600px) { .fee-row { grid-template-columns: 1fr; gap: 0.5rem; } }
+        @media (max-width: 900px) { .calc-wrap { grid-template-columns: 1fr; } .sidebar { position: static; } }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="header-inner">
-        <a class="brand" href="#">
-            <span class="brand-name">Clinical Oncology</span>
-            <span class="brand-tag">Tools</span>
-        </a>
-        <nav>
-            <a href="pmi.html" class="active">Fees Calculator</a>
-        </nav>
-    </div>
+    <div class="brand-name">Clinical Oncology Fees 2026</div>
+    <div style="font-size: 0.8rem; opacity: 0.7;">Bupa Updated Feb 2026</div>
 </header>
 
-<div class="page-hero">
-    <div class="hero-inner">
-        <h1 class="hero-title">Practice Fees Calculator</h1>
-        <p class="hero-sub">Estimate coverage, patient top-ups, and net income for episodes of care. (London 2026 rates)</p>
+<div class="calc-wrap">
+    <div>
+        <div class="insurer-bar">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--ink-mid);">INSURER:</span>
+            <div class="pill active" onclick="setInsurer('bupa', this)">BUPA</div>
+            <div class="pill" onclick="setInsurer('axa', this)">AXA</div>
+            <div class="pill" onclick="setInsurer('vitality', this)">Vitality</div>
+            <div class="pill" onclick="setInsurer('aviva', this)">Aviva</div>
+            <div class="pill" onclick="setInsurer('wpa', this)">WPA</div>
+        </div>
+
+        <div class="panel" id="p1">
+            <div class="panel-header" onclick="togglePanel('p1')">I. Consultations & General Care <span>▾</span></div>
+            <div class="panel-body" id="body-consults"></div>
+        </div>
+
+        <div class="panel" id="p2">
+            <div class="panel-header" onclick="togglePanel('p2')">II. Radiotherapy Planning & Preparation <span>▾</span></div>
+            <div class="panel-body" id="body-planning"></div>
+        </div>
+
+        <div class="panel" id="p3">
+            <div class="panel-header" onclick="togglePanel('p3')">III. Radiotherapy Supervision & Delivery <span>▾</span></div>
+            <div class="panel-body" id="body-delivery"></div>
+        </div>
+
+        <div class="panel" id="p4">
+            <div class="panel-header" onclick="togglePanel('p4')">IV. Chemotherapy Clinical Supervision <span>▾</span></div>
+            <div class="panel-body" id="body-chemo"></div>
+        </div>
+
+        <div class="facility-note">
+            <strong>Facility-Only Codes (No Consultant Fee):</strong><br>
+            Radiotherapy: X6541–49, X6590 | Technical: X6710–83 | Mould Room: X6781 (Simple), X6782 (Complex).
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="summary-card">
+            <div class="summary-title">Estimate Summary</div>
+            <div id="breakdown-list"></div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;"></div>
+            <div class="sum-row">
+                <span>Total Gross Fees</span>
+                <span id="gross-total" class="sum-total">£0.00</span>
+            </div>
+            <button class="reset-btn" onclick="resetCalc()">Clear All</button>
+        </div>
     </div>
 </div>
 
-<main class="calc-wrap">
-    
-    <div class="insurer-bar" id="insurer-selector">
-        <label>Insurer:</label>
-        <div class="insurer-pills">
-            </div>
-    </div>
-
-    <div class="calc-grid">
-        
-        <div id="panels-container">
-            </div>
-
-        <div class="sidebar">
-            <div class="summary-card">
-                <div class="sum-head">
-                    <h3>Estimate</h3>
-                    <button class="reset-btn" id="btn-reset">↺ Reset</button>
-                </div>
-                <div class="sum-row">
-                    <span>Insurer Contribution</span>
-                    <span id="disp-insurer" class="val-green">£0.00</span>
-                </div>
-                <div class="sum-row">
-                    <span>Patient Shortfall</span>
-                    <span id="disp-shortfall" class="val-red">£0.00</span>
-                </div>
-                
-                <div class="coverage-bar"><div class="coverage-fill" id="disp-bar" style="width:0%"></div></div>
-                <div class="coverage-text" id="disp-percent">0% Covered</div>
-
-                <div class="sum-total">
-                    <span>Gross Total</span>
-                    <span class="sum-total-val" id="disp-gross">£0.00</span>
-                </div>
-            </div>
-
-            <div class="expenses-card">
-                <div class="exp-row">
-                    <label class="exp-label">Secretarial (%)</label>
-                    <div class="exp-input-wrap"><input type="number" id="exp-sec" value="15"><span class="exp-suffix">%</span></div>
-                </div>
-                <div class="exp-row">
-                    <label class="exp-label">Fixed Costs (£)</label>
-                    <div class="exp-input-wrap"><input type="number" id="exp-fixed" value="50"><span class="exp-suffix">£</span></div>
-                </div>
-                <div class="net-result">
-                    <span style="font-weight:700; font-size:0.85rem; color:var(--ink-mid)">Net Income</span>
-                    <span class="net-val" id="disp-net">£0.00</span>
-                </div>
-            </div>
-
-            <div class="breakdown-card" id="breakdown-list">
-                <div class="bd-empty">Select items to see breakdown.</div>
-            </div>
-        </div>
-
-    </div>
-</main>
-
-<footer>
-    <div style="text-align:center; font-size:0.75rem; color: var(--ink-light); padding: 2rem;">
-        &copy; 2026 AM Oncology. Internal Tool. Estimates do not guarantee reimbursement.
-    </div>
-</footer>
-
 <script>
-/**
- * ─── DATA CONFIGURATION ──────────────────────────────────────────────
- * The "Source of Truth". Add new procedures here to update the UI.
- */
-const INSURERS = ['bupa', 'axa', 'vitality', 'aviva', 'cigna'];
-const INSURER_LABELS = { bupa:'BUPA', axa:'AXA Health', vitality:'Vitality', aviva:'Aviva', cigna:'Cigna/WPA' };
+    let currentInsurer = 'bupa';
 
-const DATA = [
-    {
-        id: 'consult',
-        title: 'Consultations & Inpatient (Ch 1)',
-        color: '#e0f2f1', iconColor: '#0d7c78',
-        icon: '<path d="M8 1a7 7 0 100 14A7 7 0 008 1zM6 8.5l1.5 1.5 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
-        items: [
-            { id: 'np', code: '20300', label: 'New Patient Consultation', fees: { bupa:250, axa:240, vitality:250, aviva:230, cigna:220 } },
-            { id: 'np-rem', code: '20355', label: 'New Patient (Remote)', fees: { bupa:200, axa:195, vitality:200, aviva:185, cigna:180 } },
-            { id: 'fu', code: '20310', label: 'Follow-Up Consultation', multi: 'visits', fees: { bupa:150, axa:145, vitality:150, aviva:140, cigna:130 } },
-            { id: 'fu-rem', code: '20365', label: 'Follow-Up (Remote)', multi: 'visits', fees: { bupa:120, axa:115, vitality:120, aviva:110, cigna:105 } },
-            { id: 'ip', code: '20330', label: 'Inpatient Care (Daily)', multi: 'days', fees: { bupa:100, axa:95, vitality:100, aviva:90, cigna:90 } }
-        ]
-    },
-    {
-        id: 'plan',
-        title: 'Radiotherapy Planning (Ch 20)',
-        color: '#fdf4ff', iconColor: '#9333ea',
-        icon: '<rect x="2" y="2" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
-        items: [
-            { id: 'imrt', code: 'X6772', label: 'IMRT / VMAT Planning', fees: { bupa:1000, axa:975, vitality:1000, aviva:950, cigna:900 } },
-            { id: 'cplx', code: 'X6930', label: '3D-CRT Planning', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
-            { id: 'sabr', code: 'X6002', label: 'SABR / SBRT Planning', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } },
-            { id: 'srs', code: 'X6950', label: 'SRS Planning', fees: { bupa:1350, axa:1300, vitality:1350, aviva:1250, cigna:1200 } }
-        ]
-    },
-    {
-        id: 'delivery',
-        title: 'Radiotherapy Delivery (Ch 20)',
-        color: '#fff7ed', iconColor: '#ea580c',
-        icon: '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" fill="currentColor"/>',
-        items: [
-            { id: 'ebrt1', code: 'X6581', label: 'Single Fraction Supervision (1 #)', fees: { bupa:350, axa:340, vitality:350, aviva:330, cigna:315 } },
-            { id: 'ebrt15', code: 'X0007', label: 'EBRT Supervision (≤15 #)', fees: { bupa:350, axa:340, vitality:350, aviva:330, cigna:315 } },
-            { id: 'ebrt30', code: 'X0008', label: 'EBRT Supervision (16-30 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } },
-            { id: 'ebrt31', code: 'X0009', label: 'EBRT Supervision (≥31 #)', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
-        ]
-    },
-    {
-        id: 'brachytherapy',
-        title: 'Brachytherapy (Ch 20)',
-        color: '#fdf2f8', iconColor: '#be185d',
-        icon: '<circle cx="8" cy="8" r="3" fill="currentColor"/><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 2"/>',
-        items: [
-            { id: 'cxb', code: 'BT253', label: 'Papillon CXB', multi: 'fractions', fees: { bupa:450, axa:435, vitality:450, aviva:420, cigna:400 } }
-        ]
-    },
-    {
-        id: 'sys',
-        title: 'Systemic Therapy (Ch 18)',
-        color: '#eff6ff', iconColor: '#2563eb',
-        icon: '<path d="M4 8h8M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
-        items: [
-            { id: 'c1', code: 'X0001', label: 'Chemotherapy/SACT Supervision (0-7d)', multi:'cycles', fees: { bupa:250, axa:240, vitality:250, aviva:235, cigna:225 } },
-            { id: 'c2', code: 'X0002', label: 'Chemotherapy/SACT Supervision (1-14d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
-            { id: 'c3', code: 'X0003', label: 'Chemotherapy/SACT Supervision (1-21d)', multi:'cycles', fees: { bupa:375, axa:360, vitality:375, aviva:350, cigna:340 } },
-            { id: 'c4', code: 'X0004', label: 'Chemotherapy/SACT Supervision (1-28d)', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } },
-            { id: 'c5', code: 'X0004', label: 'Chemotherapy/SACT Supervision (1-56d)', multi:'cycles', fees: { bupa:500, axa:480, vitality:500, aviva:460, cigna:440 } }
-        ]
-    }
-];
+    // ── DATA FROM YOUR FEB 2026 TABLE ──────────────────────────────────
+    const STANDARDS = {
+        // Consultations
+        '20300': { bupa: 200, axa: 170, vitality: 200, aviva: 180, wpa: 170, label: 'Initial Outpatient (F2F)', cat: 'consult' },
+        '20310': { bupa: 150, axa: 130, vitality: 150, aviva: 140, wpa: 130, label: 'Follow-up Outpatient (F2F)', cat: 'consult', multi: 'visits' },
+        '20355': { bupa: 200, axa: 170, vitality: 200, aviva: 180, wpa: 170, label: 'Initial Outpatient (Remote)', cat: 'consult' },
+        '20365': { bupa: 150, axa: 130, vitality: 150, aviva: 140, wpa: 130, label: 'Follow-up Outpatient (Remote)', cat: 'consult', multi: 'visits' },
+        '20320': { bupa: 90,  axa: 80,  vitality: 90,  aviva: 85,  wpa: 80,  label: 'Inpatient Care (Daily)', cat: 'consult', multi: 'days' },
 
-/**
- * ─── CLASS: FEE CALCULATOR ───────────────────────────────────────────
- * Encapsulates logic, rendering, and state management.
- */
-class FeeCalculator {
-    constructor() {
-        this.state = {
-            insurer: 'bupa',
-            items: {} // { itemId: { mode: 'standard'|'custom'|'none', customVal: 0, multiplier: 1 } }
-        };
-        
-        // Cache DOM roots
-        this.dom = {
-            panels: document.getElementById('panels-container'),
-            insurers: document.getElementById('insurer-selector').querySelector('.insurer-pills'),
-            breakdown: document.getElementById('breakdown-list'),
-            outputs: {
-                gross: document.getElementById('disp-gross'),
-                insurer: document.getElementById('disp-insurer'),
-                shortfall: document.getElementById('disp-shortfall'),
-                net: document.getElementById('disp-net'),
-                bar: document.getElementById('disp-bar'),
-                pct: document.getElementById('disp-percent')
-            },
-            expenses: {
-                sec: document.getElementById('exp-sec'),
-                fixed: document.getElementById('exp-fixed')
-            }
-        };
+        // Planning
+        'X6772': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Prep: Complex RT with IMRT', cat: 'plan' },
+        'X6950': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Planning: SRT/SBRT/GK', cat: 'plan' },
+        'X6810': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Prep: SIRT', cat: 'plan' },
+        'BT211': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Planning: HDR Brachy (Prostate)', cat: 'plan' },
+        'X6774': { bupa: 1085, axa: 980,  vitality: 1085, aviva: 1000, wpa: 920,  label: 'Prep: Intermediate IMRT', cat: 'plan' },
+        'X6773': { bupa: 800,  axa: 720,  vitality: 800,  aviva: 740,  wpa: 680,  label: 'Prep: Simple IMRT', cat: 'plan' },
+        'X6930': { bupa: 600,  axa: 540,  vitality: 600,  aviva: 550,  wpa: 510,  label: 'Supervision: Complex Planning', cat: 'plan' },
 
-        this.init();
-    }
+        // Delivery
+        'A0380': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'SRT (GammaKnife)', cat: 'delivery' },
+        'X6560': { bupa: 1144, axa: 1030, vitality: 1144, aviva: 1050, wpa: 970,  label: 'SIRT Delivery', cat: 'delivery' },
+        'X0009': { bupa: 960,  axa: 865,  vitality: 960,  aviva: 885,  wpa: 820,  label: 'EBRT Supervision (31+ fr)', cat: 'delivery' },
+        'X0008': { bupa: 720,  axa: 650,  vitality: 720,  aviva: 660,  wpa: 610,  label: 'EBRT Supervision (16–30 fr)', cat: 'delivery' },
+        'X0007': { bupa: 380,  axa: 340,  vitality: 380,  aviva: 350,  wpa: 320,  label: 'EBRT Supervision (1–15 fr)', cat: 'delivery' },
+        'X6581': { bupa: 25,   axa: 22,   vitality: 25,   aviva: 23,   wpa: 21,   label: 'Single Fraction Supervision', cat: 'delivery', multi: 'fractions' },
 
-    init() {
-        this.renderInsurers();
-        this.renderPanels();
-        this.attachEventListeners();
-        this.calculate(); // Initial Calc
-    }
+        // Chemo
+        'X0001': { bupa: 137, axa: 123, vitality: 137, aviva: 125, wpa: 115, label: 'Chemo Superv. (0–7 days)', cat: 'chemo' },
+        'X0002': { bupa: 257, axa: 231, vitality: 257, aviva: 235, wpa: 218, label: 'Chemo Superv. (1–14 days)', cat: 'chemo' },
+        'X0003': { bupa: 386, axa: 347, vitality: 386, aviva: 355, wpa: 328, label: 'Chemo Superv. (1–21 days)', cat: 'chemo' },
+        'X0004': { bupa: 515, axa: 463, vitality: 515, aviva: 475, wpa: 438, label: 'Chemo Superv. (1–28 days)', cat: 'chemo' },
+        'X0005': { bupa: 565, axa: 510, vitality: 565, aviva: 520, wpa: 480, label: 'Chemo Superv. (1–56 days)', cat: 'chemo' },
+    };
 
-    // ─── RENDERING ───────────────────────────────────────────────────
-
-    renderInsurers() {
-        this.dom.insurers.innerHTML = INSURERS.map(key => `
-            <div class="insurer-pill ${key === 'bupa' ? 'active' : ''}" data-key="${key}">
-                <span class="dot"></span>${INSURER_LABELS[key]}
-            </div>
-        `).join('');
-    }
-
-    renderPanels() {
-        this.dom.panels.innerHTML = DATA.map(cat => `
-            <div class="panel collapsed" id="panel-${cat.id}">
-                <div class="panel-header" onclick="this.parentElement.classList.toggle('collapsed')">
-                    <div class="panel-left">
-                        <div class="panel-icon" style="background:${cat.color}; color:${cat.iconColor}">
-                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16">${cat.icon}</svg>
-                        </div>
-                        <span class="panel-title">${cat.title}</span>
-                        <span class="panel-count" id="badge-${cat.id}">0 selected</span>
+    // Render HTML rows
+    function init() {
+        Object.keys(STANDARDS).forEach(code => {
+            const item = STANDARDS[code];
+            const html = `
+                <div class="fee-row" id="row-${code}">
+                    <div>
+                        <div class="row-label">${item.label}<span class="row-code">${code}</span></div>
+                        ${item.multi ? `
+                            <div class="multi-wrap">
+                                × <input type="number" class="multi-input" id="multi-${code}" value="1" min="1" oninput="calculate()"> ${item.multi}
+                            </div>
+                        ` : ''}
                     </div>
-                    <span class="panel-toggle">▼</span>
-                </div>
-                <div class="panel-body">
-                    ${cat.items.map(item => this.renderRow(item)).join('')}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    renderRow(item) {
-        // Find fee for current insurer (default bupa) to set placeholder
-        const fee = item.fees[this.state.insurer];
-        const hasMulti = !!item.multi;
-
-        return `
-            <div class="fee-row" data-id="${item.id}">
-                <div class="row-meta">
-                    <span class="row-label">${item.label}</span>
-                    <span class="row-code">${item.code}</span>
-                </div>
-                <div>
-                    <select class="row-select action-select">
-                        <option value="none">— Select —</option>
-                        <option value="standard">Standard Fee</option>
+                    <select class="row-select" id="sel-${code}" onchange="toggleRow('${code}')">
+                        <option value="none">— Add —</option>
+                        <option value="std">Standard Fee</option>
                         <option value="custom">Custom Fee</option>
                     </select>
+                    <input type="number" class="row-input" id="inp-${code}" disabled placeholder="0" oninput="calculate()">
                 </div>
-                <div>
-                    <div class="input-group">
-                        <span class="prefix">£</span>
-                        <input type="number" class="row-input action-input" disabled placeholder="${fee}">
-                    </div>
-                    <div class="row-status"></div>
-                    ${hasMulti ? `
-                        <div class="multiplier">
-                            <span>× ${item.multi}</span>
-                            <input type="number" class="action-multi" value="1" min="1" max="99">
-                        </div>` 
-                    : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    // ─── LOGIC & EVENTS ──────────────────────────────────────────────
-
-    attachEventListeners() {
-        // Insurer Switch
-        this.dom.insurers.addEventListener('click', (e) => {
-            const pill = e.target.closest('.insurer-pill');
-            if (!pill) return;
-            
-            // UI Update
-            document.querySelectorAll('.insurer-pill').forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-            
-            // Logic Update
-            this.state.insurer = pill.dataset.key;
-            this.updateStandardValues(); // Refreshes inputs currently set to 'standard'
-            this.calculate();
-        });
-
-        // Global Event Delegation for Inputs/Selects
-        this.dom.panels.addEventListener('input', (e) => this.handleInput(e));
-        
-        // Expenses
-        this.dom.expenses.sec.addEventListener('input', () => this.calculate());
-        this.dom.expenses.fixed.addEventListener('input', () => this.calculate());
-
-        // Reset
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            this.state.items = {};
-            document.querySelectorAll('select').forEach(s => s.value = 'none');
-            document.querySelectorAll('.row-input').forEach(i => { i.value=''; i.disabled=true; i.classList.remove('custom'); });
-            document.querySelectorAll('.fee-row').forEach(r => r.classList.remove('active-row'));
-            document.querySelectorAll('.action-multi').forEach(m => m.value = 1);
-            this.calculate();
+            `;
+            const containerId = { consult: 'body-consults', plan: 'body-planning', delivery: 'body-delivery', chemo: 'body-chemo' }[item.cat];
+            document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
         });
     }
 
-    handleInput(e) {
-        const row = e.target.closest('.fee-row');
-        if (!row) return;
-        
-        const id = row.dataset.id;
-        const select = row.querySelector('.action-select');
-        const input = row.querySelector('.action-input');
-        const multiInput = row.querySelector('.action-multi');
-        const status = row.querySelector('.row-status');
-
-        // Logic based on target type
-        if (e.target.classList.contains('action-select')) {
-            const val = e.target.value;
-            row.classList.toggle('active-row', val !== 'none');
-            select.classList.toggle('selected', val !== 'none');
-            
-            if (val === 'none') {
-                input.value = '';
-                input.disabled = true;
-                input.classList.remove('custom');
-                status.innerHTML = '';
-                delete this.state.items[id];
-            } else if (val === 'standard') {
-                input.disabled = true;
-                input.classList.remove('custom');
-                // Set value immediately based on current insurer
-                const fee = this.getStandardFee(id);
-                input.value = fee;
-                this.updateItemState(id, 'standard', fee, multiInput?.value);
-            } else { // Custom
-                input.disabled = false;
-                input.classList.add('custom');
-                if(!input.value) input.value = this.getStandardFee(id);
-                input.focus();
-                this.updateItemState(id, 'custom', input.value, multiInput?.value);
-            }
-        } 
-        else if (e.target.classList.contains('action-input') || e.target.classList.contains('action-multi')) {
-            const mode = select.value;
-            if (mode !== 'none') {
-                this.updateItemState(id, mode, input.value, multiInput?.value);
-            }
-        }
-        
-        this.calculate();
-    }
-
-    updateItemState(id, mode, val, multi = 1) {
-        this.state.items[id] = {
-            mode: mode,
-            value: parseFloat(val) || 0,
-            multi: parseInt(multi) || 1
-        };
-    }
-
-    getStandardFee(itemId) {
-        // Find item in DATA structure
-        for(let cat of DATA) {
-            const item = cat.items.find(i => i.id === itemId);
-            if(item) return item.fees[this.state.insurer];
-        }
-        return 0;
-    }
-
-    updateStandardValues() {
-        // When insurer changes, update all rows currently set to 'standard'
-        Object.entries(this.state.items).forEach(([id, item]) => {
-            if (item.mode === 'standard') {
-                const newFee = this.getStandardFee(id);
-                item.value = newFee;
-                
-                // Update DOM
-                const row = document.querySelector(`.fee-row[data-id="${id}"]`);
-                if(row) row.querySelector('.action-input').value = newFee;
-            }
-            // Update placeholders for everyone else
-            const row = document.querySelector(`.fee-row[data-id="${id}"]`);
-            if(row) row.querySelector('.action-input').placeholder = this.getStandardFee(id);
-        });
-    }
-
-    // ─── CALCULATION ENGINE ──────────────────────────────────────────
-
-    calculate() {
-        let totalGross = 0;
-        let totalInsurer = 0;
-        let totalShortfall = 0;
-        const lineItems = [];
-        const panelCounts = {};
-
-        // 1. Calculate Rows
-        Object.entries(this.state.items).forEach(([id, state]) => {
-            // Find Reference Data
-            let refItem, catId;
-            for(let cat of DATA) {
-                const found = cat.items.find(i => i.id === id);
-                if(found) { refItem = found; catId = cat.id; break; }
-            }
-            if(!refItem) return;
-
-            // Math
-            const stdFee = refItem.fees[this.state.insurer];
-            const totalRowGross = state.value * state.multi;
-            const totalRowLimit = stdFee * state.multi;
-            
-            let rowShortfall = 0;
-            let rowInsurer = totalRowGross;
-
-            if (totalRowGross > totalRowLimit) {
-                rowShortfall = totalRowGross - totalRowLimit;
-                rowInsurer = totalRowLimit;
-            }
-
-            // Totals
-            totalGross += totalRowGross;
-            totalInsurer += rowInsurer;
-            totalShortfall += rowShortfall;
-
-            // List Item
-            lineItems.push({ 
-                label: refItem.label, 
-                val: totalRowGross, 
-                multi: state.multi > 1 ? state.multi : null 
-            });
-
-            // Panel Counts
-            panelCounts[catId] = (panelCounts[catId] || 0) + 1;
-
-            // DOM Status update (Standard vs Shortfall)
-            const row = document.querySelector(`.fee-row[data-id="${id}"]`);
-            const statusEl = row.querySelector('.row-status');
-            if (rowShortfall > 0) {
-                statusEl.innerHTML = `<span class="status-over">+£${rowShortfall.toFixed(2)} shortfall</span>`;
-            } else {
-                statusEl.innerHTML = `<span class="status-ok">✓ Covered</span>`;
-            }
-        });
-
-        // 2. Calculate Expenses
-        const secRate = parseFloat(this.dom.expenses.sec.value) || 0;
-        const fixedCost = parseFloat(this.dom.expenses.fixed.value) || 0;
-        const secCost = totalGross * (secRate / 100);
-        const netIncome = totalGross - secCost - fixedCost;
-
-        // 3. Render Outputs
-        const fmt = (n) => n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        
-        this.dom.outputs.gross.textContent = '£' + fmt(totalGross);
-        this.dom.outputs.insurer.textContent = '£' + fmt(totalInsurer);
-        this.dom.outputs.shortfall.textContent = '£' + fmt(totalShortfall);
-        this.dom.outputs.net.textContent = '£' + fmt(netIncome);
-        
-        // Coverage Bar
-        const pct = totalGross > 0 ? Math.round((totalInsurer / totalGross) * 100) : 0;
-        this.dom.outputs.bar.style.width = pct + '%';
-        this.dom.outputs.pct.textContent = pct + '% covered';
-
-        // Badges
-        DATA.forEach(cat => {
-            const badge = document.getElementById(`badge-${cat.id}`);
-            const count = panelCounts[cat.id] || 0;
-            if(count > 0) {
-                badge.style.display = 'inline-block';
-                badge.textContent = `${count} selected`;
-                // Open panel if it has items
-                document.getElementById(`panel-${cat.id}`).classList.remove('collapsed');
-            } else {
-                badge.style.display = 'none';
-            }
-        });
-
-        // Breakdown List
-        if (lineItems.length === 0) {
-            this.dom.breakdown.innerHTML = '<div class="bd-empty">Select items to see breakdown.</div>';
+    function toggleRow(code) {
+        const sel = document.getElementById('sel-' + code);
+        const inp = document.getElementById('inp-' + code);
+        if (sel.value === 'std') {
+            inp.value = STANDARDS[code][currentInsurer];
+            inp.disabled = true;
+        } else if (sel.value === 'custom') {
+            inp.disabled = false;
+            inp.focus();
         } else {
-            this.dom.breakdown.innerHTML = lineItems.map(li => `
-                <div class="bd-item">
-                    <span>${li.label} ${li.multi ? `<span style="color:var(--ink-light)">(×${li.multi})</span>` : ''}</span>
-                    <span style="font-family:var(--font-mono)">£${fmt(li.val)}</span>
-                </div>
-            `).join('');
+            inp.value = '';
+            inp.disabled = true;
         }
+        calculate();
     }
-}
 
-// ─── INIT ────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new FeeCalculator();
-});
+    function calculate() {
+        let total = 0;
+        let breakdownHtml = '';
+        Object.keys(STANDARDS).forEach(code => {
+            const sel = document.getElementById('sel-' + code);
+            const inp = document.getElementById('inp-' + code);
+            const multi = document.getElementById('multi-' + code)?.value || 1;
+            
+            if (sel.value !== 'none' && inp.value > 0) {
+                const rowTotal = parseFloat(inp.value) * parseInt(multi);
+                total += rowTotal;
+                breakdownHtml += `
+                    <div class="sum-row">
+                        <span style="font-size:0.75rem; opacity:0.8;">${STANDARDS[code].label}</span>
+                        <span>£${rowTotal.toLocaleString()}</span>
+                    </div>
+                `;
+            }
+        });
+        document.getElementById('gross-total').innerText = '£' + total.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('breakdown-list').innerHTML = breakdownHtml;
+    }
 
+    function setInsurer(ins, el) {
+        currentInsurer = ins;
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        // Update standard values for already selected rows
+        Object.keys(STANDARDS).forEach(code => {
+            if (document.getElementById('sel-' + code).value === 'std') {
+                document.getElementById('inp-' + code).value = STANDARDS[code][ins];
+            }
+        });
+        calculate();
+    }
+
+    function togglePanel(id) { document.getElementById(id).classList.toggle('collapsed'); }
+    
+    function resetCalc() {
+        location.reload();
+    }
+
+    init();
 </script>
+
 </body>
 </html>
