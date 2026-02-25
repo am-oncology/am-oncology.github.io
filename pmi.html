@@ -25,111 +25,206 @@
             --red:        #c0392b;
             --red-bg:     #fef2f2;
             --green:      #1a7a4a;
+            --green-bg:   #f0fdf4;
             --navy:       #0f2942;
+            --navy-mid:   #1a3c5e;
             --white:      #ffffff;
             --font-display: 'DM Serif Display', serif;
             --font-body:    'DM Sans', sans-serif;
             --font-mono:    'DM Mono', monospace;
+            --radius:     6px;
             --radius-lg:  12px;
             --shadow:     0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
+            --shadow-lg:  0 4px 24px rgba(0,0,0,0.12);
         }
 
-        /* ── RESET & BASE ───────────────────────────────────────────── */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* ── RESET ───────────────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.6; }
-        header { background: var(--navy); padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
-        .brand-name { font-family: var(--font-display); font-size: 1.4rem; }
+
+        /* ── HEADER & HERO ───────────────────────────────────────────── */
+        header { background: var(--navy); border-bottom: 1px solid rgba(255,255,255,0.07); padding: 0 2rem; }
+        .header-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+        .brand { display: flex; align-items: baseline; gap: 0.6rem; text-decoration: none; }
+        .brand-name { font-family: var(--font-display); font-size: 1.25rem; color: var(--white); }
+        .brand-tag { font-size: 0.7rem; font-weight: 500; color: var(--teal); text-transform: uppercase; border: 1px solid rgba(13,124,120,0.5); padding: 2px 7px; border-radius: 3px; }
         
+        .page-hero { background: var(--navy); padding: 2.5rem 2rem 2rem; position: relative; overflow: hidden; }
+        .hero-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem; letter-spacing: 0.12em; }
+        .hero-title { font-family: var(--font-display); font-size: 2rem; color: white; line-height: 1.2; margin-bottom: 0.5rem; }
+        .hero-sub { font-size: 0.9rem; color: rgba(255,255,255,0.55); max-width: 540px; }
+
         /* ── LAYOUT ──────────────────────────────────────────────────── */
-        .calc-wrap { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: 1fr 340px; gap: 2rem; }
+        .calc-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; align-items: start; }
+
+        /* ── INSURER SELECTOR ────────────────────────────────────────── */
+        .insurer-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow); }
+        .insurer-bar label { font-size: 0.8rem; font-weight: 600; color: var(--ink-mid); text-transform: uppercase; }
+        .insurer-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .insurer-pill { padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: all 0.15s; }
+        .insurer-pill.active { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 600; }
+
+        /* ── PANELS & ROWS ───────────────────────────────────────────── */
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 1.25rem; overflow: hidden; }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: #fafbfc; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .panel-header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .panel-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+        .panel-title { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--ink-mid); }
+        .panel-count { font-size: 0.7rem; font-weight: 600; background: var(--teal-light); color: var(--teal); padding: 2px 7px; border-radius: 10px; }
         
-        /* ── PANELS ──────────────────────────────────────────────────── */
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-bottom: 1.5rem; overflow: hidden; }
-        .panel-header { padding: 1rem; background: #fafbfc; border-bottom: 1px solid var(--border); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; color: var(--ink-mid); cursor: pointer; display: flex; justify-content: space-between; }
-        .panel-body { padding: 0.5rem 0; }
-        .panel.collapsed .panel-body { display: none; }
-
-        /* ── ROWS ────────────────────────────────────────────────────── */
-        .fee-row { display: grid; grid-template-columns: 1fr 160px 120px; gap: 1rem; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f4f7; }
-        .row-label { font-size: 0.9rem; font-weight: 500; }
-        .row-code { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-light); background: #f0f3f6; padding: 2px 4px; border-radius: 3px; margin-left: 5px; }
-        .row-select, .row-input { padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem; width: 100%; }
-        .row-input:disabled { background: #f8f9fa; color: #ccc; }
-        .multi-wrap { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 0.7rem; color: var(--ink-light); }
-        .multi-input { width: 45px; padding: 2px; text-align: center; }
-
-        /* ── SIDEBAR ─────────────────────────────────────────────────── */
-        .sidebar { position: sticky; top: 2rem; }
-        .summary-card { background: var(--navy); color: white; padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
-        .summary-title { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
-        .sum-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .sum-total { font-size: 1.8rem; font-family: var(--font-display); margin-top: 1rem; color: #2dd4bf; }
-        .reset-btn { width: 100%; margin-top: 1rem; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .reset-btn:hover { background: rgba(255,255,255,0.2); }
-
-        .insurer-bar { background: white; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; display: flex; gap: 10px; border: 1px solid var(--border); align-items: center; }
-        .pill { padding: 6px 15px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600; }
-        .pill.active { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
+        .fee-row { display: grid; grid-template-columns: 1fr 170px 130px; gap: 0.75rem; align-items: center; padding: 0.75rem 1.25rem; border-bottom: 1px solid #f1f4f7; transition: background 0.12s; }
+        .fee-row:hover { background: #fafbfc; }
+        .row-label { font-size: 0.875rem; color: var(--ink); font-weight: 500; }
+        .row-code { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-light); background: #f0f3f6; padding: 2px 5px; border-radius: 3px; margin-left: 6px; }
         
-        .facility-note { background: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: 8px; font-size: 0.8rem; color: #92400e; margin-top: 1rem; }
+        .row-select { padding: 7px 8px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.82rem; background: white; cursor: pointer; width: 100%; }
+        .row-select.selected { border-color: var(--teal); background: var(--teal-light); }
+        .row-input-wrap { position: relative; }
+        .row-input-prefix { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); font-size: 0.82rem; color: var(--ink-light); }
+        .row-input { padding: 7px 8px 7px 20px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--font-mono); font-size: 0.85rem; width: 100%; }
+        .row-input:disabled { background: #f8fafc; color: #adb9c4; }
+        .row-status { font-size: 0.7rem; font-weight: 600; margin-top: 3px; text-align: right; min-height: 14px; }
+        
+        .multi-wrap { display: flex; align-items: center; gap: 4px; margin-top: 4px; font-size: 0.68rem; color: var(--ink-light); }
+        .multi-input { width: 45px; text-align: center; border: 1px solid var(--border); border-radius: 3px; font-family: var(--font-mono); }
 
-        @media (max-width: 900px) { .calc-wrap { grid-template-columns: 1fr; } .sidebar { position: static; } }
+        /* ── SIDEBAR CARDS ───────────────────────────────────────────── */
+        .summary-card { background: var(--navy); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-lg); margin-bottom: 1rem; color: white; padding: 1.1rem 1.25rem; }
+        .sum-gross { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.5rem; }
+        .sum-gross-val { font-family: var(--font-display); font-size: 1.6rem; color: #2dd4bf; }
+        
+        .expenses-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; box-shadow: var(--shadow); margin-top: 1rem; }
+        .expenses-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 0.85rem; }
+        .exp-field { margin-bottom: 0.75rem; }
+        .exp-label { font-size: 0.75rem; color: var(--ink-light); display: block; margin-bottom: 4px; }
+        .exp-input { width: 100%; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--font-mono); }
+        
+        .net-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.85rem; border-top: 2px solid var(--border); }
+        .net-val { font-family: var(--font-display); font-size: 1.4rem; color: var(--teal); }
+
+        .breakdown-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); margin-top: 1rem; overflow: hidden; }
+        .breakdown-head { padding: 0.75rem 1rem; background: #fafbfc; border-bottom: 1px solid var(--border); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--ink-light); }
+        .bd-item { display: flex; justify-content: space-between; padding: 5px 0.8rem; font-size: 0.78rem; border-bottom: 1px solid #f1f4f7; }
+        .bd-val { font-family: var(--font-mono); }
+
+        .facility-note { background: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: 8px; font-size: 0.75rem; color: #92400e; margin-top: 1.5rem; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="brand-name">Clinical Oncology Fees 2026</div>
-    <div style="font-size: 0.8rem; opacity: 0.7;">Bupa Updated Feb 2026</div>
+    <div class="header-inner">
+        <a class="brand" href="#">
+            <span class="brand-name">Clinical Oncology</span>
+            <span class="brand-tag">Professional 2026</span>
+        </a>
+    </div>
 </header>
 
+<div class="page-hero">
+    <div class="hero-inner">
+        <div class="hero-eyebrow">Practice Management</div>
+        <h1 class="hero-title">Fees & Income Calculator</h1>
+        <p class="hero-sub">Aligned with the Feb 2026 Bupa Schedule and official CCSD code updates.</p>
+    </div>
+</div>
+
 <div class="calc-wrap">
-    <div>
-        <div class="insurer-bar">
-            <span style="font-size: 0.8rem; font-weight: 700; color: var(--ink-mid);">INSURER:</span>
-            <div class="pill active" onclick="setInsurer('bupa', this)">BUPA</div>
-            <div class="pill" onclick="setInsurer('axa', this)">AXA</div>
-            <div class="pill" onclick="setInsurer('vitality', this)">Vitality</div>
-            <div class="pill" onclick="setInsurer('aviva', this)">Aviva</div>
-            <div class="pill" onclick="setInsurer('wpa', this)">WPA</div>
-        </div>
-
-        <div class="panel" id="p1">
-            <div class="panel-header" onclick="togglePanel('p1')">I. Consultations & General Care <span>▾</span></div>
-            <div class="panel-body" id="body-consults"></div>
-        </div>
-
-        <div class="panel" id="p2">
-            <div class="panel-header" onclick="togglePanel('p2')">II. Radiotherapy Planning & Preparation <span>▾</span></div>
-            <div class="panel-body" id="body-planning"></div>
-        </div>
-
-        <div class="panel" id="p3">
-            <div class="panel-header" onclick="togglePanel('p3')">III. Radiotherapy Supervision & Delivery <span>▾</span></div>
-            <div class="panel-body" id="body-delivery"></div>
-        </div>
-
-        <div class="panel" id="p4">
-            <div class="panel-header" onclick="togglePanel('p4')">IV. Chemotherapy Clinical Supervision <span>▾</span></div>
-            <div class="panel-body" id="body-chemo"></div>
-        </div>
-
-        <div class="facility-note">
-            <strong>Facility-Only Codes (No Consultant Fee):</strong><br>
-            Radiotherapy: X6541–49, X6590 | Technical: X6710–83 | Mould Room: X6781 (Simple), X6782 (Complex).
+    <div class="insurer-bar">
+        <label>Insurer Rates</label>
+        <div class="insurer-pills">
+            <div class="insurer-pill active" onclick="setInsurer('bupa', this)">BUPA</div>
+            <div class="insurer-pill" onclick="setInsurer('axa', this)">AXA</div>
+            <div class="insurer-pill" onclick="setInsurer('vitality', this)">Vitality</div>
+            <div class="insurer-pill" onclick="setInsurer('aviva', this)">Aviva</div>
+            <div class="insurer-pill" onclick="setInsurer('wpa', this)">WPA</div>
         </div>
     </div>
 
-    <div class="sidebar">
-        <div class="summary-card">
-            <div class="summary-title">Estimate Summary</div>
-            <div id="breakdown-list"></div>
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;"></div>
-            <div class="sum-row">
-                <span>Total Gross Fees</span>
-                <span id="gross-total" class="sum-total">£0.00</span>
+    <div class="calc-grid">
+        <div>
+            <div class="panel" id="p1">
+                <div class="panel-header" onclick="togglePanel('p1')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#e0f2f1;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM6 8.5l1.5 1.5 3-3" stroke="#0d7c78" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <span class="panel-title">Consultations</span>
+                        <span class="panel-count" id="count-p1">0 selected</span>
+                    </div>
+                    <span>▾</span>
+                </div>
+                <div class="panel-body" id="body-consults"></div>
             </div>
-            <button class="reset-btn" onclick="resetCalc()">Clear All</button>
+
+            <div class="panel" id="p2">
+                <div class="panel-header" onclick="togglePanel('p2')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#fdf4ff;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1.5" stroke="#9333ea" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="#9333ea" stroke-width="1.2"/></svg>
+                        </div>
+                        <span class="panel-title">RT Planning & Prep</span>
+                        <span class="panel-count" id="count-p2">0 selected</span>
+                    </div>
+                    <span>▾</span>
+                </div>
+                <div class="panel-body" id="body-planning"></div>
+            </div>
+
+            <div class="panel" id="p3">
+                <div class="panel-header" onclick="togglePanel('p3')">
+                    <div class="panel-header-left">
+                        <div class="panel-icon" style="background:#fff7ed;">
+                            <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12M4 4l8 8M12 4L4 12" stroke="#ea580c" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <span class="panel-title">RT Supervision</span>
+                        <span class="panel-count" id="count-p3">0 selected</span>
+                    </div>
+                    <span>▾</span>
+                </div>
+                <div class="panel-body" id="body-delivery"></div>
+            </div>
+
+            <div class="facility-note">
+                <strong>Facility Codes:</strong> Professional fees are £0 for X6541–49, X6590, X6710–83, and X6781–82.
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="summary-card">
+                <div style="font-size: 0.75rem; opacity: 0.6; text-transform: uppercase;">Total Episode Fee</div>
+                <div class="sum-gross">
+                    <span id="gross-total" class="sum-gross-val">£0.00</span>
+                </div>
+                <div style="font-size: 0.65rem; opacity: 0.5; margin-top: 4px;">Shortfall total: <span id="total-shortfall">£0.00</span></div>
+            </div>
+
+            <div class="expenses-card">
+                <div class="expenses-title">Costs & Net Income</div>
+                <div class="exp-field">
+                    <label class="exp-label">Secretarial / Admin (%)</label>
+                    <input type="number" id="exp-admin" class="exp-input" value="15" oninput="calculate()">
+                </div>
+                <div class="exp-field">
+                    <label class="exp-label">Fixed Costs / Indemnity (£)</label>
+                    <input type="number" id="exp-fixed" class="exp-input" value="0" oninput="calculate()">
+                </div>
+                <div class="net-row">
+                    <span class="net-label">Est. Net Income</span>
+                    <span id="net-val" class="net-val">£0.00</span>
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <div class="breakdown-head">Itemised Invoice</div>
+                <div id="breakdown-list">
+                    <div style="padding: 1rem; color: #999; font-size: 0.75rem; text-align: center;">No items selected.</div>
+                </div>
+            </div>
+            
+            <button onclick="location.reload()" style="width:100%; margin-top:1rem; padding:10px; border-radius:6px; border:1px solid #dce3ea; background:white; font-weight:600; cursor:pointer; color:#3d5166;">Reset Calculator</button>
         </div>
     </div>
 </div>
@@ -137,41 +232,23 @@
 <script>
     let currentInsurer = 'bupa';
 
-    // ── DATA FROM YOUR FEB 2026 TABLE ──────────────────────────────────
     const STANDARDS = {
-        // Consultations
-        '20300': { bupa: 200, axa: 170, vitality: 200, aviva: 180, wpa: 170, label: 'Initial Outpatient (F2F)', cat: 'consult' },
-        '20310': { bupa: 150, axa: 130, vitality: 150, aviva: 140, wpa: 130, label: 'Follow-up Outpatient (F2F)', cat: 'consult', multi: 'visits' },
-        '20355': { bupa: 200, axa: 170, vitality: 200, aviva: 180, wpa: 170, label: 'Initial Outpatient (Remote)', cat: 'consult' },
-        '20365': { bupa: 150, axa: 130, vitality: 150, aviva: 140, wpa: 130, label: 'Follow-up Outpatient (Remote)', cat: 'consult', multi: 'visits' },
-        '20320': { bupa: 90,  axa: 80,  vitality: 90,  aviva: 85,  wpa: 80,  label: 'Inpatient Care (Daily)', cat: 'consult', multi: 'days' },
+        '20300': { bupa: 200, axa: 170, vitality: 200, aviva: 180, wpa: 170, label: 'Initial Outpatient (F2F)', cat: 'p1' },
+        '20310': { bupa: 150, axa: 130, vitality: 150, aviva: 140, wpa: 130, label: 'Follow-up Outpatient', cat: 'p1', multi: 'visits' },
+        '20320': { bupa: 90,  axa: 80,  vitality: 90,  aviva: 85,  wpa: 80,  label: 'Inpatient Care (Daily)', cat: 'p1', multi: 'days' },
+        
+        'X6772': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Complex RT Prep (IMRT)', cat: 'p2' },
+        'X6950': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Planning: SRT/SBRT', cat: 'p2' },
+        'X6774': { bupa: 1085, axa: 980,  vitality: 1085, aviva: 1000, wpa: 920,  label: 'Intermediate RT Prep', cat: 'p2' },
+        'X6930': { bupa: 600,  axa: 540,  vitality: 600,  aviva: 550,  wpa: 510,  label: 'Complex Planning Superv.', cat: 'p2' },
 
-        // Planning
-        'X6772': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Prep: Complex RT with IMRT', cat: 'plan' },
-        'X6950': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Planning: SRT/SBRT/GK', cat: 'plan' },
-        'X6810': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Prep: SIRT', cat: 'plan' },
-        'BT211': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'Planning: HDR Brachy (Prostate)', cat: 'plan' },
-        'X6774': { bupa: 1085, axa: 980,  vitality: 1085, aviva: 1000, wpa: 920,  label: 'Prep: Intermediate IMRT', cat: 'plan' },
-        'X6773': { bupa: 800,  axa: 720,  vitality: 800,  aviva: 740,  wpa: 680,  label: 'Prep: Simple IMRT', cat: 'plan' },
-        'X6930': { bupa: 600,  axa: 540,  vitality: 600,  aviva: 550,  wpa: 510,  label: 'Supervision: Complex Planning', cat: 'plan' },
-
-        // Delivery
-        'A0380': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'SRT (GammaKnife)', cat: 'delivery' },
-        'X6560': { bupa: 1144, axa: 1030, vitality: 1144, aviva: 1050, wpa: 970,  label: 'SIRT Delivery', cat: 'delivery' },
-        'X0009': { bupa: 960,  axa: 865,  vitality: 960,  aviva: 885,  wpa: 820,  label: 'EBRT Supervision (31+ fr)', cat: 'delivery' },
-        'X0008': { bupa: 720,  axa: 650,  vitality: 720,  aviva: 660,  wpa: 610,  label: 'EBRT Supervision (16–30 fr)', cat: 'delivery' },
-        'X0007': { bupa: 380,  axa: 340,  vitality: 380,  aviva: 350,  wpa: 320,  label: 'EBRT Supervision (1–15 fr)', cat: 'delivery' },
-        'X6581': { bupa: 25,   axa: 22,   vitality: 25,   aviva: 23,   wpa: 21,   label: 'Single Fraction Supervision', cat: 'delivery', multi: 'fractions' },
-
-        // Chemo
-        'X0001': { bupa: 137, axa: 123, vitality: 137, aviva: 125, wpa: 115, label: 'Chemo Superv. (0–7 days)', cat: 'chemo' },
-        'X0002': { bupa: 257, axa: 231, vitality: 257, aviva: 235, wpa: 218, label: 'Chemo Superv. (1–14 days)', cat: 'chemo' },
-        'X0003': { bupa: 386, axa: 347, vitality: 386, aviva: 355, wpa: 328, label: 'Chemo Superv. (1–21 days)', cat: 'chemo' },
-        'X0004': { bupa: 515, axa: 463, vitality: 515, aviva: 475, wpa: 438, label: 'Chemo Superv. (1–28 days)', cat: 'chemo' },
-        'X0005': { bupa: 565, axa: 510, vitality: 565, aviva: 520, wpa: 480, label: 'Chemo Superv. (1–56 days)', cat: 'chemo' },
+        'A0380': { bupa: 1466, axa: 1320, vitality: 1466, aviva: 1350, wpa: 1250, label: 'SRT (GammaKnife)', cat: 'p3' },
+        'X0009': { bupa: 960,  axa: 865,  vitality: 960,  aviva: 885,  wpa: 820,  label: 'EBRT Superv. (31+ fr)', cat: 'p3' },
+        'X0008': { bupa: 720,  axa: 650,  vitality: 720,  aviva: 660,  wpa: 610,  label: 'EBRT Superv. (16–30 fr)', cat: 'p3' },
+        'X0007': { bupa: 380,  axa: 340,  vitality: 380,  aviva: 350,  wpa: 320,  label: 'EBRT Superv. (1–15 fr)', cat: 'p3' },
+        'X6581': { bupa: 25,   axa: 22,   vitality: 25,   aviva: 23,   wpa: 21,   label: 'Single Fraction Superv.', cat: 'p3', multi: 'fractions' },
     };
 
-    // Render HTML rows
     function init() {
         Object.keys(STANDARDS).forEach(code => {
             const item = STANDARDS[code];
@@ -190,11 +267,15 @@
                         <option value="std">Standard Fee</option>
                         <option value="custom">Custom Fee</option>
                     </select>
-                    <input type="number" class="row-input" id="inp-${code}" disabled placeholder="0" oninput="calculate()">
+                    <div class="row-input-wrap">
+                        <span class="row-input-prefix">£</span>
+                        <input type="number" class="row-input" id="inp-${code}" disabled placeholder="0" oninput="calculate()">
+                        <div class="row-status" id="stat-${code}"></div>
+                    </div>
                 </div>
             `;
-            const containerId = { consult: 'body-consults', plan: 'body-planning', delivery: 'body-delivery', chemo: 'body-chemo' }[item.cat];
-            document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
+            const containers = { p1: 'body-consults', p2: 'body-planning', p3: 'body-delivery' };
+            document.getElementById(containers[item.cat]).insertAdjacentHTML('beforeend', html);
         });
     }
 
@@ -204,44 +285,75 @@
         if (sel.value === 'std') {
             inp.value = STANDARDS[code][currentInsurer];
             inp.disabled = true;
+            sel.classList.add('selected');
         } else if (sel.value === 'custom') {
             inp.disabled = false;
-            inp.focus();
+            sel.classList.add('selected');
         } else {
             inp.value = '';
             inp.disabled = true;
+            sel.classList.remove('selected');
         }
         calculate();
     }
 
     function calculate() {
-        let total = 0;
+        let gross = 0;
+        let shortfallTotal = 0;
         let breakdownHtml = '';
+        let counts = { p1: 0, p2: 0, p3: 0 };
+
         Object.keys(STANDARDS).forEach(code => {
             const sel = document.getElementById('sel-' + code);
             const inp = document.getElementById('inp-' + code);
+            const stat = document.getElementById('stat-' + code);
             const multi = document.getElementById('multi-' + code)?.value || 1;
             
             if (sel.value !== 'none' && inp.value > 0) {
-                const rowTotal = parseFloat(inp.value) * parseInt(multi);
-                total += rowTotal;
+                counts[STANDARDS[code].cat]++;
+                const val = parseFloat(inp.value) * parseInt(multi);
+                const limit = STANDARDS[code][currentInsurer] * parseInt(multi);
+                gross += val;
+
+                // Shortfall logic
+                if (val > limit) {
+                    const diff = val - limit;
+                    shortfallTotal += diff;
+                    stat.innerHTML = `<span style="color:#c0392b">Shortfall £${diff.toFixed(0)}</span>`;
+                } else {
+                    stat.innerHTML = `<span style="color:#1a7a4a">Covered</span>`;
+                }
+
                 breakdownHtml += `
-                    <div class="sum-row">
-                        <span style="font-size:0.75rem; opacity:0.8;">${STANDARDS[code].label}</span>
-                        <span>£${rowTotal.toLocaleString()}</span>
+                    <div class="bd-item">
+                        <span>${STANDARDS[code].label}${multi > 1 ? ' (×'+multi+')' : ''}</span>
+                        <span class="bd-val">£${val.toLocaleString()}</span>
                     </div>
                 `;
+            } else {
+                stat.innerHTML = '';
             }
         });
-        document.getElementById('gross-total').innerText = '£' + total.toLocaleString(undefined, {minimumFractionDigits: 2});
-        document.getElementById('breakdown-list').innerHTML = breakdownHtml;
+
+        // Totals & Sidebar
+        const adminPct = parseFloat(document.getElementById('exp-admin').value) / 100;
+        const fixed = parseFloat(document.getElementById('exp-fixed').value) || 0;
+        const net = (gross * (1 - adminPct)) - fixed;
+
+        document.getElementById('gross-total').innerText = '£' + gross.toLocaleString();
+        document.getElementById('total-shortfall').innerText = '£' + shortfallTotal.toLocaleString();
+        document.getElementById('net-val').innerText = '£' + net.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('breakdown-list').innerHTML = breakdownHtml || '<div style="padding: 1rem; color: #999; font-size: 0.75rem; text-align: center;">No items selected.</div>';
+        
+        Object.keys(counts).forEach(cat => {
+            document.getElementById('count-' + cat).innerText = counts[cat] + ' selected';
+        });
     }
 
     function setInsurer(ins, el) {
         currentInsurer = ins;
-        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.insurer-pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
-        // Update standard values for already selected rows
         Object.keys(STANDARDS).forEach(code => {
             if (document.getElementById('sel-' + code).value === 'std') {
                 document.getElementById('inp-' + code).value = STANDARDS[code][ins];
@@ -251,11 +363,6 @@
     }
 
     function togglePanel(id) { document.getElementById(id).classList.toggle('collapsed'); }
-    
-    function resetCalc() {
-        location.reload();
-    }
-
     init();
 </script>
 
