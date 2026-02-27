@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EQD2 Calculator | Clinical Tool</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/style.css">
+
+    <style>
+        /* --- CLINICAL TOOL SPECIFIC STYLES --- */
+        .tool-container { max-width: 900px; margin: 0 auto; padding: 3rem 20px; }
+        .tool-header { margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
+        .tool-header h1 { margin-bottom: 0.5rem; color: #0f172a; }
+        .tool-header p { color: #64748b; font-size: 0.95rem; margin: 0; }
+
+        .control-panel {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group h3 {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1e293b;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .field-container { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; color: #475569; }
+        
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .btn-tool {
+            width: 100%;
+            padding: 14px;
+            background-color: #1e293b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-tool:hover { background-color: #0f172a; }
+
+        .results-area { display: none; margin-top: 2rem; animation: fadeIn 0.3s ease-in; }
+        
+        .summary-card {
+            background: #fff;
+            border: 2px solid #1e293b;
+            padding: 1.5rem;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .eqd2-value { font-size: 2.5rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0; }
+        .eqd2-label { font-size: 0.9rem; color: #64748b; text-transform: uppercase; }
+
+        .preset-btns { display: flex; gap: 8px; margin-top: 5px; }
+        .btn-mini { 
+            padding: 4px 8px; font-size: 0.75rem; border: 1px solid #cbd5e1; 
+            background: white; border-radius: 3px; cursor: pointer; 
+        }
+        .btn-mini:hover { background: #e2e8f0; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) { .panel-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-flex">
+        <div class="brand">
+            <a href="index.html" style="text-decoration:none;">
+                <h1>Clinical Oncology</h1>
+                <span class="subtitle">Tools & Calculators</span>
+            </a>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cxb.html">CXB Planner</a>
+            <a href="eqd2.html" class="active tool-link">EQD2 Calc</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="tool-container">
+        <div class="tool-header">
+            <h1>EQD2 Dose Calculator</h1>
+            <p>Calculate Equivalent Dose in 2 Gy fractions using the Linear-Quadratic model.</p>
+        </div>
+
+        <section class="control-panel">
+            <div class="panel-grid">
+                <div class="input-group">
+                    <h3>1. Regimen Parameters</h3>
+                    <div class="field-container">
+                        <label for="num-fractions">Number of Fractions (n)</label>
+                        <input type="number" id="num-fractions" placeholder="e.g. 15" oninput="clearOutput()">
+                    </div>
+                    <div class="field-container">
+                        <label for="dose-per-fraction">Dose per Fraction (Gy)</label>
+                        <input type="number" id="dose-per-fraction" step="0.01" placeholder="e.g. 2.67" oninput="updateTotalDose()">
+                    </div>
+                    <div class="field-container">
+                        <label for="total-dose">Total Dose (Gy)</label>
+                        <input type="number" id="total-dose" step="0.01" placeholder="e.g. 40" oninput="updateDosePerFx()">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <h3>2. Biological & Target</h3>
+                    <div class="field-container">
+                        <label for="ab-ratio">α/β Ratio (Gy)</label>
+                        <input type="number" id="ab-ratio" step="0.1" value="10">
+                        <div class="preset-btns">
+                            <button class="btn-mini" onclick="setAB(10)">α/β = 10 (Tumour)</button>
+                            <button class="btn-mini" onclick="setAB(3)">α/β = 3 (Late)</button>
+                        </div>
+                    </div>
+                    <div class="field-container">
+                        <label for="target-eqd2" style="color: #0369a1;">Target EQD2 (Optional)</label>
+                        <input type="number" id="target-eqd2" step="0.01" placeholder="Use to find Total Dose" style="border-color: #bae6fd;">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="calculate()" class="btn-tool">Calculate Parameters</button>
+        </section>
+
+        <div id="results-area" class="results-area">
+            <div class="summary-card">
+                <div class="eqd2-label">Calculated EQD2</div>
+                <div id="res-eqd2" class="eqd2-value">0.00</div>
+                <div id="res-description" style="font-size: 0.95rem; color: #475569;">
+                    Based on <span id="res-details">...</span>
+                </div>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 1.5rem; text-align: center;">
+                Formula used: $EQD2 = D \times \frac{d + (\alpha/\beta)}{2 + (\alpha/\beta)}$
+            </p>
+        </div>
+    </div>
+</main>
+
+<script>
+    function setAB(val) {
+        document.getElementById('ab-ratio').value = val;
+    }
+
+    function updateTotalDose() {
+        const n = parseFloat(document.getElementById('num-fractions').value);
+        const d = parseFloat(document.getElementById('dose-per-fraction').value);
+        if (n && d) {
+            document.getElementById('total-dose').value = (n * d).toFixed(2);
+        }
+        clearOutput();
+    }
+
+    function updateDosePerFx() {
+        const n = parseFloat(document.getElementById('num-fractions').value);
+        const D = parseFloat(document.getElementById('total-dose').value);
+        if (n && D) {
+            document.getElementById('dose-per-fraction').value = (D / n).toFixed(2);
+        }
+        clearOutput();
+    }
+
+    function clearOutput() {
+        document.getElementById('results-area').style.display = 'none';
+    }
+
+    function calculate() {
+        const n = parseFloat(document.getElementById('num-fractions').value);
+        const d = parseFloat(document.getElementById('dose-per-fraction').value);
+        const D = parseFloat(document.getElementById('total-dose').value);
+        const ab = parseFloat(document.getElementById('ab-ratio').value);
+        const targetEQD2 = parseFloat(document.getElementById('target-eqd2').value);
+
+        let finalEQD2, finalTotalDose, finalDosePerFx;
+
+        // Mode 1: Inverse (Calculate Total Dose from EQD2)
+        if (targetEQD2 && n && ab && !D) {
+            // Using the formula: D = ((-ab*n) + SQRT( (ab*n)^2 + 4*EQD2*n*(2+ab) )) / 2
+            const term1 = -1 * ab * n;
+            const term2 = Math.sqrt( Math.pow(ab * n, 2) + 4 * targetEQD2 * n * (2 + ab) );
+            finalTotalDose = (term1 + term2) / 2;
+            finalDosePerFx = finalTotalDose / n;
+            finalEQD2 = targetEQD2;
+            
+            // Fill back into inputs
+            document.getElementById('total-dose').value = finalTotalDose.toFixed(2);
+            document.getElementById('dose-per-fraction').value = finalDosePerFx.toFixed(2);
+        } 
+        // Mode 2: Standard (Calculate EQD2 from Dose)
+        else if (D && d && ab) {
+            finalEQD2 = D * ((d + ab) / (2 + ab));
+            finalTotalDose = D;
+            finalDosePerFx = d;
+        } else {
+            alert("Please provide at least: Fractions & EQD2 OR Total Dose & Dose/Fx.");
+            return;
+        }
+
+        // Display
+        document.getElementById('res-eqd2').innerText = finalEQD2.toFixed(2) + " Gy";
+        document.getElementById('res-details').innerText = `${n} fractions of ${finalDosePerFx.toFixed(2)} Gy (Total ${finalTotalDose.toFixed(2)} Gy) with α/β of ${ab}`;
+        document.getElementById('results-area').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
