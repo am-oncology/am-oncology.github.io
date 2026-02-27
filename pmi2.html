@@ -3,176 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OncoStream | London Private Practice Dashboard</title>
+    <title>OncoStream Pro | Billing & Clinical Letters</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
-        .stat-card { transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); }
+        @media print { 
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; }
+        }
+        .letter-paper { min-height: 297mm; }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-800 font-sans" x-data="practiceApp()">
+<body class="bg-slate-100 text-slate-900" x-data="oncoApp()" x-init="init()">
 
-    <nav class="bg-slate-900 text-white p-4 shadow-md">
+    <nav class="bg-indigo-950 text-white p-4 no-print shadow-xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <span class="bg-indigo-500 p-1 rounded">OS</span> OncoStream Pro
-            </h1>
-            <div class="flex gap-4 text-xs font-mono">
-                <span class="text-indigo-300">FY 2025/26</span>
-                <span x-text="'Indemnity Limit: £' + settings.indemnityLimit"></span>
+            <h1 class="text-xl font-black tracking-tight text-indigo-400">ONCO<span class="text-white">STREAM</span> <span class="text-xs bg-indigo-500 text-white px-2 py-0.5 rounded ml-2">v2.5 PRO</span></h1>
+            <div class="flex gap-6 text-sm items-center">
+                <button @click="view = 'billing'" :class="view === 'billing' ? 'text-white border-b-2 border-indigo-400' : 'text-slate-400'">Billing Dashboard</button>
+                <button @click="view = 'letters'" :class="view === 'letters' ? 'text-white border-b-2 border-indigo-400' : 'text-slate-400'">Letter Drafts</button>
+                <div class="h-6 w-px bg-slate-700"></div>
+                <button @click="clearData()" class="text-red-400 text-xs hover:underline">Reset Session</button>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        <aside class="space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="font-bold mb-4 flex items-center gap-2">⚙️ Global Settings</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase">Billing Service Fee (%)</label>
-                        <input type="number" x-model.number="settings.billingFee" class="w-full mt-1 p-2 bg-slate-50 rounded border">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase">Est. Tax Rate (%)</label>
-                        <select x-model.number="settings.taxRate" class="w-full mt-1 p-2 bg-slate-50 rounded border">
-                            <option value="20">20% (Basic)</option>
-                            <option value="25">25% (Corp Tax)</option>
-                            <option value="45">45% (High Earner)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase">Monthly Fixed Overheads (£)</label>
-                        <input type="number" x-model.number="settings.overheads" class="w-full mt-1 p-2 bg-slate-50 rounded border">
-                        <p class="text-[10px] text-gray-400 mt-1">Secretary, EMR, Room Hire</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
-                <h3 class="font-bold text-indigo-900 text-sm mb-2">Practice Growth Tip</h3>
-                <p class="text-xs text-indigo-700 leading-relaxed">
-                    In London, 40% of private oncology referrals come from surgical MDTs. Ensure your billing tool tracks referral sources to optimize your networking time.
-                </p>
-            </div>
-        </aside>
-
-        <main class="lg:col-span-3 space-y-6">
+    <div class="max-w-7xl mx-auto p-6 no-print" x-show="view === 'billing'">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500 stat-card">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Gross Revenue</p>
-                    <h3 class="text-2xl font-black" x-text="'£' + totals.gross.toLocaleString()"></h3>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500 stat-card">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Take Home (Est.)</p>
-                    <h3 class="text-2xl font-black text-emerald-600" x-text="'£' + totals.net.toLocaleString()"></h3>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-500 stat-card">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Indemnity Usage</p>
-                    <div class="w-full bg-gray-100 h-2 mt-2 rounded-full overflow-hidden">
-                        <div class="bg-orange-500 h-full" :style="`width: ${totals.indemnityPercent}%`"></div>
+            <aside class="space-y-4">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Net Income</p>
+                    <h2 class="text-3xl font-black text-emerald-600" x-text="'£' + totals.net.toLocaleString()"></h2>
+                    <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-sm">
+                        <div class="flex justify-between text-slate-500"><span>Gross:</span><span x-text="'£' + totals.gross"></span></div>
+                        <div class="flex justify-between text-slate-500"><span>Expenses:</span><span x-text="'£' + totals.expenses"></span></div>
                     </div>
-                    <p class="text-[10px] mt-1 text-gray-500" x-text="totals.indemnityPercent + '% of limit used'"></p>
                 </div>
-            </div>
+                
+                <div class="bg-indigo-900 text-white p-6 rounded-2xl shadow-lg">
+                    <h3 class="text-sm font-bold text-indigo-300 uppercase mb-4">Practice Overheads</h3>
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-bold uppercase text-indigo-400">Monthly Room Hire (£)</label>
+                        <input type="number" x-model.number="settings.overheads" class="w-full bg-indigo-800 border-none rounded p-2 text-sm">
+                        <label class="block text-[10px] font-bold uppercase text-indigo-400">Tax Provision (%)</label>
+                        <input type="number" x-model.number="settings.tax" class="w-full bg-indigo-800 border-none rounded p-2 text-sm">
+                    </div>
+                </div>
+            </aside>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h2 class="font-bold text-slate-700">Clinical Activity Log</h2>
-                    <button @click="addPatient()" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition">
-                        + New Entry
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold">
-                            <tr>
-                                <th class="p-4">Patient/Ref</th>
-                                <th class="p-4">Insurer</th>
-                                <th class="p-4">Codes</th>
-                                <th class="p-4 text-right">Fee (£)</th>
-                                <th class="p-4"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            <template x-for="(p, index) in patients" :key="index">
-                                <tr class="hover:bg-slate-50 transition">
-                                    <td class="p-4">
-                                        <input type="text" x-model="p.name" class="bg-transparent border-b border-transparent focus:border-indigo-300 outline-none w-full" placeholder="Patient Ref">
-                                    </td>
-                                    <td class="p-4">
-                                        <select x-model="p.insurer" class="bg-transparent outline-none font-medium text-indigo-600">
-                                            <template x-for="name in Object.keys(fees)" :key="name">
-                                                <option :value="name" x-text="name"></option>
-                                            </template>
-                                        </select>
-                                    </td>
-                                    <td class="p-4">
-                                        <div class="flex gap-1 flex-wrap">
-                                            <template x-for="c in p.items">
-                                                <span class="bg-slate-200 text-[10px] px-2 py-0.5 rounded-full font-bold" x-text="c"></span>
-                                            </template>
-                                            <button @click="openCodeSelector(index)" class="text-indigo-500 font-bold px-2">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="p-4 text-right font-bold" x-text="calculatePatientTotal(p)"></td>
-                                    <td class="p-4 text-right">
-                                        <button @click="removePatient(index)" class="text-gray-300 hover:text-red-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </button>
-                                    </td>
+            <main class="lg:col-span-3">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h2 class="font-bold text-lg">Daily Clinical Activity</h2>
+                        <button @click="addPatient()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-indigo-700 transition">+ Log New Patient</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                                <tr>
+                                    <th class="p-4">Patient Reference</th>
+                                    <th class="p-4">Insurer</th>
+                                    <th class="p-4">CCSD Codes</th>
+                                    <th class="p-4 text-right">Fee</th>
+                                    <th class="p-4">Actions</th>
                                 </tr>
-                            </template>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <template x-for="(p, index) in patients" :key="index">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-4">
+                                            <input type="text" x-model="p.name" class="font-bold bg-transparent outline-none w-full border-b border-transparent focus:border-indigo-400" placeholder="e.g. HN12345">
+                                        </td>
+                                        <td class="p-4 text-sm">
+                                            <select x-model="p.insurer" class="bg-transparent font-medium text-indigo-600">
+                                                <template x-for="name in Object.keys(feeSchedule)" :key="name">
+                                                    <option :value="name" x-text="name"></option>
+                                                </template>
+                                            </select>
+                                        </td>
+                                        <td class="p-4">
+                                            <div class="flex gap-1">
+                                                <template x-for="code in p.codes">
+                                                    <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded" x-text="code"></span>
+                                                </template>
+                                                <button @click="addCode(index)" class="text-indigo-400 hover:text-indigo-600 font-bold px-1">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="p-4 text-right font-mono font-bold" x-text="'£' + calculatePatientFee(p)"></td>
+                                        <td class="p-4 flex gap-2">
+                                            <button @click="editLetter(index)" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg hover:bg-emerald-100" title="Draft GP Letter">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            </button>
+                                            <button @click="removePatient(index)" class="text-slate-300 hover:text-red-500 p-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto p-6 no-print" x-show="view === 'letters'" x-cloak>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <h2 class="font-bold">GP Correspondence Draft</h2>
+                <div class="flex gap-2">
+                    <button @click="view = 'billing'" class="text-xs bg-slate-800 px-3 py-1 rounded">Back to Dashboard</button>
+                    <button @click="window.print()" class="text-xs bg-emerald-600 px-3 py-1 rounded font-bold">Print Professional Letter</button>
                 </div>
             </div>
-        </main>
+            
+            <div class="p-8 space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase">Consultant Name</label>
+                        <input type="text" x-model="settings.consultantName" class="w-full p-2 border-b font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase">Hospital/Clinic</label>
+                        <input type="text" x-model="settings.clinicName" class="w-full p-2 border-b">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-xl space-y-4">
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold mb-1">Diagnosis/Indication</label>
+                            <input type="text" x-model="activeLetter.diagnosis" class="w-full p-2 border rounded" placeholder="e.g. Metastatic Prostate Adenocarcinoma">
+                        </div>
+                        <div class="w-32">
+                            <label class="block text-xs font-bold mb-1">Performance Status</label>
+                            <select x-model="activeLetter.ps" class="w-full p-2 border rounded">
+                                <option>WHO 0</option><option>WHO 1</option><option>WHO 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold mb-1">Clinical Summary & Plan</label>
+                        <textarea x-model="activeLetter.plan" rows="10" class="w-full p-4 border rounded font-serif text-lg leading-relaxed" placeholder="Type clinical notes here..."></textarea>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <span class="text-xs font-bold text-slate-400 uppercase pt-1">Smart phrases:</span>
+                        <button @click="addPhrase('Stable on surveillance.')" class="bg-white border px-2 py-1 rounded text-xs hover:bg-slate-100">Surveillance</button>
+                        <button @click="addPhrase('Proceeding to palliative radiotherapy.')" class="bg-white border px-2 py-1 rounded text-xs hover:bg-slate-100">Palliative Rads</button>
+                        <button @click="addPhrase('Discussed side effects including fatigue and skin reaction.')" class="bg-white border px-2 py-1 rounded text-xs hover:bg-slate-100">Toxicity Discussion</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden print-only p-12 bg-white text-slate-900 font-serif leading-relaxed text-lg letter-paper">
+        <div class="text-right mb-12">
+            <h2 class="text-xl font-bold uppercase" x-text="settings.consultantName"></h2>
+            <p x-text="settings.clinicName"></p>
+            <p x-text="new Date().toLocaleDateString('en-GB')"></p>
+        </div>
+
+        <div class="mb-8">
+            <p><strong>RE:</strong> <span x-text="activeLetter.patientName"></span></p>
+            <p><strong>Diagnosis:</strong> <span x-text="activeLetter.diagnosis"></span></p>
+            <p><strong>Status:</strong> <span x-text="activeLetter.ps"></span></p>
+        </div>
+
+        <div class="whitespace-pre-wrap mb-12" x-text="activeLetter.plan"></div>
+
+        <div class="mt-20">
+            <p>Yours sincerely,</p>
+            <div class="h-16"></div>
+            <p class="font-bold text-xl font-sans uppercase tracking-widest border-t border-slate-200 pt-2 inline-block" x-text="settings.consultantName"></p>
+            <p class="text-sm font-sans text-slate-500">Consultant Clinical Oncologist</p>
+        </div>
     </div>
 
     <script>
-        function practiceApp() {
+        function oncoApp() {
             return {
+                view: 'billing',
                 settings: {
-                    billingFee: 3,
-                    taxRate: 25,
                     overheads: 1500,
-                    indemnityLimit: 50000
+                    tax: 25,
+                    consultantName: 'Dr. Your Name',
+                    clinicName: 'The Harley Street Clinic, London'
                 },
-                patients: [
-                    { name: 'John Doe', insurer: 'Bupa', items: ['20300', 'X0001'] }
-                ],
-                fees: {
+                patients: [],
+                activeLetter: { patientName: '', diagnosis: '', ps: 'WHO 0', plan: '' },
+                
+                feeSchedule: {
                     'Bupa': { '20300': 200, '20310': 150, 'X0001': 137, 'X0002': 257 },
                     'AXA Health': { '20300': 200, '20310': 150, 'X0001': 125, 'X0002': 250 },
                     'Self-Pay': { '20300': 250, '20310': 180, 'X0001': 200 }
                 },
+
+                init() {
+                    const saved = localStorage.getItem('oncoData');
+                    if(saved) {
+                        const data = JSON.parse(saved);
+                        this.patients = data.patients || [];
+                        this.settings = data.settings || this.settings;
+                    }
+                    this.$watch('patients', val => this.save());
+                    this.$watch('settings', val => this.save());
+                },
+
+                save() {
+                    localStorage.setItem('oncoData', JSON.stringify({
+                        patients: this.patients,
+                        settings: this.settings
+                    }));
+                },
+
                 addPatient() {
-                    this.patients.push({ name: '', insurer: 'Bupa', items: ['20300'] });
+                    this.patients.unshift({ name: '', insurer: 'Bupa', codes: ['20300'], letter: { diagnosis: '', plan: '', ps: 'WHO 0' } });
                 },
+
+                addCode(index) {
+                    const code = prompt("Enter CCSD Code:");
+                    if(code) this.patients[index].codes.push(code);
+                },
+
                 removePatient(index) {
-                    this.patients.splice(index, 1);
+                    if(confirm("Delete this entry?")) this.patients.splice(index, 1);
                 },
-                calculatePatientTotal(p) {
-                    return p.items.reduce((sum, code) => sum + (this.fees[p.insurer][code] || 0), 0);
+
+                calculatePatientFee(p) {
+                    return p.codes.reduce((sum, c) => sum + (this.feeSchedule[p.insurer][c] || 0), 0);
                 },
-                openCodeSelector(index) {
-                    const code = prompt("Enter CCSD Code (e.g., 20310, X0001):");
-                    if (code) this.patients[index].items.push(code);
+
+                editLetter(index) {
+                    const p = this.patients[index];
+                    this.activeLetter = {
+                        patientName: p.name,
+                        diagnosis: p.letter.diagnosis,
+                        ps: p.letter.ps,
+                        plan: p.letter.plan,
+                        index: index
+                    };
+                    this.view = 'letters';
                 },
+
+                addPhrase(text) {
+                    this.activeLetter.plan += " " + text;
+                },
+
+                clearData() {
+                    if(confirm("Wipe all data?")) {
+                        localStorage.clear();
+                        window.location.reload();
+                    }
+                },
+
                 get totals() {
-                    let gross = this.patients.reduce((sum, p) => sum + this.calculatePatientTotal(p), 0);
-                    let billingCost = (gross * this.settings.billingFee) / 100;
-                    let taxable = gross - billingCost - this.settings.overheads;
-                    let tax = taxable > 0 ? (taxable * this.settings.taxRate) / 100 : 0;
+                    let gross = this.patients.reduce((sum, p) => sum + this.calculatePatientFee(p), 0);
+                    let taxable = Math.max(0, gross - this.settings.overheads);
                     return {
                         gross: gross,
-                        net: Math.max(0, taxable - tax),
-                        indemnityPercent: Math.min(100, ((gross / this.settings.indemnityLimit) * 100).toFixed(1))
+                        expenses: this.settings.overheads,
+                        net: taxable - (taxable * (this.settings.tax / 100))
                     };
                 }
             }
