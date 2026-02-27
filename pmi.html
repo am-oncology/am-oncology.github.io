@@ -1,219 +1,286 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Oncology Private Practice Income Calculator</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-body { font-family: Arial, sans-serif; margin: 10px; background:#f5f7fb; }
-h1,h2,h3 { text-align:center; }
-.container { max-width:1200px; margin:auto; background:white; padding:15px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-table { width:100%; border-collapse:collapse; margin-bottom:20px; }
-th,td { border:1px solid #ccc; padding:6px; font-size:0.85em; }
-th { background:#eee; }
-input,select { width:100%; }
-.flex { display:flex; gap:10px; flex-wrap:wrap; }
-.card { flex:1; min-width:200px; background:#eef2ff; padding:10px; border-radius:6px; }
-.total { font-weight:bold; font-size:1.1em; }
-@media(max-width:700px){ th,td{font-size:0.75em;} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoBill UK | Private Practice Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [x-cloak] { display: none !important; }
+        @media print { .no-print { display: none; } }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-20" x-data="billingApp()">
 
-<div class="container">
-<h1>Oncology Private Practice Income Calculator</h1>
+    <header class="bg-indigo-900 text-white py-6 px-4 shadow-lg no-print">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">OncoBill <span class="text-indigo-300">Pro</span></h1>
+                <p class="text-xs text-indigo-200 uppercase tracking-widest font-semibold">Oncology Private Practice Calculator 2025-26</p>
+            </div>
+            <div class="text-right">
+                <span class="bg-indigo-800 px-3 py-1 rounded text-sm border border-indigo-700">Fee-Assured Database v1.2</span>
+            </div>
+        </div>
+    </header>
 
-<div class="flex">
-<div class="card">
-<label>Insurer:
-<select id="insurer" onchange="calc()">
-<option value="bupa">BUPA</option>
-<option value="axa">AXA</option>
-<option value="aviva">Aviva</option>
-<option value="vitality">Vitality</option>
-<option value="wpa">WPA</option>
-</select>
-</label>
-</div>
+    <main class="max-w-5xl mx-auto p-4 md:p-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-6 no-print">
+                
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Select Private Medical Insurer (PMI)</label>
+                    <select x-model="selectedInsurer" class="w-full p-3 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        <template x-for="pmi in Object.keys(insurers)" :key="pmi">
+                            <option :value="pmi" x-text="pmi"></option>
+                        </template>
+                    </select>
+                </section>
 
-<div class="card">
-<label>Period:
-<select id="period" onchange="calc()">
-<option value="month">Monthly</option>
-<option value="year">Annual</option>
-</select>
-</label>
-</div>
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-lg text-slate-800">Procedures & Consultations</h2>
+                        <button @click="addItem()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                            + Add Line Item
+                        </button>
+                    </div>
 
-<div class="card">
-<label>SBRT simulator (cases/week):
-<input type="number" id="sbrtSim" value="0" onchange="calc()">
-</label>
-</div>
-</div>
+                    <div class="space-y-4">
+                        <template x-for="(item, index) in activeItems" :key="index">
+                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                <div class="md:col-span-5">
+                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">CCSD Code / Description</label>
+                                    <select x-model="item.code" @change="updateItemFee(index)" class="w-full p-2 text-sm bg-white border border-slate-200 rounded">
+                                        <option value="">Select Code...</option>
+                                        <template x-for="code in ccsdCodes" :key="code.id">
+                                            <option :value="code.id" x-text="`${code.id} - ${code.desc}`"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">My Fee (£)</label>
+                                    <input type="number" x-model.number="item.customFee" class="w-full p-2 text-sm border border-slate-200 rounded">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Qty</label>
+                                    <input type="number" x-model.number="item.qty" class="w-full p-2 text-sm border border-slate-200 rounded">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <div class="text-[10px] uppercase font-bold text-slate-500 mb-1">Shortfall</div>
+                                    <div class="text-sm font-semibold py-2 px-1" 
+                                         :class="calculateShortfall(item) > 0 ? 'text-red-600' : 'text-slate-400'" 
+                                         x-text="'£' + calculateShortfall(item)"></div>
+                                </div>
+                                <div class="md:col-span-1 text-right">
+                                    <button @click="removeItem(index)" class="text-slate-400 hover:text-red-500 p-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
 
-<!-- TABLE TEMPLATE -->
-<script>
-function row(code, desc, bupa, axa, aviva, vitality, wpa){
-return `<tr>
-<td>${code}</td><td>${desc}</td>
-<td><input value="${bupa}"></td>
-<td><input value="${axa}"></td>
-<td><input value="${aviva}"></td>
-<td><input value="${vitality}"></td>
-<td><input value="${wpa}"></td>
-<td><input type="number" value="0"></td>
-<td class="sub">0</td>
-</tr>`;
-}
-</script>
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="font-bold text-lg text-slate-800 mb-4 text-emerald-700 underline decoration-emerald-200 underline-offset-8">Practice Expenses</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Secretary/Admin Fees (£)</label>
+                            <input type="number" x-model.number="expenses.secretary" class="w-full p-2 border border-slate-200 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Room Hire / Clinic Split (£)</label>
+                            <input type="number" x-model.number="expenses.room" class="w-full p-2 border border-slate-200 rounded">
+                        </div>
+                    </div>
+                </section>
+            </div>
 
-<h2>Chapter 1 – Simple investigations and procedures</h2>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("20300","Initial outpatient consultation",200,"","","",""));
-document.write(row("20355","Initial outpatient consultation – remote",180,"","","",""));
-document.write(row("20310","Follow-up outpatient consultation",120,"","","",""));
-document.write(row("20365","Follow-up outpatient consultation – remote",100,"","","",""));
-document.write(row("20320","Inpatient care",250,"","","",""));
-</script>
-</table>
+            <div class="space-y-6">
+                
+                <section class="bg-indigo-900 text-white p-6 rounded-2xl shadow-xl sticky top-6">
+                    <h2 class="text-sm uppercase tracking-widest font-bold text-indigo-300 mb-4">Financial Overview</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end border-b border-indigo-800 pb-2">
+                            <span class="text-slate-300 text-sm">Gross Billings</span>
+                            <span class="text-xl font-bold" x-text="'£' + totals.gross"></span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-indigo-800 pb-2">
+                            <span class="text-slate-300 text-sm">Total Patient Shortfall</span>
+                            <span class="text-xl font-bold text-orange-400" x-text="'£' + totals.shortfall"></span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-indigo-800 pb-2">
+                            <span class="text-slate-300 text-sm">Practice Expenses</span>
+                            <span class="text-xl font-bold text-red-400" x-text="'-£' + totals.expenses"></span>
+                        </div>
+                        <div class="pt-4 flex justify-between items-center">
+                            <span class="text-lg font-bold">Net Income</span>
+                            <span class="text-3xl font-black text-emerald-400" x-text="'£' + totals.net"></span>
+                        </div>
+                    </div>
 
-<h2>Chapter 18 – Chemotherapy</h2>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("X0001","Chemo planning (0–7 days)",137,"","","",""));
-document.write(row("X0002","Chemo planning (1–14 days)",257,"","","",""));
-document.write(row("X0003","Chemo planning (1–21 days)",386,"","","",""));
-document.write(row("X0004","Chemo planning (1–28 days)",515,"","","",""));
-</script>
-</table>
+                    <button @click="window.print()" class="w-full mt-6 bg-white/10 hover:bg-white/20 text-white py-3 rounded-lg font-bold border border-white/20 transition flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v3m4 7h2"></path></svg>
+                        Print Billing Summary
+                    </button>
+                </section>
 
-<h2>Chapter 20 – Radiotherapy</h2>
+                <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 no-print">
+                    <h2 class="font-bold text-slate-800 mb-2">Billing QR Code</h2>
+                    <p class="text-xs text-slate-500 mb-4">Scan this to quickly copy patient billing info to your practice software.</p>
+                    <div id="qrcode" class="flex justify-center bg-slate-50 p-4 rounded-lg"></div>
+                    <div class="mt-4">
+                         <label class="block text-xs font-semibold text-slate-600 mb-1">Patient Name/Ref (Optional)</label>
+                         <input type="text" x-model="patientRef" class="w-full p-2 border border-slate-200 rounded text-sm">
+                    </div>
+                </section>
+            </div>
+        </div>
 
-<h3>Radiotherapy Planning</h3>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("X6910","Simple RT planning",300,"","","",""));
-document.write(row("X6930","Complex RT planning",600,"","","",""));
-document.write(row("X6950","SBRT/SRS planning",1466,"","","",""));
-</script>
-</table>
+        <div class="hidden print:block mt-8 bg-white p-8 border border-slate-300 rounded shadow-none">
+            <h1 class="text-2xl font-bold border-b-2 border-slate-800 pb-2">Patient Billing Summary</h1>
+            <div class="grid grid-cols-2 gap-8 my-6 text-sm">
+                <div>
+                    <p class="font-bold uppercase text-slate-500">Date</p>
+                    <p x-text="new Date().toLocaleDateString('en-GB')"></p>
+                </div>
+                <div>
+                    <p class="font-bold uppercase text-slate-500">Insurer / Ref</p>
+                    <p x-text="selectedInsurer + (patientRef ? ' / ' + patientRef : '')"></p>
+                </div>
+            </div>
+            <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                    <tr class="bg-slate-100">
+                        <th class="p-2 border border-slate-300">Code</th>
+                        <th class="p-2 border border-slate-300">Description</th>
+                        <th class="p-2 border border-slate-300">Fee Charged</th>
+                        <th class="p-2 border border-slate-300">Qty</th>
+                        <th class="p-2 border border-slate-300">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="item in activeItems">
+                        <tr>
+                            <td class="p-2 border border-slate-300 font-mono" x-text="item.code"></td>
+                            <td class="p-2 border border-slate-300" x-text="getDesc(item.code)"></td>
+                            <td class="p-2 border border-slate-300" x-text="'£' + item.customFee"></td>
+                            <td class="p-2 border border-slate-300" x-text="item.qty"></td>
+                            <td class="p-2 border border-slate-300" x-text="'£' + (item.customFee * item.qty)"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </main>
 
-<h3>Radiotherapy Supervision</h3>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("X0007","EBRT ≤15 fractions",380,"","","",""));
-document.write(row("X0008","EBRT 16–30 fractions",720,"","","",""));
-document.write(row("X0009","EBRT ≥31 fractions",960,"","","",""));
-document.write(row("X6581","Single fraction RT",25,"","","",""));
-</script>
-</table>
+    <script>
+        function billingApp() {
+            return {
+                selectedInsurer: 'Bupa',
+                patientRef: '',
+                activeItems: [
+                    { code: '20300', customFee: 200, qty: 1 }
+                ],
+                expenses: { secretary: 0, room: 0 },
+                qr: null,
 
-<h3>Brachytherapy</h3>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("BT212","LDR prostate brachytherapy",921,"","","",""));
-document.write(row("BT222","HDR prostate brachytherapy",921,"","","",""));
-document.write(row("BT253","Papillon rectal cancer",205,"","","",""));
-document.write(row("BT270","Oesophagus/bronchus/stomach brachytherapy",380,"","","",""));
-document.write(row("BT342","Cervix/intrapelvic brachytherapy",380,"","","",""));
-</script>
-</table>
+                insurers: {
+                    'Bupa': { '20300': 200, '20310': 150, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
+                    'AXA Health': { '20300': 200, '20310': 150 },
+                    'Aviva': { '20300': 200, '20310': 150 },
+                    'Vitality': { '20300': 200, '20310': 150 },
+                    'WPA': { '20300': 200, '20310': 150 },
+                    'The Exeter': { '20300': 200, '20310': 150 }
+                },
 
-<h2>Expenses</h2>
-<table>
-<tr><td>Secretary/admin</td><td><input id="sec" value="0"></td></tr>
-<tr><td>Room rental</td><td><input id="room" value="0"></td></tr>
-<tr><td>Indemnity</td><td><input id="indemnity" value="0"></td></tr>
-<tr><td>Other</td><td><input id="other" value="0"></td></tr>
-</table>
+                ccsdCodes: [
+                    { id: '20300', desc: 'Initial Consultation (Face-to-Face)' },
+                    { id: '20355', desc: 'Initial Consultation (Remote)' },
+                    { id: '20310', desc: 'Follow-up Consultation' },
+                    { id: '20320', desc: 'Inpatient Care (Daily)' },
+                    { id: 'X0001', desc: 'Chemo Supervision (0-7 days)' },
+                    { id: 'X0002', desc: 'Chemo Supervision (1-14 days)' },
+                    { id: 'X0003', desc: 'Chemo Supervision (1-21 days)' },
+                    { id: 'X0004', desc: 'Chemo Supervision (1-28 days)' },
+                    { id: 'X6910', desc: 'Rad. Planning Simple' },
+                    { id: 'X6930', desc: 'Rad. Planning Complex' },
+                    { id: 'X6950', desc: 'Rad. Planning SRS/SBRT' },
+                    { id: 'BT212', desc: 'LDR Radioactive agent prostate' },
+                    { id: 'X0007', desc: 'EBRT Supervision (up to 15 fractions)' },
+                    { id: 'X0008', desc: 'EBRT Supervision (16-30 fractions)' },
+                    { id: 'X0009', desc: 'EBRT Supervision (31+ fractions)' }
+                ],
 
-<button onclick="calc()">Calculate</button>
+                getDesc(code) {
+                    const match = this.ccsdCodes.find(c => c.id === code);
+                    return match ? match.desc : 'Specialist Procedure';
+                },
 
-<h2>Results</h2>
-<p class="total">Gross: £<span id="gross">0</span></p>
-<p class="total">Expenses: £<span id="expenses">0</span></p>
-<p class="total">Net: £<span id="net">0</span></p>
+                addItem() {
+                    this.activeItems.push({ code: '', customFee: 0, qty: 1 });
+                },
 
-<canvas id="incomeChart"></canvas>
+                removeItem(index) {
+                    this.activeItems.splice(index, 1);
+                },
 
-</div>
+                updateItemFee(index) {
+                    const code = this.activeItems[index].code;
+                    const fee = this.insurers[this.selectedInsurer][code] || 0;
+                    this.activeItems[index].customFee = fee;
+                },
 
-<script>
-let chart;
+                calculateShortfall(item) {
+                    const insurerFee = this.insurers[this.selectedInsurer][item.code] || 0;
+                    const diff = item.customFee - insurerFee;
+                    return diff > 0 ? (diff * item.qty) : 0;
+                },
 
-function calc(){
-let insurer=document.getElementById("insurer").value;
-let idx={bupa:2,axa:3,aviva:4,vitality:5,wpa:6}[insurer];
-let gross=0;
+                get totals() {
+                    let gross = 0;
+                    let shortfall = 0;
+                    this.activeItems.forEach(item => {
+                        gross += (item.customFee * item.qty);
+                        shortfall += this.calculateShortfall(item);
+                    });
+                    const exp = (this.expenses.secretary || 0) + (this.expenses.room || 0);
+                    return {
+                        gross: gross,
+                        shortfall: shortfall,
+                        expenses: exp,
+                        net: gross - exp
+                    };
+                },
 
-document.querySelectorAll(".activity tr").forEach((row,i)=>{
-if(i===0) return;
-let cells=row.querySelectorAll("td");
-let fee=parseFloat(cells[idx].querySelector("input").value)||0;
-let qty=parseFloat(cells[7].querySelector("input").value)||0;
-let sub=fee*qty;
-cells[8].innerText=sub.toFixed(2);
-gross+=sub;
-});
+                init() {
+                    this.$watch('activeItems', () => this.generateQR(), { deep: true });
+                    this.$watch('selectedInsurer', () => {
+                        this.activeItems.forEach((_, i) => this.updateItemFee(i));
+                    });
+                    setTimeout(() => this.generateQR(), 500);
+                },
 
-let sbrt=parseFloat(sbrtSim.value)||0;
-gross+=sbrt*52*1466;
-
-if(period.value==="month") gross/=12;
-
-let expenses=(+sec.value||0)+(+room.value||0)+(+indemnity.value||0)+(+other.value||0);
-if(period.value==="year") expenses*=12;
-
-let net=gross-expenses;
-
-gross=Math.round(gross); expenses=Math.round(expenses); net=Math.round(net);
-
-grossSpan.innerText=gross;
-expensesSpan.innerText=expenses;
-netSpan.innerText=net;
-
-drawChart(gross,expenses,net);
-}
-
-function drawChart(g,e,n){
-let ctx=document.getElementById("incomeChart").getContext("2d");
-if(chart) chart.destroy();
-chart=new Chart(ctx,{type:"bar",
-data:{labels:["Gross","Expenses","Net"],datasets:[{data:[g,e,n]}]},
-options:{responsive:true}});
-}
-
-let grossSpan=document.getElementById("gross");
-let expensesSpan=document.getElementById("expenses");
-let netSpan=document.getElementById("net");
-</script>
-
+                generateQR() {
+                    const container = document.getElementById("qrcode");
+                    container.innerHTML = "";
+                    const billData = `Billing for ${this.patientRef || 'Patient'}: Total £${this.totals.gross}. Codes: ${this.activeItems.map(i => i.code).join(',')}`;
+                    new QRCode(container, {
+                        text: billData,
+                        width: 128,
+                        height: 128,
+                        colorDark: "#1e1b4b",
+                        colorLight: "#f8fafc"
+                    });
+                }
+            }
+        }
+    </script>
 </body>
 </html>
