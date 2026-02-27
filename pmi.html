@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fee Calculator</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+th, td { border: 1px solid #ccc; padding: 6px; }
+th { background: #f0f0f0; }
+input { width: 80px; }
+h2 { margin-top: 40px; }
+.total { font-weight: bold; font-size: 1.2em; }
+</style>
+</head>
+<body>
+
+<h1>PP Income Calculator</h1>
+
+<label>Select insurer:
+<select id="insurer">
+<option value="bupa">BUPA</option>
+<option value="axa">AXA</option>
+<option value="aviva">Aviva</option>
+<option value="vitality">Vitality</option>
+<option value="wpa">WPA</option>
+</select>
+</label>
+
+<h2>Clinical Activity</h2>
+
+<table>
+<tr>
+<th>CCSD Code</th>
+<th>Description</th>
+<th>BUPA Fee (£)</th>
+<th>Quantity</th>
+<th>Subtotal (£)</th>
+</tr>
+
+<tr><td>20300</td><td>Initial outpatient consultation</td><td><input value="200"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>20310</td><td>Follow-up outpatient consultation</td><td><input value="120"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+
+<tr><td>X0001</td><td>Chemo planning (0–7 days)</td><td><input value="137"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>X0002</td><td>Chemo planning (1–14 days)</td><td><input value="257"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+
+<tr><td>X6910</td><td>RT planning (simple)</td><td><input value="300"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>X6930</td><td>RT planning (complex)</td><td><input value="600"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>X6950</td><td>SRS/SBRT planning</td><td><input value="1466"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+
+<tr><td>X0007</td><td>EBRT supervision (≤15 fractions)</td><td><input value="380"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>X0008</td><td>EBRT supervision (16–30 fractions)</td><td><input value="720"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+
+<tr><td>BT212</td><td>LDR prostate brachytherapy</td><td><input value="921"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+
+</table>
+
+<h2>Expenses</h2>
+
+<table>
+<tr><td>Secretary/admin (£)</td><td><input id="sec" value="0"></td></tr>
+<tr><td>Room rental (£)</td><td><input id="room" value="0"></td></tr>
+<tr><td>Indemnity (£)</td><td><input id="indemnity" value="0"></td></tr>
+<tr><td>Other (£)</td><td><input id="other" value="0"></td></tr>
+</table>
+
+<button onclick="calc()">Calculate</button>
+
+<h2>Results</h2>
+<p class="total">Gross income: £<span id="gross">0</span></p>
+<p class="total">Total expenses: £<span id="expenses">0</span></p>
+<p class="total">Net income: £<span id="net">0</span></p>
+
+<script>
+function calc() {
+let rows = document.querySelectorAll("table tr");
+let gross = 0;
+
+rows.forEach(row => {
+let inputs = row.querySelectorAll("input");
+if (inputs.length === 2) {
+let fee = parseFloat(inputs[0].value) || 0;
+let qty = parseInt(inputs[1].value) || 0;
+let subtotal = fee * qty;
+row.querySelector(".sub").innerText = subtotal.toFixed(2);
+gross += subtotal;
+}
+});
+
+let sec = parseFloat(document.getElementById("sec").value) || 0;
+let room = parseFloat(document.getElementById("room").value) || 0;
+let indemnity = parseFloat(document.getElementById("indemnity").value) || 0;
+let other = parseFloat(document.getElementById("other").value) || 0;
+
+let expenses = sec + room + indemnity + other;
+let net = gross - expenses;
+
+document.getElementById("gross").innerText = gross.toFixed(2);
+document.getElementById("expenses").innerText = expenses.toFixed(2);
+document.getElementById("net").innerText = net.toFixed(2);
+}
+</script>
+
+</body>
+</html>
