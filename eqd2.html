@@ -12,86 +12,94 @@
     <link rel="stylesheet" href="assets/style.css">
 
     <style>
-        /* --- CLINICAL TOOL SPECIFIC STYLES --- */
-        .tool-container { max-width: 900px; margin: 0 auto; padding: 3rem 20px; }
+        .tool-container { max-width: 1100px; margin: 0 auto; padding: 2rem 20px; }
         .tool-header { margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
         .tool-header h1 { margin-bottom: 0.5rem; color: #0f172a; }
-        .tool-header p { color: #64748b; font-size: 0.95rem; margin: 0; }
-
-        .control-panel {
-            background-color: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 2rem;
+        
+        /* Two-Column Input Layout */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             margin-bottom: 2rem;
         }
 
-        .panel-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+        .regimen-panel {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1.5rem;
         }
 
-        .input-group h3 {
-            font-family: var(--font-body);
+        .regimen-panel.blue { border-top: 4px solid #3b82f6; }
+        .regimen-panel.indigo { border-top: 4px solid #6366f1; }
+
+        .panel-title {
             font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 800;
             color: #1e293b;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
         }
 
-        .field-container { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.85rem; margin-bottom: 4px; font-weight: 600; color: #475569; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 4px; }
         
         input[type="number"] {
-            padding: 10px;
+            width: 100%;
+            padding: 8px;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
-            width: 100%;
             font-family: inherit;
-            font-size: 1rem;
         }
 
-        .btn-tool {
+        .btn-compare {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             background-color: #1e293b;
             color: white;
             border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.2s;
-        }
-        .btn-tool:hover { background-color: #0f172a; }
-
-        .results-area { display: none; margin-top: 2rem; animation: fadeIn 0.3s ease-in; }
-        
-        .summary-card {
-            background: #fff;
-            border: 2px solid #1e293b;
-            padding: 1.5rem;
             border-radius: 6px;
-            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
         }
 
-        .eqd2-value { font-size: 2.5rem; font-weight: 700; color: #1e293b; margin: 0.5rem 0; }
-        .eqd2-label { font-size: 0.9rem; color: #64748b; text-transform: uppercase; }
-
-        .preset-btns { display: flex; gap: 8px; margin-top: 5px; }
-        .btn-mini { 
-            padding: 4px 8px; font-size: 0.75rem; border: 1px solid #cbd5e1; 
-            background: white; border-radius: 3px; cursor: pointer; 
+        /* Results Table */
+        .results-area { display: none; animation: fadeIn 0.4s ease-out; }
+        
+        table.clinical-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e2e8f0;
         }
-        .btn-mini:hover { background: #e2e8f0; }
+        
+        .clinical-table th {
+            background: #1e293b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        
+        .clinical-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .diff-row { background-color: #f0fdf4; font-weight: 700; color: #166534; }
+        .val-cell { font-family: monospace; font-size: 1.1rem; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        @media (max-width: 768px) { .panel-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -106,135 +114,159 @@
         </div>
         <nav>
             <a href="index.html">Home</a>
-            <a href="cxb.html" class="active tool-link">CXB Planner</a>
-            <a href="eqd2.html" class="active tool-link">EQD2 Calculator</a>
+            <a href="cxb.html" class="active">CXB Planner</a>
+            <a href="eqd2.html" class="active">EQD2 Calculatorn</a>
         </nav>
     </div>
 </header>
 
-<main>
-    <div class="tool-container">
-        <div class="tool-header">
-            <h1>EQD2 Dose Calculator</h1>
-            <p>Calculate Equivalent Dose in 2 Gy fractions using the Linear-Quadratic model.</p>
-        </div>
+<main class="tool-container">
+    <div class="tool-header">
+        <h1>Radiotherapy EQD2 Comparison</h1>
+        <p>Compare two fractionation schedules side-by-side using the Linear-Quadratic model.</p>
+    </div>
 
-        <section class="control-panel">
-            <div class="panel-grid">
-                <div class="input-group">
-                    <h3>1. Regimen Parameters</h3>
-                    <div class="field-container">
-                        <label for="num-fractions">Number of Fractions (n)</label>
-                        <input type="number" id="num-fractions" placeholder="e.g. 15" oninput="clearOutput()">
-                    </div>
-                    <div class="field-container">
-                        <label for="dose-per-fraction">Dose per Fraction (Gy)</label>
-                        <input type="number" id="dose-per-fraction" step="0.01" placeholder="e.g. 2.67" oninput="updateTotalDose()">
-                    </div>
-                    <div class="field-container">
-                        <label for="total-dose">Total Dose (Gy)</label>
-                        <input type="number" id="total-dose" step="0.01" placeholder="e.g. 40" oninput="updateDosePerFx()">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <h3>2. Biological & Target</h3>
-                    <div class="field-container">
-                        <label for="ab-ratio">α/β Ratio (Gy)</label>
-                        <input type="number" id="ab-ratio" step="0.1" value="10">
-                        <div class="preset-btns">
-                            <button class="btn-mini" onclick="setAB(10)">α/β = 10 (Tumour)</button>
-                            <button class="btn-mini" onclick="setAB(3)">α/β = 3 (Late)</button>
-                        </div>
-                    </div>
-                    <div class="field-container">
-                        <label for="target-eqd2" style="color: #0369a1;">Target EQD2 (Optional)</label>
-                        <input type="number" id="target-eqd2" step="0.01" placeholder="Use to find Total Dose" style="border-color: #bae6fd;">
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="calculate()" class="btn-tool">Calculate Parameters</button>
-        </section>
-
-        <div id="results-area" class="results-area">
-            <div class="summary-card">
-                <div class="eqd2-label">Calculated EQD2</div>
-                <div id="res-eqd2" class="eqd2-value">0.00</div>
-                <div id="res-description" style="font-size: 0.95rem; color: #475569;">
-                    Based on <span id="res-details">...</span>
-                </div>
-            </div>
+    <div class="comparison-grid">
+        <div class="regimen-panel blue">
+            <div class="panel-title"><span>Regimen A</span> <small>(Standard)</small></div>
             
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 1.5rem; text-align: center;">
-                Formula used: $EQD2 = D \times \frac{d + (\alpha/\beta)}{2 + (\alpha/\beta)}$
-            </p>
+            <div class="input-row">
+                <label>Number of Fractions</label>
+                <input type="number" id="n-a" placeholder="e.g. 30" oninput="syncDose('a')">
+            </div>
+            <div class="input-row">
+                <label>Dose per Fraction (Gy)</label>
+                <input type="number" id="d-a" step="0.01" placeholder="e.g. 2.0" oninput="syncDose('a')">
+            </div>
+            <div class="input-row">
+                <label>Total Dose (Gy)</label>
+                <input type="number" id="D-a" step="0.01" oninput="syncFrac('a')">
+            </div>
+            <div class="input-row">
+                <label>α/β Ratio</label>
+                <input type="number" id="ab-a" value="10" step="0.1">
+            </div>
         </div>
+
+        <div class="regimen-panel indigo">
+            <div class="panel-title"><span>Regimen B</span> <small>(Alternative)</small></div>
+            
+            <div class="input-row">
+                <label>Number of Fractions</label>
+                <input type="number" id="n-b" placeholder="e.g. 15" oninput="syncDose('b')">
+            </div>
+            <div class="input-row">
+                <label>Dose per Fraction (Gy)</label>
+                <input type="number" id="d-b" step="0.01" placeholder="e.g. 2.67" oninput="syncDose('b')">
+            </div>
+            <div class="input-row">
+                <label>Total Dose (Gy)</label>
+                <input type="number" id="D-b" step="0.01" oninput="syncFrac('b')">
+            </div>
+            <div class="input-row">
+                <label>α/β Ratio</label>
+                <input type="number" id="ab-b" value="10" step="0.1">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="runComparison()" class="btn-compare">Compare Regimens</button>
+
+    <div id="results-area" class="results-area">
+        <table class="clinical-table">
+            <thead>
+                <tr>
+                    <th style="width: 30%;">Parameter</th>
+                    <th style="width: 35%;">Regimen A</th>
+                    <th style="width: 35%;">Regimen B</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fractionation</td>
+                    <td id="res-frac-a">-</td>
+                    <td id="res-frac-b">-</td>
+                </tr>
+                <tr>
+                    <td>Total Physical Dose</td>
+                    <td class="val-cell" id="res-total-a">-</td>
+                    <td class="val-cell" id="res-total-b">-</td>
+                </tr>
+                <tr>
+                    <td><strong>EQD2</strong> (Biological)</td>
+                    <td class="val-cell"><strong id="res-eqd2-a">-</strong></td>
+                    <td class="val-cell"><strong id="res-eqd2-b">-</strong></td>
+                </tr>
+                <tr class="diff-row">
+                    <td>Relative Difference</td>
+                    <td colspan="2" style="text-align: center;" id="res-diff">-</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="font-size: 0.75rem; color: #64748b; margin-top: 1rem; font-style: italic;">
+            Note: Calculations based on the Linear-Quadratic model. Assumes time-gap between fractions is sufficient for full repair.
+        </p>
     </div>
 </main>
 
 <script>
-    function setAB(val) {
-        document.getElementById('ab-ratio').value = val;
+    // Helper to calculate EQD2
+    function getEQD2(D, d, ab) {
+        return D * ((d + ab) / (2 + ab));
     }
 
-    function updateTotalDose() {
-        const n = parseFloat(document.getElementById('num-fractions').value);
-        const d = parseFloat(document.getElementById('dose-per-fraction').value);
+    // UI Sync: Total Dose = n * d
+    function syncDose(p) {
+        const n = document.getElementById(`n-${p}`).value;
+        const d = document.getElementById(`d-${p}`).value;
         if (n && d) {
-            document.getElementById('total-dose').value = (n * d).toFixed(2);
+            document.getElementById(`D-${p}`).value = (n * d).toFixed(2);
         }
-        clearOutput();
     }
 
-    function updateDosePerFx() {
-        const n = parseFloat(document.getElementById('num-fractions').value);
-        const D = parseFloat(document.getElementById('total-dose').value);
+    // UI Sync: d = Total / n
+    function syncFrac(p) {
+        const n = document.getElementById(`n-${p}`).value;
+        const D = document.getElementById(`D-${p}`).value;
         if (n && D) {
-            document.getElementById('dose-per-fraction').value = (D / n).toFixed(2);
+            document.getElementById(`d-${p}`).value = (D / n).toFixed(2);
         }
-        clearOutput();
     }
 
-    function clearOutput() {
-        document.getElementById('results-area').style.display = 'none';
-    }
+    function runComparison() {
+        const data = ['a', 'b'].map(p => ({
+            n: parseFloat(document.getElementById(`n-${p}`).value),
+            d: parseFloat(document.getElementById(`d-${p}`).value),
+            D: parseFloat(document.getElementById(`D-${p}`).value),
+            ab: parseFloat(document.getElementById(`ab-${p}`).value)
+        }));
 
-    function calculate() {
-        const n = parseFloat(document.getElementById('num-fractions').value);
-        const d = parseFloat(document.getElementById('dose-per-fraction').value);
-        const D = parseFloat(document.getElementById('total-dose').value);
-        const ab = parseFloat(document.getElementById('ab-ratio').value);
-        const targetEQD2 = parseFloat(document.getElementById('target-eqd2').value);
-
-        let finalEQD2, finalTotalDose, finalDosePerFx;
-
-        // Mode 1: Inverse (Calculate Total Dose from EQD2)
-        if (targetEQD2 && n && ab && !D) {
-            // Using the formula: D = ((-ab*n) + SQRT( (ab*n)^2 + 4*EQD2*n*(2+ab) )) / 2
-            const term1 = -1 * ab * n;
-            const term2 = Math.sqrt( Math.pow(ab * n, 2) + 4 * targetEQD2 * n * (2 + ab) );
-            finalTotalDose = (term1 + term2) / 2;
-            finalDosePerFx = finalTotalDose / n;
-            finalEQD2 = targetEQD2;
-            
-            // Fill back into inputs
-            document.getElementById('total-dose').value = finalTotalDose.toFixed(2);
-            document.getElementById('dose-per-fraction').value = finalDosePerFx.toFixed(2);
-        } 
-        // Mode 2: Standard (Calculate EQD2 from Dose)
-        else if (D && d && ab) {
-            finalEQD2 = D * ((d + ab) / (2 + ab));
-            finalTotalDose = D;
-            finalDosePerFx = d;
-        } else {
-            alert("Please provide at least: Fractions & EQD2 OR Total Dose & Dose/Fx.");
+        if (data.some(r => isNaN(r.D) || isNaN(r.ab))) {
+            alert("Please ensure all fields for both regimens are filled.");
             return;
         }
 
-        // Display
-        document.getElementById('res-eqd2').innerText = finalEQD2.toFixed(2) + " Gy";
-        document.getElementById('res-details').innerText = `${n} fractions of ${finalDosePerFx.toFixed(2)} Gy (Total ${finalTotalDose.toFixed(2)} Gy) with α/β of ${ab}`;
+        const eqd2A = getEQD2(data[0].D, data[0].d, data[0].ab);
+        const eqd2B = getEQD2(data[1].D, data[1].d, data[1].ab);
+
+        // Update Table
+        document.getElementById('res-frac-a').innerText = `${data[0].n} × ${data[0].d} Gy`;
+        document.getElementById('res-frac-b').innerText = `${data[1].n} × ${data[1].d} Gy`;
+        
+        document.getElementById('res-total-a').innerText = `${data[0].D.toFixed(2)} Gy`;
+        document.getElementById('res-total-b').innerText = `${data[1].D.toFixed(2)} Gy`;
+        
+        document.getElementById('res-eqd2-a').innerText = `${eqd2A.toFixed(2)} Gy`;
+        document.getElementById('res-eqd2-b').innerText = `${eqd2B.toFixed(2)} Gy`;
+
+        // Calculate Difference
+        const diff = eqd2B - eqd2A;
+        const percent = (diff / eqd2A) * 100;
+        const direction = diff > 0 ? "more" : "less";
+        
+        document.getElementById('res-diff').innerText = 
+            `Regimen B delivers ${Math.abs(diff).toFixed(2)} Gy ${direction} than Regimen A (${Math.abs(percent).toFixed(1)}% change)`;
+
         document.getElementById('results-area').style.display = 'block';
     }
 </script>
