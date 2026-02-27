@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Private Practice Income Calculator</title>
+<title>Oncology Private Practice Income Calculator</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body { font-family: Arial, sans-serif; margin: 10px; background:#f5f7fb; }
@@ -21,7 +21,7 @@ input,select { width:100%; }
 <body>
 
 <div class="container">
-<h1>Private Practice Income Calculator</h1>
+<h1>Oncology Private Practice Income Calculator</h1>
 
 <div class="flex">
 <div class="card">
@@ -101,7 +101,7 @@ document.write(row("X0004","Chemo planning (1–28 days)",515,"","","",""));
 
 <h2>Chapter 20 – Radiotherapy</h2>
 
-<h3>Planning</h3>
+<h3>Radiotherapy Planning</h3>
 <table class="activity">
 <tr>
 <th>CCSD</th><th>Description</th>
@@ -112,6 +112,21 @@ document.write(row("X0004","Chemo planning (1–28 days)",515,"","","",""));
 document.write(row("X6910","Simple RT planning",300,"","","",""));
 document.write(row("X6930","Complex RT planning",600,"","","",""));
 document.write(row("X6950","SBRT/SRS planning",1466,"","","",""));
+</script>
+</table>
+
+<h3>Radiotherapy Supervision</h3>
+<table class="activity">
+<tr>
+<th>CCSD</th><th>Description</th>
+<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
+<th>Qty</th><th>Subtotal</th>
+</tr>
+<script>
+document.write(row("X0007","EBRT ≤15 fractions",380,"","","",""));
+document.write(row("X0008","EBRT 16–30 fractions",720,"","","",""));
+document.write(row("X0009","EBRT ≥31 fractions",960,"","","",""));
+document.write(row("X6581","Single fraction RT",25,"","","",""));
 </script>
 </table>
 
@@ -128,21 +143,6 @@ document.write(row("BT222","HDR prostate brachytherapy",921,"","","",""));
 document.write(row("BT253","Papillon rectal cancer",205,"","","",""));
 document.write(row("BT270","Oesophagus/bronchus/stomach brachytherapy",380,"","","",""));
 document.write(row("BT342","Cervix/intrapelvic brachytherapy",380,"","","",""));
-</script>
-</table>
-
-<h3>External Beam – Supervision</h3>
-<table class="activity">
-<tr>
-<th>CCSD</th><th>Description</th>
-<th>BUPA</th><th>AXA</th><th>Aviva</th><th>Vitality</th><th>WPA</th>
-<th>Qty</th><th>Subtotal</th>
-</tr>
-<script>
-document.write(row("X0007","EBRT ≤15 fractions",380,"","","",""));
-document.write(row("X0008","EBRT 16–30 fractions",720,"","","",""));
-document.write(row("X0009","EBRT ≥31 fractions",960,"","","",""));
-document.write(row("X6581","Single fraction RT",25,"","","",""));
 </script>
 </table>
 
