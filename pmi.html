@@ -2,56 +2,61 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Fee Calculator</title>
+<title>Private Practice Income Calculator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: Arial; margin: 20px; }
-table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
-th, td { border: 1px solid #ccc; padding: 6px; }
-th { background: #f0f0f0; }
-input { width: 80px; }
-h2 { margin-top: 40px; }
-.total { font-weight: bold; font-size: 1.2em; }
+body { font-family: Arial, sans-serif; margin: 10px; background: #f7f9fc; }
+h1, h2 { text-align: center; }
+.container { max-width: 1000px; margin: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+th, td { border: 1px solid #ccc; padding: 6px; font-size: 0.9em; }
+th { background: #eee; }
+input, select { width: 100%; padding: 4px; }
+.total { font-weight: bold; font-size: 1.1em; }
+.flex { display: flex; gap: 10px; flex-wrap: wrap; }
+.card { flex: 1; min-width: 200px; background: #f0f4ff; padding: 10px; border-radius: 6px; }
+
+@media (max-width:600px){
+table, th, td { font-size: 0.8em; }
+}
 </style>
 </head>
 <body>
 
-<h1>PP Income Calculator</h1>
+<div class="container">
 
-<label>Select insurer:
-<select id="insurer">
-<option value="bupa">BUPA</option>
-<option value="axa">AXA</option>
-<option value="aviva">Aviva</option>
-<option value="vitality">Vitality</option>
-<option value="wpa">WPA</option>
+<h1>Private Practice Income Calculator</h1>
+
+<div class="flex">
+<div class="card">
+<label>View:
+<select id="period" onchange="calc()">
+<option value="month">Monthly</option>
+<option value="year">Annual</option>
 </select>
 </label>
+</div>
+
+<div class="card">
+<label>SBRT Simulator (cases per week):
+<input type="number" id="sbrtSim" value="0" onchange="calc()">
+</label>
+</div>
+</div>
 
 <h2>Clinical Activity</h2>
 
-<table>
+<table id="activityTable">
 <tr>
-<th>CCSD Code</th>
-<th>Description</th>
-<th>BUPA Fee (£)</th>
-<th>Quantity</th>
-<th>Subtotal (£)</th>
+<th>CCSD</th><th>Description</th><th>Fee (£)</th><th>Quantity</th><th>Subtotal (£)</th>
 </tr>
 
-<tr><td>20300</td><td>Initial outpatient consultation</td><td><input value="200"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-<tr><td>20310</td><td>Follow-up outpatient consultation</td><td><input value="120"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-
-<tr><td>X0001</td><td>Chemo planning (0–7 days)</td><td><input value="137"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-<tr><td>X0002</td><td>Chemo planning (1–14 days)</td><td><input value="257"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-
-<tr><td>X6910</td><td>RT planning (simple)</td><td><input value="300"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-<tr><td>X6930</td><td>RT planning (complex)</td><td><input value="600"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-<tr><td>X6950</td><td>SRS/SBRT planning</td><td><input value="1466"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-
-<tr><td>X0007</td><td>EBRT supervision (≤15 fractions)</td><td><input value="380"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-<tr><td>X0008</td><td>EBRT supervision (16–30 fractions)</td><td><input value="720"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
-
-<tr><td>BT212</td><td>LDR prostate brachytherapy</td><td><input value="921"></td><td><input type="number" value="0" onchange="calc()"></td><td class="sub">0</td></tr>
+<tr><td>X6950</td><td>SBRT / SRS Planning</td><td><input value="1466"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
+<tr><td>X6930</td><td>Complex RT Planning</td><td><input value="600"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
+<tr><td>X6910</td><td>Simple RT Planning</td><td><input value="300"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
+<tr><td>X0007</td><td>EBRT Supervision ≤15#</td><td><input value="380"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
+<tr><td>20300</td><td>Initial Consultation</td><td><input value="200"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
+<tr><td>20310</td><td>Follow-up Consultation</td><td><input value="120"></td><td><input type="number" value="0"></td><td class="sub">0</td></tr>
 
 </table>
 
@@ -67,37 +72,74 @@ h2 { margin-top: 40px; }
 <button onclick="calc()">Calculate</button>
 
 <h2>Results</h2>
-<p class="total">Gross income: £<span id="gross">0</span></p>
-<p class="total">Total expenses: £<span id="expenses">0</span></p>
-<p class="total">Net income: £<span id="net">0</span></p>
+
+<p class="total">Gross Income: £<span id="gross">0</span></p>
+<p class="total">Expenses: £<span id="expenses">0</span></p>
+<p class="total">Net Income: £<span id="net">0</span></p>
+
+<canvas id="incomeChart"></canvas>
+
+</div>
 
 <script>
-function calc() {
-let rows = document.querySelectorAll("table tr");
+let chart;
+
+function calc(){
+let rows = document.querySelectorAll("#activityTable tr");
 let gross = 0;
 
-rows.forEach(row => {
+rows.forEach((row,i)=>{
+if(i===0) return;
 let inputs = row.querySelectorAll("input");
-if (inputs.length === 2) {
-let fee = parseFloat(inputs[0].value) || 0;
-let qty = parseInt(inputs[1].value) || 0;
+let fee = parseFloat(inputs[0].value)||0;
+let qty = parseFloat(inputs[1].value)||0;
 let subtotal = fee * qty;
 row.querySelector(".sub").innerText = subtotal.toFixed(2);
 gross += subtotal;
-}
 });
 
-let sec = parseFloat(document.getElementById("sec").value) || 0;
-let room = parseFloat(document.getElementById("room").value) || 0;
-let indemnity = parseFloat(document.getElementById("indemnity").value) || 0;
-let other = parseFloat(document.getElementById("other").value) || 0;
+// SBRT simulator
+let sbrt = parseFloat(document.getElementById("sbrtSim").value)||0;
+let sbrtAnnual = sbrt * 52 * 1466;
+gross += sbrtAnnual;
 
-let expenses = sec + room + indemnity + other;
+// Period toggle
+let period = document.getElementById("period").value;
+if(period==="month") gross = gross/12;
+
+// Expenses
+let sec = parseFloat(document.getElementById("sec").value)||0;
+let room = parseFloat(document.getElementById("room").value)||0;
+let indemnity = parseFloat(document.getElementById("indemnity").value)||0;
+let other = parseFloat(document.getElementById("other").value)||0;
+let expenses = sec+room+indemnity+other;
+if(period==="year") expenses = expenses*12;
+
 let net = gross - expenses;
 
-document.getElementById("gross").innerText = gross.toFixed(2);
-document.getElementById("expenses").innerText = expenses.toFixed(2);
-document.getElementById("net").innerText = net.toFixed(2);
+document.getElementById("gross").innerText = gross.toFixed(0);
+document.getElementById("expenses").innerText = expenses.toFixed(0);
+document.getElementById("net").innerText = net.toFixed(0);
+
+drawChart(gross, expenses, net);
+}
+
+function drawChart(gross, expenses, net){
+let ctx = document.getElementById("incomeChart").getContext("2d");
+if(chart) chart.destroy();
+
+chart = new Chart(ctx,{
+type:"bar",
+data:{
+labels:["Gross","Expenses","Net"],
+datasets:[{
+label:"£",
+data:[gross,expenses,net],
+backgroundColor:["#4caf50","#f44336","#2196f3"]
+}]
+},
+options:{responsive:true}
+});
 }
 </script>
 
