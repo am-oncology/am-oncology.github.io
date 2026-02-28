@@ -3,226 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fee Calculator | Clinical Tool</title>
+    <title>OncoBill Pro | Consultant Billing Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
-        .code-btn { transition: all 0.2s; border: 1px solid #e2e8f0; }
-        .code-btn:hover { border-color: #6366f1; background: #f8fafc; transform: translateY(-1px); }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        
+        /* Custom Scrollbar for the summary panel */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* Professional Print Stylesheet */
+        @media print {
+            @page { margin: 0cm; size: A4; }
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .print-break-inside { page-break-inside: avoid; }
+        }
+        .print-only { display: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen pb-20" x-data="billingApp()">
+<body class="bg-slate-50 text-slate-900 min-h-screen" x-data="billingSystem()" x-init="initApp()">
 
-    <header class="bg-slate-900 text-white py-6 px-8 mb-8 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-black tracking-tight">OncoBill <span class="text-indigo-400">Complete</span></h1>
-                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">2026 Specialist Fee Schedule</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-xs font-bold text-slate-400">INSURER:</span>
-                <select x-model="selectedInsurer" class="bg-slate-800 border-none rounded-lg text-sm font-bold px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                    <template x-for="pmi in Object.keys(insurers)" :key="pmi">
-                        <option :value="pmi" x-text="pmi"></option>
-                    </template>
-                </select>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <div class="no-print pb-20">
         
-        <div class="lg:col-span-8 space-y-8">
+        <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-xl border-b border-indigo-500/30">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 bg-indigo-500 rounded-lg flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/50">OB</div>
+                    <div>
+                        <h1 class="text-lg font-bold tracking-tight leading-none">OncoBill <span class="text-indigo-400">Pro</span></h1>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Specialist Fee Engine 2026</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 bg-slate-800/50 p-2 rounded-xl border border-white/10">
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase px-2">Insurer Schedule</label>
+                        <select x-model="state.insurer" @change="recalculateFees()" class="bg-transparent text-sm font-bold text-white px-2 py-1 outline-none cursor-pointer hover:text-indigo-300 transition">
+                            <template x-for="pmi in Object.keys(db.insurers)" :key="pmi">
+                                <option :value="pmi" x-text="pmi" class="bg-slate-800"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div class="w-px h-8 bg-white/10"></div>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase px-2">Patient Reference</label>
+                        <input type="text" x-model="state.patientRef" placeholder="e.g. JB-4922" class="bg-transparent text-sm font-bold text-white px-2 py-1 outline-none w-32 placeholder-slate-600 focus:placeholder-slate-500">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <section class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">Quick Pathway Bundles</h2>
-                <button @click="applyBundle('rectal_long')" class="bg-white p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-500 transition text-left shadow-sm">
-                    <h3 class="font-bold text-slate-800">Rectal Long-Course CRT</h3>
-                    <p class="text-xs text-slate-500">Initial + Complex Plan + 25# Supervision + Chemo Superv. + Follow-up</p>
-                </button>
-            </section>
+            <div class="lg:col-span-8 space-y-8">
 
-            <section>
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">1. Consultations (Chapter 1)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <template x-for="code in menu.consults">
-                        <button @click="addItem(code)" class="code-btn bg-white p-3 rounded-xl text-left flex justify-between items-center group">
-                            <div class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></div>
-                            <div class="text-[10px] font-bold text-slate-400 group-hover:text-indigo-600" x-text="code"></div>
-                        </button>
-                    </template>
-                </div>
-            </section>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <section>
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2a. Radiotherapy Planning (Chapter 20)</h3>
-                    <div class="space-y-2">
-                        <template x-for="code in menu.rtPlanning">
-                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
-                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-orange-600" x-text="code"></span>
-                            </button>
-                        </template>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="relative mb-6">
+                        <span class="absolute left-3 top-3 text-slate-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </span>
+                        <input type="text" x-model="searchQuery" placeholder="Search codes (e.g. 'planning', '20300', 'chemo')..." class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 transition">
                     </div>
-                </section>
 
-                <section>
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2b. Radiotherapy Supervision (Chapter 20)</h3>
-                    <div class="space-y-2">
-                        <template x-for="code in menu.rtSupervision">
-                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
-                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-emerald-600" x-text="code"></span>
-                            </button>
-                        </template>
-                    </div>
-                </section>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <section>
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2c. Brachytherapy (Chapter 20)</h3>
-                    <div class="space-y-2">
-                        <template x-for="code in menu.brachy">
-                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
-                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-pink-600" x-text="code"></span>
-                            </button>
-                        </template>
-                    </div>
-                </section>
-
-                <section>
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">3. Chemotherapy (Chapter 18)</h3>
-                    <div class="space-y-2">
-                        <template x-for="code in menu.chemo">
-                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
-                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-purple-600" x-text="code"></span>
-                            </button>
-                        </template>
-                    </div>
-                </section>
-            </div>
-        </div>
-
-        <div class="lg:col-span-4">
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 sticky top-24 overflow-hidden">
-                <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
-                    <h2 class="font-bold">Summary</h2>
-                    <button @click="activeItems = []" class="text-xs bg-white/20 px-2 py-1 rounded hover:bg-white/30">Clear</button>
-                </div>
-                
-                <div class="p-6 space-y-4 max-h-[500px] overflow-y-auto">
-                    <template x-for="(item, index) in activeItems" :key="index">
-                        <div class="border-b border-slate-100 pb-4">
-                            <div class="flex justify-between items-start mb-1">
-                                <span class="text-[10px] font-black text-indigo-500 uppercase font-mono" x-text="item.code"></span>
-                                <button @click="removeItem(index)" class="text-slate-300 hover:text-red-500">×</button>
-                            </div>
-                            <p class="text-xs font-bold text-slate-700 mb-2 leading-tight" x-text="getDesc(item.code)"></p>
-                            <div class="flex items-center gap-2">
-                                <div class="flex-1">
-                                    <input type="number" x-model.number="item.fee" class="w-full text-xs font-bold border rounded p-1">
-                                </div>
-                                <div class="text-[10px] text-slate-400">QTY:</div>
-                                <input type="number" x-model.number="item.qty" class="w-12 text-xs border rounded p-1">
-                                <div class="w-16 text-right font-bold text-sm" x-text="'£' + (item.fee * item.qty)"></div>
-                            </div>
+                    <div x-show="!searchQuery" class="space-y-3">
+                        <h2 class="text-xs font-black text-indigo-500 uppercase tracking-widest flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> One-Click Pathways
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <template x-for="(bundle, key) in db.bundles" :key="key">
+                                <button @click="applyBundle(key)" class="relative overflow-hidden group bg-indigo-50 hover:bg-indigo-600 border border-indigo-100 rounded-xl p-4 text-left transition-all duration-200">
+                                    <div class="relative z-10">
+                                        <h3 class="font-bold text-indigo-900 group-hover:text-white transition-colors" x-text="bundle.name"></h3>
+                                        <p class="text-xs text-indigo-600/80 group-hover:text-indigo-100 mt-1 transition-colors" x-text="bundle.desc"></p>
+                                    </div>
+                                    <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-indigo-200/50 rounded-full group-hover:bg-white/20 transition-all"></div>
+                                </button>
+                            </template>
                         </div>
-                    </template>
-                    <template x-if="activeItems.length === 0">
-                        <p class="text-center text-slate-400 text-xs italic py-10">Statement empty. Select codes or bundles.</p>
-                    </template>
+                    </div>
                 </div>
 
-                <div class="bg-slate-50 p-6 border-t border-slate-100 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Invoice</span>
-                        <span class="text-3xl font-black text-slate-900" x-text="'£' + calculateGross().toLocaleString()"></span>
+                <div class="space-y-8">
+                    <template x-for="cat in filteredCategories" :key="cat.id">
+                        <section x-show="cat.codes.length > 0" class="transition-all">
+                            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1" x-text="cat.title"></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <template x-for="code in cat.codes" :key="code">
+                                    <button @click="addItem(code)" 
+                                        class="group relative bg-white border border-slate-200 hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 rounded-xl p-3 text-left transition-all duration-200 flex justify-between items-center">
+                                        <div class="pr-8">
+                                            <div class="text-sm font-semibold text-slate-700 group-hover:text-slate-900" x-text="db.descriptions[code]"></div>
+                                            <div class="text-[10px] font-bold text-slate-400 mt-1 flex gap-2">
+                                                <span x-text="code"></span>
+                                                <span class="text-emerald-600 bg-emerald-50 px-1 rounded" x-text="'£' + getFee(code)"></span>
+                                            </div>
+                                        </div>
+                                        <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div class="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm">+</div>
+                                        </div>
+                                    </button>
+                                </template>
+                            </div>
+                        </section>
+                    </template>
+                    
+                    <div x-show="searchQuery && filteredCategories.every(c => c.codes.length === 0)" class="text-center py-12 text-slate-400 italic">
+                        No codes found matching "<span x-text="searchQuery"></span>"
                     </div>
-                    <button @click="window.print()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-slate-800 transition shadow-lg">
-                        Print Billing Summary
-                    </button>
                 </div>
             </div>
+
+            <div class="lg:col-span-4">
+                <div class="sticky top-24 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
+                    
+                    <div class="bg-indigo-600 p-5 text-white shadow-inner flex justify-between items-center z-10">
+                        <div>
+                            <h2 class="font-bold text-lg">Active Session</h2>
+                            <p class="text-xs text-indigo-200" x-text="state.items.length + ' items logged'"></p>
+                        </div>
+                        <button @click="resetSession()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-1.5 rounded-lg transition border border-indigo-500/50">
+                            Clear
+                        </button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto custom-scroll p-2 space-y-1 bg-slate-50">
+                        <template x-for="(item, index) in state.items" :key="index">
+                            <div class="group bg-white p-3 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all shadow-sm relative">
+                                <div class="flex justify-between items-start pr-6">
+                                    <div>
+                                        <span class="inline-block bg-slate-100 text-slate-600 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider mb-1" x-text="item.code"></span>
+                                        <p class="text-xs font-bold text-slate-800 leading-tight" x-text="db.descriptions[item.code]"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3 flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-100">
+                                    <div class="flex-1">
+                                        <label class="block text-[8px] text-slate-400 uppercase font-bold">Fee (£)</label>
+                                        <input type="number" x-model.number="item.fee" class="w-full bg-transparent text-xs font-bold outline-none text-slate-700">
+                                    </div>
+                                    <div class="w-px h-6 bg-slate-200"></div>
+                                    <div class="w-12 text-center">
+                                        <label class="block text-[8px] text-slate-400 uppercase font-bold">Qty</label>
+                                        <input type="number" x-model.number="item.qty" class="w-full bg-transparent text-xs font-bold outline-none text-center text-slate-700">
+                                    </div>
+                                    <div class="w-px h-6 bg-slate-200"></div>
+                                    <div class="w-16 text-right">
+                                        <label class="block text-[8px] text-slate-400 uppercase font-bold">Total</label>
+                                        <span class="text-xs font-black text-indigo-600" x-text="'£' + (item.fee * item.qty)"></span>
+                                    </div>
+                                </div>
+
+                                <button @click="removeItem(index)" class="absolute top-2 right-2 text-slate-300 hover:text-red-500 p-1 rounded-full hover:bg-red-50 transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                        
+                        <div x-show="state.items.length === 0" class="flex flex-col items-center justify-center h-48 text-slate-400">
+                            <svg class="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                            <p class="text-xs font-medium">No procedures logged</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 border-t border-slate-200 z-10">
+                        <div class="flex justify-between items-end mb-4">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Invoice</span>
+                            <span class="text-3xl font-black text-slate-900 tracking-tight" x-text="'£' + calculateTotal().toLocaleString()"></span>
+                        </div>
+                        <button @click="window.print()" class="w-full group bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-600 transition-all duration-300 shadow-lg flex items-center justify-center gap-2">
+                            <span>Generate Invoice</span>
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="print-only font-serif text-black p-8 max-w-[210mm] mx-auto">
+        <div class="flex justify-between items-start border-b-2 border-black pb-6 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold uppercase tracking-wide">Invoice</h1>
+                <p class="text-sm mt-1">Professional Medical Services</p>
+            </div>
+            <div class="text-right">
+                <p class="font-bold text-lg">Dr. Consultant Name</p>
+                <p class="text-sm text-gray-600">Clinical Oncologist</p>
+                <p class="text-sm text-gray-600">GMC: 1234567</p>
+            </div>
         </div>
-    </main>
+
+        <div class="grid grid-cols-2 gap-8 mb-8 text-sm">
+            <div>
+                <p class="font-bold uppercase text-xs text-gray-500 mb-1">Bill To / Patient</p>
+                <p class="text-lg font-bold" x-text="state.patientRef || '_________________'"></p>
+                <p class="text-gray-600">Insurer: <span x-text="state.insurer"></span></p>
+            </div>
+            <div class="text-right">
+                <p class="font-bold uppercase text-xs text-gray-500 mb-1">Date</p>
+                <p x-text="new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })"></p>
+                <p class="mt-2 text-xs text-gray-400">Invoice Generated via OncoBill Pro</p>
+            </div>
+        </div>
+
+        <table class="w-full mb-8">
+            <thead>
+                <tr class="border-b border-gray-300 text-xs uppercase text-left">
+                    <th class="py-2 w-20">Code</th>
+                    <th class="py-2">Description</th>
+                    <th class="py-2 text-center w-16">Qty</th>
+                    <th class="py-2 text-right w-24">Fee</th>
+                    <th class="py-2 text-right w-24">Total</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm">
+                <template x-for="item in state.items">
+                    <tr class="border-b border-gray-100">
+                        <td class="py-3 font-mono text-xs" x-text="item.code"></td>
+                        <td class="py-3 pr-4" x-text="db.descriptions[item.code]"></td>
+                        <td class="py-3 text-center" x-text="item.qty"></td>
+                        <td class="py-3 text-right" x-text="'£' + item.fee.toFixed(2)"></td>
+                        <td class="py-3 text-right font-bold" x-text="'£' + (item.fee * item.qty).toFixed(2)"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+
+        <div class="flex justify-end border-t-2 border-black pt-4 mb-16">
+            <div class="text-right">
+                <p class="text-xs font-bold uppercase text-gray-500">Total Payable</p>
+                <p class="text-3xl font-bold" x-text="'£' + calculateTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></p>
+            </div>
+        </div>
+
+        <div class="text-center text-xs text-gray-500 mt-auto pt-8 border-t border-gray-200">
+            <p>Please quote Patient Reference on all correspondence.</p>
+        </div>
+    </div>
 
     <script>
-        function billingApp() {
+        function billingSystem() {
             return {
-                selectedInsurer: 'Bupa',
-                activeItems: [],
+                searchQuery: '',
+                state: {
+                    insurer: 'Bupa',
+                    patientRef: '',
+                    items: []
+                },
                 
-                // RESTORED FULL DATABASE
-                menu: {
-                    consults: ['20300', '20355', '20310', '20365', '20320'],
-                    rtPlanning: ['X6910', 'X6930', 'X6950'],
-                    rtSupervision: ['X0007', 'X0008', 'X0009', 'X6581'],
-                    brachy: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342', 'H6260'],
-                    chemo: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005']
-                },
-
-                insurers: {
-                    'Bupa': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'H6260': 62, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
-                    'AXA Health': { '20300': 200, '20310': 150 },
-                    'Aviva': { '20300': 200, '20310': 150 },
-                    'Vitality': { '20300': 200, '20310': 150 },
-                    'WPA': { '20300': 200, '20310': 150 },
-                    'The Exeter': { '20300': 200, '20310': 150 },
-                    'Healix': { '20300': 200, '20310': 150 }
-                },
-
-                descriptions: {
-                    '20300': 'Initial Out-patient Consultation (Face-to-Face)',
-                    '20355': 'Initial Out-patient Consultation (Remote)',
-                    '20310': 'Follow-up Out-patient Consultation (Face-to-Face)',
-                    '20365': 'Follow-up Out-patient Consultation (Remote)',
-                    '20320': 'Inpatient Care (per day)',
-                    'X0001': 'Chemo Supervision (0-7 days)',
-                    'X0002': 'Chemo Supervision (1-14 days)',
-                    'X0003': 'Chemo Supervision (1-21 days)',
-                    'X0004': 'Chemo Supervision (1-28 days)',
-                    'X0005': 'Chemo Supervision (1-56 days)',
-                    'X6910': 'Radiotherapy Planning (Simple)',
-                    'X6930': 'Radiotherapy Planning (Complex)',
-                    'X6950': 'Radiotherapy Planning (SRS/SABR)',
-                    'BT212': 'Brachytherapy - Insertion of low dose rate radioactive agent (brachytherapy) into prostate tumour',
-                    'BT222': 'Brachytherapy - Insertion and removal of high dose rate radioactive agent (brachytherapy) into prostate tumour',
-                    'BT253': 'Brachytherapy - Low energy contact X ray brachytherapy (the Papillon technique) for early stage rectal cancer',
-                    'BT270': 'Brachytherapy - Insertion and removal of radioactive agent (brachytherapy) into carcinoma of the oesophagus, bronchus or stomach',
-                    'BT342': 'Brachytherapy - Insertion and removal of a radioactive agent (brachytherapy) into cervix or other female intra-pelvic tissue',
-                    'H6260': 'Proctoscopy',
-                    'X0007': 'Radiotherapy Supervision (≤15 fractions)',
-                    'X0008': 'Radiotherapy Supervision (16–30 fractions)',
-                    'X0009': 'Radiotherapy Supervision (≥31 fractions)',
-                    'X6581': 'Radiotherapy Supervision (Single fraction)'
-                },
-
-                getDesc(code) { return this.descriptions[code] || 'Specialist Procedure'; },
-
-                addItem(code) {
-                    const fee = this.insurers[this.selectedInsurer][code] || 0;
-                    this.activeItems.push({ code: code, fee: fee, qty: 1 });
-                },
-
-                applyBundle(type) {
-                    if (type === 'rectal_long') {
-                        this.addItem('20300'); 
-                        this.addItem('X6930');
-                        this.addItem('X0008'); 
-                        this.addItem('X0005'); 
-                        this.addItem('20310'); 
+                // DATABASE 
+                db: {
+                    categories: [
+                        { id: '1', title: '1. Consultations (Chapter 1)', codes: ['20300', '20355', '20310', '20365', '20320'] },
+                        { id: '2a', title: '2a. Radiotherapy Planning', codes: ['X6910', 'X6930', 'X6950'] },
+                        { id: '2b', title: '2b. Radiotherapy Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
+                        { id: '2c', title: '2c. Brachytherapy', codes: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342', 'H6260'] },
+                        { id: '3', title: '3. Chemotherapy', codes: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005'] }
+                    ],
+                    bundles: {
+                        'rectal_long': { 
+                            name: 'Rectal Long-Course CRT', 
+                            desc: 'New Consult + Complex Plan + 25# Superv + Chemo Superv + Follow-up',
+                            codes: ['20300', 'X6930', 'X0009', 'X0004', '20310'] 
+                        }
+                    },
+                    insurers: {
+                        'Bupa': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X0005': 800, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'H6260': 62, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
+                        'AXA Health': { '20300': 200, '20310': 150, 'X0001': 125, 'X0002': 250 },
+                        'Aviva': { '20300': 200, '20310': 150 },
+                        'Vitality': { '20300': 200, '20310': 150 },
+                        'WPA': { '20300': 200, '20310': 150 },
+                        'The Exeter': { '20300': 200, '20310': 150 }
+                    },
+                    descriptions: {
+                        '20300': 'Initial Out-patient Consultation (Face-to-Face)',
+                        '20355': 'Initial Out-patient Consultation (Remote)',
+                        '20310': 'Follow-up Out-patient Consultation (Face-to-Face)',
+                        '20365': 'Follow-up Out-patient Consultation (Remote)',
+                        '20320': 'Inpatient Care (per day)',
+                        'X0001': 'Chemo Supervision (0-7 days)',
+                        'X0002': 'Chemo Supervision (8-14 days)',
+                        'X0003': 'Chemo Supervision (15-21 days)',
+                        'X0004': 'Chemo Supervision (22-28 days)',
+                        'X0005': 'Chemo Supervision (29-56 days)',
+                        'X6910': 'Radiotherapy Planning (Simple)',
+                        'X6930': 'Radiotherapy Planning (Complex)',
+                        'X6950': 'Radiotherapy Planning (SRS/SABR)',
+                        'BT212': 'LDR Brachytherapy (Prostate)',
+                        'BT222': 'HDR Brachytherapy (Prostate)',
+                        'BT253': 'Low Energy Contact Brachy (Papillon)',
+                        'BT270': 'Brachytherapy (Oesoph/Stomach)',
+                        'BT342': 'Brachytherapy (Cervix/Pelvic)',
+                        'H6260': 'Proctoscopy',
+                        'X0007': 'Radiotherapy Supervision (≤15 fractions)',
+                        'X0008': 'Radiotherapy Supervision (16–30 fractions)',
+                        'X0009': 'Radiotherapy Supervision (≥31 fractions)',
+                        'X6581': 'Radiotherapy Supervision (Single fraction)'
                     }
                 },
 
-                removeItem(index) { this.activeItems.splice(index, 1); },
-                calculateGross() { return this.activeItems.reduce((sum, i) => sum + (i.fee * i.qty), 0); }
+                // LIFECYCLE
+                initApp() {
+                    // Load state from local storage
+                    const saved = localStorage.getItem('oncoBillState_v4');
+                    if (saved) {
+                        try {
+                            const parsed = JSON.parse(saved);
+                            this.state = { ...this.state, ...parsed };
+                        } catch(e) { console.error('Save file corrupted'); }
+                    }
+                    // Auto-save on change
+                    this.$watch('state', val => {
+                        localStorage.setItem('oncoBillState_v4', JSON.stringify(val));
+                    });
+                },
+
+                // ACTIONS
+                getFee(code) {
+                    const schedule = this.db.insurers[this.state.insurer];
+                    return schedule && schedule[code] ? schedule[code] : 0;
+                },
+
+                addItem(code) {
+                    this.state.items.push({ 
+                        code: code, 
+                        fee: this.getFee(code), 
+                        qty: 1 
+                    });
+                },
+
+                applyBundle(key) {
+                    const bundle = this.db.bundles[key];
+                    if(!bundle) return;
+                    bundle.codes.forEach(code => this.addItem(code));
+                },
+
+                removeItem(index) {
+                    this.state.items.splice(index, 1);
+                },
+
+                resetSession() {
+                    if(confirm("Clear current billing session?")) {
+                        this.state.items = [];
+                        this.state.patientRef = '';
+                    }
+                },
+
+                recalculateFees() {
+                    // When insurer changes, update all existing line item fees
+                    this.state.items = this.state.items.map(item => ({
+                        ...item,
+                        fee: this.getFee(item.code)
+                    }));
+                },
+
+                calculateTotal() {
+                    return this.state.items.reduce((sum, i) => sum + (i.fee * i.qty), 0);
+                },
+
+                // COMPUTED
+                get filteredCategories() {
+                    if (!this.searchQuery) return this.db.categories;
+                    
+                    const q = this.searchQuery.toLowerCase();
+                    // Return a deep copy structure with filtered codes
+                    return this.db.categories.map(cat => ({
+                        ...cat,
+                        codes: cat.codes.filter(c => 
+                            c.toLowerCase().includes(q) || 
+                            (this.db.descriptions[c] || '').toLowerCase().includes(q)
+                        )
+                    }));
+                }
             }
         }
     </script>
