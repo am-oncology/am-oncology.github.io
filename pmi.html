@@ -53,7 +53,6 @@
                     </div>
                     <div class="w-px h-8 bg-white/10"></div>
                     <div class="flex flex-col">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase px-2">Patient Reference</label>
                         <input type="text" x-model="state.patientRef" placeholder="e.g. JB-4922" class="bg-transparent text-sm font-bold text-white px-2 py-1 outline-none w-32 placeholder-slate-600 focus:placeholder-slate-500">
                     </div>
                 </div>
@@ -250,10 +249,6 @@
                     <span class="text-3xl font-bold" x-text="'£' + calculateGrandTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
                 </div>
             </div>
-        </div>
-
-        <div class="text-center text-xs text-gray-500 mt-auto pt-8 border-t border-gray-200">
-            <p>Please quote Patient Reference on all correspondence.</p>
         </div>
     </div>
 
