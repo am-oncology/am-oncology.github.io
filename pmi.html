@@ -257,7 +257,7 @@
                         { id: '1', title: '1. Consultations', codes: ['20300', '20355', '20310', '20365', '20320'] },
                         { id: '2a', title: '2a. Radiotherapy Planning', codes: ['X6910', 'X6930', 'X6950'] },
                         { id: '2b', title: '2b. Radiotherapy Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
-                        { id: '2c', title: '2c. Brachytherapy', codes: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342', 'H6260'] },
+                        { id: '2c', title: '2c. Brachytherapy', codes: ['BT212', 'BT222', 'BT253', 'H6260', 'BT270', 'BT342'] },
                         { id: '3', title: '3. Chemotherapy', codes: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005'] }
                     ],
                     insurers: {
@@ -284,7 +284,7 @@
                         'BT212': 'LDR Brachytherapy (Prostate)',
                         'BT222': 'HDR Brachytherapy (Prostate)',
                         'BT253': 'Contact X-ray Brachy (Papillon)',
-                        'H6260': 'Proctoscopy (Papillon)',
+                        'H6260': 'Proctoscopy',
                         'BT270': 'Brachytherapy (Oesoph/Stomach)',
                         'BT342': 'Brachytherapy (Cervix/Pelvic)',
                         'X0007': 'RT Supervision (≤15 fractions)',
@@ -372,14 +372,60 @@
         }
     </script>
 
-<footer>
-    <p>&copy; Private Medical/Health Insurer Fees.</p>
-        <p>
-            <a href="https://codes.bupa.co.uk/procedures">BUPA</a> | 
-            <a href="https://specialistforms.onlineapps.axahealth.co.uk/?source=published">AXA Health</a> | 
-            <a href="https://www.aviva.co.uk/health-insurance/providers/practitioners/fee-schedule/details/SearchByText">Aviva</a> | 
-            <a href="https://www.vitality.co.uk/healthcare-providers/fee-finder/">Vitality</a> |                 <a href="https://www.wpa.org.uk/healthcare-providers/medical-fees">WPA</a> | 
-        </p>
+<style>
+    .compact-footer {
+        padding: 25px 15px;
+        text-align: center;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        font-size: 0.85rem;
+        color: #666;
+        border-top: 1px solid #eee;
+        line-height: 1.6;
+    }
+
+    .compact-footer p {
+        margin: 0 0 8px 0;
+    }
+
+    .footer-links {
+        display: inline-flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        color: #ccc; /* Separator color */
+    }
+
+    .compact-footer a {
+        color: #0056b3;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .compact-footer a:hover {
+        color: #003366;
+        text-decoration: underline;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+        .footer-links span { display: none; }
+        .footer-links { gap: 12px; }
+    }
+</style>
+
+<footer class="compact-footer">
+    <p>&copy; 2026 Private Medical/Health Insurer Fee Schedules</p>
+    <div class="footer-links">
+        <a href="https://codes.bupa.co.uk/procedures" target="_blank">Bupa</a>
+        <span>&bull;</span>
+        <a href="https://specialistforms.onlineapps.axahealth.co.uk/?source=published" target="_blank">AXA Health</a>
+        <span>&bull;</span>
+        <a href="https://www.aviva.co.uk/health-insurance/providers/practitioners/fee-schedule/details" target="_blank">Aviva</a>
+        <span>&bull;</span>
+        <a href="https://www.healthcode.co.uk/help-and-support/the-ppr-setting-your-vitality-fees/" target="_blank">Vitality</a>
+        <span>&bull;</span>
+        <a href="https://www.wpa.org.uk/healthcare-providers/medical-fees" target="_blank">WPA</a>
+    </div>
 </footer>
     
 </body>
