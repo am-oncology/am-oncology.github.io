@@ -11,34 +11,37 @@
     <style>
         [x-cloak] { display: none !important; }
         body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        
-        /* Custom Scrollbar for the summary panel */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
-        /* Professional Print Stylesheet */
         @media print {
-            @page { margin: 0cm; size: A4; }
+            @page { margin: 1cm; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            .print-break-inside { page-break-inside: avoid; }
         }
         .print-only { display: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen" x-data="billingSystem()" x-init="initApp()">
 
+    <div class="fixed bottom-6 right-6 z-50 lg:hidden no-print" x-show="state.items.length > 0">
+        <button @click="document.getElementById('summary-panel').scrollIntoView({behavior: 'smooth'})" 
+                class="bg-indigo-600 text-white shadow-xl rounded-full px-6 py-4 font-bold flex items-center gap-2 border-2 border-white">
+            <span>View Bill</span>
+            <span class="bg-white text-indigo-600 text-xs rounded-full h-5 w-5 flex items-center justify-center" x-text="state.items.length"></span>
+        </button>
+    </div>
+
     <div class="no-print pb-20">
-        
         <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-xl border-b border-indigo-500/30">
             <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
                     <div class="h-10 w-10 bg-indigo-500 rounded-lg flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/50">OB</div>
                     <div>
                         <h1 class="text-lg font-bold tracking-tight leading-none">OncoBill <span class="text-indigo-400">Pro</span></h1>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">Specialist Fee Engine 2026</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">London Oncology 2026</p>
                     </div>
                 </div>
 
@@ -53,7 +56,7 @@
                     </div>
                     <div class="w-px h-8 bg-white/10"></div>
                     <div class="flex flex-col">
-                        <input type="text" x-model="state.patientRef" placeholder="e.g. JB-4922" class="bg-transparent text-sm font-bold text-white px-2 py-1 outline-none w-32 placeholder-slate-600 focus:placeholder-slate-500">
+                        <input type="text" x-model="state.patientRef" placeholder="Patient Ref / Name" class="bg-transparent text-sm font-bold text-white px-2 py-1 outline-none w-40 placeholder-slate-600 focus:placeholder-slate-500">
                     </div>
                 </div>
             </div>
@@ -62,19 +65,12 @@
         <main class="max-w-7xl mx-auto px-6 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <div class="lg:col-span-8 space-y-8">
-
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div class="relative mb-6">
                         <span class="absolute left-3 top-3 text-slate-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                         <input type="text" x-model="searchQuery" placeholder="Search codes (e.g. 'planning', '20300', 'chemo')..." class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                    </div>
-
-                    <div x-show="!searchQuery" class="space-y-3">
-                        <h2 class="text-xs font-black text-indigo-500 uppercase tracking-widest flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span> One-Click Pathways
-                        </h2>
                     </div>
                 </div>
 
@@ -90,7 +86,9 @@
                                             <div class="text-sm font-semibold text-slate-700 group-hover:text-slate-900" x-text="db.descriptions[code]"></div>
                                             <div class="text-[10px] font-bold text-slate-400 mt-1 flex gap-2">
                                                 <span x-text="code"></span>
-                                                <span class="text-emerald-600 bg-emerald-50 px-1 rounded" x-text="'£' + getFee(code)"></span>
+                                                <span :class="getFee(code) > 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-500 bg-red-50'" 
+                                                      class="px-1 rounded" 
+                                                      x-text="getFee(code) > 0 ? '£' + getFee(code) : 'No Fee Set'"></span>
                                             </div>
                                         </div>
                                         <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -101,24 +99,18 @@
                             </div>
                         </section>
                     </template>
-                    
-                    <div x-show="searchQuery && filteredCategories.every(c => c.codes.length === 0)" class="text-center py-12 text-slate-400 italic">
-                        No codes found matching "<span x-text="searchQuery"></span>"
-                    </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-4" id="summary-panel">
                 <div class="sticky top-24 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[calc(100vh-8rem)]">
                     
                     <div class="bg-indigo-600 p-5 text-white shadow-inner flex justify-between items-center z-10">
                         <div>
                             <h2 class="font-bold text-lg">Active Session</h2>
-                            <p class="text-xs text-indigo-200" x-text="state.items.length + ' items logged'"></p>
+                            <p class="text-xs text-indigo-200" x-text="state.items.length + ' active lines'"></p>
                         </div>
-                        <button @click="resetSession()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-1.5 rounded-lg transition border border-indigo-500/50">
-                            Clear
-                        </button>
+                        <button @click="resetSession()" class="text-xs bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-1.5 rounded-lg transition border border-indigo-500/50">Clear</button>
                     </div>
 
                     <div class="flex-1 overflow-y-auto custom-scroll p-2 space-y-1 bg-slate-50">
@@ -134,7 +126,7 @@
                                 <div class="mt-3 flex items-center gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-100">
                                     <div class="flex-1">
                                         <label class="block text-[8px] text-slate-400 uppercase font-bold">Fee (£)</label>
-                                        <input type="number" x-model.number="item.fee" class="w-full bg-transparent text-xs font-bold outline-none text-slate-700">
+                                        <input type="number" x-model.number="item.fee" :class="item.fee == 0 ? 'text-red-500' : 'text-slate-700'" class="w-full bg-transparent text-xs font-bold outline-none">
                                     </div>
                                     <div class="w-px h-6 bg-slate-200"></div>
                                     <div class="w-12 text-center">
@@ -144,7 +136,7 @@
                                     <div class="w-px h-6 bg-slate-200"></div>
                                     <div class="w-16 text-right">
                                         <label class="block text-[8px] text-slate-400 uppercase font-bold">Total</label>
-                                        <span class="text-xs font-black text-indigo-600" x-text="'£' + (item.fee * item.qty)"></span>
+                                        <span class="text-xs font-black text-indigo-600" x-text="'£' + (item.fee * item.qty).toLocaleString()"></span>
                                     </div>
                                 </div>
 
@@ -155,23 +147,30 @@
                         </template>
                         
                         <div x-show="state.items.length === 0" class="flex flex-col items-center justify-center h-48 text-slate-400">
-                            <svg class="w-12 h-12 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                             <p class="text-xs font-medium">No procedures logged</p>
                         </div>
                     </div>
 
+                    <div class="p-5 bg-white border-t border-slate-200 space-y-4 shadow-lg z-20">
+                        <div class="flex justify-between items-center text-xs text-slate-500">
+                             <div class="flex items-center gap-2">
+                                <span>Admin/Processing Fee (%)</span>
+                                <input type="number" x-model="state.adminFeePercent" class="w-12 bg-slate-100 border border-slate-300 rounded text-center font-bold text-slate-700 outline-none focus:border-indigo-500">
+                             </div>
+                        </div>
+
                         <div class="space-y-1">
                             <div class="flex justify-between items-center text-xs font-medium text-slate-500">
                                 <span>Gross Total</span>
-                                <span x-text="'£' + calculateTotal().toLocaleString()"></span>
+                                <span x-text="'£' + calculateTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
                             </div>
                             <div class="flex justify-between items-center text-xs font-medium text-emerald-600" x-show="state.adminFeePercent > 0">
                                 <span x-text="'Fee (' + state.adminFeePercent + '%)'"></span>
-                                <span x-text="'£' + calculateAdminFee().toLocaleString()"></span>
+                                <span x-text="'£' + calculateAdminFee().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
                             </div>
                             <div class="flex justify-between items-end pt-2 border-t border-slate-100">
                                 <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Grand Total</span>
-                                <span class="text-3xl font-black text-slate-900 tracking-tight" x-text="'£' + calculateGrandTotal().toLocaleString()"></span>
+                                <span class="text-3xl font-black text-slate-900 tracking-tight" x-text="'£' + calculateGrandTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
                             </div>
                         </div>
 
@@ -189,25 +188,23 @@
         <div class="flex justify-between items-start border-b-2 border-black pb-6 mb-8">
             <div>
                 <h1 class="text-3xl font-bold uppercase tracking-wide">Invoice</h1>
-                <p class="text-sm mt-1">Professional Medical Services</p>
+                <p class="text-sm mt-1">Oncology Services</p>
             </div>
             <div class="text-right">
                 <p class="font-bold text-lg">Dr. Consultant Name</p>
                 <p class="text-sm text-gray-600">Clinical Oncologist</p>
-                <p class="text-sm text-gray-600">GMC: 1234567</p>
             </div>
         </div>
-
+        
         <div class="grid grid-cols-2 gap-8 mb-8 text-sm">
-            <div>
-                <p class="font-bold uppercase text-xs text-gray-500 mb-1">Bill To / Patient</p>
+             <div>
+                <p class="font-bold uppercase text-xs text-gray-500 mb-1">Bill To</p>
                 <p class="text-lg font-bold" x-text="state.patientRef || '_________________'"></p>
                 <p class="text-gray-600">Insurer: <span x-text="state.insurer"></span></p>
             </div>
             <div class="text-right">
                 <p class="font-bold uppercase text-xs text-gray-500 mb-1">Date</p>
-                <p x-text="new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })"></p>
-                <p class="mt-2 text-xs text-gray-400">Invoice Generated via OncoBill Pro</p>
+                <p x-text="new Date().toLocaleDateString('en-GB')"></p>
             </div>
         </div>
 
@@ -233,19 +230,11 @@
                 </template>
             </tbody>
         </table>
-
-        <div class="flex justify-end border-t-2 border-black pt-4 mb-16">
-            <div class="text-right space-y-1 min-w-[200px]">
-                <div class="flex justify-between text-xs font-bold text-gray-500">
-                    <span>SUBTOTAL</span>
-                    <span x-text="'£' + calculateTotal().toFixed(2)"></span>
-                </div>
-                <div class="flex justify-between text-xs font-bold text-gray-500" x-show="state.adminFeePercent > 0">
-                    <span x-text="'MANAGEMENT FEE (' + state.adminFeePercent + '%)'"></span>
-                    <span x-text="'£' + calculateAdminFee().toFixed(2)"></span>
-                </div>
-                <div class="flex justify-between items-end border-t border-gray-200 pt-2 mt-2">
-                    <span class="text-xs font-black uppercase">Total Payable</span>
+        
+        <div class="flex justify-end border-t-2 border-black pt-4">
+             <div class="text-right space-y-1 min-w-[200px]">
+                <div class="flex justify-between items-end">
+                    <span class="text-sm font-bold uppercase">Total Payable</span>
                     <span class="text-3xl font-bold" x-text="'£' + calculateGrandTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
                 </div>
             </div>
@@ -260,15 +249,14 @@
                     insurer: 'Bupa',
                     patientRef: '',
                     items: [],
-                    adminFeePercent: 0 // New field for percentage based costs
+                    adminFeePercent: 0
                 },
                 
-                // DATABASE 
                 db: {
                     categories: [
-                        { id: '1', title: '1. Consultations (Chapter 1)', codes: ['20300', '20355', '20310', '20365', '20320'] },
-                        { id: '2a', title: '2a. Radiotherapy Planning', codes: ['X6910', 'X6930', 'X6950'] },
-                        { id: '2b', title: '2b. Radiotherapy Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
+                        { id: '1', title: '1. Consultations', codes: ['20300', '20355', '20310', '20365', '20320'] },
+                        { id: '2a', title: '2a. Planning', codes: ['X6910', 'X6930', 'X6950'] },
+                        { id: '2b', title: '2b. Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
                         { id: '2c', title: '2c. Brachytherapy', codes: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342', 'H6260'] },
                         { id: '3', title: '3. Chemotherapy', codes: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005'] }
                     ],
@@ -277,8 +265,7 @@
                         'AXA Health': { '20300': 200, '20310': 150, 'X0001': 125, 'X0002': 250 },
                         'Aviva': { '20300': 200, '20310': 150 },
                         'Vitality': { '20300': 200, '20310': 150 },
-                        'WPA': { '20300': 200, '20310': 150 },
-                        'The Exeter': { '20300': 200, '20310': 150 }
+                        'WPA': { '20300': 200, '20310': 150 }
                     },
                     descriptions: {
                         '20300': 'Initial Out-patient Consultation (Face-to-Face)',
@@ -307,7 +294,6 @@
                     }
                 },
 
-                // LIFECYCLE
                 initApp() {
                     const saved = localStorage.getItem('oncoBillState_v4');
                     if (saved) {
@@ -321,18 +307,23 @@
                     });
                 },
 
-                // ACTIONS
                 getFee(code) {
                     const schedule = this.db.insurers[this.state.insurer];
                     return schedule && schedule[code] ? schedule[code] : 0;
                 },
 
+                // FIXED: Increments Qty instead of duplicate rows
                 addItem(code) {
-                    this.state.items.push({ 
-                        code: code, 
-                        fee: this.getFee(code), 
-                        qty: 1 
-                    });
+                    const existingItem = this.state.items.find(i => i.code === code);
+                    if (existingItem) {
+                        existingItem.qty++;
+                    } else {
+                        this.state.items.push({ 
+                            code: code, 
+                            fee: this.getFee(code), 
+                            qty: 1 
+                        });
+                    }
                 },
 
                 removeItem(index) {
@@ -343,7 +334,7 @@
                     if(confirm("Clear current billing session?")) {
                         this.state.items = [];
                         this.state.patientRef = '';
-                        this.state.adminFeePercent = 0;
+                        // Do NOT reset adminFeePercent here, users prefer to keep their default setting
                     }
                 },
 
@@ -366,10 +357,8 @@
                     return this.calculateTotal() + this.calculateAdminFee();
                 },
 
-                // COMPUTED
                 get filteredCategories() {
                     if (!this.searchQuery) return this.db.categories;
-                    
                     const q = this.searchQuery.toLowerCase();
                     return this.db.categories.map(cat => ({
                         ...cat,
