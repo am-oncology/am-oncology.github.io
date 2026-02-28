@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OncoBill Pro | Clinical Bundles</title>
+    <title>Fee Calculator | Clinical Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         [x-cloak] { display: none !important; }
-        .bundle-card { border: 2px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bundle-card:hover { border-color: #6366f1; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .code-btn { transition: all 0.2s; border: 1px solid #e2e8f0; }
+        .code-btn:hover { border-color: #6366f1; background: #f8fafc; transform: translateY(-1px); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen pb-20" x-data="billingApp()">
 
-    <header class="bg-indigo-950 text-white py-6 px-8 mb-8">
+    <header class="bg-slate-900 text-white py-6 px-8 mb-8 sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black tracking-tight">OncoBill <span class="text-indigo-400">v3.1</span></h1>
-                <p class="text-[10px] uppercase tracking-widest font-bold text-indigo-300">Advanced Practice Billing 2026</p>
+                <h1 class="text-xl font-black tracking-tight">OncoBill <span class="text-indigo-400">Complete</span></h1>
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Full 2026 Specialist Fee Schedule</p>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="text-right">
-                    <label class="block text-[10px] font-bold text-indigo-400 uppercase">Current Insurer</label>
-                    <select x-model="selectedInsurer" class="bg-indigo-900 border border-indigo-700 rounded text-sm font-bold px-3 py-1 outline-none">
-                        <template x-for="pmi in Object.keys(insurers)" :key="pmi">
-                            <option :value="pmi" x-text="pmi"></option>
-                        </template>
-                    </select>
-                </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs font-bold text-slate-400">INSURER:</span>
+                <select x-model="selectedInsurer" class="bg-slate-800 border-none rounded-lg text-sm font-bold px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <template x-for="pmi in Object.keys(insurers)" :key="pmi">
+                        <option :value="pmi" x-text="pmi"></option>
+                    </template>
+                </select>
             </div>
         </div>
     </header>
@@ -39,95 +37,116 @@
         
         <div class="lg:col-span-8 space-y-8">
             
+            <section class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                <h2 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">Quick Pathway Bundles</h2>
+                <button @click="applyBundle('rectal_long')" class="bg-white p-4 rounded-xl border-2 border-indigo-200 hover:border-indigo-500 transition text-left shadow-sm">
+                    <h3 class="font-bold text-slate-800">Rectal Long-Course CRT</h3>
+                    <p class="text-xs text-slate-500">Initial + Complex Plan + 25# Supervision + Chemo Superv. + Follow-up</p>
+                </button>
+            </section>
+
             <section>
-                <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <span class="w-8 h-px bg-slate-200"></span> Clinical Pathway Bundles
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button @click="applyBundle('rectal_long')" class="bundle-card bg-white p-6 rounded-2xl text-left group">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-1 rounded-md uppercase">Gastrointestinal</span>
-                            <span class="text-indigo-600 font-bold group-hover:translate-x-1 transition">→</span>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-800">Rectal Long-Course CRT</h3>
-                        <p class="text-xs text-slate-500 mt-1">Includes: Initial Consult, Complex Planning, 25# Supervision, Chemo Supervision (Capecitabine), & Follow-up.</p>
-                    </button>
-                    
-                    <div class="border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center p-6 text-slate-400 italic text-sm">
-                        More bundles coming soon...
-                    </div>
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">1. Consultations (Chapter 1)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <template x-for="code in menu.consults">
+                        <button @click="addItem(code)" class="code-btn bg-white p-3 rounded-xl text-left flex justify-between items-center group">
+                            <div class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></div>
+                            <div class="text-[10px] font-bold text-slate-400 group-hover:text-indigo-600" x-text="code"></div>
+                        </button>
+                    </template>
                 </div>
             </section>
 
-            <hr class="border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <section>
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2a. Radiotherapy Planning</h3>
+                    <div class="space-y-2">
+                        <template x-for="code in menu.rtPlanning">
+                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
+                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
+                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-orange-600" x-text="code"></span>
+                            </button>
+                        </template>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2b. RT Supervision</h3>
+                    <div class="space-y-2">
+                        <template x-for="code in menu.rtSupervision">
+                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
+                                <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
+                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-emerald-600" x-text="code"></span>
+                            </button>
+                        </template>
+                    </div>
+                </section>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">1. Consultations</h3>
+                <section>
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2c. Brachytherapy</h3>
                     <div class="space-y-2">
-                        <template x-for="code in menu.consults">
-                            <button @click="addItem(code)" class="w-full bg-white p-3 rounded-xl border border-slate-200 text-left hover:border-indigo-400 transition flex justify-between items-center group">
+                        <template x-for="code in menu.brachy">
+                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
                                 <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-300 group-hover:text-indigo-500" x-text="code"></span>
+                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-pink-600" x-text="code"></span>
                             </button>
                         </template>
                     </div>
-                </div>
+                </section>
 
-                <div>
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">2. Radiotherapy Planning & Supervison</h3>
+                <section>
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">3. Chemotherapy</h3>
                     <div class="space-y-2">
-                        <template x-for="code in [...menu.rtPlanning, ...menu.rtSupervision]">
-                            <button @click="addItem(code)" class="w-full bg-white p-3 rounded-xl border border-slate-200 text-left hover:border-orange-400 transition flex justify-between items-center group">
+                        <template x-for="code in menu.chemo">
+                            <button @click="addItem(code)" class="code-btn w-full bg-white p-3 rounded-xl text-left flex justify-between items-center group">
                                 <span class="text-sm font-semibold text-slate-700" x-text="getDesc(code)"></span>
-                                <span class="text-[10px] font-bold text-slate-300 group-hover:text-orange-500" x-text="code"></span>
+                                <span class="text-[10px] font-bold text-slate-400 group-hover:text-purple-600" x-text="code"></span>
                             </button>
                         </template>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
 
         <div class="lg:col-span-4">
-            <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden sticky top-8">
-                <div class="bg-slate-900 p-6 text-white">
-                    <h2 class="text-lg font-bold">Billing Statement</h2>
-                    <p class="text-xs text-slate-400" x-text="selectedInsurer + ' Schedule'"></p>
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 sticky top-24 overflow-hidden">
+                <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
+                    <h2 class="font-bold">Summary</h2>
+                    <button @click="activeItems = []" class="text-xs bg-white/20 px-2 py-1 rounded hover:bg-white/30">Clear</button>
                 </div>
                 
                 <div class="p-6 space-y-4 max-h-[500px] overflow-y-auto">
                     <template x-for="(item, index) in activeItems" :key="index">
-                        <div class="flex gap-4 border-b border-slate-100 pb-4 relative group">
-                            <div class="flex-1">
-                                <div class="flex justify-between items-start">
-                                    <span class="text-[10px] font-black text-indigo-600 uppercase" x-text="item.code"></span>
-                                    <button @click="removeItem(index)" class="text-slate-300 hover:text-red-500 transition">×</button>
+                        <div class="border-b border-slate-100 pb-4">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="text-[10px] font-black text-indigo-500 uppercase font-mono" x-text="item.code"></span>
+                                <button @click="removeItem(index)" class="text-slate-300 hover:text-red-500">×</button>
+                            </div>
+                            <p class="text-xs font-bold text-slate-700 mb-2 leading-tight" x-text="getDesc(item.code)"></p>
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <input type="number" x-model.number="item.fee" class="w-full text-xs font-bold border rounded p-1">
                                 </div>
-                                <p class="text-xs font-bold text-slate-800 leading-tight my-1" x-text="getDesc(item.code)"></p>
-                                <div class="flex items-center gap-3 mt-2">
-                                    <input type="number" x-model.number="item.fee" class="w-16 text-xs font-bold border rounded p-1">
-                                    <span class="text-[10px] text-slate-400">×</span>
-                                    <input type="number" x-model.number="item.qty" class="w-10 text-xs border rounded p-1">
-                                    <span class="ml-auto font-mono font-bold text-sm" x-text="'£' + (item.fee * item.qty)"></span>
-                                </div>
+                                <div class="text-[10px] text-slate-400">QTY:</div>
+                                <input type="number" x-model.number="item.qty" class="w-12 text-xs border rounded p-1">
+                                <div class="w-16 text-right font-bold text-sm" x-text="'£' + (item.fee * item.qty)"></div>
                             </div>
                         </div>
                     </template>
                     <template x-if="activeItems.length === 0">
-                        <div class="text-center py-12">
-                            <div class="text-slate-200 text-4xl mb-2">🧾</div>
-                            <p class="text-xs text-slate-400 italic">Select a bundle or code to begin</p>
-                        </div>
+                        <p class="text-center text-slate-400 text-xs italic py-10">Statement empty. Select codes or bundles.</p>
                     </template>
                 </div>
 
-                <div class="bg-slate-50 p-6 border-t border-slate-100">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Total Estimate</span>
+                <div class="bg-slate-50 p-6 border-t border-slate-100 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Invoice</span>
                         <span class="text-3xl font-black text-slate-900" x-text="'£' + calculateGross().toLocaleString()"></span>
                     </div>
-                    <button @click="window.print()" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-indigo-700 transition">
-                        Confirm & Generate Printout
+                    <button @click="window.print()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl hover:bg-slate-800 transition shadow-lg">
+                        Print Billing Summary
                     </button>
                 </div>
             </div>
@@ -140,33 +159,50 @@
                 selectedInsurer: 'Bupa',
                 activeItems: [],
                 
+                // RESTORED FULL DATABASE
                 menu: {
-                    consults: ['20300', '20355', '20310', '20365'],
-                    chemo: ['X0001', 'X0002', 'X0003', 'X0004'],
+                    consults: ['20300', '20355', '20310', '20365', '20320'],
                     rtPlanning: ['X6910', 'X6930', 'X6950'],
                     rtSupervision: ['X0007', 'X0008', 'X0009', 'X6581'],
-                    brachy: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342']
+                    brachy: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342'],
+                    chemo: ['X0001', 'X0002', 'X0003', 'X0004']
                 },
 
                 insurers: {
-                    'Bupa': { '20300': 200, '20310': 150, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
-                    'AXA Health': { '20300': 200, '20310': 150, 'X0001': 125, 'X0002': 250, 'X6930': 550 },
+                    'Bupa': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
+                    'AXA Health': { '20300': 200, '20310': 150 },
                     'Aviva': { '20300': 200, '20310': 150 },
                     'Vitality': { '20300': 200, '20310': 150 },
-                    'WPA': { '20300': 200, '20310': 150 }
+                    'WPA': { '20300': 200, '20310': 150 },
+                    'The Exeter': { '20300': 200, '20310': 150 },
+                    'Healix': { '20300': 200, '20310': 150 }
                 },
 
                 descriptions: {
-                    '20300': 'Initial Consultation',
-                    '20310': 'Follow-up Consultation',
-                    'X6930': 'Complex Radiotherapy Planning',
-                    'X0008': 'Clinical Supervision EBRT (16-30#)',
-                    'X0004': 'Clinical Supervision Chemo (1-28 days)'
+                    '20300': 'Initial Out-patient Consultation (Face-to-Face)',
+                    '20355': 'Initial Out-patient Consultation (Remote)',
+                    '20310': 'Follow-up Out-patient Consultation (Face-to-Face)',
+                    '20365': 'Follow-up Out-patient Consultation (Remote)',
+                    '20320': 'In-patient Care (per day)',
+                    'X0001': 'Chemo Supervision (0-7 days)',
+                    'X0002': 'Chemo Supervision (8-14 days)',
+                    'X0003': 'Chemo Supervision (15-21 days)',
+                    'X0004': 'Chemo Supervision (22-28 days)',
+                    'X6910': 'Radiotherapy Planning (Simple)',
+                    'X6930': 'Radiotherapy Planning (Intermediate/Complex)',
+                    'X6950': 'Radiotherapy Planning (SBRT/SRS)',
+                    'BT212': 'Brachytherapy - HDR (First fraction)',
+                    'BT222': 'Brachytherapy - HDR (Subsequent fraction)',
+                    'BT253': 'Brachytherapy - LDR (Planning & Superv.)',
+                    'BT270': 'Brachytherapy - Manual Afterloading (Simple)',
+                    'BT342': 'Brachytherapy - Manual Afterloading (Complex)',
+                    'X0007': 'EBRT Supervision (1–10 fractions)',
+                    'X0008': 'EBRT Supervision (11–20 fractions)',
+                    'X0009': 'EBRT Supervision (21–30 fractions)',
+                    'X6581': 'EBRT Supervision (Single fraction/Other)'
                 },
 
-                getDesc(code) {
-                    return this.descriptions[code] || `Specialist Code ${code}`;
-                },
+                getDesc(code) { return this.descriptions[code] || 'Specialist Procedure'; },
 
                 addItem(code) {
                     const fee = this.insurers[this.selectedInsurer][code] || 0;
@@ -175,16 +211,11 @@
 
                 applyBundle(type) {
                     if (type === 'rectal_long') {
-                        // 1. New Consult
-                        this.addItem('20300');
-                        // 2. Complex Planning
-                        this.addItem('X6930');
-                        // 3. Supervision of 25 fractions (Mapped to X0008: 16-30 fractions)
-                        this.addItem('X0008');
-                        // 4. Chemo Supervision (28 day cycle for Capecitabine)
-                        this.addItem('X0004');
-                        // 5. Follow-up
-                        this.addItem('20310');
+                        this.addItem('20300'); // New Consult
+                        this.addItem('X6930'); // Complex RT Planning
+                        this.addItem('X0009'); // Supervision 21-30# (for 25 fractions)
+                        this.addItem('X0004'); // Chemo Supervision (28 days for Capecitabine)
+                        this.addItem('20310'); // Follow-up
                     }
                 },
 
