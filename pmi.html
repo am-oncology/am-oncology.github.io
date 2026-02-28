@@ -172,11 +172,30 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 border-t border-slate-200 z-10">
-                        <div class="flex justify-between items-end mb-4">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Invoice</span>
-                            <span class="text-3xl font-black text-slate-900 tracking-tight" x-text="'£' + calculateTotal().toLocaleString()"></span>
+                    <div class="bg-white p-5 border-t border-slate-200 z-10 space-y-3">
+                        <div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg border border-slate-100">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase">Management Fee (%)</label>
+                            <div class="flex items-center gap-1">
+                                <input type="number" x-model.number="state.adminFeePercent" class="w-12 bg-white border border-slate-200 rounded text-xs font-bold p-1 text-center outline-none focus:ring-1 focus:ring-indigo-500">
+                                <span class="text-xs font-bold text-slate-400">%</span>
+                            </div>
                         </div>
+
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-center text-xs font-medium text-slate-500">
+                                <span>Gross Total</span>
+                                <span x-text="'£' + calculateTotal().toLocaleString()"></span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-medium text-emerald-600" x-show="state.adminFeePercent > 0">
+                                <span x-text="'Fee (' + state.adminFeePercent + '%)'"></span>
+                                <span x-text="'£' + calculateAdminFee().toLocaleString()"></span>
+                            </div>
+                            <div class="flex justify-between items-end pt-2 border-t border-slate-100">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Grand Total</span>
+                                <span class="text-3xl font-black text-slate-900 tracking-tight" x-text="'£' + calculateGrandTotal().toLocaleString()"></span>
+                            </div>
+                        </div>
+
                         <button @click="window.print()" class="w-full group bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-600 transition-all duration-300 shadow-lg flex items-center justify-center gap-2">
                             <span>Generate Invoice</span>
                             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -237,9 +256,19 @@
         </table>
 
         <div class="flex justify-end border-t-2 border-black pt-4 mb-16">
-            <div class="text-right">
-                <p class="text-xs font-bold uppercase text-gray-500">Total Payable</p>
-                <p class="text-3xl font-bold" x-text="'£' + calculateTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></p>
+            <div class="text-right space-y-1 min-w-[200px]">
+                <div class="flex justify-between text-xs font-bold text-gray-500">
+                    <span>SUBTOTAL</span>
+                    <span x-text="'£' + calculateTotal().toFixed(2)"></span>
+                </div>
+                <div class="flex justify-between text-xs font-bold text-gray-500" x-show="state.adminFeePercent > 0">
+                    <span x-text="'MANAGEMENT FEE (' + state.adminFeePercent + '%)'"></span>
+                    <span x-text="'£' + calculateAdminFee().toFixed(2)"></span>
+                </div>
+                <div class="flex justify-between items-end border-t border-gray-200 pt-2 mt-2">
+                    <span class="text-xs font-black uppercase">Total Payable</span>
+                    <span class="text-3xl font-bold" x-text="'£' + calculateGrandTotal().toLocaleString(undefined, {minimumFractionDigits: 2})"></span>
+                </div>
             </div>
         </div>
 
@@ -255,7 +284,8 @@
                 state: {
                     insurer: 'Bupa',
                     patientRef: '',
-                    items: []
+                    items: [],
+                    adminFeePercent: 0 // New field for percentage based costs
                 },
                 
                 // DATABASE 
@@ -311,7 +341,6 @@
 
                 // LIFECYCLE
                 initApp() {
-                    // Load state from local storage
                     const saved = localStorage.getItem('oncoBillState_v4');
                     if (saved) {
                         try {
@@ -319,7 +348,6 @@
                             this.state = { ...this.state, ...parsed };
                         } catch(e) { console.error('Save file corrupted'); }
                     }
-                    // Auto-save on change
                     this.$watch('state', val => {
                         localStorage.setItem('oncoBillState_v4', JSON.stringify(val));
                     });
@@ -353,11 +381,11 @@
                     if(confirm("Clear current billing session?")) {
                         this.state.items = [];
                         this.state.patientRef = '';
+                        this.state.adminFeePercent = 0;
                     }
                 },
 
                 recalculateFees() {
-                    // When insurer changes, update all existing line item fees
                     this.state.items = this.state.items.map(item => ({
                         ...item,
                         fee: this.getFee(item.code)
@@ -368,12 +396,19 @@
                     return this.state.items.reduce((sum, i) => sum + (i.fee * i.qty), 0);
                 },
 
+                calculateAdminFee() {
+                    return this.calculateTotal() * (this.state.adminFeePercent / 100);
+                },
+
+                calculateGrandTotal() {
+                    return this.calculateTotal() + this.calculateAdminFee();
+                },
+
                 // COMPUTED
                 get filteredCategories() {
                     if (!this.searchQuery) return this.db.categories;
                     
                     const q = this.searchQuery.toLowerCase();
-                    // Return a deep copy structure with filtered codes
                     return this.db.categories.map(cat => ({
                         ...cat,
                         codes: cat.codes.filter(c => 
