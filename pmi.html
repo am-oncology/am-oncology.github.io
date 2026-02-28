@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OncoBill Pro | Consultant Billing Engine</title>
+    <title>Fee Calculator | Clinical Tool</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
@@ -40,8 +40,8 @@
                 <div class="flex items-center gap-3">
                     <div class="h-10 w-10 bg-indigo-500 rounded-lg flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/50">OB</div>
                     <div>
-                        <h1 class="text-lg font-bold tracking-tight leading-none">OncoBill <span class="text-indigo-400">Pro</span></h1>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">London Oncology 2026</p>
+                        <h1 class="text-lg font-bold tracking-tight leading-none">Fees Calculator <span class="text-indigo-400">Clinical Tool</span></h1>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">PMI Fees 2025-2026</p>
                     </div>
                 </div>
 
@@ -261,11 +261,11 @@
                         { id: '3', title: '3. Chemotherapy', codes: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005'] }
                     ],
                     insurers: {
-                        'Bupa': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X0005': 565, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'H6260': 62, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
-                        'AXA Health': { '20300': 200, '20310': 150, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X0007': 304, 'X0008': 576, 'X0009': 600 },
-                        'Aviva': { '20300': 200, '20310': 150 },
-                        'Vitality': { '20300': 200, '20310': 150 },
-                        'WPA': { '20300': 200, '20310': 150 }
+                        'Bupa':       { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X0005': 565, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'H6260': 62, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
+                        'AXA Health': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 65, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X6910': 440, 'X6930': 640, 'X6950': 0000, 'BT212': 640, 'BT222': 640, 'BT253': 160, 'BT270': 288, 'BT342': 288, 'H6260': 00, 'X0007': 304, 'X0008': 576, 'X0009': 600, 'X6581': 25 },
+                        'Aviva':      { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 65, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X6910': 440, 'X6930': 640, 'X6950': 0000, 'BT212': 640, 'BT222': 640, 'BT253': 160, 'BT270': 288, 'BT342': 288, 'H6260': 00, 'X0007': 304, 'X0008': 576, 'X0009': 600, 'X6581': 25 },
+                        'Vitality':   { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 65, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X6910': 440, 'X6930': 640, 'X6950': 0000, 'BT212': 640, 'BT222': 640, 'BT253': 160, 'BT270': 288, 'BT342': 288, 'H6260': 00, 'X0007': 304, 'X0008': 576, 'X0009': 600, 'X6581': 25 },
+                        'WPA':        { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 65, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X6910': 440, 'X6930': 640, 'X6950': 0000, 'BT212': 640, 'BT222': 640, 'BT253': 160, 'BT270': 288, 'BT342': 288, 'H6260': 00, 'X0007': 304, 'X0008': 576, 'X0009': 600, 'X6581': 25 }
                     },
                     descriptions: {
                         '20300': 'Initial Outpatient Consultation',
