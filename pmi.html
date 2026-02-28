@@ -20,7 +20,7 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-xl font-black tracking-tight">OncoBill <span class="text-indigo-400">Complete</span></h1>
-                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Full 2026 Specialist Fee Schedule</p>
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">2026 Specialist Fee Schedule</p>
             </div>
             <div class="flex items-center gap-4">
                 <span class="text-xs font-bold text-slate-400">INSURER:</span>
@@ -165,7 +165,7 @@
                     rtPlanning: ['X6910', 'X6930', 'X6950'],
                     rtSupervision: ['X0007', 'X0008', 'X0009', 'X6581'],
                     brachy: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342'],
-                    chemo: ['X0001', 'X0002', 'X0003', 'X0004']
+                    chemo: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005']
                 },
 
                 insurers: {
@@ -183,24 +183,24 @@
                     '20355': 'Initial Out-patient Consultation (Remote)',
                     '20310': 'Follow-up Out-patient Consultation (Face-to-Face)',
                     '20365': 'Follow-up Out-patient Consultation (Remote)',
-                    '20320': 'In-patient Care (per day)',
+                    '20320': 'Inpatient Care (per day)',
                     'X0001': 'Chemo Supervision (0-7 days)',
                     'X0002': 'Chemo Supervision (1-14 days)',
                     'X0003': 'Chemo Supervision (1-21 days)',
                     'X0004': 'Chemo Supervision (1-28 days)',
                     'X0005': 'Chemo Supervision (1-56 days)',
                     'X6910': 'Radiotherapy Planning (Simple)',
-                    'X6930': 'Radiotherapy Planning (Intermediate/Complex)',
-                    'X6950': 'Radiotherapy Planning (SBRT/SRS)',
-                    'BT212': 'Brachytherapy - HDR (First fraction)',
-                    'BT222': 'Brachytherapy - HDR (Subsequent fraction)',
-                    'BT253': 'Brachytherapy - LDR (Planning & Superv.)',
-                    'BT270': 'Brachytherapy - Manual Afterloading (Simple)',
-                    'BT342': 'Brachytherapy - Manual Afterloading (Complex)',
-                    'X0007': 'EBRT Supervision (1–10 fractions)',
-                    'X0008': 'EBRT Supervision (11–20 fractions)',
-                    'X0009': 'EBRT Supervision (21–30 fractions)',
-                    'X6581': 'EBRT Supervision (Single fraction/Other)'
+                    'X6930': 'Radiotherapy Planning (Complex)',
+                    'X6950': 'Radiotherapy Planning (SRS/SABR)',
+                    'BT212': 'Brachytherapy - Insertion of low dose rate radioactive agent (brachytherapy) into prostate tumour',
+                    'BT222': 'Brachytherapy - Insertion and removal of high dose rate radioactive agent (brachytherapy) into prostate tumour',
+                    'BT253': 'Brachytherapy - Low energy contact X ray brachytherapy (the Papillon technique) for early stage rectal cancer',
+                    'BT270': 'Brachytherapy - Insertion and removal of radioactive agent (brachytherapy) into carcinoma of the oesophagus, bronchus or stomach',
+                    'BT342': 'Brachytherapy - Insertion and removal of a radioactive agent (brachytherapy) into cervix or other female intra-pelvic tissue',
+                    'X0007': 'Radiotherapy Supervision (≤15 fractions)',
+                    'X0008': 'Radiotherapy Supervision (16–30 fractions)',
+                    'X0009': 'Radiotherapy Supervision (≥31 fractions)',
+                    'X6581': 'Radiotherapy Supervision (Single fraction)'
                 },
 
                 getDesc(code) { return this.descriptions[code] || 'Specialist Procedure'; },
