@@ -255,14 +255,14 @@
                 db: {
                     categories: [
                         { id: '1', title: '1. Consultations', codes: ['20300', '20355', '20310', '20365', '20320'] },
-                        { id: '2a', title: '2a. Planning', codes: ['X6910', 'X6930', 'X6950'] },
-                        { id: '2b', title: '2b. Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
+                        { id: '2a', title: '2a. Radiotherapy Planning', codes: ['X6910', 'X6930', 'X6950'] },
+                        { id: '2b', title: '2b. Radiotherapy Supervision', codes: ['X0007', 'X0008', 'X0009', 'X6581'] },
                         { id: '2c', title: '2c. Brachytherapy', codes: ['BT212', 'BT222', 'BT253', 'BT270', 'BT342', 'H6260'] },
                         { id: '3', title: '3. Chemotherapy', codes: ['X0001', 'X0002', 'X0003', 'X0004', 'X0005'] }
                     ],
                     insurers: {
                         'Bupa': { '20300': 200, '20355': 200, '20310': 150, '20365': 150, '20320': 82, 'X0001': 137, 'X0002': 257, 'X0003': 386, 'X0004': 515, 'X0005': 565, 'X6910': 300, 'X6930': 600, 'X6950': 1466, 'BT212': 921, 'BT222': 921, 'BT253': 205, 'BT270': 380, 'BT342': 380, 'H6260': 62, 'X0007': 380, 'X0008': 720, 'X0009': 960, 'X6581': 25 },
-                        'AXA Health': { '20300': 200, '20310': 150, 'X0001': 125, 'X0002': 250 },
+                        'AXA Health': { '20300': 200, '20310': 150, 'X0001': 100, 'X0002': 200, 'X0003': 300, 'X0004': 400, 'X0005': 800, 'X0007': 304, 'X0008': 576, 'X0009': 600 },
                         'Aviva': { '20300': 200, '20310': 150 },
                         'Vitality': { '20300': 200, '20310': 150 },
                         'WPA': { '20300': 200, '20310': 150 }
@@ -371,5 +371,21 @@
             }
         }
     </script>
+
+<footer>
+    <div class="container">
+        <div class="footer-legal">
+            <p>&copy; Private Medical/Health Insurer Fees.</p>
+            <p>
+                <a href="https://codes.bupa.co.uk/procedures">BUPA</a> | 
+                <a href="https://specialistforms.onlineapps.axahealth.co.uk/?source=published">AXA Health</a> | 
+                <a href="https://www.aviva.co.uk/health-insurance/providers/practitioners/fee-schedule/details/SearchByText">Aviva</a> | 
+                <a href="https://www.vitality.co.uk/healthcare-providers/fee-finder/">Vitality</a> | 
+                <a href="https://www.wpa.org.uk/healthcare-providers/medical-fees">WPA</a> | 
+            </p>
+        </div>
+    </div>
+</footer>
+    
 </body>
 </html>
