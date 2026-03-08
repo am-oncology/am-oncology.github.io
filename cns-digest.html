@@ -493,6 +493,21 @@ function tagHtml(tags) {
 // ═══════════════════════════════════════════════════
 const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 
+// Fetch and parse a single abstract from PubMed efetch (XML)
+async function fetchAbstract(pmid) {
+  try {
+    const url = `${BASE}efetch.fcgi?db=pubmed&id=${pmid}&retmode=xml&rettype=abstract`;
+    const resp = await fetch(url);
+    const xml  = await resp.text();
+    // Pull all <AbstractText> nodes (some papers split into sections)
+    const matches = [...xml.matchAll(/<AbstractText[^>]*>([\s\S]*?)<\/AbstractText>/g)];
+    if (!matches.length) return null;
+    return matches.map(m => m[1].replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()).join(' ');
+  } catch(e) {
+    return null;
+  }
+}
+
 async function fetchForTab(key) {
   const tab = TABS[key];
   try {
@@ -505,7 +520,7 @@ async function fetchForTab(key) {
     const papers = ids.map((id, i) => {
       const d = sumd.result[id]; if (!d) return null;
       const raw = (d.title||'Untitled').replace(/<[^>]+>/g,'');
-      return { id, title: raw, authors: d.authors ? d.authors.slice(0,4).map(a=>a.name).join(', ')+(d.authors.length>4?' et al.':'') : 'Unknown', journal: d.fulljournalname||d.source||'', date: d.pubdate||'', pmid: id, tags: autoTag(raw+' '+(d.fulljournalname||'')), num: String(i+1).padStart(2,'0') };
+      return { id, title: raw, authors: d.authors ? d.authors.slice(0,4).map(a=>a.name).join(', ')+(d.authors.length>4?' et al.':'') : 'Unknown', journal: d.fulljournalname||d.source||'', date: d.pubdate||'', pmid: id, abstract: null, tags: autoTag(raw+' '+(d.fulljournalname||'')), num: String(i+1).padStart(2,'0') };
     }).filter(Boolean);
     papersByTab[key] = papers;
     if (activeTabKey === key) { updateStats(papers, key); renderPapers(papers); }
@@ -606,23 +621,57 @@ async function openSummary(id) {
   if (!drawer || !content) return;
   document.querySelectorAll('.summary-drawer.open').forEach(d => { if(d.id!==`drawer-${id}`) d.classList.remove('open'); });
   drawer.classList.add('open');
+
   const papers = papersByTab[activeTabKey] || [];
   const paper  = papers.find(p => p.id === id);
   if (!paper) return;
   if (!claudeKey) { content.innerHTML = '<em style="color:var(--muted)">Enter your Claude API key above to enable AI-powered clinical summaries.</em>'; return; }
   if (content.dataset.loaded === id) return;
+
+  // Step 1: fetch abstract from PubMed if not already cached
+  content.innerHTML = '<span class="spinner-ring"></span>&nbsp; Fetching abstract from PubMed…';
+  if (!paper.abstract) {
+    paper.abstract = await fetchAbstract(paper.pmid);
+  }
+
+  // Step 2: call Claude with full abstract
   content.innerHTML = '<span class="spinner-ring"></span>&nbsp; Generating clinical summary…';
   const specialty = TABS[activeTabKey].specialty;
-  const prompt = `You are a clinical expert in ${specialty}.\n\nA clinician is reviewing:\nTitle: "${paper.title}"\nAuthors: ${paper.authors}\nJournal: ${paper.journal} (${paper.date})\nPMID: ${paper.pmid}\n\nProvide a concise structured summary with EXACTLY these five sections:\n**Key Finding:** [1-2 sentences — the single most impactful result]\n**Study Design:** [Study type, population, intervention/comparator]\n**Clinical Relevance:** [How this changes or informs ${specialty} practice]\n**Limitations:** [2-3 key limitations as brief clauses]\n**Bottom Line:** [One sentence a busy clinician can act on]\n\nBe precise, evidence-focused, write for a specialist audience.`;
+
+  const abstractSection = paper.abstract
+    ? `\nAbstract:\n${paper.abstract}\n`
+    : '\n(No abstract available — please infer from title and journal context.)\n';
+
+  const prompt = `You are a clinical expert in ${specialty}.
+
+A clinician is reviewing:
+Title: "${paper.title}"
+Authors: ${paper.authors}
+Journal: ${paper.journal} (${paper.date})
+PMID: ${paper.pmid}
+${abstractSection}
+Provide a concise structured summary with EXACTLY these five sections:
+**Key Finding:** [1-2 sentences — the single most impactful result, quoting specific numbers if available]
+**Study Design:** [Study type, patient population, intervention/comparator, primary endpoint, follow-up duration]
+**Clinical Relevance:** [How this specifically changes or informs ${specialty} practice]
+**Limitations:** [2-3 key limitations as brief clauses]
+**Bottom Line:** [One sentence a busy clinician can act on immediately]
+
+Be precise and evidence-focused. Use specific data (numbers, p-values, effect sizes) from the abstract where available. Write for a specialist audience.`;
+
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
     });
     if (!resp.ok) { const e = await resp.json(); content.innerHTML = `<em style="color:var(--rose)">API error: ${esc(e.error?.message||'Unknown')}</em>`; return; }
     const data = await resp.json();
     const text = data.content.map(b => b.text||'').join('');
-    content.innerHTML = text.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>`<p>${l}</p>`).join('');
+    // If abstract was fetched, show a subtle indicator
+    const abstractBadge = paper.abstract
+      ? `<div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.75rem;padding:0.25rem 0.55rem;background:var(--cream-dark);border-radius:2px;display:inline-block;">✓ Full abstract used</div>`
+      : `<div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.08em;margin-bottom:0.75rem;padding:0.25rem 0.55rem;background:var(--cream-dark);border-radius:2px;display:inline-block;">⚠ Title-only (no abstract available)</div>`;
+    content.innerHTML = abstractBadge + text.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>`<p>${l}</p>`).join('');
     content.dataset.loaded = id;
   } catch(err) { content.innerHTML = `<em style="color:var(--rose)">Request failed: ${esc(err.message)}</em>`; }
 }
