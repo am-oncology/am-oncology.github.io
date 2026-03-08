@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Colorectal Oncology Digest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #F5F0E8; --cream-dark: #EDE6D6; --ink: #1A1410; --ink-light: #3D3530;
+  --muted: #8A7E74; --rule: #C8BFB0; --surface: #FDFAF4;
+  --burgundy: #7A1E2E; --burgundy-light: #A03040;
+  --teal: #1A5C5A; --gold: #B8860B; --blue: #1E3A5F;
+  --rose: #C04050; --sage: #4A6741;
+  /* Tab accent colours */
+  --rectal-accent:   #7A1E2E;
+  --colon-accent:    #1A5C5A;
+  --anal-accent:     #1E3A5F;
+  --appendix-accent: #B8860B;
+  --tab-accent: var(--rectal-accent);
+}
+html { scroll-behavior: smooth; }
+body { background: var(--cream); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.65; min-height: 100vh; }
+
+/* ── MASTHEAD ── */
+.masthead { background: var(--ink); color: var(--cream); position: sticky; top: 0; z-index: 200; border-bottom: 3px solid var(--tab-accent); transition: border-color 0.3s; }
+.masthead-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; gap: 1.5rem; }
+.masthead-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; white-space: nowrap; color: var(--cream); }
+.masthead-title span { color: #C88888; }
+.masthead-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; margin-right: 5px; animation: blink 2s ease-in-out infinite; vertical-align: middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── CANCER TABS ── */
+.cancer-tabs-wrap { background: var(--ink); border-bottom: 1px solid rgba(255,255,255,0.08); }
+.cancer-tabs { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; }
+.ctab {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.85rem 1.5rem; border: none; background: none; color: rgba(245,240,232,0.45);
+  cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.ctab:hover { color: rgba(245,240,232,0.8); }
+.ctab.active { color: var(--cream); border-bottom-color: var(--tab-accent); }
+.ctab .ctab-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; opacity: 0.5; transition: opacity 0.2s; }
+.ctab.active .ctab-dot { opacity: 1; }
+.ctab-count { font-size: 0.58rem; background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 10px; margin-left: 6px; }
+.ctab.active .ctab-count { background: var(--tab-accent); }
+
+/* ── HERO ── */
+.hero { background: var(--ink); color: var(--cream); padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,191,176,0.05) 39px, rgba(200,191,176,0.05) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,191,176,0.025) 39px, rgba(200,191,176,0.025) 40px); pointer-events: none; }
+.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; }
+.hero-kicker { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--tab-accent); margin-bottom: 0.75rem; transition: color 0.3s; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.75rem; }
+.hero h1 em { font-style: italic; color: #C88888; }
+.hero-desc { font-size: 0.9rem; color: rgba(245,240,232,0.6); max-width: 480px; line-height: 1.7; }
+.hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; flex-shrink: 0; }
+.hero-stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--cream); line-height: 1; display: block; }
+.hero-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 0.2rem; }
+@media(max-width:680px){ .hero-inner{grid-template-columns:1fr;} .hero-stats{gap:1.5rem;} }
+
+/* ── TAB ACCENT BAR ── */
+.accent-bar { height: 4px; background: var(--tab-accent); transition: background 0.3s; }
+
+/* ── API PANEL ── */
+.api-wrap { background: var(--cream-dark); padding: 0 2rem; }
+.api-panel { background: var(--surface); border: 1.5px solid var(--rule); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 0.9rem 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; transform: translateY(-1px); }
+.api-panel-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; color: var(--teal); text-transform: uppercase; white-space: nowrap; font-weight: 500; }
+.api-panel-desc { font-size: 0.8rem; color: var(--muted); flex: 1; min-width: 140px; }
+.api-row { display: flex; gap: 0.5rem; flex: 2; min-width: 240px; }
+.api-input { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; padding: 0.48rem 0.85rem; border: 1.5px solid var(--rule); border-radius: 4px; background: var(--cream); color: var(--ink); outline: none; transition: border-color 0.2s; }
+.api-input:focus { border-color: var(--teal); }
+.api-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 0.48rem 1.1rem; background: var(--teal); color: white; border: none; border-radius: 4px; cursor: pointer; letter-spacing: 0.05em; transition: background 0.15s; white-space: nowrap; }
+.api-btn:hover { background: #236b69; }
+.api-key-status { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 0.28rem 0.7rem; border-radius: 3px; background: var(--cream-dark); color: var(--muted); border: 1px solid var(--rule); white-space: nowrap; }
+.api-key-status.set { background: rgba(26,92,90,0.1); color: var(--teal); border-color: rgba(26,92,90,0.3); }
+
+/* ── TOOLBAR ── */
+.toolbar-wrap { background: var(--cream-dark); padding-bottom: 0.5rem; }
+.toolbar { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
+.search-field { display: flex; align-items: center; gap: 0.6rem; background: var(--surface); border: 1.5px solid var(--rule); border-radius: 4px; padding: 0.48rem 1rem; flex: 1; min-width: 200px; transition: border-color 0.2s; }
+.search-field:focus-within { border-color: var(--ink-light); }
+.search-field input { background: none; border: none; outline: none; font-family: 'Source Serif 4', serif; font-size: 0.88rem; color: var(--ink); width: 100%; }
+.search-field input::placeholder { color: var(--muted); font-style: italic; }
+.chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.chip { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; padding: 0.28rem 0.75rem; border-radius: 2px; border: 1.5px solid var(--rule); background: var(--surface); color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.15s; }
+.chip:hover { border-color: var(--ink-light); color: var(--ink); }
+.chip.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+/* ── MAIN ── */
+.page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0; padding-bottom: 0.65rem; border-bottom: 2px solid var(--ink); gap: 1rem; flex-wrap: wrap; }
+.section-header h2 { font-family: 'Playfair Display', serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
+.section-count { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em; }
+.papers-list { display: flex; flex-direction: column; }
+
+/* ── PAPER ROW ── */
+.paper-row { display: grid; grid-template-columns: 52px 1fr auto; border-bottom: 1px solid var(--rule); transition: background 0.15s; animation: rowIn 0.3s ease both; cursor: pointer; }
+@keyframes rowIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.paper-row:hover { background: rgba(0,0,0,0.02); }
+.paper-row:first-child { border-top: none; }
+.paper-num { padding: 1.5rem 0.75rem 1.5rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--rule); align-self: start; padding-top: 1.7rem; text-align: right; }
+.paper-body { padding: 1.3rem 1.5rem 1.3rem 0; }
+.paper-meta-line { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem; flex-wrap: wrap; }
+.paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tab-accent); font-weight: 500; transition: color 0.3s; }
+.paper-date { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--muted); }
+.pmid { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--muted); background: var(--cream-dark); padding: 0.1rem 0.42rem; border-radius: 2px; border: 1px solid var(--rule); text-decoration: none; }
+.pmid:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
+.paper-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; line-height: 1.45; color: var(--ink); margin-bottom: 0.3rem; }
+.paper-authors { font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 0.6rem; }
+.paper-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.ptag { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; padding: 0.15rem 0.5rem; border-radius: 2px; letter-spacing: 0.05em; font-weight: 500; }
+.ptag-surgery   { background: rgba(26,92,90,0.1);    color: #1A5C5A; }
+.ptag-chemo     { background: rgba(30,58,95,0.1);    color: #1E3A5F; }
+.ptag-radio     { background: rgba(122,30,46,0.1);   color: #7A1E2E; }
+.ptag-immuno    { background: rgba(74,103,65,0.1);   color: #4A6741; }
+.ptag-genomics  { background: rgba(184,134,11,0.12); color: #8B6508; }
+.ptag-biomarker { background: rgba(192,64,80,0.1);   color: #C04050; }
+.ptag-rct       { background: rgba(26,92,90,0.14);   color: #1A5C5A; }
+.ptag-meta      { background: rgba(30,58,95,0.12);   color: #1E3A5F; }
+.ptag-phase1    { background: rgba(184,134,11,0.08); color: #8B6508; }
+.ptag-phase2    { background: rgba(184,134,11,0.14); color: #B8860B; }
+.ptag-phase3    { background: rgba(74,103,65,0.14);  color: #4A6741; }
+.ptag-trans     { background: rgba(122,30,46,0.08);  color: #A03040; }
+.ptag-default   { background: var(--cream-dark);     color: var(--muted); }
+.paper-side { padding: 1.3rem 0 1.3rem 1rem; display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; min-width: 96px; }
+.side-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.05em; padding: 0.32rem 0.7rem; border-radius: 3px; border: 1.5px solid var(--rule); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; text-decoration: none; display: block; text-align: center; }
+.side-btn:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
+.side-btn.primary { background: var(--tab-accent); color: white; border-color: var(--tab-accent); transition: background 0.15s, border-color 0.3s; }
+.side-btn.primary:hover { opacity: 0.88; }
+
+/* ── AI DRAWER ── */
+.summary-drawer { display: none; background: var(--surface); border-top: 1px solid var(--rule); border-bottom: 2px solid var(--ink); padding: 1.4rem 1.5rem 1.4rem calc(52px); animation: drawerIn 0.2s ease; }
+.summary-drawer.open { display: block; }
+@keyframes drawerIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
+.drawer-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tab-accent); margin-bottom: 0.65rem; transition: color 0.3s; }
+.drawer-content { font-size: 0.86rem; line-height: 1.82; color: var(--ink-light); max-width: 700px; }
+.drawer-content p { margin-bottom: 0.65rem; }
+.drawer-content strong { color: var(--ink); font-weight: 600; }
+.spinner-ring { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; transition: border-top-color 0.3s; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── LOADING / EMPTY ── */
+.loading-state { text-align: center; padding: 3.5rem 2rem; color: var(--muted); font-style: italic; font-size: 0.9rem; border-top: 2px solid var(--ink); }
+
+/* ── FOOTER ── */
+.page-footer { background: var(--ink); color: rgba(245,240,232,0.45); padding: 2rem; margin-top: 4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; text-align: center; line-height: 1.9; }
+.page-footer a { color: #C88888; text-decoration: none; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px) { .paper-row{grid-template-columns:36px 1fr} .paper-side{display:none} .summary-drawer{padding-left:1rem} .cancer-tabs{overflow-x:auto;gap:0} .ctab{padding:0.7rem 1rem} }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<nav class="masthead" id="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">Colorectal <span>Oncology</span> Digest</div>
+    <div class="masthead-meta"><span class="live-dot"></span><span id="masthead-date">Daily Feed · PubMed</span></div>
+  </div>
+</nav>
+
+<!-- CANCER TABS -->
+<div class="cancer-tabs-wrap">
+  <div class="cancer-tabs">
+    <button class="ctab active" data-cancer="rectal" onclick="switchTab(this)">
+      <span class="ctab-dot" style="background:#7A1E2E"></span>Rectal Cancer<span class="ctab-count" id="tc-rectal">—</span>
+    </button>
+    <button class="ctab" data-cancer="colon" onclick="switchTab(this)">
+      <span class="ctab-dot" style="background:#1A5C5A"></span>Colon Cancer<span class="ctab-count" id="tc-colon">—</span>
+    </button>
+    <button class="ctab" data-cancer="anal" onclick="switchTab(this)">
+      <span class="ctab-dot" style="background:#1E3A5F"></span>Anal Cancer<span class="ctab-count" id="tc-anal">—</span>
+    </button>
+    <button class="ctab" data-cancer="appendix" onclick="switchTab(this)">
+      <span class="ctab-dot" style="background:#B8860B"></span>Appendix Cancer<span class="ctab-count" id="tc-appendix">—</span>
+    </button>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-kicker" id="hero-kicker">Rectal Cancer · Literature Feed</div>
+      <h1 id="hero-title">Rectal Cancer<br><em>Research Digest</em></h1>
+      <p class="hero-desc" id="hero-desc">Fresh publications fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance. Never miss a pivotal paper.</p>
+    </div>
+    <div class="hero-stats">
+      <div><span class="hero-stat-num" id="stat-total">—</span><span class="hero-stat-label">Papers</span></div>
+      <div><span class="hero-stat-num" id="stat-rct">—</span><span class="hero-stat-label">Trials</span></div>
+      <div><span class="hero-stat-num" id="stat-immuno">—</span><span class="hero-stat-label">Immuno</span></div>
+      <div><span class="hero-stat-num" id="stat-genomics">—</span><span class="hero-stat-label">Genomics</span></div>
+    </div>
+  </div>
+</header>
+<div class="accent-bar" id="accent-bar"></div>
+
+<!-- API KEY -->
+<div class="api-wrap">
+  <div class="api-panel">
+    <div class="api-panel-label">🔑 Claude API</div>
+    <div class="api-panel-desc">Enter your Anthropic API key to enable AI-powered clinical summaries on any paper.</div>
+    <div class="api-row">
+      <input type="password" class="api-input" id="api-key" placeholder="sk-ant-api03-…" autocomplete="off">
+      <button class="api-btn" onclick="saveKey()">Save Key</button>
+    </div>
+    <div class="api-key-status" id="key-badge">Not set</div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar-wrap">
+  <div class="toolbar">
+    <div class="search-field">
+      <svg width="13" height="13" fill="none" stroke="#8A7E74" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Search titles, authors, journals…">
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip active" data-tag="All" onclick="setChip(this)">All</button>
+      <button class="chip" data-tag="RCT" onclick="setChip(this)">RCT</button>
+      <button class="chip" data-tag="Surgery" onclick="setChip(this)">Surgery</button>
+      <button class="chip" data-tag="Chemotherapy" onclick="setChip(this)">Chemo</button>
+      <button class="chip" data-tag="Radiotherapy" onclick="setChip(this)">Radio</button>
+      <button class="chip" data-tag="Immunotherapy" onclick="setChip(this)">Immunotherapy</button>
+      <button class="chip" data-tag="Genomics" onclick="setChip(this)">Genomics</button>
+      <button class="chip" data-tag="Biomarker" onclick="setChip(this)">Biomarker</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAPERS -->
+<main class="page-wrap">
+  <div class="section-header">
+    <h2 id="section-title">Latest Publications · Rectal Cancer</h2>
+    <span class="section-count" id="count-label">Loading…</span>
+  </div>
+  <div class="papers-list" id="papers-list">
+    <div class="loading-state"><span class="spinner-ring"></span>&nbsp; Fetching latest papers from PubMed…</div>
+  </div>
+</main>
+
+<footer class="page-footer">
+  Colorectal Oncology Digest &nbsp;·&nbsp; Data from <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">NCBI PubMed</a> via E-utilities &nbsp;·&nbsp; AI summaries by <a href="https://anthropic.com" target="_blank">Anthropic Claude</a><br>
+  For research and educational use only. Not clinical advice.
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════
+// TAB CONFIGURATION
+// ═══════════════════════════════════════════════════
+const TABS = {
+  rectal: {
+    label: 'Rectal Cancer',
+    kicker: 'Rectal Cancer · Literature Feed',
+    title: 'Rectal Cancer<br><em>Research Digest</em>',
+    desc: 'Fresh publications on rectal cancer fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance.',
+    accent: '#7A1E2E',
+    pubmedTerm: 'rectal+cancer[MeSH+Major+Topic]',
+    specialty: 'rectal cancer',
+    demo: [
+      { title: 'Total Neoadjuvant Therapy versus Standard Chemoradiation in Locally Advanced Rectal Cancer: Updated Survival Results of the RAPIDO Randomised Trial', authors: 'Bahadoer RR, Dijkstra EA, van Etten B et al.', journal: 'Lancet Oncology', date: '2026 Mar', pmid: '39100001', tags: ['RCT','Phase III','Radiotherapy','Chemotherapy'] },
+      { title: 'Pembrolizumab Monotherapy for Mismatch Repair–Deficient Locally Advanced Rectal Cancer: Phase II Results', authors: 'Cercek A, Lumish M, Sinopoli J et al.', journal: 'New England Journal of Medicine', date: '2026 Mar', pmid: '39100002', tags: ['Immunotherapy','Phase II','Genomics'] },
+      { title: 'Watch-and-Wait Strategy After Clinical Complete Response: Systematic Review and Meta-analysis of Long-term Outcomes', authors: 'Smith JJ, Garcia-Aguilar J, Rullier E et al.', journal: 'Journal of Clinical Oncology', date: '2026 Feb', pmid: '39100003', tags: ['Surgery','Meta-analysis','Radiotherapy'] },
+      { title: 'Circulating Tumour DNA-guided Adjuvant Chemotherapy in Resected Rectal Cancer: Results of the DYNAMIC-Rectal Phase III Trial', authors: 'Tie J, Cohen JD, Lahouel K et al.', journal: 'Nature Medicine', date: '2026 Feb', pmid: '39100004', tags: ['Biomarker','Genomics','Phase III'] },
+      { title: 'Robotic versus Laparoscopic Total Mesorectal Excision: 5-year Oncological Outcomes of the ROLARR Randomised Controlled Trial', authors: 'Corrigan N, Marshall H, Croft J et al.', journal: 'Annals of Surgery', date: '2026 Jan', pmid: '39100005', tags: ['Surgery','RCT'] },
+      { title: 'Short-course Radiotherapy Followed by Consolidation Chemotherapy Before Surgery: Stockholm III Trial 10-year Follow-up', authors: 'Erlandsson J, Holm T, Pettersson D et al.', journal: 'Lancet', date: '2025 Dec', pmid: '39100007', tags: ['Radiotherapy','Chemotherapy','RCT'] },
+      { title: 'Single-cell Spatial Transcriptomics Reveals Tumour Microenvironment Heterogeneity in Rectal Cancer', authors: 'Lee HO, Hong Y, Etlioglu HE et al.', journal: 'Nature Cancer', date: '2025 Nov', pmid: '39100008', tags: ['Genomics','Translational','Immunotherapy'] },
+      { title: 'Transanal Total Mesorectal Excision vs Laparoscopic TME for Low Rectal Cancer: Multicentre Randomised Trial', authors: 'Deijen CL, Velthuis S, Tsai A et al.', journal: 'British Journal of Surgery', date: '2025 Nov', pmid: '39100009', tags: ['Surgery','RCT'] },
+    ]
+  },
+  colon: {
+    label: 'Colon Cancer',
+    kicker: 'Colon Cancer · Literature Feed',
+    title: 'Colon Cancer<br><em>Research Digest</em>',
+    desc: 'Fresh publications on colon cancer fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance.',
+    accent: '#1A5C5A',
+    pubmedTerm: 'colonic+neoplasms[MeSH+Major+Topic]',
+    specialty: 'colon cancer',
+    demo: [
+      { title: 'KRAS G12C Inhibition plus Cetuximab in Metastatic Colorectal Cancer: Final Results of the CodeBreaK 300 Phase III Trial', authors: 'Fakih MG, Kopetz S, Kuboki Y et al.', journal: 'Journal of Clinical Oncology', date: '2026 Mar', pmid: '39200001', tags: ['Genomics','Chemotherapy','Phase III','Biomarker'] },
+      { title: 'Adjuvant Oxaliplatin-based Chemotherapy for Stage III Colon Cancer: Individual Patient Data Meta-analysis', authors: 'Iveson TJ, Kerr RS, Saunders MP et al.', journal: 'Lancet Oncology', date: '2026 Feb', pmid: '39200002', tags: ['Chemotherapy','Meta-analysis','Phase III'] },
+      { title: 'Laparoscopic versus Open Right Hemicolectomy: 10-year Oncological Outcomes from the COLOR Randomised Trial', authors: 'Veldkamp R, Kuhry E, Hop WC et al.', journal: 'Annals of Surgery', date: '2026 Feb', pmid: '39200003', tags: ['Surgery','RCT'] },
+      { title: 'Circulating Tumour DNA for Postoperative Surveillance in Stage II Colon Cancer: DYNAMIC Trial 5-year Results', authors: 'Tie J, Wang Y, Tomasetti C et al.', journal: 'New England Journal of Medicine', date: '2026 Jan', pmid: '39200004', tags: ['Biomarker','Genomics','Phase III'] },
+      { title: 'Pembrolizumab as First-line Therapy in Mismatch Repair-Deficient Metastatic Colorectal Cancer: KEYNOTE-177 Long-term Follow-up', authors: 'André T, Shiu KK, Kim TW et al.', journal: 'Journal of Clinical Oncology', date: '2025 Dec', pmid: '39200005', tags: ['Immunotherapy','Phase III','Genomics','RCT'] },
+      { title: 'Molecular Subtypes of Colon Cancer and Response to Adjuvant Chemotherapy: Prospective Biomarker Analysis', authors: 'Guinney J, Dienstmann R, Wang X et al.', journal: 'Nature Medicine', date: '2025 Nov', pmid: '39200006', tags: ['Genomics','Biomarker','Translational'] },
+      { title: 'Complete Mesocolic Excision versus Standard Colectomy for Right-sided Colon Cancer: Systematic Review and Meta-analysis', authors: 'Storli KE, Söndenaa K, Furnes B et al.', journal: 'British Journal of Surgery', date: '2025 Nov', pmid: '39200007', tags: ['Surgery','Meta-analysis'] },
+      { title: 'BRAF V600E-Targeted Therapy with Encorafenib plus Cetuximab in Metastatic Colorectal Cancer: BEACON-CRC2 Results', authors: 'Kopetz S, Grothey A, Yaeger R et al.', journal: 'Lancet', date: '2025 Oct', pmid: '39200008', tags: ['Genomics','Chemotherapy','Phase III','Biomarker'] },
+    ]
+  },
+  anal: {
+    label: 'Anal Cancer',
+    kicker: 'Anal Cancer · Literature Feed',
+    title: 'Anal Cancer<br><em>Research Digest</em>',
+    desc: 'Fresh publications on anal cancer and squamous cell carcinoma fetched daily from PubMed, auto-tagged by topic, and summarised with AI.',
+    accent: '#1E3A5F',
+    pubmedTerm: 'anus+neoplasms[MeSH+Major+Topic]',
+    specialty: 'anal cancer',
+    demo: [
+      { title: 'Nivolumab in Previously Treated Metastatic Anal Squamous Cell Carcinoma: Phase II NCI9673 Trial Results', authors: 'Morris VK, Salem ME, Nimeiri H et al.', journal: 'Journal of Clinical Oncology', date: '2026 Mar', pmid: '39300001', tags: ['Immunotherapy','Phase II'] },
+      { title: 'Intensified Chemoradiation with Mitomycin C versus Cisplatin in Anal Cancer: ACT II Randomised Trial 10-year Update', authors: 'James RD, Glynne-Jones R, Meadows HM et al.', journal: 'Lancet Oncology', date: '2026 Feb', pmid: '39300002', tags: ['Radiotherapy','Chemotherapy','RCT','Phase III'] },
+      { title: 'HPV Vaccination and Risk of Anal Cancer: Population-based Cohort Study from the Nordic Countries', authors: 'Luostarinen T, Apter D, Dillner J et al.', journal: 'BMJ', date: '2026 Jan', pmid: '39300003', tags: ['Biomarker','Genomics'] },
+      { title: 'Pembrolizumab plus Chemotherapy as First-line Treatment for Metastatic Anal Squamous Cell Carcinoma: KEYNOTE-811 Results', authors: 'Marabelle A, Fakih M, Lopez J et al.', journal: 'Lancet', date: '2025 Dec', pmid: '39300004', tags: ['Immunotherapy','Chemotherapy','Phase III','RCT'] },
+      { title: 'MRI-based Staging and Response Assessment in Anal Canal Cancer: Prospective Multicentre Validation Study', authors: 'Gollub MJ, Arya S, Beets-Tan RG et al.', journal: 'Radiology', date: '2025 Nov', pmid: '39300005', tags: ['Biomarker','Radiotherapy'] },
+      { title: 'Organ Preservation in High-risk Anal Cancer with Dose-escalated IMRT: Phase II PLATO Trial Results', authors: 'Sebag-Montefiore D, Adams R, Bell S et al.', journal: 'International Journal of Radiation Oncology', date: '2025 Oct', pmid: '39300006', tags: ['Radiotherapy','Phase II','Surgery'] },
+      { title: 'Molecular Characterisation of Anal Squamous Cell Carcinoma: Implications for Targeted Therapy', authors: 'Smaglo BG, Tesfaye A, Chalasani P et al.', journal: 'Nature Communications', date: '2025 Sep', pmid: '39300007', tags: ['Genomics','Translational','Biomarker'] },
+    ]
+  },
+  appendix: {
+    label: 'Appendix Cancer',
+    kicker: 'Appendix Cancer · Literature Feed',
+    title: 'Appendix Cancer<br><em>Research Digest</em>',
+    desc: 'Fresh publications on appendiceal neoplasms and pseudomyxoma peritonei fetched daily from PubMed, auto-tagged and AI-summarised.',
+    accent: '#B8860B',
+    pubmedTerm: 'appendiceal+neoplasms[MeSH+Major+Topic]',
+    specialty: 'appendix cancer',
+    demo: [
+      { title: 'Cytoreductive Surgery and HIPEC for Appendiceal Mucinous Neoplasms: Long-term Outcomes from the PSM-1 International Registry', authors: 'Carr NJ, Cecil TD, Mohamed F et al.', journal: 'Annals of Surgery', date: '2026 Mar', pmid: '39400001', tags: ['Surgery','RCT'] },
+      { title: 'Systemic Chemotherapy for High-grade Appendiceal Adenocarcinoma: Retrospective Multicentre Cohort Study', authors: 'Asare EA, Compton CC, Hanna NN et al.', journal: 'Journal of Clinical Oncology', date: '2026 Feb', pmid: '39400002', tags: ['Chemotherapy'] },
+      { title: 'Molecular Profiling of Appendiceal Neoplasms Reveals Distinct Subtypes with Therapeutic Implications', authors: 'Levine EA, Votanopoulos KI, Shen P et al.', journal: 'Nature Cancer', date: '2026 Jan', pmid: '39400003', tags: ['Genomics','Biomarker','Translational'] },
+      { title: 'Pseudomyxoma Peritonei: International Consensus Guidelines for Diagnosis, Staging, and Treatment', authors: 'Govaerts K, Lurvink RJ, De Hingh IH et al.', journal: 'European Journal of Surgical Oncology', date: '2025 Dec', pmid: '39400004', tags: ['Surgery','Meta-analysis'] },
+      { title: 'Intraperitoneal Chemotherapy Regimens for Peritoneal Metastases from Appendiceal Cancer: Systematic Review', authors: 'Quenet F, Elias D, Roca L et al.', journal: 'Lancet Oncology', date: '2025 Nov', pmid: '39400005', tags: ['Chemotherapy','Meta-analysis','Surgery'] },
+      { title: 'KRAS and GNAS Mutational Status as Prognostic Biomarkers in Appendiceal Mucinous Neoplasms', authors: 'Szych C, Staebler A, Connolly DC et al.', journal: 'Modern Pathology', date: '2025 Oct', pmid: '39400006', tags: ['Genomics','Biomarker'] },
+      { title: 'Laparoscopic Appendicectomy for Low-grade Appendiceal Mucinous Neoplasm: Oncological Safety Analysis', authors: 'Arnason T, Kamionek M, Yang M et al.', journal: 'British Journal of Surgery', date: '2025 Sep', pmid: '39400007', tags: ['Surgery'] },
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let activeTabKey = 'rectal';
+let papersByTab  = { rectal: null, colon: null, anal: null, appendix: null };
+let activeTag    = 'All';
+let claudeKey    = '';
+
+// ═══════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════
+function saveKey() {
+  claudeKey = document.getElementById('api-key').value.trim();
+  const badge = document.getElementById('key-badge');
+  badge.textContent = claudeKey ? '✓ Key active' : 'Not set';
+  badge.className   = claudeKey ? 'api-key-status set' : 'api-key-status';
+}
+
+// ═══════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════
+function switchTab(btn) {
+  document.querySelectorAll('.ctab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const key = btn.dataset.cancer;
+  activeTabKey = key;
+  activeTag = 'All';
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.tag==='All'));
+  document.getElementById('search').value = '';
+  applyTheme(key);
+  updateHero(key);
+  if (papersByTab[key]) {
+    updateStats(papersByTab[key]);
+    renderPapers(papersByTab[key]);
+    document.getElementById('section-title').textContent = `Latest Publications · ${TABS[key].label}`;
+  } else {
+    document.getElementById('papers-list').innerHTML = '<div class="loading-state"><span class="spinner-ring"></span>&nbsp; Fetching papers from PubMed…</div>';
+    document.getElementById('section-title').textContent = `Latest Publications · ${TABS[key].label}`;
+    fetchForTab(key);
+  }
+}
+
+function applyTheme(key) {
+  const accent = TABS[key].accent;
+  document.documentElement.style.setProperty('--tab-accent', accent);
+}
+
+function updateHero(key) {
+  const t = TABS[key];
+  document.getElementById('hero-kicker').textContent = t.kicker;
+  document.getElementById('hero-title').innerHTML = t.title;
+  document.getElementById('hero-desc').textContent = t.desc;
+}
+
+// ═══════════════════════════════════════════════════
+// AUTO-TAGGING
+// ═══════════════════════════════════════════════════
+const TAG_RULES = {
+  'Surgery':       ['surgery','resection','mesorectal','tme','sphincter','laparoscop','robotic','colostomy','stoma','anastomosis','watch.and.wait','organ.preserv','transanal','hemicolectomy','colectomy','cytoreduct','hipec','appendicectomy','excision'],
+  'Chemotherapy':  ['chemotherapy','folfox','folfiri','capecitabine','oxaliplatin','fluorouracil','5.fu','bevacizumab','cetuximab','panitumumab','regorafenib','mitomycin','cisplatin','encorafenib','intraperitoneal'],
+  'Radiotherapy':  ['radiation','radiotherapy','chemoradiation','short.course','long.course','neoadjuvant','brachytherapy','imrt','sbrt','external.beam'],
+  'Immunotherapy': ['immunotherapy','checkpoint','pd.l1','pd.1','ctla','nivolumab','pembrolizumab','atezolizumab','mismatch.repair','mmr','msi','dmmr','hpv'],
+  'Genomics':      ['genom','mutation','sequenc','molecular','kras','braf','nras','gnas','wnt','ctdna','liquid.biopsy','transcriptom','microsatellite','methylat'],
+  'Biomarker':     ['biomarker','marker','cea','prognostic','predictive','staging','response.assess'],
+  'RCT':           ['randomized','randomised','\\brct\\b'],
+  'Meta-analysis': ['meta.analysis','systematic.review','pooled.analysis','consensus'],
+  'Phase I':       ['phase.i\\b','phase 1\\b','first.in.human','dose.escalat'],
+  'Phase II':      ['phase.ii\\b','phase 2\\b'],
+  'Phase III':     ['phase.iii\\b','phase 3\\b'],
+  'Translational': ['translational','preclinical','mouse.model','xenograft','organoid'],
+};
+const TAG_CLASS = { 'Surgery':'ptag-surgery','Chemotherapy':'ptag-chemo','Radiotherapy':'ptag-radio','Immunotherapy':'ptag-immuno','Genomics':'ptag-genomics','Biomarker':'ptag-biomarker','RCT':'ptag-rct','Meta-analysis':'ptag-meta','Phase I':'ptag-phase1','Phase II':'ptag-phase2','Phase III':'ptag-phase3','Translational':'ptag-trans' };
+
+function autoTag(text) {
+  const t = text.toLowerCase(), found = [];
+  for (const [tag, pats] of Object.entries(TAG_RULES)) {
+    if (pats.some(p => { try{return new RegExp(p,'i').test(t);}catch(e){return t.includes(p);} })) found.push(tag);
+    if (found.length >= 5) break;
+  }
+  return found.length ? found : ['Oncology'];
+}
+function tagHtml(tags) {
+  return tags.map(t => `<span class="ptag ${TAG_CLASS[t]||'ptag-default'}">${t}</span>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// PUBMED FETCH
+// ═══════════════════════════════════════════════════
+const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+
+async function fetchForTab(key) {
+  const tab = TABS[key];
+  try {
+    const sr = await fetch(`${BASE}esearch.fcgi?db=pubmed&term=${tab.pubmedTerm}&sort=pub+date&retmax=12&retmode=json`);
+    const sd = await sr.json();
+    const ids = sd.esearchresult.idlist;
+    if (!ids.length) throw new Error('No IDs');
+    const sumr = await fetch(`${BASE}esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`);
+    const sumd = await sumr.json();
+    const papers = ids.map((id, i) => {
+      const d = sumd.result[id]; if (!d) return null;
+      const titleRaw = (d.title||'Untitled').replace(/<[^>]+>/g,'');
+      return { id, title: titleRaw, authors: d.authors ? d.authors.slice(0,4).map(a=>a.name).join(', ')+(d.authors.length>4?' et al.':'') : 'Unknown', journal: d.fulljournalname||d.source||'', date: d.pubdate||'', pmid: id, tags: autoTag(titleRaw+' '+(d.fulljournalname||'')), num: String(i+1).padStart(2,'0') };
+    }).filter(Boolean);
+    papersByTab[key] = papers;
+    if (activeTabKey === key) {
+      updateStats(papers);
+      renderPapers(papers);
+    }
+    document.getElementById(`tc-${key}`).textContent = papers.length;
+    const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('masthead-date').textContent = 'Updated ' + today;
+  } catch(err) {
+    console.warn(`PubMed error for ${key}, using demo:`, err.message);
+    const papers = TABS[key].demo.map((d,i) => ({...d, id: d.pmid, num: String(i+1).padStart(2,'0')}));
+    papersByTab[key] = papers;
+    if (activeTabKey === key) { updateStats(papers); renderPapers(papers); }
+    document.getElementById(`tc-${key}`).textContent = papers.length;
+    document.getElementById('masthead-date').textContent = 'Demo mode · ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  }
+}
+
+// Fetch all tabs in background
+async function fetchAll() {
+  fetchForTab('rectal');
+  await new Promise(r => setTimeout(r, 400));
+  fetchForTab('colon');
+  await new Promise(r => setTimeout(r, 400));
+  fetchForTab('anal');
+  await new Promise(r => setTimeout(r, 400));
+  fetchForTab('appendix');
+}
+
+// ═══════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════
+function updateStats(papers) {
+  document.getElementById('stat-total').textContent    = papers.length;
+  document.getElementById('stat-rct').textContent      = papers.filter(p=>p.tags.includes('RCT')||p.tags.includes('Phase III')).length;
+  document.getElementById('stat-immuno').textContent   = papers.filter(p=>p.tags.includes('Immunotherapy')).length;
+  document.getElementById('stat-genomics').textContent = papers.filter(p=>p.tags.includes('Genomics')).length;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderPapers(list) {
+  const el = document.getElementById('papers-list');
+  document.getElementById('count-label').textContent = `${list.length} paper${list.length!==1?'s':''} shown`;
+  if (!list.length) { el.innerHTML = '<div class="loading-state">No papers match your selection.</div>'; return; }
+  el.innerHTML = list.map((p, i) => `
+    <div class="paper-row" style="animation-delay:${i*0.035}s" id="row-${p.id}">
+      <div class="paper-num">${p.num||String(i+1).padStart(2,'0')}</div>
+      <div class="paper-body" onclick="toggleDrawer('${p.id}')">
+        <div class="paper-meta-line">
+          <span class="paper-journal">${esc(p.journal)}</span>
+          <span class="paper-date">${esc(p.date)}</span>
+          <a class="pmid" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+        </div>
+        <div class="paper-title">${esc(p.title)}</div>
+        <div class="paper-authors">${esc(p.authors)}</div>
+        <div class="paper-tags">${tagHtml(p.tags)}</div>
+      </div>
+      <div class="paper-side" onclick="event.stopPropagation()">
+        <a class="side-btn" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank">↗ PubMed</a>
+        <button class="side-btn primary" onclick="openSummary('${p.id}')">✦ Summarise</button>
+      </div>
+    </div>
+    <div class="summary-drawer" id="drawer-${p.id}">
+      <div class="drawer-label">✦ AI Clinical Summary</div>
+      <div class="drawer-content" id="drawer-content-${p.id}">
+        <em style="color:var(--muted)">Enter your Claude API key above to enable AI-powered clinical summaries.</em>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// FILTER + SEARCH
+// ═══════════════════════════════════════════════════
+function setChip(btn) {
+  document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeTag = btn.dataset.tag;
+  applyFilters();
+}
+function applyFilters() {
+  const papers = papersByTab[activeTabKey];
+  if (!papers) return;
+  const q = document.getElementById('search').value.toLowerCase();
+  let f = papers;
+  if (activeTag !== 'All') f = f.filter(p => p.tags.includes(activeTag));
+  if (q) f = f.filter(p => p.title.toLowerCase().includes(q) || p.authors.toLowerCase().includes(q) || p.journal.toLowerCase().includes(q));
+  renderPapers(f);
+}
+document.addEventListener('DOMContentLoaded', () => document.getElementById('search').addEventListener('input', applyFilters));
+
+// ═══════════════════════════════════════════════════
+// AI DRAWER
+// ═══════════════════════════════════════════════════
+function toggleDrawer(id) {
+  const drawer = document.getElementById(`drawer-${id}`);
+  if (!drawer) return;
+  if (drawer.classList.contains('open')) { drawer.classList.remove('open'); }
+  else { openSummary(id); }
+}
+
+async function openSummary(id) {
+  const drawer  = document.getElementById(`drawer-${id}`);
+  const content = document.getElementById(`drawer-content-${id}`);
+  if (!drawer || !content) return;
+  document.querySelectorAll('.summary-drawer.open').forEach(d => { if(d.id!==`drawer-${id}`) d.classList.remove('open'); });
+  drawer.classList.add('open');
+
+  const papers = papersByTab[activeTabKey] || [];
+  const paper  = papers.find(p => p.id === id);
+  if (!paper) return;
+
+  if (!claudeKey) {
+    content.innerHTML = '<em style="color:var(--muted)">Enter your Claude API key above to enable AI-powered clinical summaries.</em>';
+    return;
+  }
+  if (content.dataset.loaded === id) return; // already loaded
+
+  content.innerHTML = '<span class="spinner-ring"></span>&nbsp; Generating clinical summary…';
+  const specialty = TABS[activeTabKey].specialty;
+  const prompt = `You are a clinical oncology expert specialising in ${specialty}.\n\nA clinician is reviewing:\nTitle: "${paper.title}"\nAuthors: ${paper.authors}\nJournal: ${paper.journal} (${paper.date})\nPMID: ${paper.pmid}\n\nProvide a concise structured summary:\n**Key Finding:** [1-2 sentences — the single most impactful result]\n**Study Design:** [Study type, population, intervention/comparator]\n**Clinical Relevance:** [How this changes ${specialty} management]\n**Limitations:** [2-3 key limitations as brief clauses]\n**Bottom Line:** [One sentence a busy clinician can act on]\n\nBe precise and evidence-focused. Write for a specialist audience.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!resp.ok) { const e = await resp.json(); content.innerHTML = `<em style="color:var(--rose)">API error: ${esc(e.error?.message||'Unknown')}</em>`; return; }
+    const data = await resp.json();
+    const text = data.content.map(b=>b.text||'').join('');
+    content.innerHTML = text.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').split('\n').filter(l=>l.trim()).map(l=>`<p>${l}</p>`).join('');
+    content.dataset.loaded = id;
+  } catch(err) {
+    content.innerHTML = `<em style="color:var(--rose)">Request failed: ${esc(err.message)}</em>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+applyTheme('rectal');
+updateHero('rectal');
+fetchAll();
+</script>
+</body>
+</html>
