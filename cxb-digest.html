@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CXB Digest | Clinical Oncology Tools</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Reuse the same CSS variables as the parent site -->
+    <style>
+        :root {
+            --navy-dark: #1a2a4a;
+            --navy-primary: #2c4a7c;
+            --navy-light: #3d6499;
+            --gold: #c9a84c;
+            --text-main: #2d3748;
+            --text-light: #718096;
+            --font-body: 'Lato', sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-main);
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        /* ---- HEADER (mirrored from main site) ---- */
+        header {
+            background-color: var(--navy-dark);
+            padding: 1rem 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+        .brand h1 { font-family: var(--font-display); color: white; font-size: 1.3rem; font-weight: 400; }
+        .brand .subtitle { color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; display: block; }
+        .brand a { text-decoration: none; }
+        nav a { color: rgba(255,255,255,0.7); text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; transition: color 0.2s; }
+        nav a:hover, nav a.active { color: white; }
+        nav a.active { border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
+
+        /* ---- PAGE LAYOUT ---- */
+        .tool-container { max-width: 900px; margin: 0 auto; padding: 3rem 20px; }
+
+        .tool-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 1rem;
+        }
+        .tool-header h1 { margin-bottom: 0.5rem; color: var(--navy-dark); font-family: var(--font-display); font-size: 1.8rem; }
+        .tool-header p { color: var(--text-light); font-size: 0.95rem; }
+
+        /* ---- CONTROL PANEL ---- */
+        .control-panel {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .panel-info p { font-size: 0.9rem; color: var(--text-light); margin: 0; }
+        .panel-info strong { color: var(--navy-primary); }
+
+        .btn-tool {
+            padding: 11px 24px;
+            background-color: var(--navy-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-family: var(--font-body);
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-tool:hover { background-color: var(--navy-dark); }
+        .btn-tool:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        .btn-ai {
+            padding: 6px 14px;
+            background-color: white;
+            border: 1px solid var(--navy-primary);
+            color: var(--navy-primary);
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-ai:hover { background-color: var(--navy-primary); color: white; }
+        .btn-ai:disabled { border-color: #94a3b8; color: #94a3b8; cursor: not-allowed; }
+
+        /* ---- STATUS / LOADING ---- */
+        #status-bar {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            display: none;
+        }
+        .spinner {
+            display: inline-block;
+            width: 28px; height: 28px;
+            border: 3px solid #e2e8f0;
+            border-top-color: var(--navy-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #error-bar {
+            background-color: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            color: #b91c1c;
+            display: none;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* ---- PAPER CARDS ---- */
+        .results-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .paper-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .paper-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1.5rem;
+            animation: fadeIn 0.3s ease-in;
+            transition: box-shadow 0.2s;
+        }
+        .paper-card:hover { box-shadow: 0 4px 12px rgba(44, 74, 124, 0.1); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .paper-number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gold);
+            margin-bottom: 0.4rem;
+        }
+
+        .paper-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--navy-dark);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .paper-meta {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+        }
+        .paper-meta span { display: flex; align-items: center; gap: 4px; }
+
+        .paper-abstract {
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            max-height: 120px;
+            overflow: hidden;
+            position: relative;
+            transition: max-height 0.4s ease;
+        }
+        .paper-abstract.expanded { max-height: 2000px; }
+        .paper-abstract:not(.expanded)::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, white);
+        }
+        .abstract-placeholder {
+            font-style: italic;
+            color: var(--text-light);
+        }
+
+        .paper-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            font-size: 0.82rem;
+            color: var(--navy-primary);
+            cursor: pointer;
+            font-family: var(--font-body);
+            padding: 0;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .btn-text:hover { color: var(--navy-dark); }
+
+        .pubmed-link {
+            font-size: 0.82rem;
+            color: var(--navy-primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .pubmed-link:hover { background-color: #eff6ff; border-color: var(--navy-primary); }
+
+        /* ---- AI SUMMARY BOX ---- */
+        .ai-summary-box {
+            margin-top: 1rem;
+            background-color: #f0f5ff;
+            border: 1px solid #bfdbfe;
+            border-left: 3px solid var(--navy-primary);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .ai-summary-box.visible { display: block; }
+
+        .ai-summary-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--navy-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ai-summary-text {
+            font-size: 0.88rem;
+            color: #374151;
+            line-height: 1.65;
+        }
+
+        .ai-loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .ai-spinner {
+            width: 16px; height: 16px;
+            border: 2px solid #bfdbfe;
+            border-top-color: var(--navy-primary);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            flex-shrink: 0;
+        }
+
+        /* ---- FOOTER ---- */
+        footer {
+            background-color: var(--navy-dark);
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            margin-top: 4rem;
+        }
+
+        /* ---- PRINT ---- */
+        @media print {
+            header, footer, .control-panel, .btn-ai, .paper-actions, .ai-summary-box { display: none !important; }
+            .paper-abstract { max-height: none !important; }
+            .paper-abstract::after { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            .control-panel { flex-direction: column; align-items: flex-start; }
+            .btn-tool { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-flex">
+        <div class="brand">
+            <a href="index.html" style="text-decoration:none;">
+                <h1>Clinical Oncology</h1>
+                <span class="subtitle">Tools & Calculators</span>
+            </a>
+        </div>
+        <nav>
+            <a href="cxb.html" class="tool-link">CXB Planner</a>
+            <a href="eqd2.html" class="tool-link">EQD2 Calculator</a>
+            <a href="cxb-digest.html" class="active tool-link">CXB Digest</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <div class="tool-container">
+
+        <div class="tool-header">
+            <h1>CXB Literature Digest</h1>
+            <p>Latest publications on Papillon Contact X-ray Brachytherapy, retrieved live from PubMed. Includes AI-assisted plain-English summaries for each paper.</p>
+        </div>
+
+        <section class="control-panel">
+            <div class="panel-info">
+                <p><strong>Source:</strong> PubMed / NCBI E-utilities &nbsp;·&nbsp; <strong>Query:</strong> "contact x-ray brachytherapy" OR "Papillon technique" rectal</p>
+                <p>Showing the 10 most recent indexed results. Last fetched: <span id="last-fetched">—</span></p>
+            </div>
+            <button class="btn-tool" id="fetch-btn" onclick="fetchPapers()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                Fetch Latest Papers
+            </button>
+        </section>
+
+        <div id="error-bar"></div>
+
+        <div id="status-bar">
+            <div class="spinner"></div>
+            <p id="status-msg">Querying PubMed…</p>
+        </div>
+
+        <div id="results-meta" class="results-meta" style="display:none;"></div>
+        <div id="paper-list" class="paper-list"></div>
+
+    </div>
+</main>
+
+<footer>
+    <p>CXB Literature Digest · Data sourced from PubMed via NCBI E-utilities · AI summaries are for informational purposes only and do not constitute clinical advice.</p>
+</footer>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const PUBMED_SEARCH_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi';
+const PUBMED_FETCH_URL  = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi';
+const PUBMED_SUMMARY_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi';
+const SEARCH_QUERY = '("contact x-ray brachytherapy" OR "Papillon technique" OR "Papillon CXB" OR "Papillon radiotherapy") AND (rectal OR rectum OR colorectal)';
+const MAX_RESULTS = 10;
+
+// ─── MAIN FETCH FLOW ──────────────────────────────────────────────────────────
+async function fetchPapers() {
+    const btn = document.getElementById('fetch-btn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="ai-spinner" style="border-color:#bfdbfe; border-top-color:white;"></span> Fetching…`;
+
+    showStatus('Querying PubMed…');
+    hideError();
+    document.getElementById('paper-list').innerHTML = '';
+    document.getElementById('results-meta').style.display = 'none';
+
+    try {
+        // Step 1: Search for PMIDs
+        const searchParams = new URLSearchParams({
+            db: 'pubmed',
+            term: SEARCH_QUERY,
+            retmax: MAX_RESULTS,
+            retmode: 'json',
+            sort: 'pub_date',
+            usehistory: 'n'
+        });
+        const searchRes = await fetch(`${PUBMED_SEARCH_URL}?${searchParams}`);
+        if (!searchRes.ok) throw new Error(`PubMed search failed (${searchRes.status})`);
+        const searchData = await searchRes.json();
+        const pmids = searchData.esearchresult?.idlist || [];
+
+        if (pmids.length === 0) {
+            showError('No results found for the current query. PubMed may be temporarily unavailable or the query returned no results.');
+            return;
+        }
+
+        showStatus(`Found ${pmids.length} papers. Fetching details…`);
+
+        // Step 2: Fetch full records (title, abstract, authors, journal, date)
+        const fetchParams = new URLSearchParams({
+            db: 'pubmed',
+            id: pmids.join(','),
+            retmode: 'xml',
+            rettype: 'abstract'
+        });
+        const fetchRes = await fetch(`${PUBMED_FETCH_URL}?${fetchParams}`);
+        if (!fetchRes.ok) throw new Error(`PubMed fetch failed (${fetchRes.status})`);
+        const xmlText = await fetchRes.text();
+
+        const papers = parseXML(xmlText, pmids);
+
+        hideStatus();
+        renderPapers(papers);
+
+        document.getElementById('last-fetched').textContent = new Date().toLocaleString('en-GB', {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+
+    } catch (err) {
+        hideStatus();
+        showError(`Could not retrieve papers: ${err.message}. This tool requires internet access and PubMed to be reachable. Please try again.`);
+        console.error(err);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg> Fetch Latest Papers`;
+    }
+}
+
+// ─── XML PARSER ───────────────────────────────────────────────────────────────
+function parseXML(xmlText, pmids) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
+    const articles = doc.querySelectorAll('PubmedArticle');
+    const papers = [];
+
+    articles.forEach(article => {
+        // Title
+        const titleEl = article.querySelector('ArticleTitle');
+        const title = titleEl ? titleEl.textContent.replace(/\.$/, '') : 'No title available';
+
+        // Abstract — may have multiple sections
+        const abstractTexts = article.querySelectorAll('AbstractText');
+        let abstract = '';
+        if (abstractTexts.length > 1) {
+            // Structured abstract
+            abstractTexts.forEach(el => {
+                const label = el.getAttribute('Label');
+                const text = el.textContent.trim();
+                if (text) abstract += (label ? `${label}: ${text}\n\n` : `${text}\n\n`);
+            });
+            abstract = abstract.trim();
+        } else if (abstractTexts.length === 1) {
+            abstract = abstractTexts[0].textContent.trim();
+        }
+
+        // Authors
+        const authorEls = article.querySelectorAll('Author');
+        const authors = [];
+        authorEls.forEach(a => {
+            const last = a.querySelector('LastName')?.textContent || '';
+            const init = a.querySelector('Initials')?.textContent || '';
+            if (last) authors.push(`${last} ${init}`.trim());
+        });
+        const authorStr = authors.length > 3
+            ? `${authors.slice(0, 3).join(', ')} et al.`
+            : authors.join(', ');
+
+        // Journal & Date
+        const journal = article.querySelector('ISOAbbreviation')?.textContent
+                     || article.querySelector('Title')?.textContent
+                     || '';
+        const year  = article.querySelector('PubDate Year')?.textContent
+                   || article.querySelector('PubMedPubDate[PubStatus="pubmed"] Year')?.textContent
+                   || '';
+        const month = article.querySelector('PubDate Month')?.textContent || '';
+
+        // PMID
+        const pmid = article.querySelector('PMID')?.textContent || '';
+
+        papers.push({ title, abstract, authors: authorStr, journal, year, month, pmid });
+    });
+
+    return papers;
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderPapers(papers) {
+    const list = document.getElementById('paper-list');
+    const meta = document.getElementById('results-meta');
+
+    meta.textContent = `${papers.length} papers retrieved · sorted by publication date (most recent first)`;
+    meta.style.display = 'block';
+
+    list.innerHTML = '';
+
+    papers.forEach((paper, idx) => {
+        const hasAbstract = paper.abstract.trim().length > 0;
+        const shortAbstract = hasAbstract ? paper.abstract : '<span class="abstract-placeholder">No abstract available for this article.</span>';
+        const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/${paper.pmid}/`;
+        const dateStr = [paper.month, paper.year].filter(Boolean).join(' ');
+
+        const card = document.createElement('div');
+        card.className = 'paper-card';
+        card.id = `paper-${paper.pmid}`;
+        card.style.animationDelay = `${idx * 0.05}s`;
+
+        card.innerHTML = `
+            <div class="paper-number">Paper ${idx + 1} of ${papers.length}</div>
+            <div class="paper-title">${escapeHtml(paper.title)}</div>
+            <div class="paper-meta">
+                ${paper.authors ? `<span>👤 ${escapeHtml(paper.authors)}</span>` : ''}
+                ${paper.journal ? `<span>📰 ${escapeHtml(paper.journal)}</span>` : ''}
+                ${dateStr ? `<span>📅 ${escapeHtml(dateStr)}</span>` : ''}
+                <span>🔖 PMID: ${escapeHtml(paper.pmid)}</span>
+            </div>
+            <div class="paper-abstract" id="abstract-${paper.pmid}">${shortAbstract}</div>
+            <div class="ai-summary-box" id="ai-box-${paper.pmid}">
+                <div class="ai-summary-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    AI Clinical Summary
+                </div>
+                <div class="ai-summary-text" id="ai-text-${paper.pmid}"></div>
+            </div>
+            <div class="paper-actions">
+                ${hasAbstract ? `<button class="btn-text" onclick="toggleAbstract('${paper.pmid}')" id="toggle-btn-${paper.pmid}">Show full abstract</button>` : ''}
+                <a href="${pubmedUrl}" target="_blank" rel="noopener" class="pubmed-link">View on PubMed ↗</a>
+                ${hasAbstract ? `<button class="btn-ai" id="ai-btn-${paper.pmid}" onclick="generateAISummary('${paper.pmid}', \`${escapeBt(paper.title)}\`, \`${escapeBt(paper.abstract)}\`)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    AI Summary
+                </button>` : ''}
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+// ─── TOGGLE ABSTRACT ─────────────────────────────────────────────────────────
+function toggleAbstract(pmid) {
+    const el = document.getElementById(`abstract-${pmid}`);
+    const btn = document.getElementById(`toggle-btn-${pmid}`);
+    el.classList.toggle('expanded');
+    btn.textContent = el.classList.contains('expanded') ? 'Show less' : 'Show full abstract';
+}
+
+// ─── AI SUMMARY (Anthropic API) ───────────────────────────────────────────────
+async function generateAISummary(pmid, title, abstract) {
+    const btn = document.getElementById(`ai-btn-${pmid}`);
+    const box = document.getElementById(`ai-box-${pmid}`);
+    const textEl = document.getElementById(`ai-text-${pmid}`);
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="ai-spinner"></span> Summarising…`;
+    box.classList.add('visible');
+    textEl.innerHTML = `<div class="ai-loading"><span class="ai-spinner"></span> Generating clinical summary…</div>`;
+
+    const prompt = `You are a clinical oncology assistant. Summarise the following research paper on Papillon Contact X-ray Brachytherapy (CXB) for a clinical audience (e.g. oncologists, radiologists, clinical physicists). 
+
+Write 3–5 sentences covering: (1) the study design and patient population, (2) the key findings, and (3) the clinical relevance or takeaway. Use plain, precise language. Do not use bullet points. Do not repeat the title.
+
+Title: ${title}
+
+Abstract: ${abstract}`;
+
+    try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 1000,
+                messages: [{ role: 'user', content: prompt }]
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `API error ${response.status}`);
+        }
+
+        const data = await response.json();
+        const summaryText = data.content?.[0]?.text || 'No summary generated.';
+        textEl.textContent = summaryText;
+
+        btn.style.display = 'none'; // Hide button after successful summary
+
+    } catch (err) {
+        textEl.innerHTML = `<span style="color: #b91c1c;">Could not generate summary: ${err.message}</span>`;
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Retry`;
+    }
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function showStatus(msg) {
+    document.getElementById('status-bar').style.display = 'block';
+    document.getElementById('status-msg').textContent = msg;
+}
+function hideStatus() {
+    document.getElementById('status-bar').style.display = 'none';
+}
+function showError(msg) {
+    const el = document.getElementById('error-bar');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+function hideError() {
+    document.getElementById('error-bar').style.display = 'none';
+}
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+function escapeBt(str) {
+    // Escape backticks and backslashes for inline template literal embedding
+    return String(str).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+}
+
+// Auto-fetch on load
+fetchPapers();
+</script>
+</body>
+</html>
