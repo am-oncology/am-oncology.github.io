@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<!--
+  NeuroTrials UK — Neuro-Oncology Clinical Trial Finder
+  ======================================================
+  GitHub Pages deployment:
+    1. Create a new GitHub repository
+    2. Upload this file as 'index.html' to the root
+    3. Go to Settings → Pages → Deploy from branch (main / root)
+    4. Your site will be live at https://yourusername.github.io/repo-name
+
+  Data source: ClinicalTrials.gov API v2 (real-time, no API key required)
+  Filtering: UK sites only, RECRUITING status
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroTrials UK — Neuro-Oncology Trial Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <style>
+    :root {
+      --bg:           #f5f2ec;
+      --surface:      #ffffff;
+      --surface-2:    #f0ece3;
+      --border:       #ddd8ce;
+      --primary:      #1a1714;
+      --muted:        #5a534c;
+      --accent:       #be3a28;
+      --accent-dk:    #9e2e1e;
+      --green:        #1f6b45;
+      --green-bg:     #d7f0e4;
+      --blue-bg:      #dbeafe;
+      --blue:         #1d4ed8;
+      --purple-bg:    #ede9fe;
+      --purple:       #5b21b6;
+      --amber-bg:     #fef3c7;
+      --amber:        #92400e;
+      --tag:          #e8e3db;
+      --shadow:       0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+      --shadow-lg:    0 12px 40px rgba(0,0,0,.18);
+      --r:            8px;
+      --font-d:       'Cormorant Garamond', Georgia, serif;
+      --font-b:       'Instrument Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER ─────────────────────────────────────── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      height: 56px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .brand h1 {
+      font-family: var(--font-d);
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: .03em;
+      color: #fff;
+    }
+    .brand small {
+      font-size: 11px;
+      color: rgba(255,255,255,.45);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .hdr-actions { display: flex; gap: 6px; }
+    .hdr-btn {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      color: rgba(255,255,255,.75);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font: 500 12px var(--font-b);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .hdr-btn:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+    /* ── LAYOUT ─────────────────────────────────────── */
+    .layout {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────── */
+    .sidebar {
+      width: 288px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .sec { margin-bottom: 14px; }
+    .sec-title {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 7px 26px 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font: 400 13px var(--font-b);
+      color: var(--primary);
+      background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%235a534c' d='M5 7 .5 2.5h9z'/%3E%3C/svg%3E") no-repeat right 9px center;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color .15s;
+    }
+    input[type="text"] {
+      background-image: none;
+      padding-right: 9px;
+    }
+    select:focus, input:focus { outline: none; border-color: var(--accent); }
+
+    .cond-field { margin-top: 8px; }
+
+    .checks { display: flex; flex-direction: column; gap: 5px; }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .check-item input[type="checkbox"] {
+      width: 14px; height: 14px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .check-item label { cursor: pointer; user-select: none; }
+
+    .hr { height: 1px; background: var(--border); margin: 10px 0; }
+
+    .loc-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .loc-row input { flex: 1; }
+    .loc-icon-btn {
+      padding: 6px 9px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      cursor: pointer;
+      font-size: 14px;
+      transition: background .15s;
+      line-height: 1;
+    }
+    .loc-icon-btn:hover { background: var(--border); }
+
+    .search-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      font: 600 14px var(--font-b);
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      margin-top: 4px;
+      letter-spacing: .02em;
+    }
+    .search-btn:hover { background: var(--accent-dk); }
+    .search-btn:active { transform: scale(.99); }
+    .search-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    .reset-btn {
+      width: 100%;
+      padding: 7px;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font: 400 12px var(--font-b);
+      cursor: pointer;
+      transition: all .15s;
+      margin-top: 6px;
+    }
+    .reset-btn:hover { border-color: var(--muted); color: var(--primary); }
+
+    .data-note {
+      font-size: 10.5px;
+      color: var(--muted);
+      background: var(--surface-2);
+      padding: 8px 10px;
+      border-radius: 6px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    .data-note a { color: var(--accent); }
+
+    /* ── RESULTS ─────────────────────────────────────── */
+    .results {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+    }
+    .results::-webkit-scrollbar { width: 6px; }
+    .results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .results-hdr {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .results-title {
+      font-family: var(--font-d);
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .results-sub { font-size: 12px; color: var(--muted); }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .sort-sel { width: auto; font-size: 12px; }
+
+    /* Empty / loading */
+    .state-box {
+      text-align: center;
+      padding: 80px 40px;
+      color: var(--muted);
+    }
+    .state-icon { font-size: 44px; margin-bottom: 14px; opacity: .4; }
+    .state-box h3 { font-family: var(--font-d); font-size: 21px; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
+    .state-box p { font-size: 13px; max-width: 380px; margin: 0 auto; line-height: 1.65; }
+
+    .spinner {
+      width: 30px; height: 30px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .err-bar {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 10px 14px;
+      border-radius: var(--r);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    /* Cards */
+    .cards { display: flex; flex-direction: column; gap: 10px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: border-color .18s, box-shadow .18s, transform .15s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .card-top {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      flex: 1;
+      font-size: 13.5px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .badges { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; justify-content: flex-end; }
+
+    .badge {
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .b-rec  { background: var(--green-bg);   color: var(--green);  }
+    .b-p1   { background: var(--blue-bg);    color: var(--blue);   }
+    .b-p2   { background: var(--purple-bg);  color: var(--purple); }
+    .b-p3   { background: var(--green-bg);   color: var(--green);  }
+    .b-pe   { background: var(--amber-bg);   color: var(--amber);  }
+    .b-na   { background: var(--tag);        color: var(--muted);  }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .card-meta strong { color: var(--primary); font-weight: 500; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; }
+    .tag {
+      background: var(--tag);
+      color: var(--muted);
+      padding: 1px 7px;
+      border-radius: 12px;
+      font-size: 11px;
+    }
+
+    .card-summary {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .sites-pill {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .sites-pill strong { color: var(--green); font-weight: 600; }
+    .nct-mono {
+      font: 11px 'Courier New', monospace;
+      color: var(--muted);
+      background: var(--tag);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── MODAL ───────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.52);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .overlay.hidden { display: none; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 880px;
+      margin: auto;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-hdr {
+      background: var(--primary);
+      padding: 22px 26px 0;
+      color: #fff;
+      position: relative;
+    }
+    .modal-nct {
+      font: 11px 'Courier New', monospace;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .copy-btn-sm {
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: rgba(255,255,255,.55);
+      padding: 2px 7px;
+      border-radius: 3px;
+      font: 10px var(--font-b);
+      cursor: pointer;
+    }
+    .copy-btn-sm:hover { background: rgba(255,255,255,.22); color: #fff; }
+    .modal-title {
+      font-family: var(--font-d);
+      font-size: 21px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 14px;
+      color: #fff;
+      padding-right: 36px;
+    }
+    .modal-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,.6);
+    }
+    .modal-meta-row strong { color: #fff; font-weight: 500; }
+    .mclose {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255,255,255,.1);
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background .15s;
+    }
+    .mclose:hover { background: rgba(255,255,255,.22); }
+
+    .tabs {
+      display: flex;
+      background: var(--primary);
+      padding: 0 26px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 11px 15px;
+      background: none;
+      border: none;
+      font: 500 13px var(--font-b);
+      color: rgba(255,255,255,.45);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all .15s;
+    }
+    .tab:hover { color: rgba(255,255,255,.75); }
+    .tab.active { color: #fff; border-bottom-color: var(--accent); }
+
+    .mbody {
+      padding: 22px 26px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .mbody::-webkit-scrollbar { width: 4px; }
+    .mbody::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Overview */
+    .ov-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ic {
+      background: var(--surface-2);
+      border-radius: var(--r);
+      padding: 11px 13px;
+    }
+    .ic-lbl { font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 3px; }
+    .ic-val { font-size: 13px; font-weight: 600; color: var(--primary); }
+
+    .sec-lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 7px; }
+    .summary-p { font-size: 13px; line-height: 1.7; color: var(--muted); margin-bottom: 16px; }
+    .ivn-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+    .ivn-tag {
+      background: var(--tag);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .ivn-tag em { font-size: 10px; color: var(--muted); font-style: normal; }
+    .ctg-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .ctg-link:hover { text-decoration: underline; }
+
+    /* Contacts */
+    .contact-block { background: var(--surface-2); border-radius: var(--r); padding: 12px 14px; margin-bottom: 16px; font-size: 13px; }
+    .contact-block strong { display: block; margin-bottom: 3px; }
+    .contact-block a { color: var(--accent); }
+
+    /* Eligibility */
+    .as-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+    .as-pill {
+      background: var(--primary);
+      color: #fff;
+      padding: 3px 11px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 500;
+    }
+    .elig-section { margin-bottom: 18px; }
+    .elig-h { font-family: var(--font-d); font-size: 17px; font-weight: 600; margin-bottom: 9px; }
+    .elig-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .elig-list li {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 6px 10px;
+      background: var(--surface-2);
+      border-radius: 5px;
+    }
+    .elig-list.inc li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .elig-list.exc li::before { content: "✕"; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .raw-crit { font-size: 12px; line-height: 1.7; color: var(--muted); white-space: pre-wrap; background: var(--surface-2); padding: 12px 14px; border-radius: var(--r); margin-top: 10px; }
+
+    /* Sites */
+    #trial-map {
+      height: 280px;
+      border-radius: var(--r);
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+    }
+    .sites-ul { display: flex; flex-direction: column; gap: 7px; }
+    .site-row {
+      background: var(--surface-2);
+      border-radius: var(--r);
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .site-num {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .site-fac { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .site-city { font-size: 11.5px; color: var(--muted); }
+    .site-dist { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .site-badge {
+      margin-left: auto;
+      flex-shrink: 0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+    .site-r { background: var(--green-bg); color: var(--green); }
+    .site-o { background: var(--tag); color: var(--muted); }
+
+    /* Modal footer */
+    .mfoot {
+      padding: 14px 26px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mfoot-acts { display: flex; gap: 7px; }
+    .btn-p {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--r);
+      font: 600 12.5px var(--font-b);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-p:hover { background: var(--accent-dk); }
+    .btn-s {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: var(--r);
+      font: 500 12.5px var(--font-b);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-s:hover { border-color: var(--primary); }
+
+    /* About modal */
+    .about-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.52);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .about-modal.hidden { display: none; }
+    .about-box {
+      background: var(--surface);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: var(--shadow-lg);
+    }
+    .about-box h2 { font-family: var(--font-d); font-size: 22px; margin-bottom: 14px; }
+    .about-box p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+    .about-box ul { padding-left: 18px; font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 12px; }
+    .about-box strong { color: var(--primary); }
+    .about-box .warn { background: var(--amber-bg); color: var(--amber); padding: 10px 13px; border-radius: 6px; font-size: 12px; margin-bottom: 14px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: var(--primary);
+      color: #fff;
+      padding: 9px 14px;
+      border-radius: 7px;
+      font-size: 12.5px;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all .2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; height: auto; }
+      .sidebar { width: 100%; }
+      .ov-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────── -->
+<header>
+  <div class="brand">
+    <h1>NeuroTrials UK</h1>
+    <small>Neuro-Oncology Trial Finder</small>
+  </div>
+  <div class="hdr-actions">
+    <button class="hdr-btn" onclick="shareSearch()">⎘ Share Search</button>
+    <button class="hdr-btn" onclick="document.getElementById('about-modal').classList.remove('hidden')">About</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <div class="sec">
+      <div class="sec-title">Tumour Type <span style="color:var(--accent)">*</span></div>
+      <select id="tumour-type" onchange="onTumourChange()">
+        <option value="">— Select type —</option>
+        <optgroup label="Gliomas">
+          <option value="glioblastoma">Glioblastoma (GBM)</option>
+          <option value="astrocytoma">Astrocytoma, IDH-mutant</option>
+          <option value="oligodendroglioma">Oligodendroglioma</option>
+          <option value="high-grade-glioma">High Grade Glioma (any)</option>
+          <option value="low-grade-glioma">Low Grade Glioma (any)</option>
+          <option value="any-glioma">Any Glioma</option>
+        </optgroup>
+        <optgroup label="Embryonal / Paediatric">
+          <option value="medulloblastoma">Medulloblastoma</option>
+          <option value="ependymoma">Ependymoma</option>
+          <option value="dipg">DIPG / Diffuse Midline Glioma</option>
+          <option value="atrt">ATRT</option>
+        </optgroup>
+        <optgroup label="Other CNS">
+          <option value="meningioma">Meningioma</option>
+          <option value="pcnsl">Primary CNS Lymphoma</option>
+          <option value="craniopharyngioma">Craniopharyngioma</option>
+          <option value="pituitary">Pituitary Tumour</option>
+          <option value="brain-mets">Brain Metastases</option>
+          <option value="other-cns">Other CNS Tumour</option>
+        </optgroup>
+        <option value="any-brain">Any Brain Tumour</option>
+      </select>
+      <div class="cond-field" id="grade-field" style="display:none">
+        <div class="sec-title" style="margin-top:8px">WHO Grade</div>
+        <select id="who-grade">
+          <option value="">Any grade</option>
+          <option value="2">Grade 2</option>
+          <option value="3">Grade 3</option>
+          <option value="4">Grade 4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="sec">
+      <div class="sec-title">Molecular Markers</div>
+      <div class="checks">
+        <label class="check-item"><input type="checkbox" value="IDH mutant"><label>IDH mutant</label></label>
+        <label class="check-item"><input type="checkbox" value="IDH wildtype"><label>IDH wildtype</label></label>
+        <label class="check-item"><input type="checkbox" value="MGMT methylated"><label>MGMT methylated</label></label>
+        <label class="check-item"><input type="checkbox" value="MGMT unmethylated"><label>MGMT unmethylated</label></label>
+        <label class="check-item"><input type="checkbox" value="1p19q codeleted"><label>1p/19q codeleted</label></label>
+        <label class="check-item"><input type="checkbox" value="H3K27M"><label>H3K27M mutant</label></label>
+        <label class="check-item"><input type="checkbox" value="BRAF V600E"><label>BRAF V600E</label></label>
+        <label class="check-item"><input type="checkbox" value="EGFR amplified"><label>EGFR amplified</label></label>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="sec">
+      <div class="sec-title">Line of Treatment</div>
+      <select id="tx-line">
+        <option value="">Any</option>
+        <option value="newly-diagnosed">Newly diagnosed</option>
+        <option value="1st-recurrence">1st recurrence</option>
+        <option value="2nd-recurrence">2nd recurrence</option>
+        <option value="3rd-plus">3rd+ recurrence</option>
+        <option value="any-recurrent">Any recurrence</option>
+      </select>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="sec">
+      <div class="sec-title">Patient Age</div>
+      <select id="pt-age">
+        <option value="">Any</option>
+        <option value="paediatric">Paediatric (&lt;18)</option>
+        <option value="adult">Adult (18–65)</option>
+        <option value="elderly">Elderly (&gt;65)</option>
+      </select>
+      <div class="sec-title" style="margin-top:8px">Performance Status</div>
+      <select id="perf-status">
+        <option value="">Any</option>
+        <option value="ecog0">ECOG 0</option>
+        <option value="ecog01">ECOG 0–1</option>
+        <option value="ecog02">ECOG 0–2</option>
+        <option value="ecog03">ECOG 0–3</option>
+        <option value="kps80">KPS ≥80</option>
+        <option value="kps70">KPS ≥70</option>
+        <option value="kps60">KPS ≥60</option>
+      </select>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="sec">
+      <div class="sec-title">Location Filter</div>
+      <div class="loc-row">
+        <input type="text" id="postcode" placeholder="Postcode (e.g. W1A 1AA)">
+        <button class="loc-icon-btn" onclick="useGPS()" title="Use my location">📍</button>
+      </div>
+      <select id="radius" style="margin-bottom:6px">
+        <option value="">Any distance</option>
+        <option value="25">Within 25 miles</option>
+        <option value="50">Within 50 miles</option>
+        <option value="100">Within 100 miles</option>
+        <option value="150">Within 150 miles</option>
+      </select>
+      <select id="region">
+        <option value="">All UK regions</option>
+        <option value="london">London</option>
+        <option value="south-east">South East England</option>
+        <option value="south-west">South West England</option>
+        <option value="midlands">Midlands</option>
+        <option value="north-west">North West England</option>
+        <option value="north-east">North East England</option>
+        <option value="yorkshire">Yorkshire & Humber</option>
+        <option value="east">East of England</option>
+        <option value="wales">Wales</option>
+        <option value="scotland">Scotland</option>
+        <option value="northern-ireland">Northern Ireland</option>
+      </select>
+    </div>
+
+    <div class="hr"></div>
+
+    <button class="search-btn" id="search-btn" onclick="doSearch()">Search Trials</button>
+    <button class="reset-btn" onclick="resetAll()">Reset all filters</button>
+
+    <div class="data-note">
+      Live data from <a href="https://clinicaltrials.gov" target="_blank">ClinicalTrials.gov</a>. UK sites only · Recruiting status only.<br>
+      Some ISRCTN-only trials may not appear.
+    </div>
+
+  </aside>
+
+  <!-- ── RESULTS ─────────────────────────────────────── -->
+  <main class="results" id="results-panel">
+    <div class="state-box">
+      <div class="state-icon">🔬</div>
+      <h3>Find Eligible Trials</h3>
+      <p>Select a tumour type and any relevant filters, then click <strong>Search Trials</strong> to find actively recruiting UK studies.</p>
+    </div>
+  </main>
+
+</div>
+
+<!-- ── TRIAL DETAIL MODAL ─────────────────────────── -->
+<div class="overlay hidden" id="modal-overlay" onclick="onOverlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="mclose" onclick="closeModal()">×</button>
+
+    <div class="modal-hdr">
+      <div class="modal-nct">
+        <span id="m-nct"></span>
+        <button class="copy-btn-sm" onclick="copyNctId()">Copy ID</button>
+      </div>
+      <div class="modal-title" id="m-title"></div>
+      <div class="modal-meta-row" id="m-meta"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('ov')">Overview</button>
+      <button class="tab" onclick="switchTab('elig')">Eligibility</button>
+      <button class="tab" onclick="switchTab('sites')">UK Sites</button>
+    </div>
+
+    <div class="mbody">
+      <!-- Overview -->
+      <div class="panel active" id="p-ov">
+        <div class="ov-grid" id="ov-grid"></div>
+        <div class="sec-lbl">SUMMARY</div>
+        <p class="summary-p" id="m-summary"></p>
+        <div class="sec-lbl">INTERVENTIONS</div>
+        <div class="ivn-tags" id="m-ivn"></div>
+        <div class="sec-lbl" id="contacts-lbl" style="display:none">CENTRAL CONTACT</div>
+        <div id="m-contacts"></div>
+        <a class="ctg-link" id="m-ctg" href="#" target="_blank">View full record on ClinicalTrials.gov →</a>
+      </div>
+
+      <!-- Eligibility -->
+      <div class="panel" id="p-elig">
+        <div class="as-pills" id="m-age-sex"></div>
+        <div class="elig-section">
+          <div class="elig-h">Inclusion Criteria</div>
+          <ul class="elig-list inc" id="m-inc"></ul>
+        </div>
+        <div class="elig-section" style="margin-top:16px">
+          <div class="elig-h">Exclusion Criteria</div>
+          <ul class="elig-list exc" id="m-exc"></ul>
+        </div>
+      </div>
+
+      <!-- Sites -->
+      <div class="panel" id="p-sites">
+        <div id="trial-map"></div>
+        <div class="sites-ul" id="m-sites"></div>
+      </div>
+    </div>
+
+    <div class="mfoot">
+      <div class="mfoot-acts">
+        <button class="btn-p" onclick="openCTG()">Open ClinicalTrials.gov</button>
+        <button class="btn-s" onclick="copyTrialInfo()">Copy Summary</button>
+      </div>
+      <button class="btn-s" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ABOUT MODAL ───────────────────────────────── -->
+<div class="about-modal hidden" id="about-modal" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="about-box">
+    <h2>NeuroTrials UK</h2>
+    <p>A fast, clinical-use tool for finding actively recruiting neuro-oncology trials with UK sites.</p>
+    <div class="warn">⚠️ For informational use only. Always verify eligibility directly with the trial team before referring patients.</div>
+    <p><strong>Data source:</strong> ClinicalTrials.gov API v2, queried live on each search. Results reflect the current state of the registry.</p>
+    <ul>
+      <li>Trials shown are <strong>RECRUITING</strong> with ≥1 UK site</li>
+      <li>Some ISRCTN-only trials may not appear</li>
+      <li>Eligibility matching is keyword-based — use as a guide only</li>
+      <li>Location distances are approximate (straight-line)</li>
+    </ul>
+    <p><strong>GitHub Pages:</strong> Host by uploading <code>index.html</code> to a repo and enabling Pages under Settings → Pages.</p>
+    <button class="btn-p" onclick="document.getElementById('about-modal').classList.add('hidden')">Close</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ================================================================
+//  CONSTANTS
+// ================================================================
+const CTG_API = 'https://clinicaltrials.gov/api/v2/studies';
+
+const CONDITION_MAP = {
+  'glioblastoma':      'glioblastoma',
+  'astrocytoma':       'astrocytoma IDH-mutant',
+  'oligodendroglioma': 'oligodendroglioma',
+  'high-grade-glioma': 'high grade glioma',
+  'low-grade-glioma':  'low grade glioma',
+  'any-glioma':        'glioma',
+  'medulloblastoma':   'medulloblastoma',
+  'ependymoma':        'ependymoma',
+  'dipg':              'diffuse intrinsic pontine glioma OR diffuse midline glioma OR H3K27M glioma',
+  'atrt':              'atypical teratoid rhabdoid tumor',
+  'meningioma':        'meningioma',
+  'pcnsl':             'primary central nervous system lymphoma',
+  'craniopharyngioma': 'craniopharyngioma',
+  'pituitary':         'pituitary tumor OR pituitary adenoma OR pituitary neoplasm',
+  'brain-mets':        'brain metastases OR brain metastasis',
+  'other-cns':         'CNS tumor OR central nervous system tumor',
+  'any-brain':         'brain tumor OR glioma OR meningioma OR CNS neoplasm',
+};
+
+const REGION_CITIES = {
+  'london':          ['london'],
+  'south-east':      ['oxford','cambridge','brighton','southampton','guildford','reading','portsmouth','Canterbury'],
+  'south-west':      ['bristol','exeter','plymouth','bath','truro','gloucester','bournemouth'],
+  'midlands':        ['birmingham','nottingham','leicester','coventry','derby','stoke','worcester','lincoln'],
+  'north-west':      ['manchester','liverpool','chester','preston','blackpool','carlisle','salford'],
+  'north-east':      ['newcastle','sunderland','durham','middlesbrough','gateshead'],
+  'yorkshire':       ['leeds','sheffield','york','bradford','hull','huddersfield','harrogate'],
+  'east':            ['norwich','ipswich','colchester','peterborough','luton','cambridge','chelmsford'],
+  'wales':           ['cardiff','swansea','newport','bangor','aberystwyth'],
+  'scotland':        ['edinburgh','glasgow','aberdeen','dundee','inverness','stirling','perth'],
+  'northern-ireland':['belfast','londonderry','derry'],
+};
+
+// ================================================================
+//  STATE
+// ================================================================
+let S = {
+  filtered: [],
+  selected: null,
+  map:      null,
+  userLat:  null,
+  userLng:  null,
+};
+
+// ================================================================
+//  API + PARSING
+// ================================================================
+async function fetchTrials(condQ) {
+  const p = new URLSearchParams({
+    'query.cond':          condQ,
+    'filter.overallStatus':'RECRUITING',
+    'pageSize':            '200',
+    'format':              'json',
+    'countTotal':          'true',
+  });
+  const r = await fetch(`${CTG_API}?${p}`);
+  if (!r.ok) throw new Error(`API ${r.status}`);
+  return r.json();
+}
+
+function parseStudy(s) {
+  const ps   = s.protocolSection || {};
+  const id   = ps.identificationModule        || {};
+  const st   = ps.statusModule                || {};
+  const de   = ps.descriptionModule           || {};
+  const co   = ps.conditionsModule            || {};
+  const dg   = ps.designModule                || {};
+  const el   = ps.eligibilityModule           || {};
+  const cl   = ps.contactsLocationsModule     || {};
+  const sp   = ps.sponsorCollaboratorsModule  || {};
+  const ar   = ps.armsInterventionsModule     || {};
+
+  const allLoc  = cl.locations || [];
+  const ukLoc   = allLoc.filter(l => l.country === 'United Kingdom');
+  const phases  = dg.phases || [];
+  const rawPh   = phases[0] || 'NA';
+  const raw     = el.eligibilityCriteria || '';
+  const { inc, exc } = parseCrit(raw);
+
+  return {
+    nctId:    id.nctId || '',
+    title:    id.briefTitle || 'Untitled Study',
+    status:   st.overallStatus || '',
+    phase:    fmtPhase(rawPh),
+    rawPh,
+    summary:  de.briefSummary || '',
+    conds:    co.conditions || [],
+    minAge:   el.minimumAge || 'N/A',
+    maxAge:   el.maximumAge || 'N/A',
+    sex:      el.sex || 'ALL',
+    inc, exc, raw,
+    ukLoc,
+    ivn:      (ar.interventions || []).map(i => ({ type: i.type || '', name: i.name || '' })),
+    sponsor:  (sp.leadSponsor || {}).name || 'N/A',
+    startDate:(st.startDateStruct || {}).date || 'N/A',
+    endDate:  (st.primaryCompletionDateStruct || {}).date || '',
+    contacts: cl.centralContacts || [],
+  };
+}
+
+function fmtPhase(p) {
+  return { PHASE1:'Phase I', PHASE2:'Phase II', PHASE3:'Phase III', PHASE4:'Phase IV',
+           EARLY_PHASE1:'Early Phase I', NA:'N/A' }[p] || p;
+}
+
+function parseCrit(raw) {
+  if (!raw) return { inc: [], exc: [] };
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const inc = [], exc = [];
+  let sec = 'inc';
+  for (const ln of lines) {
+    const lo = ln.toLowerCase();
+    if (lo.includes('inclusion criteria')) { sec = 'inc'; continue; }
+    if (lo.includes('exclusion criteria')) { sec = 'exc'; continue; }
+    const clean = ln.replace(/^[\*\-\•\d+\.\)]+\s*/, '').trim();
+    if (clean.length < 3) continue;
+    if (sec === 'inc') inc.push(clean); else exc.push(clean);
+  }
+  return { inc, exc };
+}
+
+// ================================================================
+//  SEARCH
+// ================================================================
+async function doSearch() {
+  const tt = document.getElementById('tumour-type').value;
+  if (!tt) { showToast('Please select a tumour type first'); return; }
+
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true; btn.textContent = 'Searching…';
+
+  showLoading();
+
+  try {
+    // Geocode postcode if entered
+    const pc = document.getElementById('postcode').value.trim();
+    if (pc && !S.userLat) {
+      try {
+        const g = await geocodePostcode(pc);
+        if (g) { S.userLat = g.lat; S.userLng = g.lng; }
+      } catch(e) {}
+    }
+
+    let condQ = CONDITION_MAP[tt] || tt;
+
+    // Add markers to query
+    const markers = getMarkers();
+    if (markers.length) condQ += ' ' + markers.join(' ');
+
+    const data = await fetchTrials(condQ);
+    const parsed = (data.studies || []).map(parseStudy);
+    const ukOnly = parsed.filter(t => t.ukLoc.length > 0);
+
+    S.filtered = applyFilters(ukOnly);
+    renderResults(S.filtered);
+    updateURL();
+  } catch (err) {
+    showErr(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Search Trials';
+  }
+}
+
+function getMarkers() {
+  return [...document.querySelectorAll('.checks input:checked')].map(c => c.value);
+}
+
+function applyFilters(trials) {
+  let r = [...trials];
+  const line   = document.getElementById('tx-line').value;
+  const age    = document.getElementById('pt-age').value;
+  const region = document.getElementById('region').value;
+  const radius = parseInt(document.getElementById('radius').value) || 0;
+
+  if (line === 'newly-diagnosed')
+    r = r.filter(t => inText(t, ['newly diagnosed','newly-diagnosed','first-line','treatment naive','treatment-naive','untreated','de novo']));
+  else if (line === '1st-recurrence')
+    r = r.filter(t => inText(t, ['first recurrence','1st recurrence','first relapse','1st relapse','first progression','1st progression']));
+  else if (line === 'any-recurrent')
+    r = r.filter(t => inText(t, ['recurrent','recurrence','relapsed','relapse','progressive','progression']));
+  else if (line === '2nd-recurrence')
+    r = r.filter(t => inText(t, ['second recurrence','2nd recurrence','second relapse','2nd relapse']));
+
+  if (age === 'paediatric')
+    r = r.filter(t => parseAge(t.minAge) < 18 || inText(t, ['paediatric','pediatric','children','adolescent']));
+  else if (age === 'adult')
+    r = r.filter(t => parseAge(t.minAge) <= 18);
+  else if (age === 'elderly')
+    r = r.filter(t => parseAge(t.maxAge) === 0 || parseAge(t.maxAge) >= 65);
+
+  if (region && REGION_CITIES[region]) {
+    const cities = REGION_CITIES[region];
+    r = r.filter(t => t.ukLoc.some(l =>
+      cities.some(c => (l.city || '').toLowerCase().includes(c.toLowerCase()))
+    ));
+  }
+
+  if (radius && S.userLat && S.userLng) {
+    r = r.filter(t => t.ukLoc.some(l => {
+      if (!l.geoPoint) return false;
+      return haversine(S.userLat, S.userLng, l.geoPoint.lat, l.geoPoint.lon) <= radius;
+    }));
+  }
+
+  return r;
+}
+
+function inText(t, terms) {
+  const hay = (t.raw + ' ' + t.summary + ' ' + t.title).toLowerCase();
+  return terms.some(term => hay.includes(term));
+}
+function parseAge(s) {
+  if (!s || s === 'N/A') return 0;
+  const m = s.match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+// ================================================================
+//  RENDER
+// ================================================================
+function showLoading() {
+  document.getElementById('results-panel').innerHTML = `
+    <div class="state-box">
+      <div class="spinner"></div>
+      <p>Querying ClinicalTrials.gov for UK trials…</p>
+    </div>`;
+}
+
+function showErr(msg) {
+  document.getElementById('results-panel').innerHTML = `
+    <div class="err-bar">⚠ ${msg} — ClinicalTrials.gov may be temporarily unavailable.</div>
+    <div class="state-box">
+      <div class="state-icon">📡</div>
+      <h3>Connection Problem</h3>
+      <p>Please check your internet connection and try again.</p>
+    </div>`;
+}
+
+function renderResults(trials) {
+  const panel = document.getElementById('results-panel');
+
+  if (!trials.length) {
+    panel.innerHTML = `
+      <div class="state-box">
+        <div class="state-icon">🔍</div>
+        <h3>No Matching UK Trials</h3>
+        <p>No actively recruiting UK trials matched these criteria. Try removing molecular marker filters, changing the treatment line, or broadening the tumour type.</p>
+      </div>`;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="results-hdr">
+      <span class="results-title">${trials.length} Trial${trials.length !== 1 ? 's' : ''} Found</span>
+      <span class="results-sub">Actively recruiting · UK sites only</span>
+    </div>
+    <div class="toolbar">
+      <select class="sort-sel" onchange="sortBy(this.value)">
+        <option value="sites">Sort: Most UK sites</option>
+        <option value="phase">Sort: Phase (III first)</option>
+        <option value="alpha">Sort: A–Z</option>
+      </select>
+    </div>
+    <div class="cards">${trials.map(renderCard).join('')}</div>`;
+
+  panel.querySelectorAll('.card').forEach(el => {
+    el.addEventListener('click', () => {
+      const t = S.filtered.find(x => x.nctId === el.dataset.nct);
+      if (t) openModal(t);
+    });
+  });
+}
+
+function renderCard(t) {
+  const ukRec = t.ukLoc.filter(l => !l.status || l.status === 'RECRUITING').length || t.ukLoc.length;
+  const conds  = t.conds.slice(0,3).map(c => `<span class="tag">${c}</span>`).join('');
+  const ivnStr = t.ivn.filter(i => i.type !== 'OTHER').slice(0,2).map(i => i.name).join(', ');
+  return `
+    <div class="card" data-nct="${t.nctId}">
+      <div class="card-top">
+        <span class="card-title">${t.title}</span>
+        <div class="badges">
+          <span class="badge ${phaseCls(t.rawPh)}">${t.phase}</span>
+          <span class="badge b-rec">● Recruiting</span>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span>Sponsor: <strong>${trunc(t.sponsor,35)}</strong></span>
+        ${ivnStr ? `<span>Drug/Tx: <strong>${trunc(ivnStr,40)}</strong></span>` : ''}
+        ${t.minAge !== 'N/A' ? `<span>Age: <strong>${t.minAge}${t.maxAge !== 'N/A' ? ' – '+t.maxAge : '+'}</strong></span>` : ''}
+      </div>
+      <div class="tags">${conds}</div>
+      ${t.summary ? `<p class="card-summary">${t.summary}</p>` : ''}
+      <div class="card-foot">
+        <span class="sites-pill">🏥 <strong>${ukRec}</strong> UK site${ukRec !== 1 ? 's' : ''}</span>
+        <span class="nct-mono">${t.nctId}</span>
+      </div>
+    </div>`;
+}
+
+function phaseCls(p) {
+  return { PHASE1:'b-p1', EARLY_PHASE1:'b-pe', PHASE2:'b-p2', PHASE3:'b-p3', PHASE4:'b-p3' }[p] || 'b-na';
+}
+
+function sortBy(method) {
+  if (method === 'sites') S.filtered.sort((a,b) => b.ukLoc.length - a.ukLoc.length);
+  else if (method === 'phase') {
+    const ord = { PHASE3:0, PHASE2:1, PHASE1:2, EARLY_PHASE1:3, NA:4 };
+    S.filtered.sort((a,b) => (ord[a.rawPh]||5) - (ord[b.rawPh]||5));
+  } else if (method === 'alpha') S.filtered.sort((a,b) => a.title.localeCompare(b.title));
+  const cards = document.querySelector('.cards');
+  if (cards) {
+    cards.innerHTML = S.filtered.map(renderCard).join('');
+    cards.querySelectorAll('.card').forEach(el => {
+      el.addEventListener('click', () => {
+        const t = S.filtered.find(x => x.nctId === el.dataset.nct);
+        if (t) openModal(t);
+      });
+    });
+  }
+}
+
+// ================================================================
+//  MODAL
+// ================================================================
+function openModal(t) {
+  S.selected = t;
+
+  document.getElementById('m-nct').textContent   = t.nctId;
+  document.getElementById('m-title').textContent = t.title;
+  document.getElementById('m-ctg').href          = `https://clinicaltrials.gov/study/${t.nctId}`;
+
+  document.getElementById('m-meta').innerHTML = [
+    t.phase !== 'N/A' ? `Phase: <strong>${t.phase}</strong>` : '',
+    `Status: <strong style="color:#4ade80">● Recruiting</strong>`,
+    `Sponsor: <strong>${t.sponsor}</strong>`,
+    t.startDate !== 'N/A' ? `Started: <strong>${t.startDate}</strong>` : '',
+    `UK Sites: <strong>${t.ukLoc.length}</strong>`,
+  ].filter(Boolean).map(x => `<span>${x}</span>`).join('');
+
+  // Overview grid
+  document.getElementById('ov-grid').innerHTML = [
+    { l:'Phase',      v: t.phase },
+    { l:'UK Sites',   v: t.ukLoc.length },
+    { l:'Age Range',  v: `${t.minAge} – ${t.maxAge !== 'N/A' ? t.maxAge : 'No limit'}` },
+    { l:'Eligible Sex',v: fmtSex(t.sex) },
+    { l:'Start Date', v: t.startDate },
+    { l:'End Date',   v: t.endDate || 'TBC' },
+  ].map(i => `<div class="ic"><div class="ic-lbl">${i.l}</div><div class="ic-val">${i.v}</div></div>`).join('');
+
+  document.getElementById('m-summary').textContent = t.summary || 'No summary available.';
+
+  document.getElementById('m-ivn').innerHTML = t.ivn.length
+    ? t.ivn.map(i => `<span class="ivn-tag"><em>${i.type !== 'OTHER' ? i.type+' · ' : ''}</em>${i.name}</span>`).join('')
+    : '<span style="color:var(--muted);font-size:12px">No intervention detail available</span>';
+
+  // Contacts
+  const contactsLbl = document.getElementById('contacts-lbl');
+  const contactsDiv = document.getElementById('m-contacts');
+  if (t.contacts.length) {
+    contactsLbl.style.display = 'block';
+    contactsDiv.innerHTML = t.contacts.slice(0,2).map(c => `
+      <div class="contact-block">
+        <strong>${c.name || 'Contact'}</strong>
+        ${c.role ? `<span style="font-size:11px;color:var(--muted)">${c.role}</span>` : ''}
+        ${c.email ? `<a href="mailto:${c.email}">${c.email}</a>` : ''}
+        ${c.phone ? `<span>${c.phone}</span>` : ''}
+      </div>`).join('');
+  } else {
+    contactsLbl.style.display = 'none';
+    contactsDiv.innerHTML = '';
+  }
+
+  // Eligibility
+  document.getElementById('m-age-sex').innerHTML = [
+    t.minAge !== 'N/A' ? `<span class="as-pill">Min age: ${t.minAge}</span>` : '',
+    t.maxAge !== 'N/A' ? `<span class="as-pill">Max age: ${t.maxAge}</span>` : '',
+    `<span class="as-pill">${fmtSex(t.sex)}</span>`,
+  ].filter(Boolean).join('');
+
+  document.getElementById('m-inc').innerHTML = t.inc.length
+    ? t.inc.map(x => `<li>${x}</li>`).join('')
+    : '<li>See full record on ClinicalTrials.gov for criteria</li>';
+
+  document.getElementById('m-exc').innerHTML = t.exc.length
+    ? t.exc.map(x => `<li>${x}</li>`).join('')
+    : '<li>See full record on ClinicalTrials.gov for criteria</li>';
+
+  // Sites
+  renderSites(t);
+
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  switchTab('ov');
+}
+
+function renderSites(t) {
+  const ul = document.getElementById('m-sites');
+  if (!t.ukLoc.length) {
+    ul.innerHTML = '<p style="color:var(--muted);font-size:13px">No UK site details available.</p>';
+    return;
+  }
+  ul.innerHTML = t.ukLoc.map((l,i) => {
+    const rec = !l.status || l.status === 'RECRUITING';
+    let distHtml = '';
+    if (S.userLat && S.userLng && l.geoPoint) {
+      const d = haversine(S.userLat, S.userLng, l.geoPoint.lat, l.geoPoint.lon);
+      distHtml = `<div class="site-dist">~${Math.round(d)} miles from your location</div>`;
+    }
+    return `
+      <div class="site-row">
+        <div class="site-num">${i+1}</div>
+        <div style="flex:1">
+          <div class="site-fac">${l.facility || 'Unknown Facility'}</div>
+          <div class="site-city">${[l.city, l.zip].filter(Boolean).join(', ')} · UK</div>
+          ${distHtml}
+        </div>
+        <span class="site-badge ${rec ? 'site-r' : 'site-o'}">${rec ? 'Recruiting' : (l.status||'')}</span>
+      </div>`;
+  }).join('');
+}
+
+function initMap(t) {
+  if (S.map) { S.map.remove(); S.map = null; }
+  const geo = t.ukLoc.filter(l => l.geoPoint);
+  if (!geo.length) {
+    document.getElementById('trial-map').innerHTML =
+      '<div style="height:280px;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:8px;color:var(--muted);font-size:13px">No geo-coordinates available for UK sites</div>';
+    return;
+  }
+  const clat = geo.reduce((s,l) => s+l.geoPoint.lat, 0)/geo.length;
+  const clng = geo.reduce((s,l) => s+l.geoPoint.lon, 0)/geo.length;
+  const map  = L.map('trial-map').setView([clat, clng], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+  }).addTo(map);
+
+  geo.forEach((l,i) => {
+    L.circleMarker([l.geoPoint.lat, l.geoPoint.lon], {
+      radius: 9, fillColor: '#be3a28', color: '#fff', weight: 2,
+      opacity: 1, fillOpacity: .9
+    }).addTo(map).bindPopup(`
+      <strong>${l.facility || 'Site '+(i+1)}</strong><br>
+      ${l.city || ''} ${l.zip || ''}<br>
+      <span style="color:${(!l.status||l.status==='RECRUITING')?'#1f6b45':'#666'}">${l.status||'RECRUITING'}</span>`);
+  });
+
+  if (S.userLat && S.userLng) {
+    L.circleMarker([S.userLat, S.userLng], {
+      radius: 9, fillColor: '#1d4ed8', color: '#fff', weight: 2, fillOpacity: .9
+    }).addTo(map).bindPopup('Your location');
+  }
+
+  if (geo.length > 1) {
+    map.fitBounds(L.latLngBounds(geo.map(l => [l.geoPoint.lat, l.geoPoint.lon])), { padding: [40,40] });
+  }
+  S.map = map;
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`p-${tab}`).classList.add('active');
+  if (tab === 'sites') setTimeout(() => initMap(S.selected), 80);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  if (S.map) { S.map.remove(); S.map = null; }
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+function openCTG() {
+  if (S.selected) window.open(`https://clinicaltrials.gov/study/${S.selected.nctId}`, '_blank');
+}
+function copyNctId() {
+  if (S.selected) { navigator.clipboard.writeText(S.selected.nctId); showToast('NCT ID copied'); }
+}
+function copyTrialInfo() {
+  if (!S.selected) return;
+  const t = S.selected;
+  const txt = [
+    `${t.nctId} — ${t.title}`,
+    `Phase: ${t.phase} | Sponsor: ${t.sponsor}`,
+    `Start: ${t.startDate}`,
+    `UK Sites: ${t.ukLoc.map(l => `${l.facility||'?'}, ${l.city||''}`).join('; ')}`,
+    `Link: https://clinicaltrials.gov/study/${t.nctId}`,
+  ].join('\n');
+  navigator.clipboard.writeText(txt);
+  showToast('Trial summary copied');
+}
+
+// ================================================================
+//  LOCATION
+// ================================================================
+async function useGPS() {
+  if (!navigator.geolocation) { showToast('Geolocation not supported'); return; }
+  navigator.geolocation.getCurrentPosition(
+    p => { S.userLat = p.coords.latitude; S.userLng = p.coords.longitude;
+           document.getElementById('postcode').placeholder = '📍 Location detected';
+           showToast('Location detected'); },
+    () => showToast('Location permission denied')
+  );
+}
+
+async function geocodePostcode(pc) {
+  const r = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pc+', United Kingdom')}&limit=1`,
+    { headers: { 'Accept-Language': 'en' } }
+  );
+  const d = await r.json();
+  if (d.length) return { lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) };
+  return null;
+}
+
+document.getElementById('postcode').addEventListener('blur', async function() {
+  const pc = this.value.trim();
+  if (pc.length >= 3) {
+    try {
+      const g = await geocodePostcode(pc);
+      if (g) { S.userLat = g.lat; S.userLng = g.lng; showToast('Postcode located ✓'); }
+    } catch(e) {}
+  }
+});
+
+// ================================================================
+//  HELPERS
+// ================================================================
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 3958.8, r = Math.PI/180;
+  const dL = (lat2-lat1)*r, dG = (lng2-lng1)*r;
+  const a  = Math.sin(dL/2)**2 + Math.cos(lat1*r)*Math.cos(lat2*r)*Math.sin(dG/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function fmtSex(s) {
+  return { ALL:'All sexes', FEMALE:'Female only', MALE:'Male only' }[s] || (s||'All');
+}
+function trunc(s, n) {
+  if (!s) return ''; return s.length > n ? s.slice(0,n)+'…' : s;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ================================================================
+//  TUMOUR TYPE → SHOW GRADE FIELD
+// ================================================================
+function onTumourChange() {
+  const v = document.getElementById('tumour-type').value;
+  const showGrade = ['astrocytoma','oligodendroglioma','high-grade-glioma','low-grade-glioma','any-glioma'].includes(v);
+  document.getElementById('grade-field').style.display = showGrade ? 'block' : 'none';
+}
+
+// ================================================================
+//  RESET
+// ================================================================
+function resetAll() {
+  ['tumour-type','who-grade','tx-line','pt-age','perf-status','region','radius'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('postcode').value = '';
+  document.getElementById('postcode').placeholder = 'Postcode (e.g. W1A 1AA)';
+  document.querySelectorAll('.checks input').forEach(c => c.checked = false);
+  document.getElementById('grade-field').style.display = 'none';
+  S.userLat = S.userLng = null;
+}
+
+// ================================================================
+//  URL SHARING
+// ================================================================
+function updateURL() {
+  const p = new URLSearchParams();
+  const tt = document.getElementById('tumour-type').value;
+  if (tt) p.set('t', tt);
+  const line = document.getElementById('tx-line').value;
+  if (line) p.set('line', line);
+  const markers = getMarkers();
+  if (markers.length) p.set('m', markers.join(','));
+  const region = document.getElementById('region').value;
+  if (region) p.set('r', region);
+  if (p.toString()) history.replaceState(null, '', '?' + p);
+}
+
+function shareSearch() {
+  navigator.clipboard.writeText(window.location.href);
+  showToast('Search URL copied to clipboard');
+}
+
+function restoreURL() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.has('t')) { document.getElementById('tumour-type').value = p.get('t'); onTumourChange(); }
+  if (p.has('line')) document.getElementById('tx-line').value = p.get('line');
+  if (p.has('r')) document.getElementById('region').value = p.get('r');
+  if (p.has('m')) {
+    const ms = p.get('m').split(',');
+    document.querySelectorAll('.checks input').forEach(c => { if (ms.includes(c.value)) c.checked = true; });
+  }
+  if (p.has('t')) setTimeout(doSearch, 400);
+}
+
+// ================================================================
+//  INIT
+// ================================================================
+restoreURL();
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
