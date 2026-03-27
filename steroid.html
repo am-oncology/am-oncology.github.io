@@ -1,142 +1,1025 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prednisolone Weaning Schedule Generator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            max-width: 900px;
-            color: #333;
-        }
-        h1 { color: #005eb8; } /* NHS Blue */
-        .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f0f4f5;
-            border-radius: 5px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #005eb8;
-            color: white;
-        }
-        .week-col {
-            background-color: #e8edee;
-            font-weight: bold;
-        }
-        .date-subtext {
-            display: block;
-            font-size: 0.8em;
-            color: #555;
-            margin-top: 4px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUI0644 — Safe Steroid Withdrawal Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface-2: #f0ede6;
+    --border: #ddd9d0;
+    --border-light: #e8e4dc;
+    --text: #1a1916;
+    --text-2: #5a5650;
+    --text-3: #8a8680;
+    --accent: #1d4e8f;
+    --accent-light: #e8eef8;
+    --accent-mid: #3a6db5;
+    --green: #1a6b3c;
+    --green-light: #e8f5ee;
+    --amber: #7a4f00;
+    --amber-light: #fdf3de;
+    --red: #8b1a1a;
+    --red-light: #faeaea;
+    --orange: #7a3800;
+    --orange-light: #fef0e5;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 0 32px;
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 0 0;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 4px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  header p.subtitle {
+    font-size: 13px;
+    opacity: 0.75;
+    font-weight: 300;
+    max-width: 520px;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .header-badge strong { display: block; font-size: 13px; margin-bottom: 2px; }
+
+  /* ── NAV TABS ── */
+  nav {
+    display: flex;
+    gap: 2px;
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+  nav button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  nav button:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  nav button.active { background: var(--bg); color: var(--accent); }
+
+  /* ── MAIN ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 32px 32px 64px; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+  input[type="date"], input[type="number"], select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 9px 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input[type="date"]:focus, input[type="number"]:focus, select:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(58,109,181,0.12);
+    outline: none;
+  }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5650' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+
+  .btn {
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 24px;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn:hover { background: var(--accent-mid); }
+  .btn:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: var(--surface-2);
+    color: var(--accent);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  /* ── ALERT BOXES ── */
+  .alert {
+    border-radius: var(--radius-sm);
+    border-left: 4px solid;
+    font-size: 13.5px;
+    line-height: 1.55;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .alert.info { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+  .alert.warning { background: var(--amber-light); border-color: #c47f00; color: var(--amber); }
+  .alert.success { background: var(--green-light); border-color: #1a8048; color: var(--green); }
+  .alert.danger { background: var(--red-light); border-color: #c0392b; color: var(--red); }
+  .alert.orange { background: var(--orange-light); border-color: #c05800; color: var(--orange); }
+  .alert strong { font-weight: 600; }
+  .alert ul { margin: 6px 0 0 16px; }
+  .alert li { margin-bottom: 3px; }
+
+  /* ── SCHEDULE TABLE ── */
+  .table-wrapper { overflow-x: auto; margin-top: 16px; }
+  table {
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 700px;
+    width: 100%;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  th:first-child { text-align: left; padding-left: 14px; border-radius: var(--radius-sm) 0 0 0; min-width: 90px; }
+  th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+  td { border-bottom: 1px solid var(--border-light); padding: 8px; text-align: center; vertical-align: middle; }
+  td:first-child { text-align: left; padding-left: 14px; font-weight: 600; font-size: 12px; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface-2); }
+  .dose-cell { font-weight: 700; font-size: 14px; }
+  .dose-0 { color: var(--text-3); font-weight: 400; }
+  .dose-high { color: var(--accent); }
+  .dose-mid { color: var(--text); }
+  .dose-low { color: var(--green); }
+  .date-sub { display: block; font-size: 11px; color: var(--text-3); font-weight: 400; font-family: 'DM Mono', monospace; margin-top: 1px; }
+  .row-cortisol td { background: #fffbeb; }
+  .row-cortisol td:first-child { color: var(--amber); }
+  .row-stop td { background: var(--green-light); }
+  .row-phys td { background: var(--accent-light); }
+  .week-label { font-family: 'DM Mono', monospace; }
+  .week-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+  }
+  .badge-cortisol { background: var(--amber-light); color: var(--amber); border: 1px solid #f0c040; }
+  .badge-stop { background: var(--green-light); color: var(--green); border: 1px solid #5aab7a; }
+  .badge-phys { background: var(--accent-light); color: var(--accent); border: 1px solid #7aaad0; }
+
+  /* ── PRINT CONTROLS ── */
+  .print-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .print-controls p { font-size: 13px; color: var(--text-2); }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── CORTISOL INTERPRETER ── */
+  .cortisol-result {
+    border-radius: var(--radius);
+    border: 2px solid;
+    padding: 20px 24px;
+    margin-top: 20px;
+    display: none;
+  }
+  .cortisol-result.show { display: block; }
+  .cortisol-result.suppressed { border-color: #c0392b; background: var(--red-light); }
+  .cortisol-result.partial { border-color: #c47f00; background: var(--amber-light); }
+  .cortisol-result.recovered { border-color: #1a8048; background: var(--green-light); }
+  .cortisol-result h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+  .cortisol-result.suppressed h3 { color: var(--red); }
+  .cortisol-result.partial h3 { color: var(--amber); }
+  .cortisol-result.recovered h3 { color: var(--green); }
+  .action-list { margin: 10px 0 0 18px; }
+  .action-list li { margin-bottom: 6px; font-size: 14px; line-height: 1.5; }
+
+  /* ── DEX CONVERTER ── */
+  .conversion-box {
+    background: var(--accent-light);
+    border: 1px solid #b0c8e8;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 16px;
+    display: none;
+  }
+  .conversion-box.show { display: block; }
+  .conv-eq {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .conv-note { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+  /* ── EQUIV TABLE ── */
+  .equiv-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 16px; }
+  .equiv-table th { background: var(--surface-2); color: var(--text); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 12px; border-bottom: 2px solid var(--border); text-align: left; }
+  .equiv-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); }
+  .equiv-table tr:last-child td { border-bottom: none; }
+  .equiv-table tr:hover td { background: var(--surface-2); }
+  .equiv-table .hl { background: var(--accent-light); font-weight: 600; }
+  .equiv-table .hl td { color: var(--accent); }
+
+  /* ── SICK DAY RULES ── */
+  .sick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .sick-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    background: var(--surface);
+  }
+  .sick-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 12px;
+  }
+  .sick-card ul { margin-left: 16px; }
+  .sick-card li { font-size: 13.5px; margin-bottom: 5px; line-height: 1.5; }
+
+  /* ── SECTION DIVIDER ── */
+  .section-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    color: var(--text-2);
+    margin: 24px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-3);
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 24px;
+    padding: 14px 16px;
+  }
+  .disclaimer strong { color: var(--text-2); }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    header nav, .card:not(#schedule-card), .btn-row, .print-controls, .disclaimer { display: none !important; }
+    body { background: #fff; font-size: 12px; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+    main { padding: 0; }
+    table { font-size: 11px; }
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 16px 16px 48px; }
+    header { padding: 0 16px; }
+    nav button { padding: 10px 14px; font-size: 12px; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>Prednisolone Weaning Schedule Generator</h1>
-    <p>Based on the 24-week gradual prednisolone wean (starting at 5 mg daily) from GUI0644.</p>
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="header-label">Barts Health NHS Trust · Endocrinology</div>
+        <h1>Safe Steroid Withdrawal in Adults</h1>
+        <p class="subtitle">Clinical decision support tool based on guideline GUI0644. For use by qualified clinicians only.</p>
+      </div>
+      <div class="header-badge">
+        <strong>GUI0644</strong>
+        St Bartholomew's Endocrine Dept<br>Approved Sept 2025
+      </div>
+    </div>
+    <nav id="main-nav">
+      <button class="active" data-tab="tab-schedule">Weaning Schedule</button>
+      <button data-tab="tab-cortisol">HPA Axis Interpreter</button>
+      <button data-tab="tab-dex">Dexamethasone</button>
+      <button data-tab="tab-equiv">Dose Equivalence</button>
+      <button data-tab="tab-sick">Sick Day Rules</button>
+    </nav>
+  </div>
+</header>
 
-    <div class="controls">
-        <label for="startDate"><strong>Select Taper Start Date (Monday):</strong></label>
-        <input type="date" id="startDate">
-        <button onclick="generateSchedule()">Generate Schedule</button>
+<main>
+
+  <!-- ═══════════════════════════════════════════
+       TAB 1: WEANING SCHEDULE
+  ═══════════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-schedule">
+
+    <div class="card">
+      <div class="card-title">Prednisolone Weaning Schedule Generator</div>
+      <div class="card-desc">Generates a personalised 24-week tapering schedule based on Appendix 2 of GUI0644 (Hammersmith Hospital Protocol). Enter the patient's taper start date to produce a dated week-by-week plan.</div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Taper Start Date</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="field">
+          <label>Starting Dose</label>
+          <select id="startingDose">
+            <option value="5" selected>5 mg/day (standard)</option>
+            <option value="custom">Higher dose — see tapering strategy guidance</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="alert warning">
+        <strong>Before starting taper:</strong> Confirm glucocorticoids are no longer needed for disease control. Ensure the patient has a Steroid Emergency Card and has been counselled on sick day rules.
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="generateSchedule()">Generate Schedule</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print Schedule</button>
+      </div>
     </div>
 
-    <div id="scheduleContainer"></div>
+    <div id="schedule-card" style="display:none">
+      <div class="card">
+        <div class="print-controls">
+          <p id="schedule-summary">—</p>
+          <button class="btn btn-secondary" onclick="window.print()" style="font-size:13px;padding:7px 16px;">Print / Save PDF</button>
+        </div>
 
-    <script>
-        // The 24-week schedule array based on Appendix 2 of GUI0644
-        const weaningSchedule = [
-            [5, 5, 5, 5, 5, 5, 5], // Week 0
-            [5, 4, 5, 4, 5, 4, 5], // Week 1
-            [4, 4, 4, 4, 4, 4, 4], // Week 2
-            [4, 3, 4, 3, 4, 3, 4], // Week 3
-            [3, 3, 3, 3, 3, 3, 3], // Week 4 (Test 9am Cortisol here)
-            [3, 3, 3, 2, 3, 3, 3], // Week 5
-            [3, 2, 3, 3, 2, 3, 3], // Week 6
-            [3, 2, 3, 2, 3, 2, 3], // Week 7
-            [2, 3, 2, 3, 2, 3, 2], // Week 8
-            [2, 3, 2, 2, 3, 2, 2], // Week 9
-            [2, 2, 2, 3, 2, 2, 2], // Week 10
-            [2, 2, 2, 2, 2, 2, 2], // Week 11
-            [2, 2, 2, 1, 2, 2, 2], // Week 12
-            [2, 1, 2, 2, 1, 2, 2], // Week 13
-            [2, 1, 2, 1, 2, 1, 2], // Week 14
-            [1, 2, 1, 2, 1, 2, 1], // Week 15
-            [1, 2, 1, 1, 2, 1, 1], // Week 16
-            [1, 1, 1, 2, 1, 1, 1], // Week 17
-            [1, 1, 1, 1, 1, 1, 1], // Week 18
-            [1, 1, 1, 0, 1, 1, 1], // Week 19
-            [1, 0, 1, 1, 0, 1, 1], // Week 20
-            [1, 0, 1, 0, 1, 0, 1], // Week 21
-            [0, 1, 0, 1, 0, 1, 0], // Week 22
-            [0, 1, 0, 0, 1, 0, 0], // Week 23
-            [0, 0, 0, 1, 0, 0, 0]  // Week 24
-        ];
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#fffbeb;border:1px solid #f0c040;"></div><span>9am cortisol check due</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-light);border:1px solid #7aaad0;"></div><span>Physiological dose range</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green-light);border:1px solid #5aab7a;"></div><span>Final stop week</span></div>
+        </div>
 
-        function generateSchedule() {
-            const startDateInput = document.getElementById('startDate').value;
-            if (!startDateInput) {
-                alert("Please select a start date.");
-                return;
-            }
+        <div class="table-wrapper">
+          <table id="scheduleTable">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th>
+                <th>Weekly Total</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
 
-            let startDate = new Date(startDateInput);
-            
-            // Adjust to the previous Monday if a different day is selected
-            const day = startDate.getDay();
-            const diff = startDate.getDate() - day + (day === 0 ? -6 : 1);
-            startDate = new Date(startDate.setDate(diff));
+        <div class="alert info" style="margin-top:18px;font-size:13px;">
+          <strong>Monitoring:</strong> At Week 4 (3 mg/day), check 9am serum cortisol after withholding <em>all</em> glucocorticoids (including inhaled, nasal, topical) for ≥18 hours. Use the HPA Axis Interpreter tab to act on the result.
+        </div>
+      </div>
+    </div>
 
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Week</th>
-                        <th>Mon</th><th>Tues</th><th>Wed</th><th>Thurs</th><th>Fri</th><th>Sat</th><th>Sun</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+    <div class="disclaimer">
+      <strong>Clinical disclaimer:</strong> This schedule is an example only and must be individualised based on clinical response, the patient's underlying condition, risk of disease relapse, and comorbidities. Patients experiencing symptoms of adrenal insufficiency (fatigue, nausea, dizziness, hypotension) at any stage should be reviewed clinically. See GUI0644 for full guidance.
+    </div>
+  </div>
 
-            let currentDate = new Date(startDate);
+  <!-- ═══════════════════════════════════════════
+       TAB 2: HPA AXIS CORTISOL INTERPRETER
+  ═══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-cortisol">
+    <div class="card">
+      <div class="card-title">HPA Axis Recovery — Cortisol Interpreter</div>
+      <div class="card-desc">Enter the 9am serum cortisol result taken when the prednisolone dose has been weaned to 3 mg/day (Week 4 of the schedule). All steroids — including inhaled, nasal, and topical preparations — must have been withheld for ≥18 hours before sampling.</div>
 
-            for (let week = 0; week < weaningSchedule.length; week++) {
-                // Highlight week 4 for the cortisol test reminder
-                let rowStyle = week === 4 ? 'style="background-color: #fff3cd;"' : '';
-                let weekLabel = week === 4 ? `Week 4 <br><small>(Check 9am Cortisol)</small>` : `Week ${week}`;
+      <div class="alert warning" style="margin-bottom:20px;">
+        <strong>Pre-test requirements:</strong>
+        <ul>
+          <li>Sample taken at <strong>09:00</strong></li>
+          <li>All glucocorticoids (systemic, inhaled, nasal, topical) withheld ≥18 hours</li>
+          <li>If clinically Cushingoid: assume HPA suppression — do not test, continue taper</li>
+        </ul>
+      </div>
 
-                html += `<tr ${rowStyle}>
-                    <td class="week-col">${weekLabel}</td>`;
-                
-                for (let day = 0; day < 7; day++) {
-                    let dose = weaningSchedule[week][day];
-                    let dateString = currentDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-                    
-                    html += `<td><strong>${dose} mg</strong><span class="date-subtext">${dateString}</span></td>`;
-                    
-                    // Increment day
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-                html += `</tr>`;
-            }
+      <div class="form-grid" style="max-width:400px;">
+        <div class="field">
+          <label>09:00 Serum Cortisol (nmol/L)</label>
+          <input type="number" id="cortisolValue" placeholder="e.g. 245" min="0" max="2000">
+        </div>
+        <div class="field">
+          <label>Previous test at this level?</label>
+          <select id="secondTest">
+            <option value="no">No — this is the first test</option>
+            <option value="yes">Yes — previously also low (&lt;150)</option>
+          </select>
+        </div>
+      </div>
 
-            html += `</tbody></table>`;
-            
-            document.getElementById('scheduleContainer').innerHTML = html;
-        }
-    </script>
+      <div class="btn-row">
+        <button class="btn" onclick="interpretCortisol()">Interpret Result</button>
+        <button class="btn btn-secondary" onclick="clearCortisol()">Clear</button>
+      </div>
+
+      <div class="cortisol-result" id="cortisolResult">
+        <h3 id="cortisolStatus">—</h3>
+        <div id="cortisolBody"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="font-size:15px;">Reference: Cortisol Threshold Table</div>
+      <table class="equiv-table" style="margin-top:8px;">
+        <thead>
+          <tr>
+            <th>09:00 Cortisol</th>
+            <th>Interpretation</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--red);">&lt; 150 nmol/L</strong></td>
+            <td>Likely suppression</td>
+            <td>Continue 3 mg prednisolone. Retest in 3–6 months. If second low test: refer to Endocrinology.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--amber);">150–300 nmol/L</strong></td>
+            <td>Partial recovery</td>
+            <td>Continue physiological dose (3 mg). Repeat cortisol in 6–12 weeks.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">&gt; 300 nmol/L</strong></td>
+            <td>Likely recovery</td>
+            <td>HPA axis has recovered. Continue weaning per schedule based on symptoms; no further concern re: adrenal insufficiency.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="alert info" style="margin-top:16px;font-size:13px;">
+        <strong>Note on Steroid Withdrawal Syndrome (SWS):</strong> Fatigue, myalgia, nausea, mood disturbance, and joint pain may occur during taper even with normal adrenal function. SWS is a self-limiting neuroendocrine adjustment — it does not require reinstating steroids. Reassure the patient and avoid unnecessary cortisol testing.
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      Referral to Endocrinology should be reserved for patients who remain suppressed after 3–6 months on physiological replacement, or who have complicating clinical features. Dynamic testing (Synacthen) is not routinely required; morning cortisol is sufficient in most cases.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB 3: DEXAMETHASONE
+  ═══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-dex">
+    <div class="card">
+      <div class="card-title">Dexamethasone → Prednisolone Conversion</div>
+      <div class="card-desc">Dexamethasone has a long half-life and does not cross-react with serum cortisol assays, making HPA axis testing unreliable. When assessment is needed, switch to prednisolone once dexamethasone is ≤0.5–1 mg/day, then continue tapering to 3 mg/day for cortisol testing.</div>
+
+      <div class="alert warning">
+        <strong>Important:</strong> If the patient is clinically well and weaned to ≤0.5 mg/day dexamethasone, it is pragmatic to stop directly without switching or testing — provided no signs of adrenal insufficiency and no imminent physiological stress.
+      </div>
+
+      <div class="form-grid" style="max-width:350px;">
+        <div class="field">
+          <label>Current Dexamethasone Dose (mg/day)</label>
+          <input type="number" id="dexDose" placeholder="e.g. 0.5" min="0" step="0.25">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="convertDex()">Calculate Prednisolone Equivalent</button>
+        <button class="btn btn-secondary" onclick="clearDex()">Clear</button>
+      </div>
+
+      <div class="conversion-box" id="dexResult">
+        <div class="conv-eq" id="dexEquiv">—</div>
+        <div class="conv-note" id="dexNote">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="font-size:15px;">Dexamethasone — Key Clinical Considerations</div>
+      <div class="sick-grid" style="margin-top:4px;">
+        <div class="sick-card">
+          <h3>Switching Protocol</h3>
+          <ul>
+            <li>Switch when dexamethasone ≤ 0.5–1 mg/day</li>
+            <li>Convert: 0.5 mg dex ≈ 2–3 mg prednisolone</li>
+            <li>Continue tapering prednisolone to 3 mg/day</li>
+            <li>Then perform 09:00 cortisol test ≥18h after last dose</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>If Unable to Switch</h3>
+          <ul>
+            <li>Wait ≥72 hours after last dexamethasone dose before testing</li>
+            <li>Cortisol may still appear low despite endogenous recovery</li>
+            <li>Interpret results with caution due to lingering dexamethasone effects</li>
+            <li>Consider Endocrinology input if unclear</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>CYP3A4 Interactions</h3>
+          <ul>
+            <li><strong>Inhibitors</strong> (cobicistat, ritonavir, itraconazole, clarithromycin): increase steroid levels → risk of HPA suppression and Cushingoid features at low doses</li>
+            <li><strong>Inducers</strong> (carbamazepine, phenytoin, rifampicin): reduce steroid levels → taper more slowly; higher adrenal insufficiency risk</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      Conversion factors are approximate. Clinical judgement is required when switching preparations. If switching is not possible and HPA testing is still required, dexamethasone must be withheld for ≥72 hours — results must be interpreted with caution.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB 4: DOSE EQUIVALENCE
+  ═══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-equiv">
+    <div class="card">
+      <div class="card-title">Steroid Dose Equivalence</div>
+      <div class="card-desc">Approximate equivalent anti-inflammatory doses (relative to hydrocortisone). Risk of HPA suppression is more likely at doses above the physiological threshold for ≥4 weeks.</div>
+
+      <div class="alert info" style="margin-bottom:20px;">
+        <strong>HPA suppression threshold (≥4 weeks use):</strong> Prednisolone/prednisone &gt;4–6 mg · Hydrocortisone &gt;15–25 mg · Methylprednisolone &gt;3–5 mg · Dexamethasone &gt;0.25–0.5 mg
+      </div>
+
+      <div class="field" style="max-width:350px;margin-bottom:20px;">
+        <label>Highlight a glucocorticoid</label>
+        <select id="equivHighlight" onchange="renderEquivTable()">
+          <option value="">— none —</option>
+          <option value="Hydrocortisone">Hydrocortisone</option>
+          <option value="Prednisolone" selected>Prednisolone</option>
+          <option value="Methylprednisolone">Methylprednisolone</option>
+          <option value="Triamcinolone">Triamcinolone</option>
+          <option value="Dexamethasone">Dexamethasone</option>
+          <option value="Betamethasone">Betamethasone</option>
+          <option value="Cortisone acetate">Cortisone acetate</option>
+          <option value="Deflazacort">Deflazacort</option>
+        </select>
+      </div>
+
+      <table class="equiv-table" id="equivTable">
+        <thead>
+          <tr>
+            <th>Glucocorticoid</th>
+            <th>Approx. Equivalent Dose</th>
+            <th>Anti-inflammatory Potency</th>
+            <th>Mineralocorticoid Activity</th>
+            <th>Biologic Half-life</th>
+          </tr>
+        </thead>
+        <tbody id="equivBody"></tbody>
+      </table>
+
+      <p style="font-size:12px;color:var(--text-3);margin-top:10px;">Source: Appendix 3, GUI0644 (Barts Health NHS Trust)</p>
+    </div>
+
+    <div class="disclaimer">
+      Dose equivalences are approximate and should not be used as absolute values. Clinical factors including route of administration, pharmacokinetics, and individual patient response all influence effective steroid exposure.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TAB 5: SICK DAY RULES
+  ═══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-sick">
+    <div class="card">
+      <div class="card-title">Sick Day Rules & Emergency Management</div>
+      <div class="card-desc">For patients who are stopping long-term glucocorticoids or who are at risk of adrenal insufficiency. Full guidance is available in guideline <strong>GUI0545</strong>.</div>
+
+      <div class="alert danger">
+        <strong>Adrenal Crisis:</strong> If vomiting prevents oral steroid intake, or the patient is seriously unwell, they require <strong>immediate parenteral hydrocortisone (100 mg IM/IV)</strong> and emergency hospital attendance. This is a medical emergency.
+      </div>
+
+      <div class="sick-grid">
+        <div class="sick-card">
+          <h3>Who needs sick day advice?</h3>
+          <ul>
+            <li>On ≥5 mg prednisolone/day (or equivalent) for ≥4 weeks</li>
+            <li>≥3 high-dose oral steroid courses in the past year</li>
+            <li>Using multiple routes of glucocorticoid</li>
+            <li>Very potent topical steroids ≥200 g/week for ≥4 weeks</li>
+            <li>On CYP3A4 inhibitors with glucocorticoids</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>Dose doubling rule (minor illness)</h3>
+          <ul>
+            <li>Fever, significant infection, or physiological stress</li>
+            <li>Double (or increase to 5 mg twice daily) prednisolone for duration of illness</li>
+            <li>Hydrocortisone alternative: 10 mg three times daily</li>
+            <li>Return to usual dose when recovered</li>
+            <li>Do not reduce or stop steroids during illness</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>Symptoms of adrenal insufficiency</h3>
+          <ul>
+            <li>Profound fatigue and weakness</li>
+            <li>Nausea, vomiting, abdominal pain</li>
+            <li>Dizziness, postural hypotension</li>
+            <li>Confusion or reduced consciousness</li>
+            <li>If in doubt: seek urgent medical review</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>Surgery & procedures</h3>
+          <ul>
+            <li>Inform anaesthetist and surgical team of steroid history</li>
+            <li>Minor procedures: double oral dose on the day</li>
+            <li>Major surgery: may require perioperative IV hydrocortisone (discuss with Endocrinology)</li>
+            <li>Do not stop steroids without endocrine advice pre-operatively</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>Steroid Emergency Card</h3>
+          <ul>
+            <li>Issue to all patients at risk of adrenal insufficiency</li>
+            <li>Card should be carried at all times</li>
+            <li>Instructs emergency staff on steroid treatment needed</li>
+            <li>Available from NHSE / Society for Endocrinology</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>When to refer to Endocrinology</h3>
+          <ul>
+            <li>Cortisol remains &lt;150 nmol/L after 3–6 months on physiological replacement</li>
+            <li>Second suppressed cortisol result</li>
+            <li>Complicating clinical features or diagnostic uncertainty</li>
+            <li>Symptoms of adrenal insufficiency despite adequate replacement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="font-size:15px;">Supportive Medications on Steroid Withdrawal</div>
+      <div class="sick-grid">
+        <div class="sick-card">
+          <h3>Adcal D3 (Calcium + Vitamin D)</h3>
+          <ul>
+            <li>If steroids were the only bone fragility risk factor: can stop once taper is complete</li>
+            <li>Continue if: older age, post-menopausal, prior fracture, low bone density, poor dietary intake</li>
+            <li>Formal bone health review (FRAX / QFracture / DEXA) once steroids stopped</li>
+          </ul>
+        </div>
+        <div class="sick-card">
+          <h3>Proton Pump Inhibitors (PPIs)</h3>
+          <ul>
+            <li>If no other indication (reflux, peptic ulcer, NSAID use): withdraw after steroids stopped</li>
+            <li>To avoid rebound: step down gradually over 2–4 weeks, or alternate-day dosing</li>
+            <li>Mild reflux post-withdrawal is common and usually temporary</li>
+            <li>Reassess if symptoms persist or are severe</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      Sick day rules are for patients with known or suspected HPA axis suppression. Full guidance available in GUI0545. Patients should receive written information and verbal instruction; document that counselling has taken place in the clinical record.
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════
+   DATA
+═══════════════════════════════ */
+const schedule = [
+  [5,5,5,5,5,5,5],[5,4,5,4,5,4,5],[4,4,4,4,4,4,4],[4,3,4,3,4,3,4],
+  [3,3,3,3,3,3,3],[3,3,3,2,3,3,3],[3,2,3,3,2,3,3],[3,2,3,2,3,2,3],
+  [2,3,2,3,2,3,2],[2,3,2,2,3,2,2],[2,2,2,3,2,2,2],[2,2,2,2,2,2,2],
+  [2,2,2,1,2,2,2],[2,1,2,2,1,2,2],[2,1,2,1,2,1,2],[1,2,1,2,1,2,1],
+  [1,2,1,1,2,1,1],[1,1,1,2,1,1,1],[1,1,1,1,1,1,1],[1,1,1,0,1,1,1],
+  [1,0,1,1,0,1,1],[1,0,1,0,1,0,1],[0,1,0,1,0,1,0],[0,1,0,0,1,0,0],
+  [0,0,0,1,0,0,0]
+];
+
+const equivData = [
+  {name:'Hydrocortisone',   dose:'20 mg',   potency:1,     mc:'++',  half:'8–12h'},
+  {name:'Prednisolone',     dose:'5 mg',    potency:4,     mc:'+',   half:'12–36h'},
+  {name:'Methylprednisolone',dose:'4 mg',   potency:5,     mc:'±',   half:'12–36h'},
+  {name:'Triamcinolone',    dose:'4 mg',    potency:5,     mc:'0',   half:'12–36h'},
+  {name:'Dexamethasone',    dose:'0.75 mg', potency:'25–30',mc:'0',  half:'36–72h'},
+  {name:'Betamethasone',    dose:'0.75 mg', potency:'25–30',mc:'0',  half:'36–72h'},
+  {name:'Cortisone acetate',dose:'25 mg',   potency:0.8,   mc:'++',  half:'8–12h'},
+  {name:'Deflazacort',      dose:'6 mg',    potency:'~3–4', mc:'+',  half:'12–36h'},
+];
+
+/* ═══════════════════════════════
+   TABS
+═══════════════════════════════ */
+document.getElementById('main-nav').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  document.querySelectorAll('#main-nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.tab).classList.add('active');
+});
+
+/* ═══════════════════════════════
+   SCHEDULE GENERATOR
+═══════════════════════════════ */
+function generateSchedule() {
+  const val = document.getElementById('startDate').value;
+  if (!val) { alert('Please select a taper start date.'); return; }
+
+  let date = new Date(val + 'T00:00:00');
+  // Adjust to Monday
+  const dow = date.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  date.setDate(date.getDate() + diff);
+
+  const startStr = date.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate() + 24 * 7 - 1);
+  const endStr = endDate.toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+
+  document.getElementById('schedule-summary').textContent =
+    `Taper schedule: ${startStr} → ${endStr} (24 weeks)`;
+
+  const tbody = document.getElementById('scheduleBody');
+  tbody.innerHTML = '';
+  const cur = new Date(date);
+
+  schedule.forEach((week, wk) => {
+    const tr = document.createElement('tr');
+    const total = week.reduce((a,b) => a+b, 0);
+    const maxDose = Math.max(...week);
+    const isCortisol = wk === 4;
+    const isPhys = maxDose <= 3 && maxDose > 0 && wk >= 4;
+    const isStop = wk === 24;
+
+    if (isCortisol) tr.className = 'row-cortisol';
+    else if (isStop) tr.className = 'row-stop';
+    else if (isPhys && !isCortisol) tr.className = 'row-phys';
+
+    let weekCell = `<span class="week-label">Week ${wk}</span>`;
+    if (isCortisol) weekCell += `<br><span class="week-badge badge-cortisol">9am Cortisol</span>`;
+    if (isStop) weekCell += `<br><span class="week-badge badge-stop">Final Week</span>`;
+    if (isPhys && !isCortisol && !isStop && wk <= 7) weekCell += `<br><span class="week-badge badge-phys">Physiol.</span>`;
+
+    tr.innerHTML = `<td>${weekCell}</td>`;
+
+    week.forEach(dose => {
+      const dateStr = cur.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+      const cls = dose === 0 ? 'dose-0' : dose >= 4 ? 'dose-high' : dose >= 2 ? 'dose-mid' : 'dose-low';
+      tr.innerHTML += `<td><span class="dose-cell ${cls}">${dose > 0 ? dose + ' mg' : '—'}</span><span class="date-sub">${dateStr}</span></td>`;
+      cur.setDate(cur.getDate() + 1);
+    });
+
+    const totalCls = total === 0 ? 'dose-0' : total >= 28 ? 'dose-high' : total >= 14 ? 'dose-mid' : 'dose-low';
+    tr.innerHTML += `<td><span class="dose-cell ${totalCls}" style="font-size:12px;">${total} mg</span></td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('schedule-card').style.display = 'block';
+  document.getElementById('schedule-card').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ═══════════════════════════════
+   CORTISOL INTERPRETER
+═══════════════════════════════ */
+function interpretCortisol() {
+  const v = parseFloat(document.getElementById('cortisolValue').value);
+  const second = document.getElementById('secondTest').value === 'yes';
+  const el = document.getElementById('cortisolResult');
+  const status = document.getElementById('cortisolStatus');
+  const body = document.getElementById('cortisolBody');
+
+  if (isNaN(v) || v < 0) { alert('Please enter a valid cortisol value.'); return; }
+
+  el.className = 'cortisol-result show';
+
+  if (v < 150) {
+    el.classList.add('suppressed');
+    status.textContent = '⚠ Likely HPA Axis Suppression — ' + v.toFixed(0) + ' nmol/L';
+    body.innerHTML = `
+      <div class="alert danger" style="margin-bottom:12px;"><strong>Result below 150 nmol/L:</strong> Consistent with ongoing HPA axis suppression.</div>
+      <p style="font-size:14px;margin-bottom:10px;"><strong>Recommended actions:</strong></p>
+      <ul class="action-list">
+        <li>Continue prednisolone at physiological dose (<strong>3 mg/day</strong>)</li>
+        <li>Retest 09:00 cortisol in <strong>3–6 months</strong></li>
+        ${second ? '<li style="color:var(--red);font-weight:600;">This is the second suppressed result — <strong>refer to Endocrinology</strong></li>' : '<li>If this is a second low result, refer to Endocrinology</li>'}
+        <li>Ensure patient has Steroid Emergency Card and sick day counselling</li>
+        <li>Review any concurrent medications that may affect cortisol metabolism (CYP3A4 inhibitors)</li>
+      </ul>`;
+  } else if (v <= 300) {
+    el.classList.add('partial');
+    status.textContent = '↗ Partial HPA Axis Recovery — ' + v.toFixed(0) + ' nmol/L';
+    body.innerHTML = `
+      <div class="alert warning" style="margin-bottom:12px;"><strong>Result 150–300 nmol/L:</strong> Partial recovery; HPA axis not yet fully autonomous.</div>
+      <p style="font-size:14px;margin-bottom:10px;"><strong>Recommended actions:</strong></p>
+      <ul class="action-list">
+        <li>Continue prednisolone at physiological dose (<strong>3 mg/day</strong>)</li>
+        <li>Repeat 09:00 cortisol in <strong>6–12 weeks</strong></li>
+        <li>Advise patient of sick day rules and ensure emergency card issued</li>
+        <li>Do not reduce below 3 mg until cortisol is &gt;300 nmol/L</li>
+      </ul>`;
+  } else {
+    el.classList.add('recovered');
+    status.textContent = '✓ Likely HPA Axis Recovery — ' + v.toFixed(0) + ' nmol/L';
+    body.innerHTML = `
+      <div class="alert success" style="margin-bottom:12px;"><strong>Result above 300 nmol/L:</strong> HPA axis has likely recovered.</div>
+      <p style="font-size:14px;margin-bottom:10px;"><strong>Recommended actions:</strong></p>
+      <ul class="action-list">
+        <li>Continue weaning prednisolone according to the schedule</li>
+        <li>No specific concern regarding adrenal insufficiency from this result</li>
+        <li>Monitor for symptoms of steroid withdrawal syndrome (SWS) — fatigue, myalgia, nausea — these are self-limiting and do not require reinstating steroids</li>
+        <li>Consider whether further cortisol testing is needed based on clinical course</li>
+      </ul>`;
+  }
+}
+
+function clearCortisol() {
+  document.getElementById('cortisolValue').value = '';
+  document.getElementById('cortisolResult').className = 'cortisol-result';
+}
+
+/* ═══════════════════════════════
+   DEX CONVERTER
+═══════════════════════════════ */
+function convertDex() {
+  const d = parseFloat(document.getElementById('dexDose').value);
+  const el = document.getElementById('dexResult');
+  const equiv = document.getElementById('dexEquiv');
+  const note = document.getElementById('dexNote');
+
+  if (isNaN(d) || d < 0) { alert('Please enter a valid dexamethasone dose.'); return; }
+
+  // Dexamethasone 0.75 mg ≈ prednisolone 5 mg → ratio ≈ 6.67
+  const predLow = Math.round(d / 0.75 * 4 * 10) / 10;
+  const predHigh = Math.round(d / 0.75 * 5 * 10) / 10;
+
+  el.className = 'conversion-box show';
+  equiv.textContent = `${d} mg dexamethasone ≈ ${predLow}–${predHigh} mg prednisolone`;
+
+  let guidance = '';
+  if (d <= 0.5) {
+    guidance = `<div class="alert success" style="margin-top:12px;font-size:13px;"><strong>Pragmatic option:</strong> At ≤0.5 mg/day dexamethasone, if the patient is clinically well with no signs of adrenal insufficiency and no imminent physiological stress, it is acceptable to stop dexamethasone directly without switching or formal HPA testing.</div>`;
+  } else if (d <= 1) {
+    guidance = `<div class="alert info" style="margin-top:12px;font-size:13px;"><strong>Switch now:</strong> At this dose, convert to prednisolone (${predLow}–${predHigh} mg), continue tapering to 3 mg/day, then check 09:00 cortisol ≥18 hours after last dose.</div>`;
+  } else {
+    guidance = `<div class="alert warning" style="margin-top:12px;font-size:13px;"><strong>Continue tapering dexamethasone</strong> until ≤0.5–1 mg/day, then switch to prednisolone for HPA assessment. Do not test cortisol while on dexamethasone — it does not cross-react with cortisol assays.</div>`;
+  }
+
+  note.innerHTML = `<p style="margin-bottom:4px;font-size:13px;color:var(--text-2);">Conversion ratio: dexamethasone 0.75 mg ≈ prednisolone 4–5 mg (approx.)</p>${guidance}`;
+}
+
+function clearDex() {
+  document.getElementById('dexDose').value = '';
+  document.getElementById('dexResult').className = 'conversion-box';
+}
+
+/* ═══════════════════════════════
+   EQUIV TABLE
+═══════════════════════════════ */
+function renderEquivTable() {
+  const hl = document.getElementById('equivHighlight').value;
+  const tbody = document.getElementById('equivBody');
+  tbody.innerHTML = equivData.map(r => {
+    const isHL = r.name === hl;
+    return `<tr class="${isHL ? 'hl' : ''}">
+      <td>${r.name}${isHL ? ' ★' : ''}</td>
+      <td><strong>${r.dose}</strong></td>
+      <td>${r.potency}</td>
+      <td>${r.mc}</td>
+      <td>${r.half}</td>
+    </tr>`;
+  }).join('');
+}
+
+// Init equiv table on load
+renderEquivTable();
+</script>
+
 </body>
 </html>
