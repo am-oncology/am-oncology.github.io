@@ -214,9 +214,16 @@
 
     <script>
         const JOURNALS = [
-            { name: 'PRO', query: '"Pract Radiat Oncol"[Journal]' },
-            { name: 'IJROBP', query: '"Int J Radiat Oncol Biol Phys"[Journal]' },
-            { name: 'Radiotherapy & Oncology', query: '"Radiother Oncol"[Journal]' }
+            { name: 'IJROBP Red Journal (ASTRO)', query: '"Int J Radiat Oncol Biol Phys"[Journal]' },
+            { name: 'PRO (ASTRO)', query: '"Pract Radiat Oncol"[Journal]' },
+            { name: 'Advances (ASTRO)', query: '"Adv Radiat Oncol"[Journal]' },
+            { name: 'Radiotherapy & Oncology Green Journal (ESTRO)', query: '"Radiother Oncol"[Journal]' },
+            { name: 'tipsRO (ESTRO)', query: '"Tech Innov Patient Support Radiat Oncol"[Journal]' },
+            { name: 'ctRO (ESTRO)', query: '"Clin Transl Radiat Oncol"[Journal]' },
+            { name: 'phiRO (ESTRO)', query: '"Phys Imaging Radiat Oncol"[Journal]' },
+            { name: 'Clinical Oncology (RCR)', query: '"Clin Oncol (R Coll Radiol)"[Journal]' },
+            { name: 'x', query: '"x"[Journal]' },
+            { name: 'Strahlentherapie und Onkologie (DEGRO)', query: '"Strahlenther Onkol"[Journal]' }
         ];
 
         let bookmarks = JSON.parse(localStorage.getItem('onco_bookmarks') || '[]');
