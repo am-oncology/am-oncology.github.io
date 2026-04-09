@@ -83,8 +83,8 @@
 <div class="tab-bar" id="tab-bar">
   <button class="tab-btn active" data-tab="glioma">Glioma</button>
   <button class="tab-btn" data-tab="skull">Skull Base</button>
-  <button class="tab-btn" data-tab="srs">SRS / SRT</button>
-  <button class="tab-btn" data-tab="ocular">Ocular Oncology</button>
+  <button class="tab-btn" data-tab="srs">SRS</button>
+  <button class="tab-btn" data-tab="ocular">Ocular</button>
 </div>
 
 <div class="main">
@@ -126,10 +126,10 @@ const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 const API_KEY = ''; // Add your NCBI API key here for 10req/s
 
 const TABS = {
-  glioma: { accent: '#2D4A7A', query: '(glioblastoma[tiab] OR "glioma"[tiab] OR "IDH-mutant"[tiab]) AND ("humans"[MeSH Terms])' },
-  skull: { accent: '#4A3728', query: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "skull base"[tiab]) AND ("humans"[MeSH Terms])' },
+  glioma: { accent: '#2D4A7A', query: '(glioblastoma[tiab] OR "glioma"[tiab] OR "astrocytoma"[tiab] OR "oligodendroglioma"[tiab]) AND ("humans"[MeSH Terms])' },
+  skull: { accent: '#4A3728', query: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "acoustic neuroma"[tiab] OR "skull base"[tiab] OR "PitNET"[tiab]) AND ("humans"[MeSH Terms])' },
   srs: { accent: '#1A5C4A', query: '("stereotactic radiosurgery"[tiab] OR "gamma knife"[tiab]) AND ("brain"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])' },
-  ocular: { accent: '#5C3A6B', query: '("uveal melanoma"[tiab] OR "retinoblastoma"[tiab] OR "orbital tumor"[tiab]) AND ("humans"[MeSH Terms])' }
+  ocular: { accent: '#5C3A6B', query: '("uveal melanoma"[tiab] OR "orbital tumor"[tiab] OR "thyroid eye disease"[tiab]) AND ("humans"[MeSH Terms])' }
 };
 
 let activeTab = 'glioma';
