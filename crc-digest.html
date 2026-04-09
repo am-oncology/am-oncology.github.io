@@ -7,589 +7,146 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* STYLING EXACTLY MATCHING YOUR CNS-DIGEST */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --cream: #F5F0E8; --cream-dark: #EDE6D6; --ink: #1A1410; --ink-light: #3D3530;
   --muted: #8A7E74; --rule: #C8BFB0; --surface: #FDFAF4;
-  --burgundy: #7A1E2E; --burgundy-light: #A03040;
-  --teal: #1A5C5A; --gold: #B8860B; --blue: #1E3A5F;
-  --rose: #C04050; --sage: #4A6741;
-  /* Tab accent colours */
-  --rectal-accent:   #7A1E2E;
-  --colon-accent:    #1A5C5A;
-  --anal-accent:     #1E3A5F;
-  --appendix-accent: #B8860B;
-  --tab-accent: var(--rectal-accent);
+  --tab-accent: #7A1E2E;
 }
-html { scroll-behavior: smooth; }
-body { background: var(--cream); color: var(--ink); font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.65; min-height: 100vh; }
+body { background: var(--cream); color: var(--ink); font-family: 'Source Serif 4', serif; line-height: 1.6; }
 
-/* ── MASTHEAD ── */
-.masthead { background: var(--ink); color: var(--cream); position: sticky; top: 0; z-index: 200; border-bottom: 3px solid var(--tab-accent); transition: border-color 0.3s; }
-.masthead-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 52px; gap: 1.5rem; }
-.masthead-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; white-space: nowrap; color: var(--cream); }
-.masthead-title span { color: #C88888; }
-.masthead-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
-.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4CAF50; margin-right: 5px; animation: blink 2s ease-in-out infinite; vertical-align: middle; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* MASTHEAD */
+.masthead { background: var(--ink); color: var(--cream); position: sticky; top: 0; z-index: 100; border-bottom: 3px solid var(--tab-accent); }
+.masthead-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 50px; }
+.masthead-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
+.masthead-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
 
-/* ── CANCER TABS ── */
-.cancer-tabs-wrap { background: var(--ink); border-bottom: 1px solid rgba(255,255,255,0.08); }
-.cancer-tabs { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; }
-.ctab {
-  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 0.85rem 1.5rem; border: none; background: none; color: rgba(245,240,232,0.45);
-  cursor: pointer; position: relative; transition: color 0.2s; white-space: nowrap; border-bottom: 3px solid transparent; margin-bottom: -1px;
+/* TABS */
+.tabs-wrap { background: var(--ink); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.tabs { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; }
+.tab { 
+    background: none; border: none; color: rgba(255,255,255,0.5); padding: 1rem 1.5rem; 
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; border-bottom: 3px solid transparent;
 }
-.ctab:hover { color: rgba(245,240,232,0.8); }
-.ctab.active { color: var(--cream); border-bottom-color: var(--tab-accent); }
-.ctab .ctab-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; opacity: 0.5; transition: opacity 0.2s; }
-.ctab.active .ctab-dot { opacity: 1; }
-.ctab-count { font-size: 0.58rem; background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 10px; margin-left: 6px; }
-.ctab.active .ctab-count { background: var(--tab-accent); }
+.tab.active { color: #fff; border-bottom-color: var(--tab-accent); }
 
-/* ── HERO ── */
-.hero { background: var(--ink); color: var(--cream); padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden; }
-.hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(200,191,176,0.05) 39px, rgba(200,191,176,0.05) 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(200,191,176,0.025) 39px, rgba(200,191,176,0.025) 40px); pointer-events: none; }
-.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; }
-.hero-kicker { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--tab-accent); margin-bottom: 0.75rem; transition: color 0.3s; }
-.hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.75rem; }
-.hero h1 em { font-style: italic; color: #C88888; }
-.hero-desc { font-size: 0.9rem; color: rgba(245,240,232,0.6); max-width: 480px; line-height: 1.7; }
-.hero-stats { display: flex; gap: 2rem; flex-wrap: wrap; flex-shrink: 0; }
-.hero-stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--cream); line-height: 1; display: block; }
-.hero-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 0.2rem; }
-@media(max-width:680px){ .hero-inner{grid-template-columns:1fr;} .hero-stats{gap:1.5rem;} }
+/* HERO */
+.hero { background: var(--ink); color: #fff; padding: 4rem 2rem; }
+.hero-inner { max-width: 1200px; margin: 0 auto; }
+.hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 1rem; }
+.hero h1 em { color: #C88888; font-style: italic; }
 
-/* ── TAB ACCENT BAR ── */
-.accent-bar { height: 4px; background: var(--tab-accent); transition: background 0.3s; }
+/* MAIN CONTENT */
+.main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.search-bar { width: 100%; padding: 1rem; border: 1px solid var(--rule); margin-bottom: 2rem; font-family: 'Source Serif 4', serif; background: var(--surface); }
 
-/* ── API PANEL ── */
-.api-wrap { background: var(--cream-dark); padding: 0 2rem; }
-.api-panel { background: var(--surface); border: 1.5px solid var(--rule); border-left: 4px solid var(--teal); border-radius: 0 6px 6px 0; padding: 0.9rem 1.5rem; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; transform: translateY(-1px); }
-.api-panel-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.08em; color: var(--teal); text-transform: uppercase; white-space: nowrap; font-weight: 500; }
-.api-panel-desc { font-size: 0.8rem; color: var(--muted); flex: 1; min-width: 140px; }
-.api-row { display: flex; gap: 0.5rem; flex: 2; min-width: 240px; }
-.api-input { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; padding: 0.48rem 0.85rem; border: 1.5px solid var(--rule); border-radius: 4px; background: var(--cream); color: var(--ink); outline: none; transition: border-color 0.2s; }
-.api-input:focus { border-color: var(--teal); }
-.api-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 0.48rem 1.1rem; background: var(--teal); color: white; border: none; border-radius: 4px; cursor: pointer; letter-spacing: 0.05em; transition: background 0.15s; white-space: nowrap; }
-.api-btn:hover { background: #236b69; }
-.api-key-status { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 0.28rem 0.7rem; border-radius: 3px; background: var(--cream-dark); color: var(--muted); border: 1px solid var(--rule); white-space: nowrap; }
-.api-key-status.set { background: rgba(26,92,90,0.1); color: var(--teal); border-color: rgba(26,92,90,0.3); }
-
-/* ── TOOLBAR ── */
-.toolbar-wrap { background: var(--cream-dark); padding-bottom: 0.5rem; }
-.toolbar { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
-.search-field { display: flex; align-items: center; gap: 0.6rem; background: var(--surface); border: 1.5px solid var(--rule); border-radius: 4px; padding: 0.48rem 1rem; flex: 1; min-width: 200px; transition: border-color 0.2s; }
-.search-field:focus-within { border-color: var(--ink-light); }
-.search-field input { background: none; border: none; outline: none; font-family: 'Source Serif 4', serif; font-size: 0.88rem; color: var(--ink); width: 100%; }
-.search-field input::placeholder { color: var(--muted); font-style: italic; }
-.chips { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.chip { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; padding: 0.28rem 0.75rem; border-radius: 2px; border: 1.5px solid var(--rule); background: var(--surface); color: var(--muted); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.15s; }
-.chip:hover { border-color: var(--ink-light); color: var(--ink); }
-.chip.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-
-/* ── MAIN ── */
-.page-wrap { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0; padding-bottom: 0.65rem; border-bottom: 2px solid var(--ink); gap: 1rem; flex-wrap: wrap; }
-.section-header h2 { font-family: 'Playfair Display', serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
-.section-count { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em; }
-.papers-list { display: flex; flex-direction: column; }
-
-/* ── PAPER ROW ── */
-.paper-row { display: grid; grid-template-columns: 52px 1fr auto; border-bottom: 1px solid var(--rule); transition: background 0.15s; animation: rowIn 0.3s ease both; cursor: pointer; }
-@keyframes rowIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.paper-row { border-bottom: 1px solid var(--rule); padding: 1.5rem 0; cursor: pointer; transition: 0.2s; }
 .paper-row:hover { background: rgba(0,0,0,0.02); }
-.paper-row:first-child { border-top: none; }
-.paper-num { padding: 1.5rem 0.75rem 1.5rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--rule); align-self: start; padding-top: 1.7rem; text-align: right; }
-.paper-body { padding: 1.3rem 1.5rem 1.3rem 0; }
-.paper-meta-line { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem; flex-wrap: wrap; }
-.paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tab-accent); font-weight: 500; transition: color 0.3s; }
-.paper-date { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--muted); }
-.pmid { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--muted); background: var(--cream-dark); padding: 0.1rem 0.42rem; border-radius: 2px; border: 1px solid var(--rule); text-decoration: none; }
-.pmid:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
-.paper-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 400; line-height: 1.45; color: var(--ink); margin-bottom: 0.3rem; }
-.paper-authors { font-size: 0.78rem; color: var(--muted); font-style: italic; margin-bottom: 0.6rem; }
-.paper-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
-.ptag { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; padding: 0.15rem 0.5rem; border-radius: 2px; letter-spacing: 0.05em; font-weight: 500; }
-.ptag-surgery   { background: rgba(26,92,90,0.1);    color: #1A5C5A; }
-.ptag-chemo     { background: rgba(30,58,95,0.1);    color: #1E3A5F; }
-.ptag-radio     { background: rgba(122,30,46,0.1);   color: #7A1E2E; }
-.ptag-immuno    { background: rgba(74,103,65,0.1);   color: #4A6741; }
-.ptag-genomics  { background: rgba(184,134,11,0.12); color: #8B6508; }
-.ptag-biomarker { background: rgba(192,64,80,0.1);   color: #C04050; }
-.ptag-rct       { background: rgba(26,92,90,0.14);   color: #1A5C5A; }
-.ptag-meta      { background: rgba(30,58,95,0.12);   color: #1E3A5F; }
-.ptag-phase1    { background: rgba(184,134,11,0.08); color: #8B6508; }
-.ptag-phase2    { background: rgba(184,134,11,0.14); color: #B8860B; }
-.ptag-phase3    { background: rgba(74,103,65,0.14);  color: #4A6741; }
-.ptag-trans     { background: rgba(122,30,46,0.08);  color: #A03040; }
-.ptag-default   { background: var(--cream-dark);     color: var(--muted); }
-.paper-side { padding: 1.3rem 0 1.3rem 1rem; display: flex; flex-direction: column; gap: 0.45rem; align-items: flex-end; min-width: 96px; }
-.side-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; letter-spacing: 0.05em; padding: 0.32rem 0.7rem; border-radius: 3px; border: 1.5px solid var(--rule); background: var(--surface); color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; text-decoration: none; display: block; text-align: center; }
-.side-btn:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
-.side-btn.primary { background: var(--tab-accent); color: white; border-color: var(--tab-accent); transition: background 0.15s, border-color 0.3s; }
-.side-btn.primary:hover { opacity: 0.88; }
+.paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--tab-accent); text-transform: uppercase; display: block; margin-bottom: 0.5rem; }
+.paper-title { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 0.5rem; }
+.paper-authors { font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; }
 
-/* ── AI DRAWER ── */
-.summary-drawer { display: none; background: var(--surface); border-top: 1px solid var(--rule); border-bottom: 2px solid var(--ink); padding: 1.4rem 1.5rem 1.4rem calc(52px); animation: drawerIn 0.2s ease; }
-.summary-drawer.open { display: block; }
-@keyframes drawerIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:translateY(0)} }
-.drawer-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tab-accent); margin-bottom: 0.65rem; transition: color 0.3s; }
-.drawer-content { font-size: 0.86rem; line-height: 1.82; color: var(--ink-light); max-width: 700px; }
-.drawer-content p { margin-bottom: 0.65rem; }
-.drawer-content strong { color: var(--ink); font-weight: 600; }
-.spinner-ring { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; transition: border-top-color 0.3s; }
-@keyframes spin { to{transform:rotate(360deg)} }
-
-/* ── LOADING / EMPTY ── */
-.loading-state { text-align: center; padding: 3.5rem 2rem; color: var(--muted); font-style: italic; font-size: 0.9rem; border-top: 2px solid var(--ink); }
-
-/* ── FOOTER ── */
-.page-footer { background: var(--ink); color: rgba(245,240,232,0.45); padding: 2rem; margin-top: 4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.05em; text-align: center; line-height: 1.9; }
-.page-footer a { color: #C88888; text-decoration: none; }
-
-/* ── RESPONSIVE ── */
-@media(max-width:640px) { .paper-row{grid-template-columns:36px 1fr} .paper-side{display:none} .summary-drawer{padding-left:1rem} .cancer-tabs{overflow-x:auto;gap:0} .ctab{padding:0.7rem 1rem} }
+.drawer { display: none; background: #fff; padding: 1.5rem; border: 1px solid var(--rule); margin-top: 1rem; font-size: 0.95rem; line-height: 1.8; }
+.drawer.open { display: block; }
 </style>
 </head>
 <body>
 
-<nav class="masthead" id="masthead">
+<nav class="masthead">
   <div class="masthead-inner">
-    <div class="masthead-title">Colorectal <span>Oncology</span> Digest</div>
-    <div class="masthead-meta"><span class="live-dot"></span><span id="masthead-date">Daily Feed · PubMed</span></div>
+    <div class="masthead-title">Colorectal Oncology Digest</div>
+    <div class="masthead-meta" id="date-display">Daily Feed</div>
   </div>
 </nav>
 
-<div class="cancer-tabs-wrap">
-  <div class="cancer-tabs">
-    <button class="ctab active" data-cancer="rectal" onclick="switchTab(this)">
-      <span class="ctab-dot" style="background:#7A1E2E"></span>Rectal Cancer<span class="ctab-count" id="tc-rectal">—</span>
-    </button>
-    <button class="ctab" data-cancer="colon" onclick="switchTab(this)">
-      <span class="ctab-dot" style="background:#1A5C5A"></span>Colon Cancer<span class="ctab-count" id="tc-colon">—</span>
-    </button>
-    <button class="ctab" data-cancer="anal" onclick="switchTab(this)">
-      <span class="ctab-dot" style="background:#1E3A5F"></span>Anal Cancer<span class="ctab-count" id="tc-anal">—</span>
-    </button>
-    <button class="ctab" data-cancer="appendix" onclick="switchTab(this)">
-      <span class="ctab-dot" style="background:#B8860B"></span>Appendix Cancer<span class="ctab-count" id="tc-appendix">—</span>
-    </button>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" data-term="rectal+cancer[MeSH]" onclick="switchTab(this, '#7A1E2E')">Rectal</button>
+    <button class="tab" data-term="colonic+neoplasms[MeSH]" onclick="switchTab(this, '#1A5C5A')">Colon</button>
+    <button class="tab" data-term="anus+neoplasms[MeSH]" onclick="switchTab(this, '#1E3A5F')">Anal</button>
+    <button class="tab" data-term="appendiceal+neoplasms[MeSH]" onclick="switchTab(this, '#B8860B')">Appendix</button>
   </div>
 </div>
 
 <header class="hero">
   <div class="hero-inner">
-    <div>
-      <div class="hero-kicker" id="hero-kicker">Rectal Cancer · Literature Feed</div>
-      <h1 id="hero-title">Rectal Cancer<br><em>Research Digest</em></h1>
-      <p class="hero-desc" id="hero-desc">Fresh publications fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance. Never miss a pivotal paper.</p>
-    </div>
-    <div class="hero-stats">
-      <div><span class="hero-stat-num" id="stat-total">—</span><span class="hero-stat-label">Papers</span></div>
-      <div><span class="hero-stat-num" id="stat-rct">—</span><span class="hero-stat-label">Trials</span></div>
-      <div><span class="hero-stat-num" id="stat-immuno">—</span><span class="hero-stat-label">Immuno</span></div>
-      <div><span class="hero-stat-num" id="stat-genomics">—</span><span class="hero-stat-label">Genomics</span></div>
-    </div>
+    <h1 id="hero-title">Rectal Cancer<br><em>Research Digest</em></h1>
   </div>
 </header>
-<div class="accent-bar" id="accent-bar"></div>
 
-<div class="api-wrap">
-  <div class="api-panel">
-    <div class="api-panel-label">🔑 Claude API</div>
-    <div class="api-panel-desc">Enter your Anthropic API key to enable AI-powered clinical summaries on any paper.</div>
-    <div class="api-row">
-      <input type="password" class="api-input" id="api-key" placeholder="sk-ant-api03-…" autocomplete="off">
-      <button class="api-btn" onclick="saveKey()">Save Key</button>
-    </div>
-    <div class="api-key-status" id="key-badge">Not set</div>
-  </div>
-</div>
-
-<div class="toolbar-wrap">
-  <div class="toolbar">
-    <div class="search-field">
-      <svg width="13" height="13" fill="none" stroke="#8A7E74" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="search" placeholder="Search titles, authors, journals…">
-    </div>
-    <div class="chips" id="chips">
-      <button class="chip active" data-tag="All" onclick="setChip(this)">All</button>
-      <button class="chip" data-tag="RCT" onclick="setChip(this)">RCT</button>
-      <button class="chip" data-tag="Surgery" onclick="setChip(this)">Surgery</button>
-      <button class="chip" data-tag="Chemotherapy" onclick="setChip(this)">Chemo</button>
-      <button class="chip" data-tag="Radiotherapy" onclick="setChip(this)">Radio</button>
-      <button class="chip" data-tag="Immunotherapy" onclick="setChip(this)">Immunotherapy</button>
-      <button class="chip" data-tag="Genomics" onclick="setChip(this)">Genomics</button>
-      <button class="chip" data-tag="Biomarker" onclick="setChip(this)">Biomarker</button>
-    </div>
-  </div>
-</div>
-
-<main class="page-wrap">
-  <div class="section-header">
-    <h2 id="section-title">Latest Publications · Rectal Cancer</h2>
-    <span class="section-count" id="count-label">Loading…</span>
-  </div>
-  <div class="papers-list" id="papers-list">
-    <div class="loading-state"><span class="spinner-ring"></span>&nbsp; Fetching latest papers from PubMed…</div>
-  </div>
+<main class="main">
+  <input type="text" class="search-bar" id="search" placeholder="Filter papers..." oninput="renderPapers()">
+  <div id="papers-list">Loading papers...</div>
 </main>
 
-<footer class="page-footer">
-  Colorectal Oncology Digest &nbsp;·&nbsp; Data from <a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank">NCBI PubMed</a> via E-utilities &nbsp;·&nbsp; AI summaries by <a href="https://anthropic.com" target="_blank">Anthropic Claude</a><br>
-  For research and educational use only. Not clinical advice.
-</footer>
-
 <script>
-// ═══════════════════════════════════════════════════
-// TAB CONFIGURATION
-// ═══════════════════════════════════════════════════
-const TABS = {
-  rectal: {
-    label: 'Rectal Cancer',
-    kicker: 'Rectal Cancer · Literature Feed',
-    title: 'Rectal Cancer<br><em>Research Digest</em>',
-    desc: 'Fresh publications on rectal cancer fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance.',
-    accent: '#7A1E2E',
-    pubmedTerm: 'rectal+cancer[MeSH+Major+Topic]'
-  },
-  colon: {
-    label: 'Colon Cancer',
-    kicker: 'Colon Cancer · Literature Feed',
-    title: 'Colon Cancer<br><em>Research Digest</em>',
-    desc: 'Fresh publications on colon cancer fetched daily from PubMed, auto-tagged by topic, and summarised with AI for clinical relevance.',
-    accent: '#1A5C5A',
-    pubmedTerm: 'colonic+neoplasms[MeSH+Major+Topic]'
-  },
-  anal: {
-    label: 'Anal Cancer',
-    kicker: 'Anal Cancer · Literature Feed',
-    title: 'Anal Cancer<br><em>Research Digest</em>',
-    desc: 'Fresh publications on anal cancer and squamous cell carcinoma fetched daily from PubMed, auto-tagged by topic, and summarised with AI.',
-    accent: '#1E3A5F',
-    pubmedTerm: 'anus+neoplasms[MeSH+Major+Topic]'
-  },
-  appendix: {
-    label: 'Appendix Cancer',
-    kicker: 'Appendix Cancer · Literature Feed',
-    title: 'Appendix Cancer<br><em>Research Digest</em>',
-    desc: 'Fresh publications on appendiceal neoplasms and pseudomyxoma peritonei fetched daily from PubMed, auto-tagged and AI-summarised.',
-    accent: '#B8860B',
-    pubmedTerm: 'appendiceal+neoplasms[MeSH+Major+Topic]'
-  }
-};
+let allPapers = [];
 
-// ═══════════════════════════════════════════════════
-// STATE & TAG RULES
-// ═══════════════════════════════════════════════════
-let activeTabKey = 'rectal';
-let papersByTab  = { rectal: null, colon: null, anal: null, appendix: null };
-let activeTag    = 'All';
-let claudeKey    = '';
-
-const TAG_RULES = {
-  'Surgery':       ['surgery','resection','mesorectal','tme','sphincter','laparoscop','robotic','colostomy','stoma','anastomosis','watch and wait','organ preserv','transanal','hemicolectomy','colectomy','cytoreduct','hipec','appendicectomy','excision'],
-  'Chemotherapy':  ['chemotherapy','folfox','folfiri','capecitabine','oxaliplatin','fluorouracil','5-fu','irinotecan','mitomycin','cisplatin'],
-  'Radiotherapy':  ['radiotherapy','radiation','chemoradiotherapy','imrt','chemoradiation'],
-  'Immunotherapy': ['immunotherapy','pembrolizumab','nivolumab','pd-1','pd-l1','ipilimumab','immune'],
-  'Genomics':      ['genom','mutation','kras','braf','ctdna','transcriptom','molecular','dna'],
-  'Biomarker':     ['biomarker','marker','expression','microsatellite','mmr','msi'],
-  'RCT':           ['randomised','randomized','rct','trial'],
-  'Meta-analysis': ['meta-analysis','systematic review'],
-  'Phase II':      ['phase ii','phase 2'],
-  'Phase III':     ['phase iii','phase 3']
-};
-
-function assignTags(title) {
-  let t = title.toLowerCase();
-  let tags = [];
-  for (let [tag, keywords] of Object.entries(TAG_RULES)) {
-    if (keywords.some(kw => t.includes(kw))) {
-      tags.push(tag);
-    }
-  }
-  return tags;
-}
-
-// ═══════════════════════════════════════════════════
-// API KEY MANAGER
-// ═══════════════════════════════════════════════════
-function saveKey() {
-  claudeKey = document.getElementById('api-key').value.trim();
-  const badge = document.getElementById('key-badge');
-  badge.textContent = claudeKey ? '✓ Key active' : 'Not set';
-  badge.className   = claudeKey ? 'api-key-status set' : 'api-key-status';
-}
-
-// ═══════════════════════════════════════════════════
-// TAB SWITCHING & PUBMED FETCH
-// ═══════════════════════════════════════════════════
-function switchTab(btn) {
-  document.querySelectorAll('.ctab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const key = btn.dataset.cancer;
-  activeTabKey = key;
-  activeTag = 'All';
-  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.dataset.tag==='All'));
-  document.getElementById('search').value = '';
-  
-  applyTheme(key);
-  updateHero(key);
-  
-  document.getElementById('section-title').textContent = `Latest Publications · ${TABS[key].label}`;
-
-  if (papersByTab[key]) {
-    updateStats(papersByTab[key]);
-    renderPapers(papersByTab[key]);
-  } else {
-    document.getElementById('papers-list').innerHTML = '<div class="loading-state"><span class="spinner-ring"></span>&nbsp; Fetching live papers from PubMed...</div>';
-    fetchForTab(key);
-  }
-}
-
-function applyTheme(key) {
-  const accent = TABS[key].accent;
-  document.documentElement.style.setProperty('--tab-accent', accent);
-}
-
-function updateHero(key) {
-  const t = TABS[key];
-  document.getElementById('hero-kicker').textContent = t.kicker;
-  document.getElementById('hero-title').innerHTML = t.title;
-  document.getElementById('hero-desc').textContent = t.desc;
-}
-
-async function fetchForTab(key) {
-  try {
-    const term = TABS[key].pubmedTerm;
-    // 1. Search PubMed for the 15 most recent PMIDs matching the tab's topic
-    const searchRes = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=15&sort=pub+date&term=${term}`);
-    const searchData = await searchRes.json();
-    const pmids = searchData.esearchresult.idlist;
-
-    if (!pmids || pmids.length === 0) {
-      document.getElementById('papers-list').innerHTML = '<div class="loading-state">No recent papers found.</div>';
-      return;
-    }
-
-    // 2. Fetch the summary metadata (Title, Authors, Journal, Date) for those PMIDs
-    const summaryRes = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=${pmids.join(',')}`);
-    const summaryData = await summaryRes.json();
-    const results = summaryData.result;
-
-    const papers = [];
-    for (let id of pmids) {
-      const p = results[id];
-      if(!p) continue;
-      
-      const title = p.title || 'Untitled';
-      const authors = p.authors ? p.authors.map(a => a.name).join(', ') : 'Unknown Authors';
-      const journal = p.fulljournalname || p.source || 'Unknown Journal';
-      
-      // Parse basic date string
-      let dateObj = new Date(p.pubdate.split(' ')[0]);
-      let dateStr = isNaN(dateObj) ? p.pubdate : dateObj.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-
-      papers.push({
-        pmid: id,
-        title: title,
-        authors: authors,
-        journal: journal,
-        date: dateStr,
-        tags: assignTags(title)
-      });
-    }
-
-    papersByTab[key] = papers;
-    document.getElementById(`tc-${key}`).textContent = papers.length;
-    
-    updateStats(papersByTab[key]);
-    renderPapers(papersByTab[key]);
-
-  } catch (error) {
-    console.error("PubMed Fetch Error:", error);
-    document.getElementById('papers-list').innerHTML = `<div class="loading-state" style="color:var(--rose)">Error fetching from PubMed: ${error.message}</div>`;
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// FILTERING & RENDERING
-// ═══════════════════════════════════════════════════
-function setChip(btn) {
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  activeTag = btn.dataset.tag;
-  if (papersByTab[activeTabKey]) {
-    renderPapers(papersByTab[activeTabKey]);
-  }
-}
-
-function updateStats(papers) {
-  document.getElementById('stat-total').textContent = papers.length;
-  document.getElementById('stat-rct').textContent = papers.filter(p => p.tags.includes('RCT') || p.tags.includes('Phase III') || p.tags.includes('Phase II')).length;
-  document.getElementById('stat-immuno').textContent = papers.filter(p => p.tags.includes('Immunotherapy')).length;
-  document.getElementById('stat-genomics').textContent = papers.filter(p => p.tags.includes('Genomics') || p.tags.includes('Biomarker')).length;
-}
-
-function renderPapers(papers) {
+async function fetchPapers(term) {
   const list = document.getElementById('papers-list');
-  list.innerHTML = '';
-
-  const searchTerm = document.getElementById('search').value.toLowerCase();
+  list.innerHTML = "Fetching latest research...";
   
-  let filtered = papers.filter(p => {
-    const textMatch = p.title.toLowerCase().includes(searchTerm) || 
-                      p.authors.toLowerCase().includes(searchTerm) || 
-                      p.journal.toLowerCase().includes(searchTerm);
-    const tagMatch = activeTag === 'All' || p.tags.includes(activeTag);
-    return textMatch && tagMatch;
-  });
-
-  document.getElementById('count-label').textContent = `${filtered.length} paper${filtered.length !== 1 ? 's' : ''}`;
-
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="loading-state">No papers match your search/filter criteria.</div>';
-    return;
-  }
-
-  filtered.forEach((p, idx) => {
-    const tagsHtml = p.tags.map(t => {
-      let cls = 'ptag-default';
-      if(t==='Surgery') cls='ptag-surgery';
-      else if(t==='Chemotherapy') cls='ptag-chemo';
-      else if(t==='Radiotherapy') cls='ptag-radio';
-      else if(t==='Immunotherapy') cls='ptag-immuno';
-      else if(t==='Genomics') cls='ptag-genomics';
-      else if(t==='Biomarker') cls='ptag-biomarker';
-      else if(t==='RCT') cls='ptag-rct';
-      else if(t==='Meta-analysis') cls='ptag-meta';
-      else if(t==='Phase II') cls='ptag-phase2';
-      else if(t==='Phase III') cls='ptag-phase3';
-      return `<span class="ptag ${cls}">${t}</span>`;
-    }).join('');
-
-    const row = document.createElement('div');
-    row.innerHTML = `
-      <div class="paper-row" onclick="fetchSummary('${p.pmid}')">
-        <div class="paper-num">${(idx+1).toString().padStart(2,'0')}</div>
-        <div class="paper-body">
-          <div class="paper-meta-line">
-            <span class="paper-journal">${p.journal}</span>
-            <span class="paper-date">${p.date}</span>
-            <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" class="pmid" onclick="event.stopPropagation()">PMID: ${p.pmid}</a>
-          </div>
-          <h3 class="paper-title">${p.title}</h3>
-          <div class="paper-authors">${p.authors}</div>
-          <div class="paper-tags">${tagsHtml}</div>
-        </div>
-        <div class="paper-side">
-          <button class="side-btn primary" onclick="event.stopPropagation(); fetchSummary('${p.pmid}')">AI Summary</button>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" class="side-btn" onclick="event.stopPropagation()">View on PubMed</a>
-        </div>
-      </div>
-      <div class="summary-drawer" id="drawer-${p.pmid}">
-        <div class="drawer-label">✦ Claude AI Summary</div>
-        <div class="drawer-content" id="summary-content-${p.pmid}"></div>
-      </div>
-    `;
-    list.appendChild(row);
-  });
-}
-
-// ═══════════════════════════════════════════════════
-// CLAUDE AI & PUBMED ABSTRACT ENGINE
-// ═══════════════════════════════════════════════════
-async function fetchSummary(pmid) {
-  const drawer = document.getElementById(`drawer-${pmid}`);
-  const content = document.getElementById(`summary-content-${pmid}`);
-
-  // Toggle close if already open and finished loading
-  if(drawer.classList.contains('open') && content.innerHTML.indexOf('spinner') === -1) {
-    drawer.classList.remove('open');
-    return;
-  }
-
-  drawer.classList.add('open');
-  content.innerHTML = '<span class="spinner-ring"></span>&nbsp; Fetching full abstract from PubMed...';
-
   try {
-    // 1. Fetch the raw XML abstract from PubMed efetch API
-    const res = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=${pmid}&retmode=xml`);
-    const xmlText = await res.text();
-    
-    // Parse the XML safely
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-    const abstractNodes = xmlDoc.getElementsByTagName("AbstractText");
-    
-    let abstract = "";
-    if (abstractNodes.length > 0) {
-      abstract = Array.from(abstractNodes).map(n => n.textContent).join('\n\n');
-    } else {
-      content.innerHTML = "<em>No abstract available on PubMed for this paper.</em>";
-      return;
-    }
+    const search = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=10&term=${term}`);
+    const searchData = await search.json();
+    const ids = searchData.esearchresult.idlist.join(',');
 
-    // Fallback: If no API key is provided, just show the raw PubMed abstract.
-    if (!claudeKey) {
-      content.innerHTML = `<strong>Raw Abstract (Claude API Key not set):</strong><br><br>${abstract.replace(/\n/g, '<br>')}`;
-      return;
-    }
+    const summary = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=${ids}`);
+    const summaryData = await summary.json();
 
-    // 2. We have the key and the abstract. Call Anthropic Claude API.
-    content.innerHTML = '<span class="spinner-ring"></span>&nbsp; Abstract found. Generating concise clinical summary with Claude...';
+    allPapers = searchData.esearchresult.idlist.map(id => ({
+      id,
+      title: summaryData.result[id].title,
+      journal: summaryData.result[id].source,
+      authors: summaryData.result[id].authors.map(a => a.name).join(', ')
+    }));
 
-    const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': claudeKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: "claude-3-haiku-20240307",
-        max_tokens: 250,
-        system: "You are an expert oncology assistant. Summarise the following medical abstract into 2 or 3 concise bullet points focusing purely on clinical relevance, outcomes, and conclusions.",
-        messages: [
-          { role: "user", content: abstract }
-        ]
-      })
-    });
-
-    if (!aiRes.ok) {
-      // Browsers often block client-side API requests via CORS for security reasons.
-      throw new Error(`Anthropic API blocked (CORS) or Invalid Key (Status: ${aiRes.status}). Local browsers cannot usually call Claude directly without a proxy server. <br><br><strong>Here is the raw abstract instead:</strong><br><br>${abstract.replace(/\n/g, '<br>')}`);
-    }
-
-    const data = await aiRes.json();
-    const aiText = data.content[0].text;
-    content.innerHTML = aiText.replace(/\n/g, '<br>');
-
-  } catch(e) {
-    content.innerHTML = `<span style="color:var(--rose)">${e.message}</span>`;
+    renderPapers();
+  } catch (e) {
+    list.innerHTML = "Error loading papers.";
   }
 }
 
-// ═══════════════════════════════════════════════════
-// INITIALISATION
-// ═══════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  // Set today's date in masthead
-  const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  document.getElementById('masthead-date').textContent = `Daily Feed · ${dateStr}`;
+function renderPapers() {
+  const query = document.getElementById('search').value.toLowerCase();
+  const list = document.getElementById('papers-list');
+  const filtered = allPapers.filter(p => p.title.toLowerCase().includes(query));
 
-  // Attach search listener
-  document.getElementById('search').addEventListener('input', () => {
-    if (papersByTab[activeTabKey]) {
-      renderPapers(papersByTab[activeTabKey]);
-    }
-  });
+  list.innerHTML = filtered.map(p => `
+    <div class="paper-row" onclick="toggleDrawer('${p.id}')">
+      <span class="paper-journal">${p.journal}</span>
+      <h2 class="paper-title">${p.title}</h2>
+      <p class="paper-authors">${p.authors}</p>
+      <div class="drawer" id="drawer-${p.id}">Loading abstract...</div>
+    </div>
+  `).join('');
+}
 
-  // Start by loading the first tab
-  switchTab(document.querySelector('.ctab[data-cancer="rectal"]'));
-});
+async function toggleDrawer(id) {
+  const drawer = document.getElementById(`drawer-${id}`);
+  drawer.classList.toggle('open');
+  
+  if (drawer.classList.contains('open') && drawer.innerText === "Loading abstract...") {
+    const res = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=${id}&retmode=xml`);
+    const xmlText = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "text/xml");
+    const abstract = xml.getElementsByTagName("AbstractText")[0]?.textContent || "No abstract available.";
+    drawer.innerText = abstract;
+  }
+}
+
+function switchTab(btn, color) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.documentElement.style.setProperty('--tab-accent', color);
+  document.getElementById('hero-title').innerHTML = `${btn.innerText} Cancer<br><em>Research Digest</em>`;
+  fetchPapers(btn.dataset.term);
+}
+
+document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+fetchPapers('rectal+cancer[MeSH]');
 </script>
 </body>
 </html>
