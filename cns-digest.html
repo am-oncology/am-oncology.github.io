@@ -29,64 +29,40 @@
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
 
   .tab-bar { background: var(--ink); display: flex; padding: 0 2.5rem; border-bottom: 1px solid #2A2520; overflow-x: auto; }
-  .tab-bar::-webkit-scrollbar { height: 2px; }
-  .tab-bar::-webkit-scrollbar-thumb { background: var(--tab-accent); }
   .tab-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6A6458; background: none; border: none; padding: 0.85rem 1.5rem 0.75rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; }
-  .tab-btn:hover { color: #A09880; }
   .tab-btn.active { color: var(--cream); border-bottom-color: var(--tab-accent); }
 
   .main { max-width: 900px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
 
-  .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--rule); margin-bottom: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--muted); gap: 1rem; flex-wrap: wrap; }
-  .status-left { display: flex; align-items: center; gap: 0.75rem; }
-  .status-count { color: var(--ink); font-weight: 500; }
-  .refresh-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tab-accent); background: none; border: 1px solid var(--tab-accent); padding: 0.25rem 0.65rem; border-radius: 2px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+  .status-bar { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.5rem; }
+  .status-top { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  
+  .controls-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+  #search-bar { flex-grow: 1; min-width: 200px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.4rem 0.75rem; border: 1px solid var(--rule); background: white; border-radius: 2px; color: var(--ink); outline-color: var(--tab-accent); }
+  
+  select, .refresh-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tab-accent); background: white; border: 1px solid var(--tab-accent); padding: 0.4rem 0.6rem; border-radius: 2px; cursor: pointer; height: 32px; }
   .refresh-btn:hover { background: var(--tab-accent); color: white; }
-  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .loading-state { padding: 3rem 0; text-align: center; }
-  .spinner { width: 28px; height: 28px; border: 2px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .loading-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; }
-  .loading-steps { margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); opacity: 0.7; }
-
-  .error-state { padding: 1.5rem; border: 1px solid #C4A882; background: #FAF5EE; border-radius: 3px; display: none; }
-  .error-state.visible { display: block; }
-  .error-state h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.4rem; }
-  .error-state p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
-
-  .query-display { background: var(--cream-mid); border: 1px solid var(--rule); border-radius: 2px; padding: 0.6rem 0.85rem; margin-bottom: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.57rem; color: var(--muted); line-height: 1.6; word-break: break-word; display: none; }
-  .query-display.visible { display: block; }
-  .query-label { color: var(--ink); font-weight: 500; margin-right: 0.4rem; }
-
-  .paper-list { display: none; flex-direction: column; }
-  .paper-list.visible { display: flex; }
-  .paper-item { border-bottom: 1px solid var(--rule); padding: 1.25rem 0; cursor: pointer; }
+  .paper-item { border-bottom: 1px solid var(--rule); padding: 1.25rem 0; cursor: pointer; transition: background 0.1s; }
   .paper-item:hover { background: var(--cream-dark); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
-  .paper-num { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; color: var(--muted); margin-bottom: 0.3rem; }
   .paper-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.4rem; }
-  .paper-authors { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-bottom: 0.35rem; }
-  .paper-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
-  .paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--tab-accent); letter-spacing: 0.02em; font-weight: 500; }
-  .paper-date { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); }
-  .paper-pmid { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); background: var(--cream-dark); padding: 0.1rem 0.4rem; border-radius: 2px; border: 1px solid var(--rule); text-decoration: none; }
-  .paper-pmid:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
+  .paper-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--tab-accent); font-weight: 500; }
+  
+  .badge-link { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); background: var(--cream-dark); padding: 0.1rem 0.4rem; border-radius: 2px; border: 1px solid var(--rule); text-decoration: none; }
+  .badge-link:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
+  .doi-link { color: #5C3A6B; }
 
   .abstract-drawer { display: none; background: var(--cream-dark); border: 1px solid var(--rule); border-radius: 2px; padding: 1.25rem 1.5rem; margin-top: 1rem; }
   .abstract-drawer.open { display: block; }
-  .drawer-loading { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
-  .drawer-spinner { width: 12px; height: 12px; border: 1.5px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-  .drawer-heading { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--tab-accent); margin-bottom: 0.75rem; font-weight: 500; }
   .abstract-text { font-size: 0.88rem; line-height: 1.7; color: #3A3228; white-space: pre-wrap; }
-  .drawer-footer { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-  .abstract-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; color: var(--muted); background: var(--cream); padding: 0.15rem 0.4rem; border-radius: 2px; border: 1px solid var(--rule); }
-  .pubmed-link { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--tab-accent); text-decoration: none; margin-left: auto; }
-  .pubmed-link:hover { text-decoration: underline; }
+  
+  .drawer-footer { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); display: flex; gap: 0.75rem; align-items: center; }
+  .cite-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; background: var(--tab-accent); color: white; border: none; padding: 0.25rem 0.55rem; border-radius: 2px; cursor: pointer; }
 
-  .no-results { padding: 2.5rem 0; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); display: none; }
-  .no-results.visible { display: block; }
-
-  footer { text-align: center; padding: 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); border-top: 1px solid var(--rule); background: var(--cream-dark); margin-top: 2rem; }
+  .loading-state, .error-state, .no-results { text-align: center; padding: 3rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+  .spinner { width: 24px; height: 24px; border: 2px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 </style>
 </head>
 <body>
@@ -99,7 +75,6 @@
     </div>
     <div class="masthead-meta">
       <div id="fetch-date">—</div>
-      <div>10 papers per tab</div>
       <div>pubmed.ncbi.nlm.nih.gov</div>
     </div>
   </div>
@@ -114,256 +89,205 @@
 
 <div class="main">
   <div class="status-bar">
-    <div class="status-left">
-      <span class="status-count" id="status-count">—</span>
-      <span id="status-msg">Loading…</span>
+    <div class="status-top">
+      <div>
+        <span id="status-count" style="color:var(--ink); font-weight:500;">—</span>
+        <span id="status-msg">Loading latest papers…</span>
+      </div>
+      <div id="last-updated"></div>
     </div>
-    <button class="refresh-btn" id="refresh-btn" onclick="refreshTab()">↺ Refresh</button>
+    <div class="controls-row">
+      <input type="text" id="search-bar" placeholder="Filter by title or author..." oninput="filterResults()">
+      <select id="date-range" onchange="refreshTab()">
+        <option value="30">30 Days</option>
+        <option value="90" selected>90 Days</option>
+        <option value="180">180 Days</option>
+        <option value="365">1 Year</option>
+      </select>
+      <button class="refresh-btn" onclick="refreshTab()">↺ Refresh</button>
+    </div>
   </div>
 
-  <div class="query-display" id="query-display">
-    <span class="query-label">PubMed query:</span><span id="query-text"></span>
-  </div>
-
-  <div class="loading-state" id="loading-state">
+  <div class="loading-state" id="loading-state" style="display:none">
     <div class="spinner"></div>
-    <div class="loading-label">Fetching from PubMed…</div>
-    <div class="loading-steps" id="loading-steps">Connecting to NCBI E-utilities</div>
+    <div id="loading-steps">Accessing NCBI E-utilities...</div>
   </div>
 
-  <div class="error-state" id="error-state">
-    <h3>Could not fetch papers</h3>
-    <p id="error-msg">Unable to connect to PubMed. Check your connection and try refreshing.</p>
+  <div class="error-state" id="error-state" style="display:none">
+    <p id="error-msg">Failed to connect to PubMed.</p>
   </div>
 
   <div class="paper-list" id="paper-list"></div>
-  <div class="no-results" id="no-results">No papers found in the last 90 days for this query.</div>
+  <div class="no-results" id="no-results" style="display:none">No papers matching your criteria were found.</div>
 </div>
-
-<footer>
-  Papers retrieved live from PubMed/MEDLINE via NCBI E-utilities · Abstracts fetched on demand · Updated each page load
-</footer>
 
 <script>
 const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+const API_KEY = ''; // Add your NCBI API key here for 10req/s
 
 const TABS = {
-  glioma: {
-    accent: '#2D4A7A',
-    // Broad query: any paper about glioma AND some form of clinical relevance
-    query: '(glioblastoma[tiab] OR "glioma"[tiab] OR "IDH-mutant"[tiab] OR "diffuse midline glioma"[tiab] OR ependymoma[tiab] OR "high-grade glioma"[tiab] OR "low-grade glioma"[tiab]) AND ("humans"[MeSH Terms])',
-  },
-  skull: {
-    accent: '#4A3728',
-    query: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "acoustic neuroma"[tiab] OR "pituitary adenoma"[tiab] OR "skull base"[tiab] OR craniopharyngioma[tiab] OR "pituitary tumor"[tiab] OR "sellar"[tiab]) AND ("humans"[MeSH Terms])',
-  },
-  srs: {
-    accent: '#1A5C4A',
-    query: '("stereotactic radiosurgery"[tiab] OR "gamma knife"[tiab] OR "CyberKnife"[tiab] OR "stereotactic radiotherapy"[tiab] OR "SBRT"[tiab] OR "LINAC radiosurgery"[tiab]) AND ("brain"[tiab] OR "intracranial"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])',
-  },
-  ocular: {
-    accent: '#5C3A6B',
-    query: '("uveal melanoma"[tiab] OR "choroidal melanoma"[tiab] OR retinoblastoma[tiab] OR "thyroid eye disease"[tiab] OR "Graves ophthalmopathy"[tiab] OR "orbital tumor"[tiab] OR "ocular oncology"[tiab] OR "conjunctival melanoma"[tiab] OR "vitreoretinal lymphoma"[tiab]) AND ("humans"[MeSH Terms])',
-  }
+  glioma: { accent: '#2D4A7A', query: '(glioblastoma[tiab] OR "glioma"[tiab] OR "IDH-mutant"[tiab]) AND ("humans"[MeSH Terms])' },
+  skull: { accent: '#4A3728', query: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "skull base"[tiab]) AND ("humans"[MeSH Terms])' },
+  srs: { accent: '#1A5C4A', query: '("stereotactic radiosurgery"[tiab] OR "gamma knife"[tiab]) AND ("brain"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])' },
+  ocular: { accent: '#5C3A6B', query: '("uveal melanoma"[tiab] OR "retinoblastoma"[tiab] OR "orbital tumor"[tiab]) AND ("humans"[MeSH Terms])' }
 };
 
 let activeTab = 'glioma';
+let currentPapers = [];
 let cache = {};
-
-function setAccent(c) { document.documentElement.style.setProperty('--tab-accent', c); }
-
-function formatDate(d) {
-  return d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-}
-
-function fromDate() {
-  const d = new Date(); d.setDate(d.getDate() - 90);
-  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function esc(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
 
 function ui(id) { return document.getElementById(id); }
 
-function showLoading(step) {
-  ui('loading-state').style.display = 'block';
-  ui('loading-steps').textContent = step;
-  ui('paper-list').classList.remove('visible');
-  ui('error-state').classList.remove('visible');
-  ui('no-results').classList.remove('visible');
-  ui('query-display').classList.remove('visible');
-  ui('refresh-btn').disabled = true;
-  ui('status-count').textContent = '—';
-  ui('status-msg').textContent = 'Fetching…';
+function fromDate() {
+  const days = parseInt(ui('date-range').value);
+  const d = new Date(); d.setDate(d.getDate() - days);
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
 }
 
-function hideLoading() {
-  ui('loading-state').style.display = 'none';
-  ui('refresh-btn').disabled = false;
-}
-
-async function loadTab(key, force) {
+async function loadTab(key, force = false) {
   activeTab = key;
+  const range = ui('date-range').value;
+  const cacheKey = `${key}-${range}`;
+
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
-  setAccent(TABS[key].accent);
+  document.documentElement.style.setProperty('--tab-accent', TABS[key].accent);
+  ui('search-bar').value = '';
 
-  if (!force && cache[key]) { render(cache[key], key); return; }
+  if (!force && cache[cacheKey]) { 
+    currentPapers = cache[cacheKey];
+    render(currentPapers); 
+    return; 
+  }
 
-  showLoading('Step 1/2 — Searching PubMed index…');
+  ui('loading-state').style.display = 'block';
+  ui('paper-list').innerHTML = '';
+  ui('no-results').style.display = 'none';
 
   try {
-    const q = TABS[key].query;
-    const fd = fromDate();
-
-    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(q)}&sort=pub+date&retmax=10&datetype=pdat&mindate=${fd}&retmode=json`;
+    const auth = API_KEY ? `&api_key=${API_KEY}` : '';
+    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(TABS[key].query)}&sort=pub+date&retmax=15&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
+    
     const sRes = await fetch(searchUrl);
-    if (!sRes.ok) throw new Error(`PubMed search returned HTTP ${sRes.status}`);
     const sData = await sRes.json();
     const ids = sData.esearchresult?.idlist || [];
 
     if (!ids.length) {
-      hideLoading();
-      ui('no-results').classList.add('visible');
-      ui('status-msg').textContent = 'No papers found in last 90 days';
-      ui('query-text').textContent = q;
-      ui('query-display').classList.add('visible');
+      ui('loading-state').style.display = 'none';
+      ui('no-results').style.display = 'block';
       return;
     }
 
-    ui('loading-steps').textContent = `Step 2/2 — Retrieving ${ids.length} summaries…`;
-
-    const sumUrl = `${BASE}esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`;
+    const sumUrl = `${BASE}esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json${auth}`;
     const rRes = await fetch(sumUrl);
-    if (!rRes.ok) throw new Error(`PubMed summary returned HTTP ${rRes.status}`);
     const rData = await rRes.json();
 
-    const papers = ids.map((id, i) => {
-      const d = rData.result?.[id];
-      if (!d || d.error) return null;
-      const auths = (d.authors||[]).slice(0,4).map(a=>a.name).join(', ');
+    currentPapers = ids.map(id => {
+      const d = rData.result[id];
+      const doi = d.articleids?.find(a => a.idtype === 'doi')?.value;
       return {
         pmid: id,
-        title: (d.title||'').replace(/\.$/, ''),
-        authors: (d.authors?.length > 4) ? auths + ' et al.' : auths,
-        journal: d.fulljournalname || d.source || '',
-        date: d.pubdate || '',
-        abstract: null,
-        num: String(i+1).padStart(2,'0'),
-        total: String(ids.length).padStart(2,'0'),
+        doi: doi,
+        title: d.title.replace(/\.$/, ''),
+        authorsShort: d.authors.map(a => a.name).slice(0, 3).join(', ') + (d.authors.length > 3 ? ' et al.' : ''),
+        authorsFull: d.authors.map(a => a.name).join(', '),
+        journal: d.source,
+        date: d.pubdate,
+        abstract: null
       };
-    }).filter(Boolean);
+    });
 
-    cache[key] = { papers, query: q };
-    render({ papers, query: q }, key);
-
-  } catch(err) {
-    hideLoading();
-    ui('error-state').classList.add('visible');
-    ui('error-msg').textContent = `${err.message}. This may be a temporary NCBI issue — try refreshing in a moment.`;
-    ui('status-msg').textContent = 'Error';
+    cache[cacheKey] = currentPapers;
+    render(currentPapers);
+  } catch (err) {
+    ui('loading-state').style.display = 'none';
+    ui('error-state').style.display = 'block';
   }
 }
 
-function render({ papers, query }, key) {
-  hideLoading();
+function filterResults() {
+  const query = ui('search-bar').value.toLowerCase();
+  const filtered = currentPapers.filter(p => 
+    p.title.toLowerCase().includes(query) || 
+    p.authorsFull.toLowerCase().includes(query)
+  );
+  render(filtered);
+}
 
-  ui('query-text').textContent = query;
-  ui('query-display').classList.add('visible');
-  ui('fetch-date').textContent = formatDate(new Date());
-
-  if (!papers.length) {
-    ui('no-results').classList.add('visible');
-    ui('status-msg').textContent = 'No papers found';
-    return;
-  }
-
-  ui('status-count').textContent = `${papers.length} papers`;
-  ui('status-msg').textContent = `Retrieved from PubMed · ${formatDate(new Date())}`;
-
+function render(papers) {
+  ui('loading-state').style.display = 'none';
+  ui('status-count').textContent = `${papers.length} Results`;
+  ui('fetch-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  
   const list = ui('paper-list');
-  list.innerHTML = '';
-
-  papers.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'paper-item';
-    item.innerHTML = `
-      <div class="paper-num">${p.num} / ${p.total}</div>
-      <div class="paper-title">${esc(p.title)}</div>
-      <div class="paper-authors">${esc(p.authors)}</div>
+  list.innerHTML = papers.map(p => `
+    <div class="paper-item" onclick="toggleDrawer('${p.pmid}')">
+      <div class="paper-title">${p.title}</div>
+      <div style="font-size: 0.82rem; color: var(--muted); font-style: italic;">${p.authorsShort}</div>
       <div class="paper-meta">
-        <span class="paper-journal">${esc(p.journal)}</span>
-        <span class="paper-date">${esc(p.date)}</span>
-        <a class="paper-pmid" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+        <span class="paper-journal">${p.journal}</span>
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.58rem;">${p.date}</span>
+        <a class="badge-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+        ${p.doi ? `<a class="badge-link doi-link" href="https://doi.org/${p.doi}" target="_blank" onclick="event.stopPropagation()">DOI</a>` : ''}
       </div>
       <div class="abstract-drawer" id="drw-${p.pmid}">
-        <div class="drawer-heading">Abstract</div>
-        <div id="drw-loading-${p.pmid}" class="drawer-loading"><div class="drawer-spinner"></div>Fetching abstract…</div>
-        <div id="drw-text-${p.pmid}" class="abstract-text" style="display:none"></div>
-        <div id="drw-foot-${p.pmid}" class="drawer-footer" style="display:none">
-          <span class="abstract-badge" id="drw-badge-${p.pmid}"></span>
-          <a class="pubmed-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank">↗ Open in PubMed</a>
+        <div id="drw-text-${p.pmid}" class="abstract-text">Loading abstract...</div>
+        <div class="drawer-footer">
+          <button class="cite-btn" onclick="copyCitation(event, '${p.pmid}')">Copy AMA Citation</button>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" style="font-size: 0.6rem; color: var(--tab-accent); margin-left: auto;">View on PubMed ↗</a>
         </div>
-      </div>`;
-    item.addEventListener('click', () => toggleDrawer(p, item));
-    list.appendChild(item);
-  });
-
-  list.classList.add('visible');
+      </div>
+    </div>
+  `).join('');
+  
+  ui('no-results').style.display = papers.length === 0 ? 'block' : 'none';
 }
 
-async function toggleDrawer(paper, item) {
-  const drw = document.getElementById(`drw-${paper.pmid}`);
+async function toggleDrawer(pmid) {
+  const drw = ui(`drw-${pmid}`);
   const wasOpen = drw.classList.contains('open');
   document.querySelectorAll('.abstract-drawer.open').forEach(d => d.classList.remove('open'));
   if (wasOpen) return;
   drw.classList.add('open');
 
-  if (paper.abstract !== null) return; // already fetched
+  const p = currentPapers.find(x => x.pmid === pmid);
+  if (p.abstract) { ui(`drw-text-${pmid}`).textContent = p.abstract; return; }
 
   try {
-    const url = `${BASE}efetch.fcgi?db=pubmed&id=${paper.pmid}&retmode=xml&rettype=abstract`;
-    const resp = await fetch(url);
-    const text = await resp.text();
+    const auth = API_KEY ? `&api_key=${API_KEY}` : '';
+    const res = await fetch(`${BASE}efetch.fcgi?db=pubmed&id=${pmid}&retmode=xml${auth}`);
+    const text = await res.text();
     const doc = new DOMParser().parseFromString(text, 'text/xml');
     const nodes = doc.querySelectorAll('AbstractText');
-    let parts = [];
-    nodes.forEach(n => {
-      const label = n.getAttribute('Label');
-      parts.push(label ? `${label}: ${n.textContent.trim()}` : n.textContent.trim());
-    });
-    paper.abstract = parts.join('\n\n') || '';
+    const abstract = Array.from(nodes).map(n => {
+        const label = n.getAttribute('Label');
+        return label ? `${label}: ${n.textContent}` : n.textContent;
+    }).join('\n\n');
+    
+    p.abstract = abstract || "No abstract text provided in the PubMed record.";
+    ui(`drw-text-${pmid}`).textContent = p.abstract;
   } catch {
-    paper.abstract = '';
-  }
-
-  document.getElementById(`drw-loading-${paper.pmid}`).style.display = 'none';
-  const textEl = document.getElementById(`drw-text-${paper.pmid}`);
-  const badgeEl = document.getElementById(`drw-badge-${paper.pmid}`);
-  textEl.style.display = 'block';
-  document.getElementById(`drw-foot-${paper.pmid}`).style.display = 'flex';
-
-  if (paper.abstract) {
-    textEl.textContent = paper.abstract;
-    badgeEl.textContent = '✓ Full abstract';
-    badgeEl.style.color = '#2D7A4A';
-  } else {
-    textEl.textContent = 'No abstract available for this article.';
-    textEl.style.fontStyle = 'italic';
-    textEl.style.color = 'var(--muted)';
-    badgeEl.textContent = '⚠ Title only';
+    ui(`drw-text-${pmid}`).textContent = "Error fetching abstract from NCBI.";
   }
 }
 
-function refreshTab() { delete cache[activeTab]; loadTab(activeTab, true); }
+function copyCitation(e, pmid) {
+  e.stopPropagation();
+  const p = currentPapers.find(x => x.pmid === pmid);
+  const citation = `${p.authorsFull}. ${p.title}. ${p.journal}. ${p.date}; PMID: ${p.pmid}.`;
+  navigator.clipboard.writeText(citation);
+  const btn = e.target;
+  const oldText = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = oldText, 2000);
+}
+
+function refreshTab() { loadTab(activeTab, true); }
 
 document.getElementById('tab-bar').addEventListener('click', e => {
   const btn = e.target.closest('.tab-btn');
   if (btn) loadTab(btn.dataset.tab);
 });
 
-document.getElementById('fetch-date').textContent = formatDate(new Date());
 loadTab('glioma');
 </script>
 </body>
