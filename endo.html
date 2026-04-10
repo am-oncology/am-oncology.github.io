@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endometrial Cancer Adjuvant Tool (UK 2026)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 15px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .recommendation {
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .note {
+            font-size: 0.85em;
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .risk-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            button { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Endometrial Cancer Adjuvant Tool</h1>
+    <p class="subtitle">Interactive guidance based on UK/ESGO 2025-2026 Standards</p>
+
+    <div class="grid">
+        <div class="form-group">
+            <label>Molecular Classification</label>
+            <select id="molecular">
+                <option value="unknown">Unknown / Not tested</option>
+                <option value="pole">POLEmut (Ultramutated)</option>
+                <option value="mmrd">MMRd (Hypermutated)</option>
+                <option value="nsmp">NSMP (No Specific Molecular Profile)</option>
+                <option value="p53abn">p53abn (Copy-number high)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Histology</label>
+            <select id="histology">
+                <option value="endometrioid">Endometrioid</option>
+                <option value="serous">Serous</option>
+                <option value="clear-cell">Clear Cell</option>
+                <option value="carcinosarcoma">Carcinosarcoma</option>
+                <option value="undifferentiated">Undifferentiated</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>FIGO 2023 Stage</label>
+            <select id="stage">
+                <option value="IA1">IA1 (G1/2, <50% inv)</option>
+                <option value="IA2">IA2 (G3, <50% inv)</option>
+                <option value="IA3">IA3 (Stage I, POLEmut)</option>
+                <option value="IB">IB (>=50% invasion)</option>
+                <option value="II">II (Cervical involvement)</option>
+                <option value="III">III (Locoregional spread)</option>
+                <option value="IV">IV (Advanced/Metastatic)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Grade</label>
+            <select id="grade">
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>LVSI Status</label>
+            <select id="lvsi">
+                <option value="none">None / Negative</option>
+                <option value="focal">Focal</option>
+                <option value="substantial">Substantial / Extensive</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Patient Age</label>
+            <input type="number" id="age" value="65" min="18" max="110">
+        </div>
+
+        <button onclick="calculateAdjuvant()">Generate Recommendation</button>
+    </div>
+
+    <div id="result">
+        <div id="riskLevel" class="risk-tag"></div>
+        <div class="result-title">Recommended Pathway:</div>
+        <div id="pathway" class="recommendation"></div>
+        <div class="note">
+            <strong>Disclaimer:</strong> This tool is for educational purposes for healthcare professionals. All cases must be discussed at a specialist Multi-Disciplinary Team (MDT) meeting.
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculateAdjuvant() {
+        const molecular = document.getElementById('molecular').value;
+        const histology = document.getElementById('histology').value;
+        const stage = document.getElementById('stage').value;
+        const grade = parseInt(document.getElementById('grade').value);
+        const lvsi = document.getElementById('lvsi').value;
+        const age = parseInt(document.getElementById('age').value);
+
+        let risk = "";
+        let rec = "";
+        let color = "";
+
+        // 1. POLE mutated (De-escalation)
+        if (molecular === "pole" && (stage.startsWith("I") || stage === "II")) {
+            risk = "Low Risk (Molecularly driven)";
+            rec = "<strong>Observation</strong> only. Recent evidence suggests that even with G3 or Stage II, POLEmut has excellent prognosis without adjuvant therapy.";
+            color = "var(--success)";
+        } 
+        // 2. High Risk Group
+        else if (stage.startsWith("III") || stage.startsWith("IV") || histology !== "endometrioid" || molecular === "p53abn") {
+            risk = "High Risk";
+            color = "var(--danger)";
+            
+            if (stage === "IV") {
+                rec = "<strong>Systemic Chemotherapy + Immunotherapy</strong> (if MMRd). Palliative RT for symptom control if needed.";
+            } else if (histology === "serous" || histology === "clear-cell" || molecular === "p53abn") {
+                rec = "<strong>Chemotherapy + External Beam Radiotherapy (EBRT)</strong>. Non-endometrioid and p53abn subtypes require aggressive combined modality treatment.";
+            } else {
+                rec = "<strong>Chemotherapy + EBRT</strong>. Sequential or concurrent (Sandwich) protocol as per MDT preference.";
+            }
+        }
+        // 3. High-Intermediate Risk
+        else if (lvsi === "substantial" || (stage === "IB" && grade === 3) || stage === "II") {
+            risk = "High-Intermediate Risk";
+            color = "var(--warning)";
+            rec = "<strong>External Beam Radiotherapy (EBRT)</strong>. Consider the addition of Chemotherapy if there are multiple risk factors (e.g., G3 AND substantial LVSI). Brachytherapy (VBT) boost may be added for Stage II.";
+        }
+        // 4. Intermediate Risk
+        else if ((stage === "IB" && (grade === 1 || grade === 2)) || (stage === "IA2")) {
+            risk = "Intermediate Risk";
+            color = "var(--accent)";
+            if (age < 60) {
+                rec = "<strong>Observation</strong> or Vaginal Brachytherapy (VBT). In patients < 60, omitting adjuvant treatment is often acceptable if LVSI is negative.";
+            } else {
+                rec = "<strong>Vaginal Brachytherapy (VBT)</strong> recommended to reduce local recurrence.";
+            }
+        }
+        // 5. Low Risk
+        else {
+            risk = "Low Risk";
+            color = "var(--success)";
+            rec = "<strong>Observation</strong>. No adjuvant treatment required. Routine follow-up per local protocol.";
+        }
+
+        // Display results
+        const resDiv = document.getElementById('result');
+        const riskTag = document.getElementById('riskLevel');
+        const pathway = document.getElementById('pathway');
+
+        resDiv.style.display = "block";
+        resDiv.style.backgroundColor = color + "15"; // Light tint
+        riskTag.innerText = risk;
+        riskTag.style.backgroundColor = color;
+        pathway.innerHTML = rec;
+        
+        // Scroll to result
+        resDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
