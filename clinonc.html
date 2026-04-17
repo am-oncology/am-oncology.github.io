@@ -1,127 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Oncology: Clinic Guide</title>
+    <style>
+        :root {
+            --bg-main: #f0f2f5;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .top-nav {
+            background-color: var(--primary);
+            padding: 0 20px;
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 4px solid var(--accent);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            padding: 15px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .nav-btn.active { color: #fff; border-bottom: 4px solid var(--accent); margin-bottom: -4px; }
+
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+        .sidebar {
+            width: 220px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sub-nav-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sub-nav-btn.active { background: #eff6ff; color: var(--accent); border-right: 3px solid var(--accent); }
+
+        .content { flex: 1; padding: 30px; overflow-y: auto; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.75rem; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
+        select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+
+        .btn-calc {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #results-container { margin-top: 25px; display: none; }
+        .result-box { padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid; }
+        .treatment-box { background: #f0fdf4; border-color: var(--success); }
+        .followup-box { background: #f8fafc; border-color: var(--info); }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .disclaimer { font-size: 0.75rem; color: var(--text-muted); margin-top: 30px; text-align: center; border-top: 1px solid var(--border); padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav" id="topNav"></div>
+
+    <div class="main-layout">
+        <div class="sidebar" id="sideNav"></div>
+        <div class="content">
+            <div class="card">
+                <h2 id="module-title">Select Module</h2>
+                <p id="module-subtitle" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+
+                <div id="form-container" class="form-grid"></div>
+                <button id="calc-btn" class="btn-calc" style="display:none" onclick="calculateLogic()">Calculate Pathway</button>
+
+                <div id="results-container">
+                    <div id="risk-badge" class="risk-badge"></div>
+                    <div class="result-box treatment-box">
+                        <h4 style="margin-bottom:8px">Management Recommendation</h4>
+                        <p id="treatment-text"></p>
+                    </div>
+                    <div class="result-box followup-box">
+                        <h4 style="margin-bottom:8px">Follow-up Protocol</h4>
+                        <p id="followup-text"></p>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>Educational Prototype:</strong> Clinical judgment required. Discuss all cases at specialist MDT.
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
 /**
- * ---------------------------------------------------------
- * THE MASTER CLINICAL DATABASE
- * ---------------------------------------------------------
+ * 1. CLINICAL KNOWLEDGE BASE
  */
 const clinicalData = {
-    "CNS": { 
-        subsites: { "Glioma": { inputs: [], logic: ()=>({}) } } 
-    },
-    "H&N": { 
-        subsites: { "Oropharynx": { inputs: [], logic: ()=>({}) } } 
-    },
-    "Breast": { 
-        subsites: { "Early": { inputs: [], logic: ()=>({}) }, "Locally Advanced": { inputs: [], logic: ()=>({}) } } 
-    },
-    "Lung": { 
-        subsites: { "NSCLC": { inputs: [], logic: ()=>({}) }, "SCLC": { inputs: [], logic: ()=>({}) } } 
-    },
-    "UGI": { 
-        subsites: { "Oesophagus": { inputs: [], logic: ()=>({}) }, "Pancreas": { inputs: [], logic: ()=>({}) } } 
-    },
-    "LGI": {
-        subsites: {
-            "Anal": {
-                subtitle: "Definitive Chemoradiotherapy (PLATO/ACT II)",
-                inputs: [
-                    { id: "tstage", label: "T-Stage", options: ["T1", "T2", "T3", "T4"] },
-                    { id: "nstage", label: "N-Stage", options: ["N0", "N1a", "N1b", "N1c"] }
-                ],
-                logic: (inputs) => {
-                    const t = inputs.tstage; const n = inputs.nstage;
-                    let risk = (n !== "N0" || t === "T3" || t === "T4") ? "High Risk (Locally Advanced)" : "Low Risk (Early Stage)";
-                    return {
-                        risk: risk,
-                        color: risk.includes("High") ? "var(--danger)" : "var(--success)",
-                        treatment: risk.includes("High") ? "<strong>53.2Gy in 28 fractions</strong>. Concurrent Mitomycin C (Day 1) and 5-FU/Capecitabine." : "<strong>50.4Gy in 28 fractions</strong>. Concurrent Mitomycin C (Day 1) and 5-FU/Capecitabine.",
-                        followup: risk.includes("High") ? "12-Week Assessment: DRE + MRI Pelvis. If CR, review 3-6 monthly for 2 years. Annual CT CAP for 3 years." : "12-Week Assessment: DRE + MRI Pelvis. If CR, review 3-6 monthly for 2 years. Routine cross-sectional imaging not strictly required."
-                    };
-                }
-            },
-            "Rectal": {
-                subtitle: "Neoadjuvant Strategy & Organ Preservation",
-                inputs: [
-                    { id: "tstage", label: "T-Stage", options: ["T1", "T2", "T3", "T4"] },
-                    { id: "crm", label: "CRM / EMVI", options: ["Clear & Neg", "Threatened CRM", "EMVI Positive"] }
-                ],
-                logic: (inputs) => {
-                    const { tstage, crm } = inputs;
-                    if (tstage === "T1" && crm === "Clear & Neg") {
-                        return { risk: "Early Disease", color: "var(--success)", treatment: "Consider Organ Preservation: Local excision (TEMS/TAMIS) or Papillon (Contact X-ray Brachytherapy) if patient refuses surgery.", followup: "If Watch & Wait: Intensive protocol. MRI and Endoscopy every 3 months for first 2 years, then 6 monthly to 5 years." };
-                    } else if (tstage === "T4" || crm !== "Clear & Neg") {
-                        return { risk: "High Risk (Threatened Margins)", color: "var(--danger)", treatment: "<strong>Total Neoadjuvant Therapy (TNT)</strong>. Consider SCRT (5x5Gy) followed by consolidation chemo (RAPIDO), or Neoadjuvant chemo followed by Long-Course ChemoRT (PRODIGE 23).", followup: "Standard post-op LGI: CT CAP at 1 and 3 years. CEA 6-monthly for 3 years. Colonoscopy at 1 and 5 years." };
-                    } else {
-                        return { risk: "Intermediate", color: "var(--warning)", treatment: "Upfront TME Surgery OR Short-Course RT (25Gy/5#) with immediate surgery.", followup: "Standard post-op LGI surveillance." };
-                    }
-                }
-            }
-        }
-    },
-    "GU": {
-        subsites: {
-            "Prostate": {
-                subtitle: "Risk Stratification & Pathway (NICE/Cambridge)",
-                inputs: [
-                    { id: "psa", label: "PSA Level", options: ["< 10", "10 - 20", "> 20"] },
-                    { id: "grade", label: "Grade Group (Gleason)", options: ["GG 1 (<=6)", "GG 2 (3+4=7)", "GG 3 (4+3=7)", "GG 4 (8)", "GG 5 (9-10)"] },
-                    { id: "tstage", label: "T-Stage (MRI/DRE)", options: ["T1 - T2a", "T2b", "T2c", "T3a", "T3b - T4", "N1"] }
-                ],
-                logic: (inputs) => {
-                    const { psa, grade, tstage } = inputs;
-                    let risk, treatment, followup, color;
+    "CNS": { subsites: ["Glioma"] },
+    "H&N": { subsites: ["Oropharynx"] },
+    "Breast": { subsites: ["Early", "Locally Advanced"] },
+    "Lung": { subsites: ["NSCLC", "SCLC"] },
+    "UGI": { subsites: ["Oesophagus", "Pancreas"] },
+    "LGI": { subsites: ["Colon", "Rectal", "Anal"] },
+    "GU": { subsites: ["Prostate", "Bladder"] },
+    "Gynae": { subsites: ["Endometrial"] }
+};
 
-                    if (tstage === "N1" || tstage === "T3b - T4" || tstage === "T3a" || tstage === "T2c" || grade.startsWith("GG 4") || grade.startsWith("GG 5") || psa === "> 20") {
-                        risk = "High Risk / Locally Advanced";
-                        color = "var(--danger)";
-                        treatment = "<strong>Radical RT (e.g. 60Gy/20# or 74Gy/37#) + 2-3 years ADT.</strong> Consider pelvic nodal irradiation if risk >15%. Alternatively, Radical Prostatectomy. If high burden, consider systemic escalation (Docetaxel/Abiraterone).";
-                        followup = "PSA at 6 weeks post-RT, then 3-6 monthly for 3 years, then 6-12 monthly. Monitor bone health (DEXA) due to long-term ADT.";
-                    } else if (psa === "10 - 20" || grade.startsWith("GG 2") || grade.startsWith("GG 3") || tstage === "T2b") {
-                        risk = "Intermediate Risk";
-                        color = "var(--warning)";
-                        treatment = "<strong>Radical RT + 4-6 months ADT.</strong> Consider LDR or HDR Brachytherapy as monotherapy (if favorable) or boost. Alternatively, Radical Prostatectomy or Active Surveillance (if favorable/low volume).";
-                        followup = "PSA 3-6 monthly for 3 years, then annually. Monitor urinary and bowel function.";
-                    } else {
-                        risk = "Low Risk";
-                        color = "var(--success)";
-                        treatment = "<strong>Active Surveillance</strong> is the standard of care. Intervene only if disease progression (PSA kinetics, MRI changes, or repeat biopsy). Alternatives: LDR Brachytherapy or RP.";
-                        followup = "PSA every 3-4 months in year 1, then 6-monthly. DRE annually. Repeat MRI/Biopsy protocol per local MDT.";
-                    }
-                    return { risk, color, treatment, followup };
-                }
-            },
-            "Bladder": { subtitle: "Module under construction", inputs: [], logic: () => ({}) }
+const ToolRegistry = {
+    "Colon": {
+        subtitle: "Adjuvant (IDEA) & Neoadjuvant (FOXTRoT/ESMO)",
+        inputs: [
+            { id: "intent", label: "Clinical Setting", options: ["Adjuvant (Post-Op)", "Neoadjuvant (FOXTRoT Criteria)"] },
+            { id: "tstage", label: "T-Stage", options: ["T1/T2", "T3 (Low Risk <5mm)", "T3 (High Risk >5mm)", "T4a", "T4b"] },
+            { id: "nstage", label: "N-Stage", options: ["N0", "N1 (1-3 nodes)", "N2 (>=4 nodes)"] },
+            { id: "nodes", label: "Nodes Removed", options: [">= 12", "< 12"] },
+            { id: "mmr", label: "MMR Status", options: ["pMMR", "dMMR"] },
+            { id: "risk_feat", label: "High Risk (EMVI/PNI/Grade 3)", options: ["None", "Present"] },
+            { id: "ps", label: "Performance Status", options: ["PS 0-1", "PS 2", "PS 3+"] },
+            { id: "age", label: "Age", options: ["< 70", "70-80", "> 80"] }
+        ],
+        logic: (v) => {
+            if (v.intent === "Neoadjuvant (FOXTRoT Criteria)") {
+                const fit = (v.tstage.includes("High Risk") || v.tstage.startsWith("T4")) && v.ps === "PS 0-1";
+                return {
+                    risk: fit ? "FOXTRoT Eligible" : "Ineligible",
+                    color: fit ? "var(--success)" : "var(--warning)",
+                    treatment: fit ? "<strong>Neoadjuvant Chemo:</strong> 6 weeks Oxaliplatin-based (CAPOX/FOLFOX) then surgery." : "Upfront surgery recommended. No trial-based benefit for neoadjuvant chemo in this profile.",
+                    followup: "Re-stage post-op for adjuvant completion."
+                };
+            }
+            // Adjuvant Logic
+            if (v.ps.startsWith("PS 3") || v.age === "> 80") return { risk: "Frail/Elderly", color: "var(--warning)", treatment: "Observation or single-agent Capecitabine if fit.", followup: "Standard LGI surveillance." };
+            
+            if (v.nstage !== "N0") {
+                return { risk: "Stage III", color: "var(--danger)", treatment: "<strong>3 months CAPOX (IDEA)</strong> or 6 months FOLFOX. Dual agent preferred.", followup: "CEA/CT surveillance." };
+            }
+            if (v.mmr === "dMMR") return { risk: "Stage II dMMR", color: "var(--success)", treatment: "<strong>Observation.</strong> High prognosis; minimal 5-FU benefit.", followup: "Standard surveillance." };
+            
+            const hiRisk = v.tstage.startsWith("T4") || v.nodes === "< 12" || v.risk_feat === "Present";
+            return {
+                risk: hiRisk ? "High-Risk Stage II" : "Low-Risk Stage II",
+                color: hiRisk ? "var(--accent)" : "var(--success)",
+                treatment: hiRisk ? "<strong>Capecitabine or 3m CAPOX.</strong>" : "Observation.",
+                followup: "Standard surveillance."
+            };
         }
     },
-    "Gynae": {
-        subsites: {
-            "Endometrial": {
-                subtitle: "Adjuvant Therapy (ESGO 2025 Integrated)",
-                inputs: [
-                    { id: "risk", label: "ESGO Risk Group", options: ["Low", "Intermediate", "High-Intermediate", "High"] }
-                ],
-                logic: (inputs) => {
-                    const map = {
-                        "Low": { c: "var(--success)", t: "<strong>Observation.</strong> No adjuvant treatment.", f: "Patient-Initiated Follow-Up (PIFU)." },
-                        "Intermediate": { c: "var(--accent)", t: "<strong>Vaginal Brachytherapy (VBT)</strong> to reduce vault recurrence.", f: "PIFU or routine clinical review per local policy." },
-                        "High-Intermediate": { c: "var(--warning)", t: "<strong>EBRT</strong> +/- Vaginal Brachytherapy boost.", f: "3-4 monthly clinics for 2 years, then 6 monthly to 5 years." },
-                        "High": { c: "var(--danger)", t: "<strong>Chemotherapy + EBRT.</strong> Sequence per MDT (Sandwich or sequential).", f: "3 monthly clinics for 2 years, then 6 monthly to 5 years. Symptom-directed imaging." }
-                    };
-                    const res = map[inputs.risk];
-                    return { risk: inputs.risk + " Risk", color: res.c, treatment: res.t, followup: res.f };
-                }
-            }
+    "Prostate": {
+        subtitle: "NICE/Cambridge Risk Stratification",
+        inputs: [
+            { id: "psa", label: "PSA Level", options: ["< 10", "10-20", "> 20"] },
+            { id: "grade", label: "Grade Group", options: ["GG 1", "GG 2", "GG 3", "GG 4", "GG 5"] },
+            { id: "t", label: "T-Stage", options: ["T1-T2a", "T2b", "T2c", "T3a", "T3b-T4"] }
+        ],
+        logic: (v) => { /* Simple prostate stub */
+            const high = v.psa === "> 20" || v.grade === "GG 4" || v.t.startsWith("T3");
+            return {
+                risk: high ? "High Risk" : "Low/Intermediate",
+                color: high ? "var(--danger)" : "var(--success)",
+                treatment: high ? "Radical RT + 2-3 yrs ADT" : "AS or Radical RT",
+                followup: "PSA monitoring"
+            };
         }
     }
 };
 
-let currentSystem = "CNS";
-let currentSubsite = "Glioma";
-
 /**
- * ---------------------------------------------------------
- * UI RENDER ENGINE
- * ---------------------------------------------------------
+ * 2. UI ENGINE
  */
+let currentSystem = "LGI";
+let currentSubsite = "Colon";
+
 function init() {
     renderTopNav();
     loadSystem(currentSystem);
@@ -130,7 +251,7 @@ function init() {
 function renderTopNav() {
     const nav = document.getElementById('topNav');
     nav.innerHTML = '';
-    Object.keys(clinicalData).forEach(sys => {
+    ["CNS", "H&N", "Breast", "Lung", "UGI", "LGI", "GU", "Gynae"].forEach(sys => {
         const btn = document.createElement('button');
         btn.className = `nav-btn ${sys === currentSystem ? 'active' : ''}`;
         btn.innerText = sys;
@@ -142,98 +263,50 @@ function renderTopNav() {
 function loadSystem(sys) {
     currentSystem = sys;
     renderTopNav();
-    
     const sideNav = document.getElementById('sideNav');
     sideNav.innerHTML = '';
-    
-    const subsites = Object.keys(clinicalData[sys].subsites);
-    if(subsites.length > 0) {
-        currentSubsite = subsites[0]; // Auto-select first
-        subsites.forEach(sub => {
-            const btn = document.createElement('button');
-            btn.className = `sub-nav-btn ${sub === currentSubsite ? 'active' : ''}`;
-            btn.innerText = sub;
-            btn.onclick = () => loadSubsite(sub);
-            sideNav.appendChild(btn);
-        });
-        loadSubsite(currentSubsite);
-    }
+    clinicalData[sys].subsites.forEach(sub => {
+        const btn = document.createElement('button');
+        btn.className = `sub-nav-btn ${sub === currentSubsite ? 'active' : ''}`;
+        btn.innerText = sub;
+        btn.onclick = () => loadSubsite(sub);
+        sideNav.appendChild(btn);
+    });
+    loadSubsite(clinicalData[sys].subsites[0]);
 }
 
 function loadSubsite(sub) {
     currentSubsite = sub;
-    
-    // Update sidebar UI
-    document.querySelectorAll('.sub-nav-btn').forEach(b => {
-        b.classList.toggle('active', b.innerText === sub);
-    });
-
-    const data = clinicalData[currentSystem].subsites[sub];
+    document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.innerText === sub));
+    const tool = ToolRegistry[sub] || { subtitle: "Module under construction", inputs: [] };
     
     document.getElementById('module-title').innerText = `${sub} Cancer`;
-    document.getElementById('module-subtitle').innerText = data.subtitle || "";
-    
-    const container = document.getElementById('form-container');
-    const calcBtn = document.getElementById('calc-btn');
-    const results = document.getElementById('results-container');
-    
-    container.innerHTML = '';
-    results.style.display = 'none';
+    document.getElementById('module-subtitle').innerText = tool.subtitle;
+    document.getElementById('form-container').innerHTML = tool.inputs.map(i => `
+        <div class="input-group">
+            <label>${i.label}</label>
+            <select id="input-${i.id}">${i.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>
+        </div>
+    `).join('') || `<p style="padding:20px; color:var(--text-muted)">Tool in development.</p>`;
 
-    if (!data.inputs || data.inputs.length === 0) {
-        container.innerHTML = `<div class="placeholder-msg">Module currently in development. Clinical logic pending.</div>`;
-        calcBtn.style.display = 'none';
-        return;
-    }
-
-    // Generate Form
-    data.inputs.forEach(inp => {
-        const group = document.createElement('div');
-        group.className = 'input-group';
-        
-        const label = document.createElement('label');
-        label.innerText = inp.label;
-        
-        const select = document.createElement('select');
-        select.id = `input-${inp.id}`;
-        
-        inp.options.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt;
-            option.innerText = opt;
-            select.appendChild(option);
-        });
-
-        group.appendChild(label);
-        group.appendChild(select);
-        container.appendChild(group);
-    });
-
-    calcBtn.style.display = 'block';
+    document.getElementById('calc-btn').style.display = tool.inputs.length ? 'block' : 'none';
+    document.getElementById('results-container').style.display = 'none';
 }
 
 function calculateLogic() {
-    const data = clinicalData[currentSystem].subsites[currentSubsite];
-    if (!data.logic) return;
-
-    // Gather inputs
-    const userInputs = {};
-    data.inputs.forEach(inp => {
-        userInputs[inp.id] = document.getElementById(`input-${inp.id}`).value;
-    });
-
-    // Run Engine
-    const result = data.logic(userInputs);
-
-    // Render Output
-    const resDiv = document.getElementById('results-container');
-    document.getElementById('risk-badge').innerText = result.risk;
-    document.getElementById('risk-badge').style.backgroundColor = result.color;
-    document.getElementById('treatment-text').innerHTML = result.treatment;
-    document.getElementById('followup-text').innerHTML = result.followup;
+    const tool = ToolRegistry[currentSubsite];
+    const vals = {};
+    tool.inputs.forEach(i => vals[i.id] = document.getElementById(`input-${i.id}`).value);
+    const res = tool.logic(vals);
     
-    resDiv.style.display = 'block';
+    document.getElementById('risk-badge').innerText = res.risk;
+    document.getElementById('risk-badge').style.backgroundColor = res.color;
+    document.getElementById('treatment-text').innerHTML = res.treatment;
+    document.getElementById('followup-text').innerHTML = res.followup;
+    document.getElementById('results-container').style.display = 'block';
 }
 
-// Boot up
 window.onload = init;
+</script>
+</body>
+</html>
