@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClinOnc: LGI</title>
+    <style>
+        :root {
+            --bg-main: #f0f2f5; --bg-card: #ffffff; --text-main: #1e293b;
+            --text-muted: #64748b; --primary: #0f172a; --accent: #3b82f6;
+            --accent-hover: #2563eb; --border: #e2e8f0; --success: #10b981;
+            --warning: #f59e0b; --danger: #ef4444; --info: #0ea5e9;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; }
+        
+        /* Top Nav - Now using links */
+        .top-nav { background: var(--primary); padding: 0 20px; display: flex; overflow-x: auto; border-bottom: 4px solid var(--accent); }
+        .nav-link { text-decoration: none; color: #cbd5e1; padding: 15px 20px; font-size: 0.9rem; font-weight: 600; white-space: nowrap; transition: 0.2s; }
+        .nav-link:hover { color: #fff; background: rgba(255,255,255,0.1); }
+        .nav-link.active { color: #fff; border-bottom: 4px solid var(--accent); margin-bottom: -4px; }
+
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 220px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px 0; overflow-y: auto; }
+        .sub-nav-btn { display: block; width: 100%; text-align: left; padding: 12px 24px; background: none; border: none; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; }
+        .sub-nav-btn.active { background: #eff6ff; color: var(--accent); border-right: 3px solid var(--accent); font-weight: bold; }
+        
+        .content { flex: 1; padding: 30px; overflow-y: auto; }
+        .card { background: var(--bg-card); border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 950px; margin: 0 auto; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.7rem; font-weight: 700; margin-bottom: 5px; color: var(--text-muted); text-transform: uppercase; }
+        select, input { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+        .btn-calc { width: 100%; padding: 15px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        #results-container { margin-top: 25px; display: none; }
+        .result-box { padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid; }
+        .treatment-box { background: #f0fdf4; border-color: var(--success); }
+        .timeline-box { background: #f8fafc; border-color: var(--info); }
+        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        .schedule-table td, .schedule-table th { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .risk-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: #fff; margin-bottom: 10px; }
+        .disclaimer { font-size: 0.7rem; color: var(--text-muted); margin-top: 30px; text-align: center; border-top: 1px solid var(--border); padding-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="clinonc-cns.html" class="nav-link">CNS</a>
+        <a href="clinonc-hn.html" class="nav-link">H&N</a>
+        <a href="clinonc-breast.html" class="nav-link">Breast</a>
+        <a href="clinonc-lung.html" class="nav-link">Lung</a>
+        <a href="clinonc-ugi.html" class="nav-link">UGI</a>
+        <a href="clinonc-lgi.html" class="nav-link active">LGI</a>
+        <a href="clinonc-gu.html" class="nav-link">GU</a>
+        <a href="clinonc-gynae.html" class="nav-link">Gynae</a>
+    </div>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <button class="sub-nav-btn active" onclick="loadModule('Colon Neoadjuvant')">Colon Neoadjuvant</button>
+            <button class="sub-nav-btn" onclick="loadModule('Colon Adjuvant')">Colon Adjuvant</button>
+            <button class="sub-nav-btn" onclick="loadModule('Rectal')">Rectal</button>
+            <button class="sub-nav-btn" onclick="loadModule('Anal')">Anal</button>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2 id="module-title">LGI Oncology</h2>
+                <p id="module-subtitle" style="color: var(--text-muted); margin-bottom: 20px;"></p>
+
+                <div id="form-container" class="form-grid"></div>
+                <button id="calc-btn" class="btn-calc" onclick="calculate()">Generate Schedule</button>
+
+                <div id="results-container">
+                    <div id="risk-badge" class="risk-badge"></div>
+                    <div class="result-box treatment-box">
+                        <h4 style="margin-bottom:8px">Clinical Recommendation</h4>
+                        <p id="treatment-text"></p>
+                    </div>
+                    <div class="result-box timeline-box">
+                        <h4 style="margin-bottom:8px">Pathway Timeline</h4>
+                        <div id="timeline-output"></div>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>Educational Prototype:</strong> MDT discussion required. Logic based on FOXTRoT/IDEA trials.
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    /* LOCAL LOGIC REGISTRY FOR LGI */
+    const Modules = {
+        "Colon Neoadjuvant": {
+            subtitle: "FOXTRoT Protocol",
+            inputs: [
+                { id: "startDate", label: "Chemo Start Date", type: "date" },
+                { id: "tstage", label: "T-Stage", options: ["T3 (>5mm)", "T4a", "T4b", "Low Risk"] },
+                { id: "ps", label: "PS", options: ["0-1", "2+"] }
+            ],
+            calc: (v) => {
+                const fit = v.tstage !== "Low Risk" && v.ps === "0-1";
+                const start = v.startDate ? new Date(v.startDate) : null;
+                return {
+                    risk: fit ? "Eligible" : "Ineligible", color: fit ? "var(--success)" : "var(--warning)",
+                    text: fit ? "Proceed with 6 weeks NAC." : "Upfront surgery first.",
+                    timeline: start ? [
+                        ["Cycle 1", d(start, 0)], ["Cycle 2", d(start, 21)], ["Restaging CT", d(start, 42)], ["Post-NAC MDT", d(start, 49)], ["Week of Surgery", d(start, 70)]
+                    ] : []
+                };
+            }
+        },
+        "Colon Adjuvant": {
+            subtitle: "IDEA/ESMO Protocol",
+            inputs: [
+                { id: "surgDate", label: "Surgery Date", type: "date" },
+                { id: "nstage", label: "N-Stage", options: ["N0", "N1", "N2"] },
+                { id: "dur", label: "Duration", options: ["3 Months (CAPOX)", "6 Months"] }
+            ],
+            calc: (v) => {
+                const surg = v.surgDate ? new Date(v.surgDate) : null;
+                const endWk = v.dur.includes("3") ? 12 : 24;
+                return {
+                    risk: v.nstage === "N0" ? "Stage II" : "Stage III", color: "var(--danger)",
+                    text: `Adjuvant chemotherapy indicated for ${v.dur}.`,
+                    timeline: surg ? [
+                        ["Chemo Start", d(surg, 42)], ["Chemo End", d(surg, 42 + (endWk*7))], ["1yr Surveillance", d(surg, 365)]
+                    ] : []
+                };
+            }
+        }
+    };
+
+    let activeMod = "Colon Neoadjuvant";
+
+    function loadModule(name) {
+        activeMod = name;
+        document.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.toggle('active', b.innerText === name));
+        const m = Modules[name] || { subtitle: "TBD", inputs: [] };
+        document.getElementById('module-title').innerText = name;
+        document.getElementById('module-subtitle').innerText = m.subtitle;
+        document.getElementById('form-container').innerHTML = m.inputs.map(i => `
+            <div class="input-group">
+                <label>${i.label}</label>
+                ${i.type === 'date' ? `<input type="date" id="${i.id}">` : `<select id="${i.id}">${i.options.map(o => `<option>${o}</option>`).join('')}</select>`}
+            </div>
+        `).join('');
+        document.getElementById('results-container').style.display = 'none';
+    }
+
+    function calculate() {
+        const v = {};
+        Modules[activeMod].inputs.forEach(i => v[i.id] = document.getElementById(i.id).value);
+        const res = Modules[activeMod].calc(v);
+        document.getElementById('risk-badge').innerText = res.risk;
+        document.getElementById('risk-badge').style.backgroundColor = res.color;
+        document.getElementById('treatment-text').innerHTML = res.text;
+        document.getElementById('timeline-output').innerHTML = `<table class="schedule-table">` + res.timeline.map(t => `<tr><td>${t[0]}</td><td><strong>${t[1]}</strong></td></tr>`).join('') + `</table>`;
+        document.getElementById('results-container').style.display = 'block';
+    }
+
+    function d(date, days) { return new Date(new Date(date).setDate(new Date(date).getDate() + days)).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}); }
+
+    window.onload = () => loadModule('Colon Neoadjuvant');
+</script>
+</body>
+</html>
