@@ -2,31 +2,1527 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clinical Oncology Clinic Helper</title>
-    </head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lower GI — Oncology Clinical Helper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --navy:        #0c1a2e;
+            --navy-mid:    #132238;
+            --navy-light:  #1a3050;
+            --teal:        #0b7a70;
+            --teal-bright: #0d9488;
+            --teal-pale:   #ccfbf1;
+            --amber:       #b45309;
+            --amber-pale:  #fef3c7;
+            --red:         #b91c1c;
+            --red-pale:    #fee2e2;
+            --green:       #166534;
+            --green-pale:  #dcfce7;
+            --blue-pale:   #eff6ff;
+            --blue-mid:    #bfdbfe;
+            --slate:       #64748b;
+            --border:      #e2e8f0;
+            --text:        #1e293b;
+            --text-muted:  #475569;
+            --bg:          #f1f5f9;
+            --white:       #ffffff;
+            --nav-h:       54px;
+            --sidebar-w:   248px;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+        }
+
+        /* ── TOP NAV ── */
+        .top-nav {
+            height: var(--nav-h);
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 2px;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .nav-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding-right: 16px;
+            margin-right: 8px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        .nav-logo em { color: var(--teal-bright); font-style: normal; }
+        .nav-link {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 500;
+            padding: 6px 11px;
+            border-radius: 6px;
+            transition: all 0.15s;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.07); }
+        .nav-link.active { color: white; background: var(--teal); }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--navy-mid);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 28px 12px;
+            position: fixed;
+            top: var(--nav-h); left: 0; bottom: 0;
+            overflow-y: auto;
+            z-index: 50;
+        }
+        .sidebar-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9.5px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 0 10px;
+            margin-bottom: 10px;
+        }
+        .sidebar-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin: 14px 0;
+        }
+        .sidebar-btn {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+            padding: 10px 10px;
+            background: none;
+            border: none;
+            border-radius: 7px;
+            color: rgba(255,255,255,0.5);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 12.5px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 2px;
+            line-height: 1.35;
+        }
+        .sidebar-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+        .sidebar-btn.active { background: rgba(13,148,136,0.18); color: #5eead4; font-weight: 500; }
+        .sidebar-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            padding: 2px 5px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            letter-spacing: 0.04em;
+        }
+        .sidebar-btn.active .sidebar-num { background: rgba(13,148,136,0.3); }
+
+        /* ── CONTENT ── */
+        .content {
+            margin-left: var(--sidebar-w);
+            padding: 36px 44px 60px;
+            max-width: calc(var(--sidebar-w) + 860px);
+        }
+
+        /* ── PANELS ── */
+        .tool-panel { display: none; }
+        .tool-panel.active { display: block; }
+
+        /* ── TOOL HEADER ── */
+        .tool-header { margin-bottom: 28px; }
+        .tool-tag {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--teal-bright);
+            background: rgba(13,148,136,0.07);
+            border: 1px solid rgba(13,148,136,0.18);
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin-bottom: 10px;
+        }
+        .tool-title { font-size: 21px; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.25; }
+        .tool-subtitle { font-size: 13.5px; color: var(--text-muted); max-width: 640px; line-height: 1.55; }
+        .tool-subtitle strong { color: var(--text); font-weight: 500; }
+
+        /* ── DISCLAIMER ── */
+        .disclaimer {
+            display: flex;
+            gap: 10px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 26px;
+            font-size: 12px;
+            color: #78350f;
+            line-height: 1.5;
+        }
+        .disclaimer-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+        /* ── FORM CARD ── */
+        .form-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .section-head {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--slate);
+            margin-bottom: 16px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid var(--border);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .form-grid.cols-1 { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 12px; font-weight: 500; color: var(--text); }
+        .form-group select,
+        .form-group input[type="date"],
+        .form-group input[type="text"] {
+            padding: 8px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            color: var(--text);
+            background: white;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            -webkit-appearance: none;
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--teal-bright);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+        }
+        .form-group select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 8px center; background-repeat: no-repeat; background-size: 16px; padding-right: 30px; }
+
+        /* ── CHECKBOXES ── */
+        .cb-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-bottom: 18px;
+        }
+        .cb-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .cb-item:hover { border-color: var(--teal-bright); background: rgba(13,148,136,0.02); }
+        .cb-item input[type="checkbox"] { margin-top: 2px; accent-color: var(--teal-bright); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; }
+        .cb-item span { font-size: 12px; line-height: 1.4; color: var(--text); }
+
+        /* ── DIVIDER ── */
+        .hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+        /* ── DATE BOX ── */
+        .date-box {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        .date-box-title {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--slate);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .date-box-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+
+        /* ── BUTTONS ── */
+        .btn-row { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--teal);
+            color: white;
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: 0.01em;
+        }
+        .btn-primary:hover { background: var(--teal-bright); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(13,148,136,0.3); }
+        .btn-reset {
+            background: none;
+            color: var(--slate);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-reset:hover { border-color: #94a3b8; color: var(--text); }
+
+        /* ── RESULT CARDS ── */
+        .result-card {
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 18px;
+            border: 1px solid;
+        }
+        .result-card.eligible  { background: var(--green-pale); border-color: #86efac; }
+        .result-card.ineligible { background: var(--red-pale); border-color: #fca5a5; }
+        .result-card.caution   { background: var(--amber-pale); border-color: #fcd34d; }
+        .result-card.info      { background: var(--blue-pale); border-color: var(--blue-mid); }
+        .result-card.neutral   { background: var(--white); border-color: var(--border); }
+
+        .verdict-row { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+        .verdict-icon { font-size: 18px; }
+        .verdict-label {
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .result-card.eligible  .verdict-label { color: var(--green); }
+        .result-card.ineligible .verdict-label { color: var(--red); }
+        .result-card.caution   .verdict-label { color: var(--amber); }
+        .result-card.info      .verdict-label { color: #1d4ed8; }
+        .result-card.neutral   .verdict-label { color: var(--slate); }
+
+        .result-title { font-size: 15.5px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+        .result-body { font-size: 13px; color: var(--text); line-height: 1.65; }
+        .result-body ul { margin: 8px 0 8px 18px; }
+        .result-body li { margin-bottom: 5px; }
+        .result-body p + p { margin-top: 8px; }
+        .result-body strong { font-weight: 600; }
+
+        /* Inline callout within result body */
+        .callout {
+            border-left: 3px solid;
+            padding: 8px 12px;
+            border-radius: 0 5px 5px 0;
+            font-size: 12.5px;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+        .callout.red   { border-color: #f87171; background: #fee2e2; color: #7f1d1d; }
+        .callout.amber { border-color: #fbbf24; background: #fef9e7; color: #78350f; }
+        .callout.slate { border-color: #94a3b8; background: #f8fafc; color: var(--text-muted); }
+        .callout.teal  { border-color: var(--teal-bright); background: rgba(13,148,136,0.05); color: var(--teal); }
+
+        /* ── REGIMEN BOX ── */
+        .regimen-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate); margin-top: 16px; margin-bottom: 6px; }
+        .regimen-box {
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            padding: 14px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.75;
+            color: var(--text);
+            white-space: pre-line;
+        }
+
+        /* ── REFERENCE NOTE ── */
+        .ref-note {
+            font-size: 11px;
+            color: var(--slate);
+            margin-top: 14px;
+            padding-top: 13px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            line-height: 1.55;
+        }
+
+        /* ── SCHEDULE SECTION ── */
+        .schedule-section {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 26px 30px;
+            margin-top: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .schedule-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .schedule-sub   { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
+        .schedule-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+        .schedule-table th {
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--slate);
+            border-bottom: 2px solid var(--border);
+        }
+        .schedule-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+        .schedule-table tr:last-child td { border-bottom: none; }
+        .schedule-table tr.row-key { background: rgba(13,148,136,0.06); }
+        .schedule-table tr.row-alt { background: #fafafa; }
+
+        .date-cell {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11.5px;
+            color: var(--teal);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .note-cell { font-size: 11.5px; color: var(--text-muted); }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            font-size: 9.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+        .badge-chemo    { background: #dbeafe; color: #1e40af; }
+        .badge-surgery  { background: #fce7f3; color: #9d174d; }
+        .badge-clinic   { background: #f0fdf4; color: #166534; }
+        .badge-imaging  { background: #fef3c7; color: #92400e; }
+        .badge-response { background: #f3e8ff; color: #6b21a8; }
+        .badge-rt       { background: #fef2f2; color: #991b1b; }
+        .badge-discharge{ background: #f1f5f9; color: #475569; }
+        .badge-review   { background: #ecfdf5; color: #065f46; }
+
+        /* ── ERROR ── */
+        .error-msg {
+            color: var(--red);
+            font-size: 12.5px;
+            padding: 10px 14px;
+            background: var(--red-pale);
+            border-radius: 6px;
+            border: 1px solid #fca5a5;
+            margin-top: 8px;
+        }
+
+        /* ── UTILITY ── */
+        .hidden { display: none !important; }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.14); border-radius: 10px; }
+    </style>
+</head>
 <body>
-    <div class="top-nav">
-        <a href="cns.html" class="nav-link active">CNS</a>
-        <a href="hn.html" class="nav-link">H&N</a>
-        <a href="breast.html" class="nav-link">Breast</a>
-        <a href="lung.html" class="nav-link">Lung</a>
-        <a href="ugi.html" class="nav-link">UGI</a>
-        <a href="lgi.html" class="nav-link">LGI</a>
-        <a href="gu.html" class="nav-link">GU</a>
-        <a href="gynae.html" class="nav-link">Gynae</a>
-        <a href="misc.html" class="nav-link">Misc</a>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+    <div class="nav-logo">Onco<em>Helper</em></div>
+    <a href="cns.html"    class="nav-link">CNS</a>
+    <a href="hn.html"     class="nav-link">H&amp;N</a>
+    <a href="breast.html" class="nav-link">Breast</a>
+    <a href="lung.html"   class="nav-link">Lung</a>
+    <a href="ugi.html"    class="nav-link">UGI</a>
+    <a href="lgi.html"    class="nav-link active">LGI</a>
+    <a href="gu.html"     class="nav-link">GU</a>
+    <a href="gynae.html"  class="nav-link">Gynae</a>
+    <a href="misc.html"   class="nav-link">Misc</a>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-label">Lower GI Tools</div>
+    <button class="sidebar-btn active" onclick="showPanel('foxtrot', this)">
+        <span class="sidebar-num">01</span>
+        <span>FOXTROT Neoadjuvant Eligibility</span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('adjuvant', this)">
+        <span class="sidebar-num">02</span>
+        <span>Adjuvant Chemotherapy</span>
+    </button>
+    <button class="sidebar-btn" onclick="showPanel('anal', this)">
+        <span class="sidebar-num">03</span>
+        <span>Anal Cancer Post-RT Follow-up</span>
+    </button>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content" style="margin-top: 54px;">
+
+    <!-- DISCLAIMER -->
+    <div class="disclaimer">
+        <span class="disclaimer-icon">⚠️</span>
+        <span><strong>Clinical Decision Support Tool.</strong> Intended to assist, not replace, clinical judgement and MDT decision-making. Always verify against current local protocols and individual patient circumstances. Not a substitute for specialist advice. Not for direct prescribing.</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL 1 — FOXTROT
+    ══════════════════════════════════════════════════════ -->
+    <div id="panel-foxtrot" class="tool-panel active">
+        <div class="tool-header">
+            <div class="tool-tag">Colon Cancer · Neoadjuvant</div>
+            <h1 class="tool-title">FOXTROT Eligibility &amp; Schedule</h1>
+            <p class="tool-subtitle">Assess eligibility for neoadjuvant FOLFOX chemotherapy prior to surgical resection of colonic adenocarcinoma, based on the <strong>FOXTROT trial</strong> (Foxtrot Collaborative Group, <em>Lancet Oncol</em> 2022).</p>
         </div>
 
-    <div class="main-layout">
-        <div class="sidebar" id="sideNav">
-            <button class="sub-nav-btn active">Overview</button>
-        </div>
-        <div class="content">
-            <div class="card">
-                <h2>Lower GI Module</h2>
-                <p>Content for this site is currently under development.</p>
+        <div class="form-card">
+            <div class="section-head">Tumour Characteristics</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Primary tumour site</label>
+                    <select id="ft-site">
+                        <option value="">— Select —</option>
+                        <option value="colon">Colon (above peritoneal reflection / &gt;15 cm from anal verge)</option>
+                        <option value="rectum">Rectum (≤15 cm from anal verge / below peritoneal reflection)</option>
+                        <option value="uncertain">Uncertain / not yet confirmed on imaging</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Radiological T stage (CT or MRI)</label>
+                    <select id="ft-tstage">
+                        <option value="">— Select —</option>
+                        <option value="T1">T1</option>
+                        <option value="T2">T2</option>
+                        <option value="T3">T3</option>
+                        <option value="T4a">T4a — peritoneal surface involvement</option>
+                        <option value="T4b">T4b — invasion of adjacent structures</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Distant metastases (staging CT)</label>
+                    <select id="ft-mstage">
+                        <option value="">— Select —</option>
+                        <option value="M0">M0 — no distant metastases</option>
+                        <option value="M1">M1 — distant metastases present</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Technical resectability</label>
+                    <select id="ft-resect">
+                        <option value="">— Select —</option>
+                        <option value="yes">Resectable (surgeon assessment)</option>
+                        <option value="borderline">Borderline resectable</option>
+                        <option value="no">Not resectable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>MMR / MSI status</label>
+                    <select id="ft-msi">
+                        <option value="">— Select —</option>
+                        <option value="pMMR">pMMR / MSS</option>
+                        <option value="dMMR">dMMR / MSI-H</option>
+                        <option value="unknown">Unknown / not yet tested</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>RAS / RAF mutational status</label>
+                    <select id="ft-ras">
+                        <option value="">— Select —</option>
+                        <option value="wildtype">All wild-type (KRAS, NRAS, BRAF)</option>
+                        <option value="mutant">Mutant (KRAS, NRAS or BRAF V600E)</option>
+                        <option value="unknown">Unknown / not yet tested</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-head">Patient Fitness</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>WHO Performance Status</label>
+                    <select id="ft-ps">
+                        <option value="">— Select —</option>
+                        <option value="0">0 — Fully active</option>
+                        <option value="1">1 — Restricted in strenuous activity</option>
+                        <option value="2">2 — Ambulatory; capable of self-care</option>
+                        <option value="3">3 — Limited self-care</option>
+                        <option value="4">4 — Completely disabled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prior systemic anti-cancer therapy</label>
+                    <select id="ft-prior">
+                        <option value="">— Select —</option>
+                        <option value="none">None — chemotherapy-naïve</option>
+                        <option value="yes">Yes — prior chemotherapy or targeted therapy</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-head">Contraindications — check all that apply</div>
+            <div class="cb-grid">
+                <label class="cb-item"><input type="checkbox" id="ft-ci-renal"><span>Significant renal impairment (eGFR &lt;30 or on dialysis)</span></label>
+                <label class="cb-item"><input type="checkbox" id="ft-ci-neuro"><span>Pre-existing peripheral neuropathy grade ≥2</span></label>
+                <label class="cb-item"><input type="checkbox" id="ft-ci-dpyd"><span>Known DPD deficiency (full or intermediate)</span></label>
+                <label class="cb-item"><input type="checkbox" id="ft-ci-preg"><span>Pregnancy or breastfeeding</span></label>
+                <label class="cb-item"><input type="checkbox" id="ft-ci-liver"><span>Significant hepatic impairment</span></label>
+                <label class="cb-item"><input type="checkbox" id="ft-ci-cardiac"><span>Decompensated cardiac disease</span></label>
+            </div>
+
+            <hr class="hr">
+            <div class="date-box">
+                <div class="date-box-title">📅 Schedule Generator <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;"> — optional</span></div>
+                <div class="date-box-sub">Enter the planned start date for neoadjuvant Cycle 1 to generate a provisional treatment and surgery schedule.</div>
+                <div class="form-group" style="max-width:220px;">
+                    <label>Planned Cycle 1 Day 1 (neoadjuvant FOLFOX)</label>
+                    <input type="date" id="ft-startdate">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn-primary" onclick="assessFoxtrot()">▶ Assess Eligibility</button>
+                <button class="btn-reset" onclick="resetFoxtrot()">Reset</button>
             </div>
         </div>
+
+        <div id="foxtrot-result"></div>
     </div>
+
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL 2 — ADJUVANT CHEMOTHERAPY
+    ══════════════════════════════════════════════════════ -->
+    <div id="panel-adjuvant" class="tool-panel">
+        <div class="tool-header">
+            <div class="tool-tag">Colon &amp; Rectal Cancer · Post-operative</div>
+            <h1 class="tool-title">Adjuvant Chemotherapy Decision</h1>
+            <p class="tool-subtitle">Supports decision-making for adjuvant systemic chemotherapy following resection of colon or rectal cancer. Based on <strong>ESMO 2020/2022 guidelines</strong>, <strong>NICE CG131</strong>, and key trial data (MOSAIC, XELOXA, QUASAR, CHRONICLE, EORTC 22921).</p>
+        </div>
+
+        <div class="form-card">
+            <div class="section-head">Tumour Site &amp; Pathology</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Primary site</label>
+                    <select id="adj-site" onchange="toggleRectalFields()">
+                        <option value="">— Select —</option>
+                        <option value="colon">Colon</option>
+                        <option value="rectal">Rectum</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pathological T stage (pT)</label>
+                    <select id="adj-pt">
+                        <option value="">— Select —</option>
+                        <option value="T1">pT1</option>
+                        <option value="T2">pT2</option>
+                        <option value="T3">pT3</option>
+                        <option value="T4a">pT4a</option>
+                        <option value="T4b">pT4b</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pathological N stage (pN / ypN)</label>
+                    <select id="adj-pn">
+                        <option value="">— Select —</option>
+                        <option value="N0">N0 — no nodal involvement</option>
+                        <option value="N1a">N1a — 1 positive node</option>
+                        <option value="N1b">N1b — 2–3 positive nodes</option>
+                        <option value="N1c">N1c — tumour deposits, no positive nodes</option>
+                        <option value="N2a">N2a — 4–6 positive nodes</option>
+                        <option value="N2b">N2b — ≥7 positive nodes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Resection margin status</label>
+                    <select id="adj-margin">
+                        <option value="">— Select —</option>
+                        <option value="R0">R0 — clear margins</option>
+                        <option value="R1">R1 — microscopic margin involvement</option>
+                        <option value="R2">R2 — macroscopic residual disease</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-head">Adverse Pathological Features (Stage II relevance)</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Tumour grade</label>
+                    <select id="adj-grade">
+                        <option value="">— Select —</option>
+                        <option value="G1G2">G1 / G2 — well or moderately differentiated</option>
+                        <option value="G3">G3 — poorly differentiated</option>
+                        <option value="G4">G4 / undifferentiated</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>MMR / MSI status</label>
+                    <select id="adj-msi">
+                        <option value="">— Select —</option>
+                        <option value="pMMR">pMMR / MSS</option>
+                        <option value="dMMR">dMMR / MSI-H</option>
+                        <option value="unknown">Unknown / not tested</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Lymphovascular invasion (LVI)</label>
+                    <select id="adj-lvi">
+                        <option value="">— Select —</option>
+                        <option value="no">Not identified</option>
+                        <option value="yes">Present</option>
+                        <option value="unknown">Not reported</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Perineural invasion (PNI)</label>
+                    <select id="adj-pni">
+                        <option value="">— Select —</option>
+                        <option value="no">Not identified</option>
+                        <option value="yes">Present</option>
+                        <option value="unknown">Not reported</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Lymph nodes examined</label>
+                    <select id="adj-lncount">
+                        <option value="">— Select —</option>
+                        <option value="adequate">≥12 lymph nodes examined</option>
+                        <option value="inadequate">&lt;12 lymph nodes examined</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Perforation or obstruction</label>
+                    <select id="adj-obstperf">
+                        <option value="">— Select —</option>
+                        <option value="no">Neither present</option>
+                        <option value="yes">Perforation or obstruction</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- RECTAL-ONLY FIELDS -->
+            <div id="rectal-fields" class="hidden">
+                <div class="section-head">Rectal Cancer — Pre-operative Treatment</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Neoadjuvant treatment received</label>
+                        <select id="adj-preop">
+                            <option value="">— Select —</option>
+                            <option value="none">None — upfront surgery only</option>
+                            <option value="SCPRT">Short-course pre-op RT (5×5 Gy)</option>
+                            <option value="LCRT">Long-course chemoradiotherapy (LCRT)</option>
+                            <option value="TNT">Total neoadjuvant therapy (TNT) including induction chemotherapy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tumour regression grade (if applicable)</label>
+                        <select id="adj-trg">
+                            <option value="">— Not applicable / unknown —</option>
+                            <option value="TRG1">TRG1 — complete pathological response (ypT0N0)</option>
+                            <option value="TRG2">TRG2 — near-complete response</option>
+                            <option value="TRG3">TRG3 — partial response</option>
+                            <option value="TRG4">TRG4 — minimal response</option>
+                            <option value="TRG5">TRG5 — no response</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="hr">
+            <div class="section-head">Patient Factors</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>WHO Performance Status</label>
+                    <select id="adj-ps">
+                        <option value="">— Select —</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <select id="adj-age">
+                        <option value="">— Select —</option>
+                        <option value="u70">&lt;70 years</option>
+                        <option value="70to75">70–75 years</option>
+                        <option value="o75">&gt;75 years</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Pre-existing peripheral neuropathy</label>
+                    <select id="adj-neuro">
+                        <option value="">— Select —</option>
+                        <option value="none">None / Grade 0</option>
+                        <option value="g1">Grade 1 (mild, asymptomatic)</option>
+                        <option value="g2plus">Grade ≥2 (symptomatic limitation)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Renal function</label>
+                    <select id="adj-renal">
+                        <option value="">— Select —</option>
+                        <option value="ok">Adequate (eGFR ≥30)</option>
+                        <option value="impaired">Impaired (eGFR &lt;30 or on dialysis)</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="hr">
+            <div class="date-box">
+                <div class="date-box-title">📅 Schedule Generator <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;"> — optional</span></div>
+                <div class="date-box-sub">Enter the date of surgery and/or planned chemotherapy start date to generate a provisional schedule. Adjuvant chemotherapy should ideally begin within 8 weeks of surgery.</div>
+                <div class="form-grid" style="max-width:500px; margin-bottom:0;">
+                    <div class="form-group">
+                        <label>Date of surgery</label>
+                        <input type="date" id="adj-surgdate">
+                    </div>
+                    <div class="form-group">
+                        <label>Planned chemotherapy start date (if known)</label>
+                        <input type="date" id="adj-chemostart">
+                    </div>
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn-primary" onclick="assessAdjuvant()">▶ Generate Recommendation</button>
+                <button class="btn-reset" onclick="resetAdjuvant()">Reset</button>
+            </div>
+        </div>
+
+        <div id="adjuvant-result"></div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════
+         PANEL 3 — ANAL CANCER FOLLOW-UP
+    ══════════════════════════════════════════════════════ -->
+    <div id="panel-anal" class="tool-panel">
+        <div class="tool-header">
+            <div class="tool-tag">Anal Cancer · Post-CRT</div>
+            <h1 class="tool-title">Anal Cancer Post-RT Follow-up Schedule</h1>
+            <p class="tool-subtitle">Generate a structured surveillance schedule following definitive chemoradiotherapy for squamous cell carcinoma of the anus. Based on <strong>UKANO 2020 guidelines</strong> and standard UK practice.</p>
+        </div>
+
+        <div class="form-card">
+            <div class="section-head">Diagnosis &amp; Treatment</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Clinical stage at diagnosis</label>
+                    <select id="anal-stage">
+                        <option value="">— Select —</option>
+                        <option value="T1N0">T1N0 (Stage I)</option>
+                        <option value="T2N0">T2N0 (Stage II)</option>
+                        <option value="T3T4N0">T3–T4 N0 (Stage IIIA)</option>
+                        <option value="N1">Any T, N1–3 (Stage IIIB/C)</option>
+                        <option value="M1">M1 (Stage IV)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Chemotherapy received</label>
+                    <select id="anal-chemo">
+                        <option value="">— Select —</option>
+                        <option value="MMC-5FU">MMC + 5-FU (ACT I/ACT II standard)</option>
+                        <option value="MMC-Cape">MMC + Capecitabine</option>
+                        <option value="RT-only">Radiotherapy alone</option>
+                        <option value="other">Other / trial regimen</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>RT dose to primary</label>
+                    <select id="anal-dose">
+                        <option value="">— Select —</option>
+                        <option value="50.4">50.4 Gy (standard)</option>
+                        <option value="54">54 Gy (boost)</option>
+                        <option value="45">45 Gy</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>HIV status</label>
+                    <select id="anal-hiv">
+                        <option value="">— Select —</option>
+                        <option value="neg">HIV negative</option>
+                        <option value="pos">HIV positive (on ART)</option>
+                        <option value="unk">Unknown</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section-head">Response Assessment (if already performed)</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>11-week clinical response assessment</label>
+                    <select id="anal-resp11">
+                        <option value="">— Not yet performed —</option>
+                        <option value="CR">Complete clinical response (no palpable disease)</option>
+                        <option value="PR">Partial response (residual, decreasing)</option>
+                        <option value="NR">No response / progressive disease</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>MRI response (if performed)</label>
+                    <select id="anal-mri">
+                        <option value="">— Not performed —</option>
+                        <option value="CR">Complete MRI response</option>
+                        <option value="PR">Partial MRI response</option>
+                        <option value="NR">No MRI response</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="hr">
+            <div class="date-box">
+                <div class="date-box-title">📅 Follow-up Schedule Generator</div>
+                <div class="date-box-sub">Enter the date of the <strong>last radiotherapy fraction</strong> to generate a dated follow-up schedule. All dates are approximate — actual scheduling should account for department capacity and patient availability.</div>
+                <div class="form-group" style="max-width:220px;">
+                    <label>Date of last RT fraction</label>
+                    <input type="date" id="anal-rtend">
+                </div>
+            </div>
+            <div class="btn-row">
+                <button class="btn-primary" onclick="assessAnal()">▶ Generate Follow-up Schedule</button>
+                <button class="btn-reset" onclick="resetAnal()">Reset</button>
+            </div>
+        </div>
+
+        <div id="anal-result"></div>
+    </div>
+
+</main>
+
+<script>
+// ─────────────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────────────
+function showPanel(name, btn) {
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function addDays(d, n)   { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function addWeeks(d, n)  { return addDays(d, n * 7); }
+function addMonths(d, n) { const r = new Date(d); r.setMonth(r.getMonth() + n); return r; }
+
+function fmt(d)      { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtFull(d)  { return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+
+function badge(type, text) { return `<span class="badge badge-${type}">${text}</span>`; }
+
+function sRow(date, title, note, cls, bType, bText) {
+    return `<tr class="${cls || ''}">
+        <td class="date-cell">${date ? fmt(date) : '—'}</td>
+        <td>${bType ? badge(bType, bText) + ' ' : ''}${title}</td>
+        <td class="note-cell">${note || ''}</td>
+    </tr>`;
+}
+
+function rCard(type, icon, label, title, body, regimen, ref) {
+    return `<div class="result-card ${type}">
+        <div class="verdict-row">
+            <span class="verdict-icon">${icon}</span>
+            <span class="verdict-label">${label}</span>
+        </div>
+        <div class="result-title">${title}</div>
+        <div class="result-body">${body}</div>
+        ${regimen ? `<div class="regimen-label">Proposed Regimen</div><div class="regimen-box">${regimen}</div>` : ''}
+        ${ref ? `<div class="ref-note">${ref}</div>` : ''}
+    </div>`;
+}
+
+function showResult(id, html) {
+    const el = document.getElementById(id);
+    el.innerHTML = html;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─────────────────────────────────────────────────────
+// FOXTROT
+// ─────────────────────────────────────────────────────
+function assessFoxtrot() {
+    const site      = document.getElementById('ft-site').value;
+    const tstage    = document.getElementById('ft-tstage').value;
+    const mstage    = document.getElementById('ft-mstage').value;
+    const resect    = document.getElementById('ft-resect').value;
+    const msi       = document.getElementById('ft-msi').value;
+    const ras       = document.getElementById('ft-ras').value;
+    const ps        = document.getElementById('ft-ps').value;
+    const prior     = document.getElementById('ft-prior').value;
+    const startDate = document.getElementById('ft-startdate').value;
+
+    const ciRenal   = document.getElementById('ft-ci-renal').checked;
+    const ciNeuro   = document.getElementById('ft-ci-neuro').checked;
+    const ciDpyd    = document.getElementById('ft-ci-dpyd').checked;
+    const ciPreg    = document.getElementById('ft-ci-preg').checked;
+    const ciLiver   = document.getElementById('ft-ci-liver').checked;
+    const ciCardiac = document.getElementById('ft-ci-cardiac').checked;
+
+    if (!site || !tstage || !mstage || !resect || !ps || !prior) {
+        showResult('foxtrot-result', `<div class="error-msg">Please complete all required fields before assessing eligibility.</div>`);
+        return;
+    }
+
+    const abs = [], cautions = [];
+
+    // Absolute exclusions
+    if (site === 'rectum')
+        abs.push('Rectal cancer: FOXTROT applies exclusively to colonic tumours above the peritoneal reflection. Rectal cancer is managed via a separate neoadjuvant pathway (SCPRT or LCRT).');
+    if (site === 'uncertain')
+        abs.push('Tumour site uncertain: confirm whether colonic or rectal before considering neoadjuvant chemotherapy.');
+    if (tstage === 'T1' || tstage === 'T2')
+        abs.push(`${tstage} disease: FOXTROT requires radiological T3 or T4. No benefit has been demonstrated for early-stage tumours.`);
+    if (mstage === 'M1')
+        abs.push('Metastatic disease (M1): FOXTROT evaluated non-metastatic resectable colon cancer only. Metastatic disease requires a separate multidisciplinary strategy.');
+    if (resect === 'no')
+        abs.push('Technically unresectable: surgical resection must be feasible — FOXTROT is a preoperative strategy, not a downsizing strategy for unresectable disease.');
+    if (prior === 'yes')
+        abs.push('Prior systemic anti-cancer therapy: patients must be chemotherapy-naïve for the index tumour.');
+    if (ps === '3' || ps === '4')
+        abs.push(`Performance status ${ps}: FOXTROT eligibility requires WHO PS 0–2. Systemic chemotherapy with curative intent is not appropriate at this performance level.`);
+    if (ciRenal)
+        abs.push('Significant renal impairment: FOLFOX requires adequate renal function for oxaliplatin clearance and 5-FU dosing safety. Consider dose modification or specialist pharmacy review.');
+    if (ciNeuro)
+        abs.push('Peripheral neuropathy grade ≥2: oxaliplatin is contraindicated with pre-existing significant neuropathy.');
+    if (ciDpyd)
+        abs.push('DPD deficiency: 5-FU and capecitabine are contraindicated. Full DPD deficiency precludes this regimen entirely; intermediate deficiency requires specialist pharmacogenomics input.');
+    if (ciPreg)
+        abs.push('Pregnancy / breastfeeding: cytotoxic chemotherapy is contraindicated.');
+    if (ciLiver)
+        abs.push('Significant hepatic impairment: discuss dose reduction strategy with pharmacy and hepatology before proceeding.');
+    if (ciCardiac)
+        abs.push('Decompensated cardiac disease: 5-FU carries a risk of cardiotoxicity; not appropriate without cardiology input and clinical stabilisation.');
+
+    // Cautions / discussion points
+    if (ps === '2')
+        cautions.push('PS 2: the FOXTROT trial predominantly enrolled PS 0–1 patients. PS 2 patients should receive careful MDT assessment; consider whether the total treatment burden (neoadjuvant + surgery + adjuvant) is appropriate and discuss with the patient.');
+    if (msi === 'dMMR')
+        cautions.push('dMMR / MSI-H: emerging data raise questions about the benefit of oxaliplatin-based chemotherapy in dMMR colon cancer. Some centres offer FOXTROT to dMMR patients; others prefer upfront surgery. Consider clinical trial enrolment (e.g. neoadjuvant immune checkpoint blockade). Discuss at specialist MDT.');
+    if (msi === 'unknown')
+        cautions.push('MMR/MSI status unknown: strongly recommend reflex testing before starting neoadjuvant chemotherapy, as dMMR status may alter management.');
+    if (tstage === 'T4b')
+        cautions.push('T4b disease: confirm surgical plan for en-bloc resection with specialist surgical MDT. Discuss restaging imaging plan (repeat CT ± MRI after neoadjuvant).');
+    if (resect === 'borderline')
+        cautions.push('Borderline resectable: neoadjuvant chemotherapy may be particularly valuable in this context to enhance R0 resection rates. However, confirm at specialist surgical MDT before proceeding.');
+    if (ras === 'wildtype')
+        cautions.push('All-wild-type (KRAS/NRAS/BRAF): the FOXTROT trial included a panitumumab arm for RAS WT patients; this has not been adopted as standard. EGFR inhibitors in the neoadjuvant setting are not currently standard outside trials. Discuss at specialist MDT.');
+
+    const eligible = abs.length === 0;
+    let html = '';
+
+    if (eligible) {
+        let body = `<p>Based on the information provided, this patient <strong>meets the eligibility criteria</strong> for neoadjuvant FOLFOX chemotherapy as per the FOXTROT protocol. Present at MDT and confirm local SACT eligibility criteria before prescribing.</p>`;
+        if (cautions.length) {
+            body += `<p style="margin-top:10px;"><strong>Points requiring MDT discussion before proceeding:</strong></p><ul>${cautions.map(c => `<li>${c}</li>`).join('')}</ul>`;
+        }
+
+        const regimen =
+`FOXTROT Neoadjuvant Regimen — 3 cycles, q14d:
+─────────────────────────────────────────────────
+Oxaliplatin       85 mg/m²      IV over 2 h          Day 1
+Folinic acid      350 mg        IV over 2 h (concurrent) Day 1
+5-Fluorouracil    400 mg/m²     IV bolus             Day 1
+5-Fluorouracil    2400 mg/m²    IV over 46 h         Days 1–3
+─────────────────────────────────────────────────
+Cycle interval:   14 days × 3 cycles = 6 weeks total
+Surgery window:   target ~4 weeks after completing Cycle 3
+Adjuvant FOLFOX:  9 further cycles post-operatively (Cycles 4–12)
+Total duration:   12 cycles (24 weeks of active chemotherapy)`;
+
+        html += rCard('eligible', '✓', 'Meets FOXTROT Eligibility Criteria',
+            'Eligible for neoadjuvant FOLFOX — refer to SACT team and confirm at MDT',
+            body, regimen,
+            '<strong>Reference:</strong> Foxtrot Collaborative Group. Preoperative chemotherapy for operable colon cancer. <em>Lancet Oncol</em> 2022;23(7):963–975. | Always verify against local SACT protocol.');
+
+        // Schedule
+        if (startDate) {
+            const s = new Date(startDate);
+            const c1 = s;
+            const c2 = addDays(s, 14);
+            const c3 = addDays(s, 28);
+            const endNeo = addDays(s, 42);
+            const surgEarly = addDays(endNeo, 21);
+            const surgLate  = addDays(endNeo, 35);
+            const surgTarget = addDays(endNeo, 28);
+            const adjStart = addDays(surgTarget, 49); // 7 weeks post-surgery
+            const adjEnd   = addDays(adjStart, 8 * 14); // 9 cycles × 14d
+
+            let rows = '';
+            rows += sRow(c1,                   'Neoadjuvant Cycle 1, Day 1', 'FOLFOX. Pre-chemo bloods, weight, ECOG, consent check. Prescribe anti-emetics. DPYD genotype result required.', 'row-key', 'chemo', 'Chemo');
+            rows += sRow(addDays(c1, 2),        'Cycle 1: 5-FU pump disconnect', 'Day-unit or community nursing disconnect of 46-hour 5-FU infusion.', '', 'chemo', 'Chemo');
+            rows += sRow(c2,                   'Neoadjuvant Cycle 2, Day 1', 'FOLFOX. Pre-chemo bloods required. Assess neuropathy.', 'row-key', 'chemo', 'Chemo');
+            rows += sRow(addDays(c2, 2),        'Cycle 2: 5-FU pump disconnect', '', '', 'chemo', 'Chemo');
+            rows += sRow(c3,                   'Neoadjuvant Cycle 3, Day 1 (final)', 'FOLFOX. Pre-chemo bloods. Neuropathy assessment. Arrange pre-operative CT restaging.', 'row-key', 'chemo', 'Chemo');
+            rows += sRow(addDays(c3, 2),        'Cycle 3: 5-FU pump disconnect', '', '', 'chemo', 'Chemo');
+            rows += sRow(addDays(c3, 14),       'Pre-operative restaging CT', 'CT chest/abdomen/pelvis to confirm M0 and assess response. Surgical team to review and book resection.', 'row-alt', 'imaging', 'CT');
+            rows += sRow(null, `Surgery window: ${fmt(surgEarly)} – ${fmt(surgLate)}`, 'Target resection ~4 weeks after Cycle 3. Pre-operative assessment and enhanced recovery pathway. Stoma marking if applicable.', 'row-key', 'surgery', 'Surgery');
+            rows += sRow(adjStart,             'Adjuvant Cycle 4, Day 1 (first post-op)', 'First adjuvant FOLFOX cycle. Target 6–8 weeks post-surgery. Confirm wound healing, bowel function, bloods. Neuropathy baseline.', 'row-key', 'chemo', 'Chemo');
+            rows += sRow(adjEnd,               'Estimated completion — Cycle 12 (final)', 'Final adjuvant cycle. Arrange end-of-treatment review and CT surveillance plan (12 weeks post-completion).', '', 'review', 'End Chemo');
+
+            html += `<div class="schedule-section">
+                <div class="schedule-title">Provisional FOXTROT Treatment Schedule</div>
+                <div class="schedule-sub">Based on neoadjuvant Cycle 1 start: <strong>${fmtFull(c1)}</strong>. All dates are approximate and subject to blood results, toxicity, and surgical availability.</div>
+                <table class="schedule-table">
+                    <thead><tr><th style="width:150px;">Approximate Date</th><th>Event</th><th>Notes</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>`;
+        }
+
+    } else {
+        let body = `<p>This patient <strong>does not meet eligibility criteria</strong> for neoadjuvant FOLFOX (FOXTROT). The following absolute contraindication(s) were identified:</p>
+        <ul>${abs.map(c => `<li>${c}</li>`).join('')}</ul>
+        <p style="margin-top:10px;">Proceed to specialist MDT for alternative surgical and/or oncological planning. Ensure complete staging and optimise fitness before surgery if upfront resection is planned.</p>`;
+
+        html += rCard('ineligible', '✗', 'Does Not Meet FOXTROT Eligibility Criteria',
+            'Not eligible — proceed to MDT for alternative plan',
+            body, null,
+            '<strong>Reference:</strong> Foxtrot Collaborative Group. <em>Lancet Oncol</em> 2022.');
+    }
+
+    showResult('foxtrot-result', html);
+}
+
+function resetFoxtrot() {
+    ['ft-site','ft-tstage','ft-mstage','ft-resect','ft-msi','ft-ras','ft-ps','ft-prior'].forEach(id => document.getElementById(id).value = '');
+    ['ft-ci-renal','ft-ci-neuro','ft-ci-dpyd','ft-ci-preg','ft-ci-liver','ft-ci-cardiac'].forEach(id => document.getElementById(id).checked = false);
+    document.getElementById('ft-startdate').value = '';
+    document.getElementById('foxtrot-result').innerHTML = '';
+}
+
+// ─────────────────────────────────────────────────────
+// ADJUVANT CHEMOTHERAPY
+// ─────────────────────────────────────────────────────
+function toggleRectalFields() {
+    const show = document.getElementById('adj-site').value === 'rectal';
+    document.getElementById('rectal-fields').classList.toggle('hidden', !show);
+}
+
+function assessAdjuvant() {
+    const site      = document.getElementById('adj-site').value;
+    const pt        = document.getElementById('adj-pt').value;
+    const pn        = document.getElementById('adj-pn').value;
+    const margin    = document.getElementById('adj-margin').value;
+    const grade     = document.getElementById('adj-grade').value;
+    const msi       = document.getElementById('adj-msi').value;
+    const lvi       = document.getElementById('adj-lvi').value;
+    const pni       = document.getElementById('adj-pni').value;
+    const lncount   = document.getElementById('adj-lncount').value;
+    const obstperf  = document.getElementById('adj-obstperf').value;
+    const ps        = document.getElementById('adj-ps').value;
+    const age       = document.getElementById('adj-age').value;
+    const neuro     = document.getElementById('adj-neuro').value;
+    const renal     = document.getElementById('adj-renal').value;
+    const surgDate  = document.getElementById('adj-surgdate').value;
+    const chemoStart= document.getElementById('adj-chemostart').value;
+
+    const preop     = site === 'rectal' ? document.getElementById('adj-preop').value  : '';
+    const trg       = site === 'rectal' ? document.getElementById('adj-trg').value    : '';
+
+    if (!site || !pt || !pn || !ps || !age) {
+        showResult('adjuvant-result', `<div class="error-msg">Please complete all required fields (site, pT, pN, PS, age) before generating a recommendation.</div>`);
+        return;
+    }
+
+    // Oxaliplatin fitness
+    const oxaliOK      = neuro !== 'g2plus' && renal !== 'impaired' && (ps === '0' || ps === '1') && age !== 'o75';
+    const oxaliCaution = !oxaliOK && (neuro !== 'g2plus') && (renal !== 'impaired') && ps !== '3';
+    const fitForChemo  = ps !== '3';
+
+    // High-risk features
+    const hrf = [];
+    if (pt === 'T4a' || pt === 'T4b') hrf.push('pT4 tumour');
+    if (grade === 'G3' || grade === 'G4') hrf.push('Poor/undifferentiated grade (G3/G4)');
+    if (lvi === 'yes') hrf.push('Lymphovascular invasion');
+    if (pni === 'yes') hrf.push('Perineural invasion');
+    if (obstperf === 'yes') hrf.push('Tumour perforation or obstruction');
+    if (lncount === 'inadequate') hrf.push('<12 lymph nodes examined');
+    if (margin === 'R1') hrf.push('R1 resection margin');
+
+    const isN0 = pn === 'N0';
+    const isN2 = pn === 'N2a' || pn === 'N2b';
+    const isN1c = pn === 'N1c';
+    const pCR  = trg === 'TRG1';
+
+    let cardType, icon, label, cardTitle, body, regimen = '', cycles = 0, cycleInterval = 21, notes = '';
+
+    // ── COLON ──────────────────────────────────────────
+    if (site === 'colon') {
+
+        if (isN0 && (pt === 'T1' || pt === 'T2')) {
+            // Stage I
+            cardType = 'neutral'; icon = '—'; label = 'No Adjuvant Chemotherapy';
+            cardTitle = 'Stage I Colon Cancer: Adjuvant Chemotherapy Not Indicated';
+            body = `<p>Stage I (pT1–2 pN0) colon cancer. Low risk of recurrence after curative resection. <strong>Adjuvant chemotherapy is not recommended.</strong> Arrange post-operative surveillance as per local protocol.</p>`;
+            notes = 'Offer Lynch syndrome / hereditary CRC assessment if clinically indicated (young age, family history, dMMR on pathology).';
+
+        } else if (isN0) {
+            // Stage II
+            if (msi === 'dMMR') {
+                cardType = 'neutral'; icon = '—'; label = 'Stage II · dMMR/MSI-H · No Chemo';
+                cardTitle = 'Stage II dMMR/MSI-H Colon Cancer: Adjuvant Chemotherapy Not Recommended';
+                body = `<p><strong>dMMR / MSI-H Stage II:</strong> 5-fluorouracil–based adjuvant chemotherapy confers no survival benefit in this molecular subgroup and some analyses suggest potential harm. <strong>Adjuvant chemotherapy is not recommended.</strong></p>
+                ${hrf.length ? `<p style="margin-top:8px;"><em>Despite the following adverse pathological features (${hrf.join(', ')}), the dMMR status overrides the indication for 5-FU–based adjuvant chemotherapy in Stage II disease.</em></p>` : ''}
+                <p style="margin-top:8px;">Ensure Lynch syndrome germline testing is offered. Arrange routine surveillance.</p>`;
+                notes = 'Discuss PD-1 checkpoint inhibitor trials in the adjuvant setting if available. Refer to genetics for Lynch syndrome assessment.';
+
+            } else if (hrf.length === 0) {
+                // Low-risk Stage II pMMR
+                cardType = 'neutral'; icon = '—'; label = 'Stage II · Low-risk · pMMR · No Chemo';
+                cardTitle = 'Low-risk Stage II pMMR Colon Cancer: Adjuvant Chemotherapy Not Routinely Recommended';
+                body = `<p>No adverse pathological features identified. In low-risk Stage II pMMR/MSS colon cancer, adjuvant chemotherapy does not provide a clinically meaningful survival benefit. <strong>Adjuvant chemotherapy is not routinely recommended.</strong></p>
+                <p style="margin-top:8px;">Arrange post-operative CT surveillance (typically at 12 and 36 months) and CEA monitoring per local protocol.</p>`;
+                if (msi === 'unknown') notes = 'MMR/MSI status unknown. If dMMR/MSI-H is identified on further testing, revise management accordingly.';
+
+            } else {
+                // High-risk Stage II pMMR
+                cardType = 'caution'; icon = '⚠'; label = 'Stage II · High-risk · pMMR · Discuss at MDT';
+                cardTitle = 'High-risk Stage II pMMR: Adjuvant Chemotherapy — MDT Discussion Required';
+                body = `<p>The following high-risk pathological features were identified:</p>
+                <ul>${hrf.map(f => `<li>${f}</li>`).join('')}</ul>
+                <p style="margin-top:8px;">Adjuvant chemotherapy should be <strong>discussed at MDT</strong>. Absolute risk reduction is modest (~3–4% with capecitabine; QUASAR trial), but is generally considered for fit patients with multiple high-risk features.</p>`;
+
+                if (!fitForChemo) {
+                    body += `<div class="callout slate"><strong>PS 3:</strong> Patient unlikely fit for adjuvant chemotherapy. Focus on surveillance and supportive care.</div>`;
+                    cardType = 'neutral';
+                } else if (oxaliOK && hrf.length >= 2) {
+                    body += `<p style="margin-top:8px;">In fit patients with ≥2 high-risk features, consider capecitabine monotherapy or CAPOX (oxaliplatin doublet — less established evidence in Stage II; based on Stage III data extrapolation). Discuss at MDT.</p>`;
+                    regimen = `CAPOX (if doublet agreed at MDT):\nCapecitabine 1000 mg/m² BD Days 1–14 + Oxaliplatin 130 mg/m² Day 1, q21d × 8 cycles\n\nOR Capecitabine monotherapy (QUASAR evidence):\nCapecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`;
+                    cycles = 8; cycleInterval = 21;
+                } else {
+                    body += `<p style="margin-top:8px;">Given patient fitness or age profile, <strong>capecitabine monotherapy</strong> is preferred if adjuvant chemotherapy is agreed at MDT (oxaliplatin avoided for neuropathy, renal impairment, PS ≥2, or age >75).</p>`;
+                    regimen = `Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles (6 months)`;
+                    cycles = 8; cycleInterval = 21;
+                }
+                notes = 'The absolute benefit in Stage II is modest. A careful discussion of benefits, risks, and patient preferences is essential. Quality of life and treatment tolerability must be factored in.';
+                if (msi === 'unknown') notes += ' MMR/MSI status unknown — recommend testing before MDT decision.';
+            }
+
+        } else {
+            // Stage III (N+)
+            cardType = 'eligible'; icon = '✓'; label = 'Stage III · Adjuvant Chemotherapy Recommended';
+            cardTitle = 'Stage III Colon Cancer: Adjuvant Chemotherapy Indicated';
+
+            if (!fitForChemo) {
+                cardType = 'caution'; icon = '⚠'; label = 'Stage III · Fitness Concern';
+                cardTitle = 'Stage III: Adjuvant Chemotherapy Indicated — Performance Status Requires MDT Review';
+                body = `<p>Stage III colon cancer — adjuvant chemotherapy is indicated. However, <strong>PS 3</strong> suggests the patient may not be fit for systemic treatment at this time. Discuss in MDT: consider oncology-palliative care liaison, clinical trial access, and supportive surveillance.</p>`;
+
+            } else if (oxaliOK) {
+                body = `<p>Stage III pMMR colon cancer: <strong>oxaliplatin-containing doublet chemotherapy is recommended</strong> (MOSAIC: FOLFOX; XELOXA: CAPOX). Standard duration is 6 months total.
+                ${msi === 'dMMR' ? '<br><br><strong>dMMR/MSI-H Stage III:</strong> unlike Stage II, dMMR Stage III patients benefit from oxaliplatin-based adjuvant chemotherapy. Proceed with doublet as standard.' : ''}</p>
+                ${isN2 ? `<div class="callout teal" style="margin-top:10px;"><strong>N2 disease (≥4 positive nodes):</strong> High-risk — strongly favour full doublet chemotherapy. Do not substitute monotherapy.</div>` : 
+                  (isN1c ? `<div class="callout slate" style="margin-top:10px;"><strong>N1c (tumour deposits, no positive nodes):</strong> Treat as node-positive disease — doublet chemotherapy as per N1 Stage III.</div>` : '')}`;
+                regimen = `CAPOX (preferred — oral convenience, equivalent efficacy):\nCapecitabine 1000 mg/m² BD Days 1–14 + Oxaliplatin 130 mg/m² Day 1, q21d × 8 cycles\n\nOR FOLFOX:\nOxaliplatin 85 mg/m² + Folinic acid 350 mg + 5-FU 400 mg/m² bolus + 5-FU 2400 mg/m² over 46 h, q14d × 12 cycles`;
+                cycles = 8; cycleInterval = 21;
+
+            } else if (oxaliCaution) {
+                cardType = 'caution'; icon = '⚠'; label = 'Stage III · Oxaliplatin Eligibility Uncertain';
+                cardTitle = 'Stage III: Adjuvant Chemotherapy Indicated — Regimen Requires MDT Discussion';
+                body = `<p>Stage III colon cancer: adjuvant chemotherapy is indicated. <strong>Oxaliplatin eligibility requires careful MDT assessment</strong> given patient factors (age / PS / neuropathy). Options:</p>
+                <ul>
+                    <li>If oxaliplatin tolerated: CAPOX or FOLFOX at 80% starting dose with planned escalation if tolerated.</li>
+                    <li>If oxaliplatin not appropriate: capecitabine monotherapy (lesser DFS benefit, but clinically meaningful vs. observation in Stage III).</li>
+                </ul>
+                ${isN2 ? `<div class="callout amber" style="margin-top:8px;"><strong>N2 disease:</strong> Stronger indication for doublet — make every effort to assess oxaliplatin tolerability before defaulting to monotherapy.</div>` : ''}`;
+                regimen = `If oxaliplatin tolerated: CAPOX as above at 80% starting dose\n\nOR if oxaliplatin not appropriate:\nCapecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`;
+                cycles = 8; cycleInterval = 21;
+
+            } else {
+                body = `<p>Stage III colon cancer: adjuvant chemotherapy is indicated. Given patient factors, oxaliplatin is not appropriate. <strong>Capecitabine monotherapy</strong> is recommended.</p>`;
+                regimen = `Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles (6 months)`;
+                cycles = 8; cycleInterval = 21;
+            }
+            notes = 'Adjuvant chemotherapy should ideally commence within 8 weeks of surgery — delay beyond 12 weeks is associated with reduced efficacy. Ensure consent, DPYD genotyping, baseline bloods, and stoma/bowel function assessment completed before starting.';
+            if (msi === 'dMMR') notes += ' Lynch syndrome / hereditary CRC assessment should be offered to all dMMR Stage III patients.';
+        }
+
+    // ── RECTAL ─────────────────────────────────────────
+    } else if (site === 'rectal') {
+
+        if (preop === 'TNT') {
+            cardType = 'neutral'; icon = '—'; label = 'Post-TNT · Adjuvant Not Routinely Indicated';
+            cardTitle = 'Post–Total Neoadjuvant Therapy: No Routine Adjuvant Chemotherapy';
+            body = `<p>This patient received total neoadjuvant therapy (TNT) including full-dose induction chemotherapy pre-operatively. <strong>Adjuvant chemotherapy is not routinely given following TNT</strong> — systemic treatment has been delivered in the neoadjuvant phase.</p>
+            ${pCR ? `<div class="callout teal" style="margin-top:10px;"><strong>Pathological complete response (ypT0N0) achieved.</strong> Excellent prognostic indicator. Proceed with routine post-operative surveillance.</div>` :
+                    `<div class="callout amber" style="margin-top:10px;"><strong>Non-complete pathological response:</strong> If response was poor (TRG4–5, ypN+), discuss at specialist MDT whether further systemic treatment is warranted — evidence base is limited. Clinical trial enrolment should be considered.</div>`}`;
+
+        } else if (preop === 'LCRT') {
+            if (pCR || (isN0 && pt !== 'T4a' && pt !== 'T4b' && margin !== 'R1')) {
+                cardType = 'neutral'; icon = '—'; label = 'Post-LCRT · Low-risk · No Adjuvant Recommended';
+                cardTitle = pCR ? 'Pathological Complete Response After LCRT: No Adjuvant Chemotherapy' : 'Post-LCRT ypN0: Adjuvant Chemotherapy Not Routinely Recommended';
+                body = `<p>${pCR ? `<strong>Pathological complete response (ypT0N0)</strong> — outstanding outcome.` : `Post–long-course CRT and curative resection, ypN0.`} Adjuvant chemotherapy is <strong>not routinely recommended</strong>. Evidence from CHRONICLE (Glynne-Jones et al.) and EORTC 22921 (Bosset et al.) does not support a significant survival benefit in this setting.</p>
+                <p style="margin-top:8px;">Arrange post-operative surveillance per local rectal cancer follow-up pathway.</p>`;
+            } else {
+                cardType = 'caution'; icon = '⚠'; label = 'Post-LCRT · ypN+ · Discuss Adjuvant at MDT';
+                cardTitle = 'Post-LCRT with Residual Nodal Disease: Adjuvant Chemotherapy — MDT Discussion';
+                body = `<p>Following LCRT and surgery with <strong>ypN+ disease</strong>, adjuvant chemotherapy should be discussed at MDT. Evidence base is modest (CHRONICLE was underpowered; EORTC 22921 showed no significant OS benefit), but adjuvant chemotherapy is reasonable for fit patients with residual nodal disease.</p>
+                ${isN2 ? `<div class="callout amber" style="margin-top:10px;"><strong>ypN2 disease:</strong> Stronger case for adjuvant doublet — recommend CAPOX if fit.</div>` : ''}`;
+                regimen = oxaliOK
+                    ? `CAPOX: Capecitabine 1000 mg/m² BD Days 1–14 + Oxaliplatin 130 mg/m² Day 1, q21d × 8 cycles\n\nOR Capecitabine monotherapy: 1250 mg/m² BD Days 1–14, q21d × 8 cycles`
+                    : `Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`;
+                cycles = 8; cycleInterval = 21;
+                notes = 'Discuss risk-benefit carefully with the patient. Absolute benefit from adjuvant chemotherapy in post-LCRT rectal cancer is uncertain.';
+            }
+
+        } else if (preop === 'SCPRT') {
+            if (isN0 && pt !== 'T4a' && pt !== 'T4b' && margin !== 'R1') {
+                cardType = 'neutral'; icon = '—'; label = 'Post-SCPRT · N0 · No Adjuvant';
+                cardTitle = 'Post-SCPRT pN0: Adjuvant Chemotherapy Not Routinely Recommended';
+                body = `<p>Following SCPRT and curative resection with pN0 disease, adjuvant chemotherapy is <strong>not routinely recommended</strong> in the absence of additional high-risk features. Arrange standard rectal cancer surveillance.</p>`;
+            } else {
+                cardType = 'caution'; icon = '⚠'; label = 'Post-SCPRT · High-risk or N+ · Discuss at MDT';
+                cardTitle = 'Post-SCPRT with High-risk Pathology or N+: MDT Discussion Required';
+                body = `<p>Following SCPRT and surgery with ${isN0 ? 'high-risk pathological features' : 'node-positive disease'}, adjuvant chemotherapy should be discussed at MDT. Consider ${oxaliOK ? 'CAPOX or capecitabine monotherapy' : 'capecitabine monotherapy'} if fit.</p>`;
+                regimen = oxaliOK
+                    ? `CAPOX: Capecitabine 1000 mg/m² BD Days 1–14 + Oxaliplatin 130 mg/m² Day 1, q21d × 8 cycles\nOR Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`
+                    : `Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`;
+                cycles = 8; cycleInterval = 21;
+            }
+
+        } else {
+            // No pre-op treatment
+            if (isN0 && (pt === 'T1' || pt === 'T2')) {
+                cardType = 'neutral'; icon = '—'; label = 'Early Rectal · Upfront Surgery · No Adjuvant';
+                cardTitle = 'pT1–2N0 Rectal Cancer after Upfront Surgery: No Adjuvant Chemotherapy';
+                body = `<p>Adjuvant chemotherapy is <strong>not indicated</strong>. Discuss whether pelvic radiotherapy is required (e.g. threatened CRM, positive margin, EMVI+) if not administered pre-operatively — multidisciplinary assessment is required.</p>`;
+
+            } else if (isN0) {
+                cardType = 'caution'; icon = '⚠'; label = 'Rectal · N0 · Upfront Surgery · MDT Review';
+                cardTitle = 'pT3–4N0 Rectal Cancer after Upfront Surgery: Requires Specialist MDT Discussion';
+                body = `<p>pT3–T4N0 rectal cancer treated with upfront surgery and no neoadjuvant treatment. <strong>Discuss at specialist MDT.</strong> Both adjuvant pelvic radiotherapy (particularly if CRM involved/close) and adjuvant chemotherapy (particularly for pT4 or multiple adverse features) may be relevant.</p>
+                <ul>
+                    <li>If CRM involved or close: consider adjuvant pelvic long-course RT ± concurrent chemotherapy</li>
+                    <li>If pT4 or multiple adverse pathological features: consider adjuvant chemotherapy (cape or CAPOX)</li>
+                </ul>
+                <p style="margin-top:8px;">Timing and sequencing of RT and chemotherapy should be planned with the clinical oncology and radiotherapy teams.</p>`;
+
+            } else {
+                // N+ upfront surgery
+                cardType = 'eligible'; icon = '✓'; label = 'Rectal · N+ · Upfront Surgery · Adjuvant Indicated';
+                cardTitle = 'Node-positive Rectal Cancer after Upfront Surgery: Adjuvant Chemotherapy Recommended';
+                body = `<p>pN+ rectal cancer treated with upfront surgery (no neoadjuvant treatment received). <strong>Adjuvant chemotherapy is recommended.</strong></p>
+                <p style="margin-top:8px;">Additionally, <strong>adjuvant pelvic radiotherapy</strong> should be discussed at specialist MDT if not previously administered, particularly for positive/close CRM, EMVI, or high-risk T4 disease.</p>
+                ${oxaliOK ? '<p style="margin-top:8px;">CAPOX (preferred) or capecitabine monotherapy (if less fit) is recommended.</p>' : '<p style="margin-top:8px;">Capecitabine monotherapy recommended given oxaliplatin suitability concerns.</p>'}`;
+                regimen = oxaliOK
+                    ? `CAPOX: Capecitabine 1000 mg/m² BD Days 1–14 + Oxaliplatin 130 mg/m² Day 1, q21d × 8 cycles\nOR Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`
+                    : `Capecitabine 1250 mg/m² BD Days 1–14, q21d × 8 cycles`;
+                cycles = 8; cycleInterval = 21;
+                notes = 'Coordinate timing of adjuvant chemotherapy and RT with the multidisciplinary team — sequencing varies by centre (e.g. short-course chemo → LCRT → chemo; or concurrent chemoRT → adjuvant chemo).';
+            }
+        }
+    }
+
+    // Add notes callout if present
+    if (notes) body += `<div class="callout slate" style="margin-top:10px;">${notes}</div>`;
+
+    const ref = '<strong>References:</strong> ESMO Colon Cancer Guidelines 2020 | ESMO Rectal Cancer Guidelines 2022 | NICE CG131 | MOSAIC (André, NEJM 2004) | XELOXA (Schmoll, JCO 2012) | QUASAR (Kerr, Lancet 2007) | CHRONICLE (Glynne-Jones, JCO 2014) | EORTC 22921 (Bosset, NEJM 2006)';
+
+    let html = rCard(cardType, icon, label, cardTitle, body, regimen || null, ref);
+
+    // Schedule
+    if ((surgDate || chemoStart) && cycles > 0) {
+        let chStart;
+        if (chemoStart) {
+            chStart = new Date(chemoStart);
+        } else {
+            chStart = addDays(new Date(surgDate), 49); // default 7 weeks post-surgery
+        }
+
+        let rows = '';
+        if (surgDate && !chemoStart) {
+            rows += sRow(new Date(surgDate), 'Date of surgery', 'Reference date for adjuvant planning.', 'row-key', 'surgery', 'Surgery');
+            rows += sRow(addDays(new Date(surgDate), 14), 'Surgical follow-up / wound review', 'Surgical wound assessment. Begin discussion of adjuvant oncology plan.', '', 'clinic', 'Clinic');
+            rows += sRow(addDays(new Date(surgDate), 42), 'Pre-chemotherapy oncology assessment', 'Bloods, weight, stoma review, neuropathy baseline, consent. Target chemo start within 8 weeks of surgery.', 'row-alt', 'clinic', 'Clinic');
+        }
+
+        for (let i = 0; i < cycles; i++) {
+            const cycleDate = addDays(chStart, i * cycleInterval);
+            const last = i === cycles - 1;
+            rows += sRow(cycleDate,
+                `Cycle ${i+1}${last ? ' — Final' : ''}`,
+                i === 0
+                    ? 'Start of adjuvant chemotherapy. Pre-chemo bloods, consent, weight, ECOG. DPYD genotype required before start.'
+                    : last
+                        ? 'Final cycle. Arrange post-treatment review, CT surveillance plan, CEA baseline.'
+                        : 'Pre-chemo bloods required. Toxicity review (nausea, neuropathy, hand-foot syndrome, diarrhoea).',
+                i === 0 || last ? 'row-key' : '',
+                'chemo', 'Chemo'
+            );
+        }
+        const endChemo = addDays(chStart, cycles * cycleInterval);
+        rows += sRow(addDays(endChemo, 84), 'Post-chemotherapy CT scan', '12 weeks post-completion: CT chest/abdomen/pelvis + CEA per surveillance protocol.', '', 'imaging', 'CT');
+
+        html += `<div class="schedule-section">
+            <div class="schedule-title">Provisional Adjuvant Chemotherapy Schedule</div>
+            <div class="schedule-sub">Chemotherapy start: <strong>${fmtFull(chStart)}</strong>${surgDate && !chemoStart ? ` (planned ~7 weeks after surgery on ${fmt(new Date(surgDate))})` : ''}. All dates approximate.</div>
+            <table class="schedule-table">
+                <thead><tr><th style="width:150px;">Approximate Date</th><th>Event</th><th>Notes</th></tr></thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`;
+    }
+
+    showResult('adjuvant-result', html);
+}
+
+function resetAdjuvant() {
+    ['adj-site','adj-pt','adj-pn','adj-margin','adj-grade','adj-msi','adj-lvi','adj-pni',
+     'adj-lncount','adj-obstperf','adj-ps','adj-age','adj-neuro','adj-renal'].forEach(id => document.getElementById(id).value = '');
+    ['adj-preop','adj-trg'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('adj-surgdate').value = '';
+    document.getElementById('adj-chemostart').value = '';
+    document.getElementById('rectal-fields').classList.add('hidden');
+    document.getElementById('adjuvant-result').innerHTML = '';
+}
+
+// ─────────────────────────────────────────────────────
+// ANAL CANCER FOLLOW-UP
+// ─────────────────────────────────────────────────────
+function assessAnal() {
+    const rtEnd    = document.getElementById('anal-rtend').value;
+    const resp11   = document.getElementById('anal-resp11').value;
+    const hiv      = document.getElementById('anal-hiv').value;
+
+    if (!rtEnd) {
+        showResult('anal-result', `<div class="error-msg">Please enter the date of the last RT fraction to generate the follow-up schedule.</div>`);
+        return;
+    }
+
+    const d = new Date(rtEnd);
+    let html = '';
+
+    // Context card
+    let contextBody = `<p>Post-CRT follow-up schedule generated per UKANO 2020 guidelines. Key clinical principles:</p>
+    <ul>
+        <li><strong>Do not assess, biopsy, or operate before 11 weeks:</strong> tumour regression continues for up to 26 weeks after CRT. Biopsy before 11 weeks risks false-negative results and impairs healing.</li>
+        <li><strong>First formal response assessment: 11 weeks post–last RT fraction.</strong> Clinical examination including DRE and bilateral inguinal groin assessment.</li>
+        <li>If <strong>complete clinical response (CR)</strong>: proceed with surveillance below.</li>
+        <li>If <strong>partial response</strong>: MRI pelvis at 16–18 weeks; further clinical review at 26 weeks before considering salvage.</li>
+        <li>If <strong>no response / progressive disease</strong>: urgent MRI, PET-CT, and specialist MDT review for salvage APR consideration.</li>
+    </ul>`;
+
+    if (resp11 === 'NR') {
+        contextBody += `<div class="callout red" style="margin-top:10px;"><strong>Non-response / progressive disease at 11-week assessment:</strong> This requires urgent MRI ± PET-CT and specialist MDT (ideally at a high-volume centre) for consideration of salvage abdominoperineal resection. The surveillance schedule below is suspended pending this decision.</div>`;
+    } else if (resp11 === 'PR') {
+        contextBody += `<div class="callout amber" style="margin-top:10px;"><strong>Partial response at 11 weeks:</strong> Await further regression. Arrange MRI pelvis at 16–18 weeks. If complete response confirmed at subsequent assessment: proceed with surveillance schedule. If ongoing or progressive disease at 26 weeks: refer to specialist MDT for salvage consideration.</div>`;
+    }
+
+    if (hiv === 'pos') {
+        contextBody += `<div class="callout teal" style="margin-top:10px;"><strong>HIV-positive patient:</strong> More frequent haematological monitoring during and after CRT. Liaise closely with HIV/GU medicine team regarding ART interactions and immunosuppression. Ensure CD4 count is monitored — consider frequency of surveillance visits in the context of immune status.</div>`;
+    }
+
+    html += rCard('info', '📋', 'UKANO 2020 Follow-up Protocol',
+        'Anal SCC Post-CRT Follow-up',
+        contextBody, null,
+        '<strong>References:</strong> UKANO Guidelines 2020 | James et al. ACT II Trial. <em>Lancet Oncol</em> 2013;14(6):516–524 | NICE NG151 (2020)');
+
+    // Generate schedule
+    const w11   = addWeeks(d, 11);
+    const m3    = addMonths(d, 3);
+    const m6    = addMonths(d, 6);
+    const m9    = addMonths(d, 9);
+    const m12   = addMonths(d, 12);
+    const m15   = addMonths(d, 15);
+    const m18   = addMonths(d, 18);
+    const m21   = addMonths(d, 21);
+    const m24   = addMonths(d, 24);
+    const m30   = addMonths(d, 30);
+    const m36   = addMonths(d, 36);
+    const m42   = addMonths(d, 42);
+    const m48   = addMonths(d, 48);
+    const m54   = addMonths(d, 54);
+    const m60   = addMonths(d, 60);
+
+    let rows = '';
+    rows += sRow(d,    'End of radiotherapy (last fraction)', 'Acute toxicity management begins. Ensure skin care advice, analgesia, anti-diarrhoeals, haematological monitoring plan. Begin 11-week countdown.', 'row-key', 'rt', 'End RT');
+    rows += sRow(addWeeks(d, 2), 'Acute toxicity review (optional)', 'Nurse-led or telephone review — not routine at all UK centres. Assess skin, mucositis, bowel, fatigue, haematological toxicity. Escalate Grade ≥3 toxicity.', '', 'review', 'Review');
+    rows += sRow(w11,  '⭐ 11-week response assessment', 'CRITICAL. Full clinical examination: DRE, perianal inspection, bilateral inguinal groin palpation. Do NOT biopsy unless CR is clearly absent and surgical planning is underway. Document response clearly.', 'row-key', 'response', 'Response');
+
+    if (!resp11 || resp11 === 'PR') {
+        rows += sRow(addWeeks(d, 16), 'MRI pelvis at 16–18 weeks (if PR at 11 weeks)', 'Re-staging MRI with diffusion-weighted imaging. Discuss at specialist MDT if residual or equivocal disease. EUA ± biopsy if clinically appropriate.', 'row-alt', 'imaging', 'MRI');
+    }
+
+    rows += sRow(m3,   'Month 3 clinic', 'Clinical examination, DRE, groins. Assess subacute toxicities: skin, bowel, urinary, sexual function, fatigue. Address late effects proactively.', '', 'clinic', 'Clinic');
+    rows += sRow(m6,   'Month 6 clinic + MRI pelvis', 'Clinical review and <strong>MRI pelvis</strong> (6-month baseline scan — important reference for future comparison). Assess late effects. HIV+ patients: CD4 count.', 'row-key', 'imaging', 'MRI + Clinic');
+    rows += sRow(m9,   'Month 9 clinic', 'Clinical examination. Review bowel function, sexual/urinary function, pelvic floor. Refer to late effects or rehabilitation services if appropriate.', '', 'clinic', 'Clinic');
+    rows += sRow(m12,  'Month 12 clinic + CT', 'Clinical review. <strong>CT chest/abdomen/pelvis</strong> for surveillance at 12 months (or if not done at 6 months). Annual inguinal groin and anal examination.', 'row-key', 'imaging', 'CT + Clinic');
+    rows += sRow(m15,  'Month 15 clinic', 'Clinical examination. Bowel, sexual, and urinary toxicity review. Signpost to relevant support services.', '', 'clinic', 'Clinic');
+    rows += sRow(m18,  'Month 18 clinic', 'Clinical examination. Discuss ongoing late effects: bowel dysfunction, lower limb lymphoedema (if groins irradiated), radiation fibrosis, osteoporosis risk.', '', 'clinic', 'Clinic');
+    rows += sRow(m21,  'Month 21 clinic', 'Clinical examination.', '', 'clinic', 'Clinic');
+    rows += sRow(m24,  'Month 24 clinic + CT', '2-year landmark. <strong>CT chest/abdomen/pelvis</strong>. Risk of late recurrence reduces significantly after this point. Transition to 6-monthly surveillance.', 'row-key', 'imaging', 'CT + Clinic');
+    rows += sRow(m30,  'Month 30 clinic (6-monthly phase)', 'Clinical examination. Confirm ongoing complete response. Reinforce surveillance symptoms to report.', '', 'clinic', 'Clinic');
+    rows += sRow(m36,  'Month 36 clinic + CT', 'Clinical review + <strong>CT chest/abdomen/pelvis</strong> at 3 years.', 'row-alt', 'imaging', 'CT + Clinic');
+    rows += sRow(m42,  'Month 42 clinic', 'Clinical examination.', '', 'clinic', 'Clinic');
+    rows += sRow(m48,  'Month 48 clinic', 'Clinical examination. Quality of life review. Ongoing late effects.', '', 'clinic', 'Clinic');
+    rows += sRow(m54,  'Month 54 clinic', 'Clinical examination.', '', 'clinic', 'Clinic');
+    rows += sRow(m60,  '5-year clinic — discharge assessment', 'Clinical examination, DRE, groins. <strong>CT chest/abdomen/pelvis</strong> at 5 years. Counsel regarding surveillance post-discharge: red-flag symptoms warranting urgent re-referral (new anorectal bleeding, pain, perianal mass, new inguinal lymphadenopathy). Discuss discharge to GP or annual GP-led follow-up.', 'row-key', 'discharge', 'Discharge');
+
+    html += `<div class="schedule-section">
+        <div class="schedule-title">Post-CRT Follow-up Schedule — Anal SCC</div>
+        <div class="schedule-sub">End of radiotherapy: <strong>${fmtFull(d)}</strong>. All dates are approximate (±1–2 weeks). Every clinic visit should include DRE and bilateral inguinal groin examination.</div>
+        <table class="schedule-table">
+            <thead><tr><th style="width:155px;">Approximate Date</th><th>Appointment</th><th>Notes</th></tr></thead>
+            <tbody>${rows}</tbody>
+        </table>
+        <div class="ref-note">
+            <strong>Inguinal recurrence outside prior RT field:</strong> may be salvageable with RT ± surgical dissection — refer promptly to MDT.<br>
+            <strong>Inguinal recurrence within prior RT field:</strong> systemic chemotherapy or clinical trial — discuss at specialist MDT.<br>
+            <strong>Biopsy for suspected recurrence:</strong> EUA at specialist centre with colorectal surgery; MRI and/or PET-CT prior to biopsy where possible.
+        </div>
+    </div>`;
+
+    showResult('anal-result', html);
+}
+
+function resetAnal() {
+    ['anal-stage','anal-chemo','anal-dose','anal-hiv','anal-resp11','anal-mri'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    document.getElementById('anal-rtend').value = '';
+    document.getElementById('anal-result').innerHTML = '';
+}
+</script>
 </body>
 </html>
