@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Neuro-Oncology Tracker</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .sidebar h2 { margin-top: 0; font-size: 1.5rem; color: var(--primary); }
+        .filter-group { display: flex; flex-direction: column; gap: 10px; }
+        .filter-group label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .search-bar {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        /* Article Cards */
+        .article-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .article-title { font-size: 1.25rem; font-weight: bold; color: var(--primary); margin: 0; }
+        .article-meta { font-size: 0.9rem; color: var(--text-light); }
+        .article-abstract { font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+        
+        /* Hashtags */
+        .hashtags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag {
+            background-color: #e1f0fa;
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        /* Links */
+        .links { display: flex; gap: 15px; margin-top: 10px; }
+        .links a {
+            text-decoration: none;
+            color: white;
+            background-color: var(--accent);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        .links a:hover { background-color: #2980b9; }
+        .links a.doi-link { background-color: var(--primary); }
+        .links a.doi-link:hover { background-color: #1a252f; }
+        
+        /* Utilities */
+        .hidden { display: none !important; }
+        #loading { 
+            text-align: center; 
+            color: var(--accent); 
+            font-size: 1.2rem; 
+            margin-top: 50px; 
+            font-weight: bold;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(52,152,219,0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Filters</h2>
+        <div class="filter-group" id="journal-filters">
+            <h3>Journals</h3>
+            </div>
+    </div>
+
+    <div class="main-content">
+        <input type="text" id="search-input" class="search-bar" placeholder="Search topics, keywords, or authors...">
+        
+        <div id="loading"><span class="spinner"></span>Fetching latest articles live from PubMed...</div>
+        <div id="articles-container"></div>
+    </div>
+
+    <script>
+        let allArticles = [];
+        const JOURNALS = [
+            "Neuro-oncology",
+            "Journal of neuro-oncology",
+            "Neuro-oncology practice",
+            "Neuro-oncology advances"
+        ];
+        const DAYS_BACK = 30;
+        const MAX_RESULTS = 50;
+
+        // 1. Fetch live data using a CORS proxy
+        async function fetchLivePubMed() {
+            try {
+                // Step A: Build Query and Get PMIDs
+                const journalQuery = JOURNALS.map(j => `"${j}"[Journal]`).join(" OR ");
+                const fullQuery = `(${journalQuery}) AND ("${DAYS_BACK}"[Date - Publication])`;
+                
+                const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(fullQuery)}&retmode=json&retmax=${MAX_RESULTS}`;
+                const proxySearchUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(searchUrl)}`;
+                
+                const searchRes = await fetch(proxySearchUrl);
+                const searchData = JSON.parse((await searchRes.json()).contents);
+                const pmids = searchData.esearchresult.idlist;
+
+                if (!pmids || pmids.length === 0) {
+                    throw new Error("No articles found in the last 30 days.");
+                }
+
+                // Step B: Fetch XML details for those PMIDs
+                const fetchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=${pmids.join(",")}&retmode=xml`;
+                const proxyFetchUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(fetchUrl)}`;
+                
+                const fetchRes = await fetch(proxyFetchUrl);
+                const xmlString = (await fetchRes.json()).contents;
+
+                // Step C: Parse the XML into a JSON array
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                const pubmedArticles = xmlDoc.querySelectorAll("PubmedArticle");
+
+                allArticles = Array.from(pubmedArticles).map(article => {
+                    const pmid = article.querySelector("PMID")?.textContent || "";
+                    const title = article.querySelector("ArticleTitle")?.textContent || "No Title Available";
+                    const journal = article.querySelector("Title")?.textContent || "Unknown Journal";
+                    
+                    // Abstract
+                    const abstractTexts = article.querySelectorAll("AbstractText");
+                    const abstract = Array.from(abstractTexts).map(a => a.textContent).join(" ");
+                    
+                    // Authors
+                    const authors = Array.from(article.querySelectorAll("Author")).map(a => {
+                        const last = a.querySelector("LastName")?.textContent || "";
+                        const init = a.querySelector("Initials")?.textContent || "";
+                        return `${last} ${init}`.trim();
+                    }).filter(a => a.length > 0);
+
+                    // Keywords & MeSH terms
+                    const keywords = Array.from(article.querySelectorAll("Keyword, DescriptorName"))
+                                        .map(k => k.textContent)
+                                        .filter(k => k);
+                    const uniqueKeywords = [...new Set(keywords)];
+
+                    // DOI
+                    let doi = "";
+                    article.querySelectorAll("ArticleId").forEach(id => {
+                        if (id.getAttribute("IdType") === "doi") doi = id.textContent;
+                    });
+
+                    // Date
+                    let date = new Date().getFullYear().toString();
+                    const yearNode = article.querySelector("PubDate Year");
+                    if (yearNode) date = yearNode.textContent;
+
+                    return { pmid, title, journal, abstract, authors, keywords: uniqueKeywords, doi, date };
+                });
+
+                // Step D: Render
+                document.getElementById('loading').classList.add('hidden');
+                setupJournalFilters();
+                renderArticles(allArticles);
+
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `Error fetching data: ${error.message}`;
+                console.error("Fetch Error:", error);
+            }
+        }
+
+        // 2. Setup Sidebar Filters dynamically
+        function setupJournalFilters() {
+            const foundJournals = [...new Set(allArticles.map(a => a.journal))].sort();
+            const filterContainer = document.getElementById('journal-filters');
+            filterContainer.innerHTML = '<h3>Journals</h3>'; // Reset
+            
+            foundJournals.forEach(journal => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" value="${journal}" checked> ${journal}`;
+                label.querySelector('input').addEventListener('change', filterArticles);
+                filterContainer.appendChild(label);
+            });
+        }
+
+        // 3. Render HTML Cards
+        function renderArticles(articles) {
+            const container = document.getElementById('articles-container');
+            container.innerHTML = ''; 
+
+            if (articles.length === 0) {
+                container.innerHTML = '<p>No articles found matching your filters.</p>';
+                return;
+            }
+
+            articles.forEach(article => {
+                const tagsHtml = (article.keywords || [])
+                    .map(keyword => `<span class="tag">#${keyword.replace(/[\s-]/g, '')}</span>`)
+                    .join('');
+
+                const card = document.createElement('div');
+                card.className = 'article-card';
+                card.innerHTML = `
+                    <h3 class="article-title">${article.title}</h3>
+                    <div class="article-meta">
+                        <strong>${article.journal}</strong> • Published: ${article.date} • ${article.authors.join(', ')}
+                    </div>
+                    ${article.abstract ? `<div class="article-abstract">${article.abstract}</div>` : ''}
+                    <div class="hashtags">${tagsHtml}</div>
+                    <div class="links">
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/${article.pmid}/" target="_blank" rel="noopener">PubMed</a>
+                        ${article.doi ? `<a href="https://doi.org/${article.doi}" target="_blank" rel="noopener" class="doi-link">DOI</a>` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 4. Filtering Logic
+        function filterArticles() {
+            const searchText = document.getElementById('search-input').value.toLowerCase();
+            const checkedBoxes = Array.from(document.querySelectorAll('#journal-filters input:checked'));
+            const selectedJournals = checkedBoxes.map(box => box.value);
+
+            const filtered = allArticles.filter(article => {
+                const journalMatch = selectedJournals.includes(article.journal);
+                const textMatch = 
+                    article.title.toLowerCase().includes(searchText) ||
+                    (article.abstract && article.abstract.toLowerCase().includes(searchText)) ||
+                    (article.keywords && article.keywords.some(k => k.toLowerCase().includes(searchText)));
+
+                return journalMatch && textMatch;
+            });
+
+            renderArticles(filtered);
+        }
+
+        // Event Listeners & Boot
+        document.getElementById('search-input').addEventListener('input', filterArticles);
+        fetchLivePubMed();
+    </script>
+</body>
+</html>
