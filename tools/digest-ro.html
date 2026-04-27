@@ -1,1 +1,519 @@
-html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --border: #e4e7ec;
+  --border-strong: #d0d5dd;
+  --text: #101828;
+  --text-2: #475467;
+  --text-3: #98a2b3;
+  --accent: #1d4ed8;
+  --accent-light: #eff4ff;
+  --accent-mid: #b2ccff;
+  --green: #027a48; --green-bg: #ecfdf3;
+  --pink: #c11574; --pink-bg: #fdf2fa;
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.05);
+  --shadow: 0 1px 3px rgba(16,24,40,.1), 0 1px 2px rgba(16,24,40,.06);
+  --shadow-md: 0 4px 8px -2px rgba(16,24,40,.1), 0 2px 4px -2px rgba(16,24,40,.06);
+  --radius: 10px;
+  --font: 'DM Sans', system-ui, sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+[data-theme="dark"] {
+  --bg: #0d1117; --surface: #161b22; --surface-2: #21262d;
+  --border: #30363d; --border-strong: #444c56;
+  --text: #e6edf3; --text-2: #8b949e; --text-3: #484f58;
+  --accent: #4493f8; --accent-light: #121d2f; --accent-mid: #1f3a6e;
+  --green: #3fb950; --green-bg: #0f2a1a;
+  --pink: #f778ba; --pink-bg: #2d1b27;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+  --shadow: 0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+  --shadow-md: 0 4px 8px -2px rgba(0,0,0,.4), 0 2px 4px -2px rgba(0,0,0,.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 60px; font-size: 14px; -webkit-font-smoothing: antialiased; transition: background .25s, color .25s; }
+
+/* Header */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.header-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+}
+.wordmark { display: flex; align-items: center; gap: 10px; }
+.wordmark-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+}
+.wordmark-icon svg { width: 14px; height: 14px; fill: white; }
+.wordmark-text { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
+.wordmark-sub { font-size: 11px; color: var(--text-3); font-weight: 400; margin-left: 2px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.pill-btn {
+  font-family: var(--font); font-size: 12.5px; font-weight: 500;
+  padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-2); transition: all .15s;
+}
+.pill-btn:hover { border-color: var(--border-strong); color: var(--text); }
+
+/* Layout */
+.page { max-width: 1080px; margin: 0 auto; padding: 1.5rem 1rem; display: grid; grid-template-columns: 272px 1fr; gap: 1.5rem; align-items: start; }
+@media (max-width: 860px) { .page { grid-template-columns: 1fr; } aside { position: relative !important; top: 0 !important; } }
+aside { position: sticky; top: 72px; }
+
+/* Sidebar */
+.sidebar-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.sidebar-section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-section:last-child { border-bottom: none; }
+.sidebar-label {
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-3); margin-bottom: 10px;
+}
+.search-wrap { position: relative; }
+.search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+.search-input {
+  width: 100%; padding: 7px 10px 7px 32px;
+  border-radius: 7px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text);
+  font-family: var(--font); font-size: 13px;
+  transition: border .15s, box-shadow .15s;
+}
+.search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.select-input {
+  width: 100%; padding: 7px 10px; border-radius: 7px;
+  border: 1px solid var(--border); background: var(--surface-2);
+  color: var(--text); font-family: var(--font); font-size: 13px; cursor: pointer;
+}
+.select-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+/* Specialty chips */
+.chip-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  font-size: 11.5px; font-weight: 500; padding: 3px 9px;
+  border-radius: 5px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text-2);
+  cursor: pointer; transition: all .15s; user-select: none;
+  font-family: var(--font);
+}
+.chip.on { background: var(--accent-light); color: var(--accent); border-color: var(--accent-mid); font-weight: 600; }
+.chip:hover:not(.on) { border-color: var(--border-strong); color: var(--text); }
+
+/* Journal list */
+.jlist label { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text-2); margin-bottom: 6px; cursor: pointer; }
+.jlist label:last-child { margin-bottom: 0; }
+.jlist input[type=checkbox] { accent-color: var(--accent); width: 13px; height: 13px; }
+.jlist label:hover { color: var(--text); }
+
+/* Sidebar buttons */
+.sidebar-actions { padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; }
+.btn-primary {
+  font-family: var(--font); font-size: 13px; font-weight: 600;
+  background: var(--accent); color: #fff; border: none;
+  padding: 8px 14px; border-radius: 7px; cursor: pointer; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-ghost {
+  font-family: var(--font); font-size: 13px; font-weight: 500;
+  background: transparent; color: var(--text-2);
+  border: 1px solid var(--border); padding: 7px 14px; border-radius: 7px;
+  cursor: pointer; width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all .15s;
+}
+.btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+
+/* Feed */
+.feed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.feed-count { font-size: 12px; color: var(--text-3); font-weight: 500; }
+
+/* Article card */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 8px; overflow: hidden;
+  box-shadow: var(--shadow); transition: box-shadow .15s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-header { padding: 14px 16px; cursor: pointer; }
+.card-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.badge.j { background: var(--surface-2); }
+.badge.cr { background: var(--pink-bg); color: var(--pink); border-color: var(--pink-bg); }
+.badge.sp { background: var(--accent-light); color: var(--accent); border-color: var(--accent-light); }
+.badge.dt { color: var(--text-3); background: none; border: none; font-family: var(--font); font-size: 11.5px; padding: 0; }
+.card h2 { font-size: 14px; font-weight: 500; line-height: 1.45; color: var(--text); letter-spacing: -0.01em; }
+.card-hint { font-size: 11px; color: var(--text-3); margin-top: 5px; }
+
+.card-body { display: none; border-top: 1px solid var(--border); background: var(--surface-2); padding: 16px; }
+.card.open .card-body { display: block; }
+.abs-text { font-size: 13px; color: var(--text-2); line-height: 1.65; }
+.abs-text + .abs-text { margin-top: 8px; }
+
+
+.card-actions { display: flex; align-items: center; gap: 0; margin-top: 13px; border-top: 1px solid var(--border); padding-top: 11px; }
+.act-btn {
+  font-family: var(--font); font-size: 12px; font-weight: 500;
+  color: var(--text-2); background: none; border: none;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  text-decoration: none; display: flex; align-items: center; gap: 4px;
+  transition: all .15s;
+}
+.act-btn:hover { background: var(--border); color: var(--text); }
+.act-btn.primary-act { color: var(--accent); font-weight: 600; }
+.act-btn.primary-act:hover { background: var(--accent-light); }
+.act-sep { width: 1px; height: 16px; background: var(--border); margin: 0 2px; }
+
+/* Loading */
+#loading { text-align: center; padding: 4rem 2rem; color: var(--text-3); font-size: 13px; }
+.loading-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin: 0 2px; animation: pulse 1.2s ease-in-out infinite; }
+.loading-dot:nth-child(2) { animation-delay: .2s; }
+.loading-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse { 0%,80%,100% { opacity:.2; transform:scale(.8); } 40% { opacity:1; transform:scale(1); } }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: var(--text); color: var(--bg);
+  font-size: 12.5px; font-weight: 500; padding: 8px 14px;
+  border-radius: 7px; box-shadow: var(--shadow-md);
+  opacity: 0; transform: translateY(6px); transition: all .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div class="header-inner">
+    <div class="wordmark">
+      <div class="wordmark-icon">
+        <svg viewBox="0 0 16 16"><path d="M2 3h5v2H2zm7 0h5v2H9zM2 7h12v2H2zm0 4h5v2H2zm7 0h5v2H9z"/></svg>
+      </div>
+      <span class="wordmark-text">OncoStream</span>
+      <span class="wordmark-sub">Radiation Oncology Literature</span>
+    </div>
+    <div class="header-actions">
+      <button class="pill-btn" onclick="toggleTheme()">
+        <span id="theme-icon">☾</span> Dark mode
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <aside>
+    <div class="sidebar-card">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Search</div>
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="m15 15 3 3"/></svg>
+          <input type="text" id="query" class="search-input" placeholder="e.g. SBRT, prostate, adaptive..." onkeypress="if(event.key==='Enter')fetchPapers()">
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Date Range</div>
+        <select id="dateRange" class="select-input">
+          <option value="0">All time</option>
+          <option value="1">Last month</option>
+          <option value="3" selected>Last 3 months</option>
+          <option value="6">Last 6 months</option>
+          <option value="12">Last 12 months</option>
+          <option value="24">Last 2 years</option>
+        </select>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Specialty</div>
+        <div class="chip-grid" id="spec-chips"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">PubMed Journals</div>
+        <div id="pubmed-list" class="jlist"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Other Journals</div>
+        <div id="crossref-list" class="jlist"></div>
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="btn-primary" onclick="fetchPapers()">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 4v5h5M16 16v-5h-5"/><path d="M16.5 8A7 7 0 1 0 15 14.5"/></svg>
+          Update Feed
+        </button>
+        <button class="btn-ghost" onclick="showBookmarks()">
+          <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h10a1 1 0 0 1 1 1v13l-6-3-6 3V4a1 1 0 0 1 1-1z"/></svg>
+          Saved Bookmarks
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div id="loading" style="display:none;">
+      <div style="margin-bottom:10px;">
+        <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>
+      </div>
+      Querying PubMed &amp; Crossref…
+    </div>
+    <div id="feed-header" class="feed-header" style="display:none;">
+      <span class="feed-count" id="feed-count"></span>
+    </div>
+    <div id="results"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PUBMED = [
+  { name: 'IJROBP Red Journal', q: '"Int J Radiat Oncol Biol Phys"[Journal]' },
+  { name: 'PRO', q: '"Pract Radiat Oncol"[Journal]' },
+  { name: 'Advances in RadOnc', q: '"Adv Radiat Oncol"[Journal]' },
+  { name: 'Radiotherapy & Oncology', q: '"Radiother Oncol"[Journal]' },
+  { name: 'tipsRO', q: '"Tech Innov Patient Support Radiat Oncol"[Journal]' },
+  { name: 'ctRO', q: '"Clin Transl Radiat Oncol"[Journal]' },
+  { name: 'phiRO', q: '"Phys Imaging Radiat Oncol"[Journal]' },
+  { name: 'Clinical Oncology', q: '"Clin Oncol (R Coll Radiol)"[Journal]' },
+  { name: 'Strahlentherapie', q: '"Strahlenther Onkol"[Journal]' },
+];
+const CROSSREF = [
+  { name: 'Radiation Oncology', issn: '1748-717X' },
+  { name: 'Radiotherapy in Practice', issn: '1460-3969' },
+  { name: 'Radiation Oncology Journal', issn: '2234-3156' },
+  { name: 'Ann. Rad. Therapy & Oncology', issn: '2577-8757' },
+];
+const SPECS = [
+  { l:'Breast', t:['breast','mammary'] },
+  { l:'GI', t:['rectal','colorectal','pancreatic','gastric','oesophageal','esophageal','hepatocellular','colon','anal'] },
+  { l:'Thoracic', t:['lung','NSCLC','SCLC','mesothelioma','thoracic'] },
+  { l:'CNS', t:['glioblastoma','glioma','brain','meningioma','SRS','radiosurgery','spinal cord'] },
+  { l:'GU', t:['prostate','bladder','renal','kidney','cervical','endometrial','uterine','ovarian'] },
+  { l:'H&N', t:['head and neck','oropharyngeal','nasopharyngeal','laryngeal','thyroid','salivary'] },
+  { l:'Haem', t:['lymphoma','myeloma','leukaemia','leukemia','haematological'] },
+  { l:'Sarcoma', t:['sarcoma','bone tumour','soft tissue'] },
+  { l:'Palliative', t:['palliative','bone metastasis','bone mets','spinal metastasis'] },
+  { l:'SBRT/SABR', t:['SBRT','SABR','stereotactic body','ablative'] },
+  { l:'Proton', t:['proton','carbon ion','particle therapy','hadron'] },
+];
+
+let bookmarks = JSON.parse(localStorage.getItem('onco_bm') || '[]');
+let active = new Set();
+let isDark = false;
+
+const $ = id => document.getElementById(id);
+
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg;
+  t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  $('theme-icon').textContent = isDark ? '☀' : '☾';
+}
+
+function stripJats(s) {
+  if (!s) return 'Abstract available on publisher website.';
+  return s.replace(/<jats:[^>]*>/gi,'').replace(/<\/jats:[^>]*>/gi,'')
+    .replace(/<[^>]+>/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&nbsp;/g,' ').replace(/\s{2,}/g,' ').trim()
+    || 'Abstract available on publisher website.';
+}
+
+function dateCutoff() {
+  const m = parseInt($('dateRange').value); if (!m) return null;
+  const d = new Date(); d.setMonth(d.getMonth() - m); return d;
+}
+function pmDateTerm(m) {
+  if (!m) return '';
+  const d = new Date(); d.setMonth(d.getMonth() - m);
+  const [y, mo, dy] = [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')];
+  return ` AND ("${y}/${mo}/${dy}"[Date - Publication] : "3000"[Date - Publication])`;
+}
+function specLabel(text) {
+  const lo = text.toLowerCase();
+  return SPECS.find(s => s.t.some(t => lo.includes(t.toLowerCase())))?.l || null;
+}
+function matchSpec(text) {
+  if (!active.size) return true;
+  const lo = text.toLowerCase();
+  for (const l of active) { const s = SPECS.find(x => x.l === l); if (s?.t.some(t => lo.includes(t.toLowerCase()))) return true; }
+  return false;
+}
+
+function init() {
+  const chips = $('spec-chips');
+  SPECS.forEach(s => {
+    const c = document.createElement('span'); c.className = 'chip'; c.textContent = s.l;
+    c.onclick = () => { if(active.has(s.l)){active.delete(s.l);c.classList.remove('on');}else{active.add(s.l);c.classList.add('on');} };
+    chips.appendChild(c);
+  });
+  const pm = $('pubmed-list');
+  PUBMED.forEach(j => pm.innerHTML += `<label><input type="checkbox" class="pm-cb" value="${j.q.replace(/"/g,'&quot;')}" checked>${j.name}</label>`);
+  const cr = $('crossref-list');
+  CROSSREF.forEach(j => cr.innerHTML += `<label><input type="checkbox" class="cr-cb" value="${j.issn}" checked>${j.name}</label>`);
+  fetchPapers();
+}
+
+async function fetchPapers() {
+  const res = $('results'), load = $('loading');
+  const kw = $('query').value.trim();
+  const months = parseInt($('dateRange').value) || 0;
+  const cut = dateCutoff();
+  const selPM = [...document.querySelectorAll('.pm-cb:checked')].map(i => i.value);
+  const selCR = [...document.querySelectorAll('.cr-cb:checked')].map(i => i.value);
+  if (!selPM.length && !selCR.length) { toast('Select at least one journal'); return; }
+
+  res.innerHTML = ''; load.style.display = 'block'; $('feed-header').style.display = 'none';
+  let all = [];
+
+  try {
+    if (selPM.length) {
+      let q = `(${selPM.join(' OR ')})`;
+      if (kw) q += ` AND (${kw})`;
+      q += pmDateTerm(months);
+      const sr = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmode=json&retmax=30&sort=pub+date&term=${encodeURIComponent(q)}`);
+      const { esearchresult: { idlist } } = await sr.json();
+      if (idlist?.length) {
+        const xml = new DOMParser().parseFromString(await (await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=${idlist.join(',')}`)).text(), 'text/xml');
+        Array.from(xml.getElementsByTagName('PubmedArticle')).forEach(a => {
+          const pd = a.querySelector('PubDate');
+          const yr = pd?.querySelector('Year')?.textContent || '2000';
+          const mo = pd?.querySelector('Month')?.textContent || 'Jan';
+          const dy = pd?.querySelector('Day')?.textContent || '01';
+          const sd = new Date(`${yr} ${mo} ${dy}`).getTime() || 0;
+          if (cut && sd < cut.getTime()) return;
+          const pmid = a.querySelector('PMID').textContent;
+          const title = a.querySelector('ArticleTitle')?.textContent || 'Unknown Title';
+          let abs = '';
+          a.querySelectorAll('AbstractText').forEach(n => {
+            const lbl = n.getAttribute('Label');
+            abs += `<p class="abs-text">${lbl ? `<strong>${lbl}:</strong> ` : ''}${n.textContent}</p>`;
+          });
+          const MON = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          const moNum = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(mo) + 1;
+          all.push({ id: pmid, src: 'PubMed', title, journal: a.querySelector('ISOAbbreviation')?.textContent || '', displayDate: `${MON[moNum] || mo} ${yr}`, sortDate: sd, abstract: abs || '<p class="abs-text">Abstract not available.</p>', link: `https://pubmed.ncbi.nlm.nih.gov/${pmid}`, sl: specLabel(title + ' ' + abs) });
+        });
+      }
+    }
+
+    if (selCR.length) {
+      await Promise.all(selCR.map(issn => {
+        let u = `https://api.crossref.org/journals/${issn}/works?sort=published&order=desc&select=DOI,title,container-title,published,abstract,URL&rows=12`;
+        if (kw) u += `&query=${encodeURIComponent(kw)}`;
+        return fetch(u).then(r => r.ok ? r.json() : null).catch(() => null);
+      })).then(results => results.forEach(data => {
+        data?.message?.items?.forEach(item => {
+          const [y, mo = 1, d = 1] = item.published?.['date-parts']?.[0] || [2000];
+          const sd = new Date(y, mo-1, d).getTime();
+          if (cut && sd < cut.getTime()) return;
+          const title = item.title?.[0] || 'Unknown Title';
+          const ca = stripJats(item.abstract);
+          const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          all.push({ id: item.DOI, src: 'Crossref', title, journal: item['container-title']?.[0] || '', displayDate: `${MON[mo-1] || ''} ${y}`.trim(), sortDate: sd, abstract: `<p class="abs-text">${ca}</p>`, link: item.URL || `https://doi.org/${item.DOI}`, sl: specLabel(title + ' ' + ca) });
+        });
+      }));
+    }
+
+    if (active.size) all = all.filter(p => matchSpec(p.title + ' ' + p.abstract));
+    if (!all.length) { res.innerHTML = '<p style="padding:2rem;color:var(--text-3);font-size:13px;">No papers found. Try broadening your filters.</p>'; return; }
+
+    all.sort((a,b) => b.sortDate - a.sortDate);
+    const top = all.slice(0, 35);
+    $('feed-count').textContent = `${top.length} paper${top.length !== 1 ? 's' : ''}`;
+    $('feed-header').style.display = 'flex';
+    render(top);
+  } catch(e) {
+    console.error(e);
+    res.innerHTML = '<p style="padding:2rem;color:var(--text-3);font-size:13px;">Error connecting to databases. Please check your connection.</p>';
+  } finally { load.style.display = 'none'; }
+}
+
+function esc(s) { return s.replace(/`/g,'\\`').replace(/\$/g,'\\$'); }
+
+function render(articles) {
+  const c = $('results');
+  articles.forEach(a => {
+    const isCR = a.src === 'Crossref';
+    const safeId = a.id.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="card-header" onclick="this.closest('.card').classList.toggle('open')">
+        <div class="card-meta">
+          <span class="badge ${isCR ? 'cr' : 'j'}">${a.journal}</span>
+          ${a.sl ? `<span class="badge sp">${a.sl}</span>` : ''}
+          <span class="badge dt">${a.displayDate}</span>
+        </div>
+        <h2>${a.title}</h2>
+        <div class="card-hint">Click to read abstract</div>
+      </div>
+      <div class="card-body">
+        ${a.abstract}
+        <div class="card-actions">
+          <a class="act-btn primary-act" href="${a.link}" target="_blank">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 3H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/><path d="M15 3h2v2m0 0-7 7m7-7H12"/></svg>
+            View paper
+          </a>
+          <div class="act-sep"></div>
+          <button class="act-btn" onclick="bm('${safeId}', \`${esc(a.title)}\`, '${a.link}')">
+            <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h10a1 1 0 0 1 1 1v13l-6-3-6 3V4a1 1 0 0 1 1-1z"/></svg>
+            Save
+          </button>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+
+function bm(id, title, link) {
+  if (!bookmarks.find(b => b.id === id)) { bookmarks.push({id, title, link}); localStorage.setItem('onco_bm', JSON.stringify(bookmarks)); toast('Saved to bookmarks'); }
+  else toast('Already bookmarked');
+}
+
+function showBookmarks() {
+  const c = $('results'); $('feed-header').style.display = 'none';
+  if (!bookmarks.length) { toast('No bookmarks saved yet'); return; }
+  c.innerHTML = `<div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:12px;">Saved — ${bookmarks.length} paper${bookmarks.length!==1?'s':''}</div>`;
+  bookmarks.forEach((b, i) => {
+    c.innerHTML += `<div class="card" style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <a href="${b.link}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:13px;font-weight:500;line-height:1.4;">${b.title}</a>
+      <button class="act-btn" style="white-space:nowrap;flex-shrink:0;" onclick="rmBm(${i})">Remove</button>
+    </div>`;
+  });
+}
+function rmBm(i) { bookmarks.splice(i,1); localStorage.setItem('onco_bm', JSON.stringify(bookmarks)); showBookmarks(); }
+
+init();
+</script>
+</body>
+</html>
