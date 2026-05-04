@@ -3,65 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Colorectal Oncology Literature Digest</title>
+<title>Tools | CRC Digest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1A1410;
-    --cream: #F5F0E8;
-    --cream-dark: #EDE8DF;
-    --cream-mid: #E8E2D8;
-    --muted: #7A7268;
-    --rule: #D4CEC4;
-    --tab-accent: #2D4A7A;
+    --text-main: #1E293B;      
+    --text-muted: #64748B;     
+    --bg-body: #F8FAFC;        
+    --bg-card: #FFFFFF;
+    --border-color: #E2E8F0;   
+    --primary-blue: #0284C7;   
+    --header-bg: #0F172A;      
+    --tab-accent: var(--primary-blue);
   }
+  
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Source Serif 4', Georgia, serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+  
+  body { 
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+    background: var(--bg-body); 
+    color: var(--text-main); 
+    min-height: 100vh; 
+    line-height: 1.5;
+  }
 
-  .masthead { background: var(--ink); color: var(--cream); padding: 2rem 2.5rem 1.5rem; border-bottom: 4px solid var(--tab-accent); }
-  .masthead-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-  .masthead h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
-  .masthead h1 span { color: var(--tab-accent); display: block; font-style: italic; font-weight: 400; font-size: 0.85em; }
-  .masthead-meta { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #8A8070; line-height: 1.8; flex-shrink: 0; }
-  .live-badge { display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(45,74,122,0.3); border: 1px solid var(--tab-accent); color: #9BB3D4; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 0.2rem 0.55rem; border-radius: 2px; margin-top: 0.5rem; letter-spacing: 0.05em; text-transform: uppercase; }
-  .live-dot { width: 5px; height: 5px; background: #4CAF50; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .masthead { 
+    background: var(--header-bg); 
+    color: #FFFFFF; 
+    padding: 2.5rem 2.5rem 1.5rem; 
+    border-bottom: 4px solid var(--tab-accent); 
+  }
+  
+  .masthead-top { 
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; 
+  }
+  
+  .masthead h1 { 
+    font-size: clamp(1.4rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; 
+  }
+  
+  .masthead h1 span { 
+    color: #94A3B8; display: block; font-weight: 500; font-size: 0.55em; margin-top: 0.35rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+  
+  .masthead-meta { 
+    text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #94A3B8; line-height: 1.8; flex-shrink: 0; 
+  }
+  
+  .live-badge { 
+    display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.1); 
+    border: 1px solid rgba(255,255,255,0.2); color: #E2E8F0; font-size: 0.65rem; font-weight: 500; 
+    padding: 0.25rem 0.6rem; border-radius: 4px; margin-top: 1rem; letter-spacing: 0.05em; text-transform: uppercase; 
+  }
+  
+  .live-dot { width: 6px; height: 6px; background: #22C55E; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
-  .tab-bar { background: var(--ink); display: flex; padding: 0 2.5rem; border-bottom: 1px solid #2A2520; overflow-x: auto; }
-  .tab-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: #6A6458; background: none; border: none; padding: 0.85rem 1.5rem 0.75rem; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color 0.2s, border-color 0.2s; }
-  .tab-btn.active { color: var(--cream); border-bottom-color: var(--tab-accent); }
+  .tab-bar { 
+    background: var(--header-bg); display: flex; padding: 0 2.5rem; gap: 0.5rem; overflow-x: auto;
+  }
+  
+  .tab-btn { 
+    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; color: #94A3B8; 
+    background: none; border: none; padding: 1rem 1.25rem; cursor: pointer; 
+    border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s;
+  }
+  
+  .tab-btn:hover { color: #F8FAFC; }
+  .tab-btn.active { color: #FFFFFF; border-bottom-color: var(--tab-accent); }
 
   .main { max-width: 900px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
 
-  .status-bar { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.5rem; }
-  .status-top { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  .status-bar { 
+    display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; 
+  }
+  
+  .status-top { 
+    display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; 
+  }
   
   .controls-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-  #search-bar { flex-grow: 1; min-width: 200px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 0.4rem 0.75rem; border: 1px solid var(--rule); background: white; border-radius: 2px; color: var(--ink); outline-color: var(--tab-accent); }
   
-  select, .refresh-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--tab-accent); background: white; border: 1px solid var(--tab-accent); padding: 0.4rem 0.6rem; border-radius: 2px; cursor: pointer; height: 32px; }
-  .refresh-btn:hover { background: var(--tab-accent); color: white; }
-
-  .paper-item { border-bottom: 1px solid var(--rule); padding: 1.25rem 0; cursor: pointer; transition: background 0.1s; }
-  .paper-item:hover { background: var(--cream-dark); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
-  .paper-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.35; margin-bottom: 0.4rem; }
-  .paper-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
-  .paper-journal { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--tab-accent); font-weight: 500; }
+  #search-bar { 
+    flex-grow: 1; min-width: 200px; font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 0.5rem 0.75rem; 
+    border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 4px; color: var(--text-main);
+  }
   
-  .badge-link { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--muted); background: var(--cream-dark); padding: 0.1rem 0.4rem; border-radius: 2px; border: 1px solid var(--rule); text-decoration: none; }
-  .badge-link:hover { border-color: var(--tab-accent); color: var(--tab-accent); }
-  .doi-link { color: #5C3A6B; }
-
-  .abstract-drawer { display: none; background: var(--cream-dark); border: 1px solid var(--rule); border-radius: 2px; padding: 1.25rem 1.5rem; margin-top: 1rem; }
-  .abstract-drawer.open { display: block; }
-  .abstract-text { font-size: 0.88rem; line-height: 1.7; color: #3A3228; white-space: pre-wrap; }
+  select, .action-btn { 
+    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: var(--text-main); 
+    background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; 
+    border-radius: 4px; cursor: pointer; height: 36px; transition: all 0.2s;
+  }
   
-  .drawer-footer { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--rule); display: flex; gap: 0.75rem; align-items: center; }
-  .cite-btn { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; background: var(--tab-accent); color: white; border: none; padding: 0.25rem 0.55rem; border-radius: 2px; cursor: pointer; }
+  .refresh-btn { color: var(--primary-blue); border-color: var(--primary-blue); font-weight: 600; }
+  .refresh-btn:hover { background: var(--primary-blue); color: white; }
 
-  .loading-state, .error-state, .no-results { text-align: center; padding: 3rem 0; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); }
-  .spinner { width: 24px; height: 24px; border: 2px solid var(--rule); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+  .query-details {
+    font-size: 0.75rem; color: var(--text-muted); background: #F1F5F9; border-radius: 4px; padding: 0.75rem;
+    border: 1px dashed #CBD5E1; margin-bottom: 1.5rem;
+  }
+  .query-details summary { font-weight: 600; cursor: pointer; }
+  .query-details code { display: block; margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #475569; word-break: break-all; }
+
+  .paper-item { 
+    background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem; 
+    margin-bottom: 1rem; cursor: pointer; transition: all 0.15s; 
+  }
+  
+  .paper-item:hover { border-color: #CBD5E1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  
+  .paper-title { font-size: 1.05rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.4rem; color: var(--text-main); }
+  
+  .paper-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  
+  .paper-journal { font-size: 0.75rem; color: var(--tab-accent); font-weight: 600; }
+  .high-impact { background: #FEF08A; color: #854D0E; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+  
+  .badge-link { 
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); background: var(--bg-body); 
+    padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); text-decoration: none; 
+  }
+
+  .abstract-drawer { display: none; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 4px; padding: 1.25rem 1.5rem; margin-top: 1.25rem; }
+  .abstract-drawer.open { display: block; animation: slideDown 0.2s ease-out; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .abstract-text { font-size: 0.9rem; line-height: 1.7; color: #334155; white-space: pre-wrap; }
+  
+  .drawer-footer { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.75rem; align-items: center; }
+  .cite-btn { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.75rem; background: var(--tab-accent); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
+
+  .loading-state, .error-state, .no-results { text-align: center; padding: 4rem 0; font-size: 0.85rem; color: var(--text-muted); }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border-color); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
   @keyframes spin { to{transform:rotate(360deg)} }
 </style>
 </head>
@@ -70,7 +145,7 @@
 <div class="masthead">
   <div class="masthead-top">
     <div>
-      <h1>Colorectal Oncology<span>Literature Digest</span></h1>
+      <h1>Clinical Oncology Tools<span>Gastrointestinal Oncology Literature Digest</span></h1>
       <div class="live-badge"><div class="live-dot"></div>Live · PubMed</div>
     </div>
     <div class="masthead-meta">
@@ -91,22 +166,30 @@
   <div class="status-bar">
     <div class="status-top">
       <div>
-        <span id="status-count" style="color:var(--ink); font-weight:500;">—</span>
+        <span id="status-count" style="color:var(--text-main); font-weight:600;">—</span>
         <span id="status-msg">Loading latest papers…</span>
       </div>
       <div id="last-updated"></div>
     </div>
     <div class="controls-row">
-      <input type="text" id="search-bar" placeholder="Filter by title or author..." oninput="filterResults()">
+      <input type="text" id="search-bar" placeholder="Filter locally by title/author..." oninput="filterResults()">
+      
       <select id="date-range" onchange="refreshTab()">
         <option value="30">30 Days</option>
         <option value="90" selected>90 Days</option>
         <option value="180">180 Days</option>
         <option value="365">1 Year</option>
       </select>
-      <button class="refresh-btn" onclick="refreshTab()">↺ Refresh</button>
+
+      <button class="action-btn" onclick="exportCSV()">↓ CSV</button>
+      <button class="action-btn refresh-btn" onclick="refreshTab()">↺ Refresh</button>
     </div>
   </div>
+
+  <details class="query-details">
+    <summary>View Active Search Parameters</summary>
+    <code id="query-string">Loading...</code>
+  </details>
 
   <div class="loading-state" id="loading-state" style="display:none">
     <div class="spinner"></div>
@@ -114,7 +197,7 @@
   </div>
 
   <div class="error-state" id="error-state" style="display:none">
-    <p id="error-msg">Failed to connect to PubMed.</p>
+    <p id="error-msg">Failed to connect to PubMed. Please try again.</p>
   </div>
 
   <div class="paper-list" id="paper-list"></div>
@@ -123,13 +206,18 @@
 
 <script>
 const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
-const API_KEY = ''; // Add your NCBI API key here for 10req/s
+const API_KEY = ''; 
+
+const HIGH_IMPACT_JOURNALS = [
+  "N Engl J Med", "Lancet", "Lancet Oncol", "J Clin Oncol", "JAMA", "JAMA Oncol", 
+  "Dis Colon Rectum", "Colorectal Dis", "Br J Surg", "Ann Surg", "Gastroenterology", "Gut"
+];
 
 const TABS = {
-  rectal: { accent: '#2D4A7A', query: '("rectal neoplasms"[MeSH Terms] OR "rectal cancer"[tiab] OR "rectal carcinoma"[tiab]) AND ("humans"[MeSH Terms])' },
-  colon: { accent: '#7A3228', query: '("colonic neoplasms"[MeSH Terms] OR "colon cancer"[tiab] OR "colon carcinoma"[tiab]) AND ("humans"[MeSH Terms])' },
-  anal: { accent: '#1A5C4A', query: '("anus neoplasms"[MeSH Terms] OR "anal cancer"[tiab] OR "anal carcinoma"[tiab]) AND ("humans"[MeSH Terms])' },
-  appendix: { accent: '#6B3A54', query: '("appendiceal neoplasms"[MeSH Terms] OR "appendix cancer"[tiab] OR "appendiceal carcinoma"[tiab]) AND ("humans"[MeSH Terms])' }
+  rectal: { accent: '#0284C7', query: '("rectal neoplasms"[MeSH Terms] OR "rectal cancer"[tiab] OR "rectal carcinoma"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' },
+  colon: { accent: '#7C3AED', query: '("colonic neoplasms"[MeSH Terms] OR "colon cancer"[tiab] OR "colon carcinoma"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' },
+  anal: { accent: '#059669', query: '("anus neoplasms"[MeSH Terms] OR "anal cancer"[tiab] OR "anal carcinoma"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' },
+  appendix: { accent: '#DB2777', query: '("appendiceal neoplasms"[MeSH Terms] OR "appendix cancer"[tiab] OR "appendiceal carcinoma"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' }
 };
 
 let activeTab = 'rectal';
@@ -152,6 +240,7 @@ async function loadTab(key, force = false) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
   document.documentElement.style.setProperty('--tab-accent', TABS[key].accent);
   ui('search-bar').value = '';
+  ui('query-string').textContent = `Active Search: ${TABS[key].query}\nRange: Last ${range} days (Since ${fromDate()})`;
 
   if (!force && cache[cacheKey]) { 
     currentPapers = cache[cacheKey];
@@ -165,14 +254,16 @@ async function loadTab(key, force = false) {
 
   try {
     const auth = API_KEY ? `&api_key=${API_KEY}` : '';
-    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(TABS[key].query)}&sort=pub+date&retmax=15&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
+    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(TABS[key].query)}&sort=pub+date&retmax=20&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
     
     const sRes = await fetch(searchUrl);
     const sData = await sRes.json();
     const ids = sData.esearchresult?.idlist || [];
 
     if (!ids.length) {
+      currentPapers = [];
       ui('loading-state').style.display = 'none';
+      ui('status-count').textContent = `0 Results`;
       ui('no-results').style.display = 'block';
       return;
     }
@@ -184,13 +275,16 @@ async function loadTab(key, force = false) {
     currentPapers = ids.map(id => {
       const d = rData.result[id];
       const doi = d.articleids?.find(a => a.idtype === 'doi')?.value;
+      const isHighImpact = HIGH_IMPACT_JOURNALS.some(hj => d.source.includes(hj));
+
       return {
         pmid: id,
-        doi: doi,
+        doi: doi || '',
         title: d.title.replace(/\.$/, ''),
         authorsShort: d.authors.map(a => a.name).slice(0, 3).join(', ') + (d.authors.length > 3 ? ' et al.' : ''),
         authorsFull: d.authors.map(a => a.name).join(', '),
         journal: d.source,
+        isHighImpact: isHighImpact,
         date: d.pubdate,
         abstract: null
       };
@@ -218,22 +312,22 @@ function render(papers) {
   ui('status-count').textContent = `${papers.length} Results`;
   ui('fetch-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
   
-  const list = ui('paper-list');
-  list.innerHTML = papers.map(p => `
+  ui('paper-list').innerHTML = papers.map(p => `
     <div class="paper-item" onclick="toggleDrawer('${p.pmid}')">
       <div class="paper-title">${p.title}</div>
-      <div style="font-size: 0.82rem; color: var(--muted); font-style: italic;">${p.authorsShort}</div>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">${p.authorsShort}</div>
       <div class="paper-meta">
         <span class="paper-journal">${p.journal}</span>
-        <span style="font-family: 'JetBrains Mono'; font-size: 0.58rem;">${p.date}</span>
-        <a class="badge-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
-        ${p.doi ? `<a class="badge-link doi-link" href="https://doi.org/${p.doi}" target="_blank" onclick="event.stopPropagation()">DOI</a>` : ''}
+        ${p.isHighImpact ? '<span class="high-impact">★ High Impact</span>' : ''}
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem;">${p.date}</span>
+        <a class="badge-link" style="margin-left:auto;" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+        ${p.doi ? `<a class="badge-link" href="https://doi.org/${p.doi}" target="_blank" onclick="event.stopPropagation()">DOI</a>` : ''}
       </div>
       <div class="abstract-drawer" id="drw-${p.pmid}">
         <div id="drw-text-${p.pmid}" class="abstract-text">Loading abstract...</div>
         <div class="drawer-footer">
-          <button class="cite-btn" onclick="copyCitation(event, '${p.pmid}')">Copy AMA Citation</button>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" style="font-size: 0.6rem; color: var(--tab-accent); margin-left: auto;">View on PubMed ↗</a>
+          <button class="cite-btn" onclick="copyCitation(event, '${p.pmid}')">Copy Citation</button>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" style="font-size: 0.75rem; color: var(--tab-accent); margin-left: auto; text-decoration: none; font-weight: 500;">View Full PubMed ↗</a>
         </div>
       </div>
     </div>
@@ -262,11 +356,10 @@ async function toggleDrawer(pmid) {
         const label = n.getAttribute('Label');
         return label ? `${label}: ${n.textContent}` : n.textContent;
     }).join('\n\n');
-    
-    p.abstract = abstract || "No abstract text provided in the PubMed record.";
+    p.abstract = abstract || "No abstract text provided.";
     ui(`drw-text-${pmid}`).textContent = p.abstract;
   } catch {
-    ui(`drw-text-${pmid}`).textContent = "Error fetching abstract from NCBI.";
+    ui(`drw-text-${pmid}`).textContent = "Error fetching abstract.";
   }
 }
 
@@ -275,10 +368,19 @@ function copyCitation(e, pmid) {
   const p = currentPapers.find(x => x.pmid === pmid);
   const citation = `${p.authorsFull}. ${p.title}. ${p.journal}. ${p.date}; PMID: ${p.pmid}.`;
   navigator.clipboard.writeText(citation);
-  const btn = e.target;
-  const oldText = btn.textContent;
-  btn.textContent = 'Copied!';
-  setTimeout(() => btn.textContent = oldText, 2000);
+  const btn = e.target; btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy Citation', 2000);
+}
+
+function exportCSV() {
+  if (!currentPapers.length) return;
+  let csv = "PMID,Title,Journal,Date\n" + currentPapers.map(p => `"${p.pmid}","${p.title.replace(/"/g,'""')}","${p.journal}","${p.date}"`).join("\n");
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', `Colorectal_${activeTab}_${new Date().toISOString().split('T')[0]}.csv`);
+  a.click();
 }
 
 function refreshTab() { loadTab(activeTab, true); }
