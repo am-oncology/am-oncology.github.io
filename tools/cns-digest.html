@@ -8,13 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --text-main: #1E293B;      /* Slate 800 */
-    --text-muted: #64748B;     /* Slate 500 */
-    --bg-body: #F8FAFC;        /* Slate 50 */
+    --text-main: #1E293B;      
+    --text-muted: #64748B;     
+    --bg-body: #F8FAFC;        
     --bg-card: #FFFFFF;
-    --border-color: #E2E8F0;   /* Slate 200 */
-    --primary-blue: #0284C7;   /* Clinical Blue */
-    --header-bg: #0F172A;      /* Dark Slate */
+    --border-color: #E2E8F0;   
+    --primary-blue: #0284C7;   
+    --header-bg: #0F172A;      
     --tab-accent: var(--primary-blue);
   }
   
@@ -37,87 +37,43 @@
   }
   
   .masthead-top { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: flex-start; 
-    gap: 1rem; 
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; 
   }
   
   .masthead h1 { 
-    font-size: clamp(1.4rem, 3vw, 2.1rem); 
-    font-weight: 600; 
-    letter-spacing: -0.02em; 
-    line-height: 1.2; 
+    font-size: clamp(1.4rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; 
   }
   
   .masthead h1 span { 
-    color: #94A3B8; 
-    display: block; 
-    font-weight: 500; 
-    font-size: 0.55em; 
-    margin-top: 0.35rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    color: #94A3B8; display: block; font-weight: 500; font-size: 0.55em; margin-top: 0.35rem;
+    text-transform: uppercase; letter-spacing: 0.08em;
   }
   
   .masthead-meta { 
-    text-align: right; 
-    font-family: 'JetBrains Mono', monospace; 
-    font-size: 0.7rem; 
-    color: #94A3B8; 
-    line-height: 1.8; 
-    flex-shrink: 0; 
+    text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #94A3B8; line-height: 1.8; flex-shrink: 0; 
   }
   
   .live-badge { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 0.4rem; 
-    background: rgba(255,255,255,0.1); 
-    border: 1px solid rgba(255,255,255,0.2); 
-    color: #E2E8F0; 
-    font-size: 0.65rem;
-    font-weight: 500; 
-    padding: 0.25rem 0.6rem; 
-    border-radius: 4px; 
-    margin-top: 1rem; 
-    letter-spacing: 0.05em; 
-    text-transform: uppercase; 
+    display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.1); 
+    border: 1px solid rgba(255,255,255,0.2); color: #E2E8F0; font-size: 0.65rem; font-weight: 500; 
+    padding: 0.25rem 0.6rem; border-radius: 4px; margin-top: 1rem; letter-spacing: 0.05em; text-transform: uppercase; 
   }
   
   .live-dot { 
-    width: 6px; 
-    height: 6px; 
-    background: #22C55E; 
-    border-radius: 50%; 
-    animation: pulse 2s ease-in-out infinite; 
+    width: 6px; height: 6px; background: #22C55E; border-radius: 50%; animation: pulse 2s ease-in-out infinite; 
   }
   
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
   .tab-bar { 
-    background: var(--bg-card); 
-    display: flex; 
-    padding: 0 2.5rem; 
-    border-bottom: 1px solid var(--border-color); 
-    overflow-x: auto; 
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: var(--bg-card); display: flex; padding: 0 2.5rem; border-bottom: 1px solid var(--border-color); 
+    overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
   
   .tab-btn { 
-    font-family: 'Inter', sans-serif; 
-    font-weight: 600;
-    font-size: 0.75rem; 
-    letter-spacing: 0.05em; 
-    text-transform: uppercase; 
-    color: var(--text-muted); 
-    background: none; 
-    border: none; 
-    padding: 1rem 1.5rem; 
-    cursor: pointer; 
-    border-bottom: 3px solid transparent; 
-    white-space: nowrap; 
-    transition: all 0.2s; 
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.05em; 
+    text-transform: uppercase; color: var(--text-muted); background: none; border: none; padding: 1rem 1.5rem; 
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; 
   }
   
   .tab-btn:hover { color: var(--text-main); }
@@ -126,194 +82,79 @@
   .main { max-width: 900px; margin: 0 auto; padding: 2.5rem 2.5rem 4rem; }
 
   .status-bar { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 1rem; 
-    padding-bottom: 1.5rem; 
-    border-bottom: 1px solid var(--border-color); 
-    margin-bottom: 1.5rem; 
+    display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; 
   }
   
   .status-top { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    font-size: 0.8rem; 
-    color: var(--text-muted); 
-    font-weight: 500; 
+    display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; 
   }
   
   .controls-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
   
   #search-bar { 
-    flex-grow: 1; 
-    min-width: 200px; 
-    font-family: 'Inter', sans-serif; 
-    font-size: 0.85rem; 
-    padding: 0.5rem 0.75rem; 
-    border: 1px solid var(--border-color); 
-    background: var(--bg-card); 
-    border-radius: 4px; 
-    color: var(--text-main); 
-    transition: border-color 0.2s, box-shadow 0.2s;
+    flex-grow: 1; min-width: 200px; font-family: 'Inter', sans-serif; font-size: 0.85rem; padding: 0.5rem 0.75rem; 
+    border: 1px solid var(--border-color); background: var(--bg-card); border-radius: 4px; color: var(--text-main); transition: all 0.2s;
   }
   
-  #search-bar:focus { 
-    outline: none; 
-    border-color: var(--tab-accent); 
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); 
+  #search-bar:focus { outline: none; border-color: var(--tab-accent); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+  
+  select, .action-btn { 
+    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: var(--text-main); 
+    background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; 
+    border-radius: 4px; cursor: pointer; height: 36px; transition: all 0.2s;
   }
   
-  select, .refresh-btn { 
-    font-family: 'Inter', sans-serif; 
-    font-size: 0.75rem; 
-    font-weight: 500;
-    color: var(--text-main); 
-    background: var(--bg-card); 
-    border: 1px solid var(--border-color); 
-    padding: 0.4rem 0.75rem; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    height: 36px; 
-    transition: all 0.2s;
-  }
+  .refresh-btn { color: var(--primary-blue); border-color: var(--primary-blue); font-weight: 600; }
+  .refresh-btn:hover { background: var(--primary-blue); color: #FFFFFF; }
   
-  .refresh-btn { 
-    color: var(--primary-blue); 
-    border-color: var(--primary-blue); 
-    font-weight: 600; 
+  .export-btn:hover { background: #F1F5F9; border-color: #CBD5E1; }
+
+  .query-details {
+    font-size: 0.75rem; color: var(--text-muted); background: #F1F5F9; border-radius: 4px; padding: 0.75rem;
+    border: 1px dashed #CBD5E1; margin-bottom: 1.5rem;
   }
-  
-  .refresh-btn:hover { 
-    background: var(--primary-blue); 
-    color: #FFFFFF; 
-  }
+  .query-details summary { font-weight: 600; cursor: pointer; list-style-position: inside; }
+  .query-details code { display: block; margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #475569; word-break: break-all; }
 
   .paper-item { 
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 1.5rem; 
-    margin-bottom: 1rem;
-    cursor: pointer; 
-    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; 
+    background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem; 
+    margin-bottom: 1rem; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; 
     box-shadow: 0 1px 2px rgba(0,0,0,0.02);
   }
   
-  .paper-item:hover { 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-    border-color: #CBD5E1;
-    transform: translateY(-1px);
-  }
+  .paper-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: #CBD5E1; transform: translateY(-1px); }
   
-  .paper-title { 
-    font-size: 1.05rem; 
-    font-weight: 600; 
-    line-height: 1.4; 
-    margin-bottom: 0.4rem; 
-    color: var(--text-main); 
-  }
+  .paper-title { font-size: 1.05rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.4rem; color: var(--text-main); }
   
-  .paper-meta { 
-    display: flex; 
-    align-items: center; 
-    gap: 0.75rem; 
-    flex-wrap: wrap; 
-    margin-top: 0.75rem; 
-  }
+  .paper-meta { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
   
-  .paper-journal { 
-    font-size: 0.75rem; 
-    color: var(--tab-accent); 
-    font-weight: 600; 
-  }
+  .paper-journal { font-size: 0.75rem; color: var(--tab-accent); font-weight: 600; }
+  .high-impact { background: #FEF08A; color: #854D0E; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
   
   .badge-link { 
-    font-family: 'JetBrains Mono', monospace; 
-    font-size: 0.65rem; 
-    color: var(--text-muted); 
-    background: var(--bg-body); 
-    padding: 0.2rem 0.5rem; 
-    border-radius: 4px; 
-    border: 1px solid var(--border-color); 
-    text-decoration: none; 
-    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); background: var(--bg-body); 
+    padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); text-decoration: none; transition: all 0.2s;
   }
   
-  .badge-link:hover { 
-    border-color: var(--tab-accent); 
-    color: var(--tab-accent); 
-    background: #FFFFFF; 
-  }
+  .badge-link:hover { border-color: var(--tab-accent); color: var(--tab-accent); background: #FFFFFF; }
 
   .abstract-drawer { 
-    display: none; 
-    background: var(--bg-body); 
-    border: 1px solid var(--border-color); 
-    border-radius: 4px; 
-    padding: 1.25rem 1.5rem; 
-    margin-top: 1.25rem; 
+    display: none; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 4px; 
+    padding: 1.25rem 1.5rem; margin-top: 1.25rem; 
   }
   
-  .abstract-drawer.open { 
-    display: block; 
-    animation: slideDown 0.2s ease-out; 
-  }
+  .abstract-drawer.open { display: block; animation: slideDown 0.2s ease-out; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
   
-  @keyframes slideDown { 
-    from { opacity: 0; transform: translateY(-5px); } 
-    to { opacity: 1; transform: translateY(0); } 
-  }
+  .abstract-text { font-size: 0.9rem; line-height: 1.7; color: #334155; white-space: pre-wrap; }
   
-  .abstract-text { 
-    font-size: 0.9rem; 
-    line-height: 1.7; 
-    color: #334155; 
-    white-space: pre-wrap; 
-  }
+  .drawer-footer { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.75rem; align-items: center; }
   
-  .drawer-footer { 
-    margin-top: 1.25rem; 
-    padding-top: 1rem; 
-    border-top: 1px solid var(--border-color); 
-    display: flex; 
-    gap: 0.75rem; 
-    align-items: center; 
-  }
-  
-  .cite-btn { 
-    font-family: 'Inter', sans-serif; 
-    font-weight: 500;
-    font-size: 0.75rem; 
-    background: var(--tab-accent); 
-    color: white; 
-    border: none; 
-    padding: 0.4rem 0.8rem; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    transition: opacity 0.2s;
-  }
-  
+  .cite-btn { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.75rem; background: var(--tab-accent); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; }
   .cite-btn:hover { opacity: 0.9; }
 
-  .loading-state, .error-state, .no-results { 
-    text-align: center; 
-    padding: 4rem 0; 
-    font-family: 'Inter', sans-serif; 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-  }
-  
-  .spinner { 
-    width: 28px; 
-    height: 28px; 
-    border: 3px solid var(--border-color); 
-    border-top-color: var(--tab-accent); 
-    border-radius: 50%; 
-    animation: spin 0.8s linear infinite; 
-    margin: 0 auto 1rem; 
-  }
-  
+  .loading-state, .error-state, .no-results { text-align: center; padding: 4rem 0; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--text-muted); }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border-color); border-top-color: var(--tab-accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
   @keyframes spin { to{transform:rotate(360deg)} }
 </style>
 </head>
@@ -349,16 +190,31 @@
       <div id="last-updated"></div>
     </div>
     <div class="controls-row">
-      <input type="text" id="search-bar" placeholder="Filter by title or author..." oninput="filterResults()">
+      <input type="text" id="search-bar" placeholder="Filter locally by title/author..." oninput="filterResults()">
+      
+      <select id="article-type" onchange="refreshTab()">
+        <option value="">All Article Types</option>
+        <option value=' AND "Review"[Publication Type]'>Reviews</option>
+        <option value=' AND "Clinical Trial"[Publication Type]'>Clinical Trials</option>
+        <option value=' AND "Meta-Analysis"[Publication Type]'>Meta-Analyses</option>
+      </select>
+
       <select id="date-range" onchange="refreshTab()">
         <option value="30">30 Days</option>
         <option value="90" selected>90 Days</option>
         <option value="180">180 Days</option>
         <option value="365">1 Year</option>
       </select>
-      <button class="refresh-btn" onclick="refreshTab()">↺ Refresh</button>
+
+      <button class="action-btn export-btn" onclick="exportCSV()">↓ CSV</button>
+      <button class="action-btn refresh-btn" onclick="refreshTab()">↺ Refresh</button>
     </div>
   </div>
+
+  <details class="query-details" id="query-details-box">
+    <summary>View Active Search Parameters</summary>
+    <code id="query-string">Loading...</code>
+  </details>
 
   <div class="loading-state" id="loading-state" style="display:none">
     <div class="spinner"></div>
@@ -366,7 +222,7 @@
   </div>
 
   <div class="error-state" id="error-state" style="display:none">
-    <p id="error-msg">Failed to connect to PubMed.</p>
+    <p id="error-msg">Failed to connect to PubMed. Please try again.</p>
   </div>
 
   <div class="paper-list" id="paper-list"></div>
@@ -377,12 +233,17 @@
 const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
 const API_KEY = ''; // Add your NCBI API key here for 10req/s
 
-/* Updated accent colors to maintain the clinical/medical feel per tab */
+// Top-tier journals to highlight
+const HIGH_IMPACT_JOURNALS = [
+  "N Engl J Med", "Lancet", "Lancet Oncol", "J Clin Oncol", "Neuro Oncol", 
+  "JAMA", "JAMA Oncol", "Nat Med", "Cancer Cell", "J Neurosurg"
+];
+
 const TABS = {
-  glioma: { accent: '#0284C7', query: '(glioblastoma[tiab] OR "glioma"[tiab] OR "astrocytoma"[tiab] OR "oligodendroglioma"[tiab]) AND ("humans"[MeSH Terms])' },
-  skull: { accent: '#0D9488', query: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "acoustic neuroma"[tiab] OR "skull base"[tiab] OR "PitNET"[tiab]) AND ("humans"[MeSH Terms])' },
-  srs: { accent: '#4338CA', query: '("stereotactic radiosurgery"[tiab] OR "gamma knife"[tiab]) AND ("brain"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])' },
-  ocular: { accent: '#2563EB', query: '("uveal melanoma"[tiab] OR "orbital tumor"[tiab] OR "thyroid eye disease"[tiab]) AND ("humans"[MeSH Terms])' }
+  glioma: { accent: '#0284C7', baseQuery: '(glioblastoma[tiab] OR "glioma"[tiab] OR "astrocytoma"[tiab] OR "oligodendroglioma"[tiab]) AND ("humans"[MeSH Terms])' },
+  skull: { accent: '#0D9488', baseQuery: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "acoustic neuroma"[tiab] OR "skull base"[tiab] OR "PitNET"[tiab]) AND ("humans"[MeSH Terms])' },
+  srs: { accent: '#4338CA', baseQuery: '("stereotactic radiosurgery"[tiab] OR "gamma knife"[tiab]) AND ("brain"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])' },
+  ocular: { accent: '#2563EB', baseQuery: '("uveal melanoma"[tiab] OR "orbital tumor"[tiab] OR "thyroid eye disease"[tiab]) AND ("humans"[MeSH Terms])' }
 };
 
 let activeTab = 'glioma';
@@ -397,14 +258,24 @@ function fromDate() {
   return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
 }
 
+function getFullQuery(key) {
+  const typeFilter = ui('article-type').value;
+  return TABS[key].baseQuery + typeFilter;
+}
+
 async function loadTab(key, force = false) {
   activeTab = key;
   const range = ui('date-range').value;
-  const cacheKey = `${key}-${range}`;
+  const typeFilter = ui('article-type').value;
+  const fullQuery = getFullQuery(key);
+  const cacheKey = `${key}-${range}-${typeFilter}`; // Cache now accounts for article type
 
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === key));
   document.documentElement.style.setProperty('--tab-accent', TABS[key].accent);
   ui('search-bar').value = '';
+  
+  // Update query display box
+  ui('query-string').textContent = `Search: ${fullQuery}\nDate Range: Last ${range} Days (from ${fromDate()})`;
 
   if (!force && cache[cacheKey]) { 
     currentPapers = cache[cacheKey];
@@ -418,14 +289,16 @@ async function loadTab(key, force = false) {
 
   try {
     const auth = API_KEY ? `&api_key=${API_KEY}` : '';
-    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(TABS[key].query)}&sort=pub+date&retmax=15&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
+    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(fullQuery)}&sort=pub+date&retmax=20&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
     
     const sRes = await fetch(searchUrl);
     const sData = await sRes.json();
     const ids = sData.esearchresult?.idlist || [];
 
     if (!ids.length) {
+      currentPapers = [];
       ui('loading-state').style.display = 'none';
+      ui('status-count').textContent = `0 Results`;
       ui('no-results').style.display = 'block';
       return;
     }
@@ -437,13 +310,17 @@ async function loadTab(key, force = false) {
     currentPapers = ids.map(id => {
       const d = rData.result[id];
       const doi = d.articleids?.find(a => a.idtype === 'doi')?.value;
+      const journalTitle = d.source;
+      const isHighImpact = HIGH_IMPACT_JOURNALS.some(hj => journalTitle.includes(hj));
+
       return {
         pmid: id,
-        doi: doi,
+        doi: doi || '',
         title: d.title.replace(/\.$/, ''),
         authorsShort: d.authors.map(a => a.name).slice(0, 3).join(', ') + (d.authors.length > 3 ? ' et al.' : ''),
         authorsFull: d.authors.map(a => a.name).join(', '),
-        journal: d.source,
+        journal: journalTitle,
+        isHighImpact: isHighImpact,
         date: d.pubdate,
         abstract: null
       };
@@ -461,7 +338,8 @@ function filterResults() {
   const query = ui('search-bar').value.toLowerCase();
   const filtered = currentPapers.filter(p => 
     p.title.toLowerCase().includes(query) || 
-    p.authorsFull.toLowerCase().includes(query)
+    p.authorsFull.toLowerCase().includes(query) ||
+    p.journal.toLowerCase().includes(query)
   );
   render(filtered);
 }
@@ -478,15 +356,16 @@ function render(papers) {
       <div style="font-size: 0.85rem; color: var(--text-muted);">${p.authorsShort}</div>
       <div class="paper-meta">
         <span class="paper-journal">${p.journal}</span>
-        <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem;">${p.date}</span>
-        <a class="badge-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+        ${p.isHighImpact ? '<span class="high-impact">★ High Impact</span>' : ''}
+        <span style="font-family: 'JetBrains Mono'; font-size: 0.65rem; margin-left: 0.5rem;">${p.date}</span>
+        <a class="badge-link" style="margin-left:auto;" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
         ${p.doi ? `<a class="badge-link" href="https://doi.org/${p.doi}" target="_blank" onclick="event.stopPropagation()">DOI</a>` : ''}
       </div>
       <div class="abstract-drawer" id="drw-${p.pmid}">
         <div id="drw-text-${p.pmid}" class="abstract-text">Loading abstract...</div>
         <div class="drawer-footer">
           <button class="cite-btn" onclick="copyCitation(event, '${p.pmid}')">Copy AMA Citation</button>
-          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" style="font-size: 0.7rem; color: var(--tab-accent); margin-left: auto; text-decoration: none; font-weight: 500;">View on PubMed ↗</a>
+          <a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" style="font-size: 0.75rem; color: var(--tab-accent); margin-left: auto; text-decoration: none; font-weight: 500;">View Full Record on PubMed ↗</a>
         </div>
       </div>
     </div>
@@ -534,6 +413,31 @@ function copyCitation(e, pmid) {
   setTimeout(() => btn.textContent = oldText, 2000);
 }
 
+function exportCSV() {
+  if (!currentPapers || currentPapers.length === 0) return alert("No papers to export.");
+  
+  // Create CSV Headers
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "PMID,Title,Authors,Journal,Date,DOI,Link\n";
+  
+  // Format rows
+  currentPapers.forEach(p => {
+    const title = `"${p.title.replace(/"/g, '""')}"`;
+    const authors = `"${p.authorsFull.replace(/"/g, '""')}"`;
+    const link = `https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/`;
+    csvContent += `${p.pmid},${title},${authors},${p.journal},${p.date},${p.doi},${link}\n`;
+  });
+  
+  // Trigger download
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `Literature_Digest_${activeTab}_${new Date().toISOString().split('T')[0]}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 function refreshTab() { loadTab(activeTab, true); }
 
 document.getElementById('tab-bar').addEventListener('click', e => {
@@ -541,6 +445,7 @@ document.getElementById('tab-bar').addEventListener('click', e => {
   if (btn) loadTab(btn.dataset.tab);
 });
 
+// Initialize
 loadTab('glioma');
 </script>
 </body>
