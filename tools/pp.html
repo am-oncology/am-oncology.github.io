@@ -1,1 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oncology Private Practice Dashboard | UK 2026</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        :root { --primary: #005eb8; --secondary: #512da8; }
+        body { font-size: 0.95rem; line-height: 1.6; }
+        nav { border-bottom: 1px solid #e1e4e8; margin-bottom: 2rem; background: white; }
+        .tab-content { display: none; padding-top: 20px; }
+        .tab-content.active { display: block; }
+        .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .code-snippet { background: #f4f4f4; padding: 15px; border-left: 5px solid var(--primary); font-family: monospace; position: relative; }
+        .copy-btn { position: absolute; top: 5px; right: 5px; font-size: 0.7rem; }
+        .london-badge { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 0.7rem; }
+        table { font-size: 0.85rem; }
+        .matrix-card { border: 1px solid #ddd; padding: 1rem; border-radius: 8px; }
+    </style>
+</head>
+<body>
 
+<nav class="container-fluid">
+    <ul>
+        <li><strong>OncoLaunch 2026</strong> <span class="london-badge">LONDON EDITION</span></li>
+    </ul>
+    <ul>
+        <li><a href="#" onclick="showTab('nhs')">1. NHS Exit</a></li>
+        <li><a href="#" onclick="showTab('registry')">2. Registry</a></li>
+        <li><a href="#" onclick="showTab('billing')">3. Billing (Oncology)</a></li>
+        <li><a href="#" onclick="showTab('tax')">4. Tax & HMRC</a></li>
+        <li><a href="#" onclick="showTab('tech')">5. AI & Admin</a></li>
+    </ul>
+</nav>
+
+<main class="container">
+
+    <!-- TAB 1: NHS TRANSITION -->
+    <section id="nhs" class="tab-content active">
+        <h2>The NHS Transition</h2>
+        <p>In 2026, most Trusts require a formal "Declaration of Private Practice" under the <strong>Management of Conflicts of Interest Policy</strong>. If you are on a full-time contract, you usually owe the NHS 10 PAs before engaging in private work.</p>
+        
+        <article>
+            <h5>📧 Email Template: Clinical Director/Manager</h5>
+            <p>Subject: Formal Notification of Commencement of Private Practice - Dr. [Name]</p>
+            <div class="code-snippet" id="emailTemplate">
+Dear [Clinical Director Name],<br><br>
+I am writing to formally notify the Trust of my intention to commence private medical practice starting [Date]. <br><br>
+In accordance with my NHS contract and the 2026 GMC Good Medical Practice guidance, I confirm that:<br>
+1. Private work will be conducted outside of my agreed NHS Job Plan PAs.<br>
+2. I will ensure no conflict of interest arises regarding patient waiting lists.<br>
+3. My NHS commitment remains my primary professional priority.<br><br>
+I have updated my 'Declaration of Interests' on the Trust portal. Please let me know if we need to review my Job Plan to ensure continued transparency.<br><br>
+Best regards,<br>
+[Your Name]
+            </div>
+        </article>
+    </section>
+
+    <!-- TAB 2: REGISTRY -->
+    <section id="registry" class="tab-content">
+        <h2>The Registration Checklist</h2>
+        <p>You cannot legally bill a patient until these 5 entities are satisfied.</p>
+        <div class="grid">
+            <div class="matrix-card">
+                <h5>1. GMC & Indemnity</h5>
+                <ul>
+                    <li><a href="https://www.gmc-uk.org/" target="_blank">GMC:</a> Ensure "License to Practise" is active.</li>
+                    <li><strong>Indemnity:</strong> Must be "Occurrence-based" for London private work (MDU/MPS/Howden).</li>
+                </ul>
+            </div>
+            <div class="matrix-card">
+                <h5>2. Data & Privacy</h5>
+                <ul>
+                    <li><a href="https://ico.org.uk/" target="_blank">ICO:</a> Register as a Data Controller (£40 fee).</li>
+                    <li><strong>DBS:</strong> Ensure you have an "Enhanced" certificate dated within 3 years.</li>
+                </ul>
+            </div>
+        </div>
+        <br>
+        <div class="grid">
+            <div class="matrix-card">
+                <h5>3. Quality & Transparency</h5>
+                <ul>
+                    <li><a href="https://www.cqc.org.uk/" target="_blank">CQC:</a> Mandatory if you treat patients in your own rooms.</li>
+                    <li><a href="https://www.phin.org.uk/" target="_blank">PHIN:</a> Mandatory fee & outcome disclosure.</li>
+                </ul>
+            </div>
+            <div class="matrix-card">
+                <h5>4. The Billing Gateway</h5>
+                <ul>
+                    <li><a href="https://www.healthcode.co.uk/" target="_blank">Healthcode:</a> Register for an 'ePractice' account to send invoices.</li>
+                    <li><a href="https://www.ccsd.org.uk/" target="_blank">CCSD:</a> The database for procedure codes.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 3: BILLING & ONCOLOGY -->
+    <section id="billing" class="tab-content">
+        <h2>Oncology Billing Engine</h2>
+        <p>London rates are typically 15-20% higher than national averages. Below are common <strong>CCSD Oncology Codes</strong>.</p>
+        
+        <input type="text" id="codeSearch" placeholder="Search by code (e.g. 20300) or treatment..." onkeyup="filterCodes()">
+        
+        <table id="codeTable">
+            <thead>
+                <tr>
+                    <th>CCSD Code</th>
+                    <th>Description</th>
+                    <th>Est. London Fee (Bupa/AXA)</th>
+                    <th>Self-Pay (Rec. Rate)</th>
+                </tr>
+            </thead>
+            <tbody id="codeBody">
+                <tr><td>20300</td><td>Initial Specialist Consultation</td><td>£210 - £260</td><td>£300 - £350</td></tr>
+                <tr><td>20310</td><td>Follow-up Consultation</td><td>£150 - £180</td><td>£200 - £250</td></tr>
+                <tr><td>X7010</td><td>Chemotherapy: Complex IV (Cycle 1)</td><td>£350</td><td>£500+</td></tr>
+                <tr><td>X7040</td><td>Chemotherapy: Simple Oral (per cycle)</td><td>£120</td><td>£200</td></tr>
+                <tr><td>X7002</td><td>Complex Treatment Planning</td><td>£280</td><td>£400</td></tr>
+            </tbody>
+        </table>
+
+        <div class="tool-box" style="background:#fff3cd; padding:15px; border-radius:8px;">
+            <strong>Pro Tip:</strong> In 2026, many PMI companies (like AXA) require <strong>pre-authorisation</strong> for "Complex Planning" codes. Do not start treatment without the patient providing an Auth Code.
+        </div>
+    </section>
+
+    <!-- TAB 4: TAX & HMRC -->
+    <section id="tax" class="tab-content">
+        <h2>HMRC & Business Structure</h2>
+        <p>In 2026, <strong>Making Tax Digital (MTD)</strong> is mandatory. You must use compatible software (Xero/FreeAgent).</p>
+        
+        <div class="grid">
+            <article>
+                <h4>Option A: Sole Trader</h4>
+                <p><strong>Pros:</strong> Zero setup cost, total privacy of accounts.</p>
+                <p><strong>Cons:</strong> Pay 40-45% tax on everything over the threshold; personally liable for debts.</p>
+                <footer>Best for: Annual profits < £40k</footer>
+            </article>
+            <article>
+                <h4>Option B: Ltd Company</h4>
+                <p><strong>Pros:</strong> Limited liability, 19-25% Corp Tax. Can pay spouse a salary (if they work in the biz).</p>
+                <p><strong>Cons:</strong> Public filing at Companies House, higher accountancy fees (£2k+/year).</p>
+                <footer>Best for: Annual profits > £50k</footer>
+            </article>
+        </div>
+
+        <h5>HMRC Checklist</h5>
+        <ul>
+            <li><strong>Start:</strong> Register for 'Self Assessment' as soon as you earn >£1,000.</li>
+            <li><strong>VAT:</strong> Medical care is exempt, but <i>Legal Reports</i> are not. If legal work exceeds £90k, you must register.</li>
+            <li><strong>Annual:</strong> Submit accounts by Jan 31st. Set aside 35% of every private invoice for the tax man!</li>
+        </ul>
+    </section>
+
+    <!-- TAB 5: AI & ADMIN -->
+    <section id="tech" class="tab-content">
+        <h2>The 2026 Modern Practice</h2>
+        <p>Don't hire a full-time secretary immediately. Use the "Hybrid Approach."</p>
+        
+        <div class="grid">
+            <article>
+                <h5>1. Virtual Secretary (VMT)</h5>
+                <p>Services like <strong>Medserv</strong> or <strong>The Medical Secretary</strong> answer your calls and book slots in London clinics on a pay-per-minute or % basis.</p>
+            </article>
+            <article>
+                <h5>2. AI Scribe (The Future)</h5>
+                <p>Tools like <strong>Heidi Health</strong> or <strong>Freed</strong> record the consult on your phone and generate a GP letter in 30 seconds. This replaces traditional audio typing.</p>
+            </article>
+        </div>
+
+        <div class="matrix-card">
+            <h5>Automated Onboarding Flow</h5>
+            <ol>
+                <li>Patient books via your website (integrated with <strong>Semble</strong>).</li>
+                <li>System automatically sends GDPR consent and "Self-Pay" terms.</li>
+                <li>Patient uploads insurance details via secure link.</li>
+                <li>You see the patient; AI Scribe generates the letter.</li>
+                <li><strong>Healthcode</strong> sends the invoice automatically upon letter completion.</li>
+            </ol>
+        </div>
+    </section>
+
+</main>
+
+<script>
+    function showTab(tabId) {
+        // Hide all tabs
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        
+        // Update Nav styling if needed
+    }
+
+    function filterCodes() {
+        const input = document.getElementById('codeSearch').value.toUpperCase();
+        const rows = document.getElementById('codeBody').getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+            const text = rows[i].innerText.toUpperCase();
+            rows[i].style.display = text.includes(input) ? "" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>
