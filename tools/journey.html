@@ -1,0 +1,49 @@
+<style>
+  .journey-container { max-width: 800px; margin: 2rem auto; }
+  .steps { display: flex; justify-content: space-between; position: relative; margin-bottom: 3rem; }
+  .steps::before { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #E2E8F0; z-index: 1; }
+  
+  .step-node { 
+    width: 40px; height: 40px; border-radius: 50%; background: white; border: 2px solid #E2E8F0; 
+    display: flex; align-items: center; justify-content: center; z-index: 2; cursor: pointer; transition: all 0.3s;
+  }
+  .step-node.active { border-color: #0284C7; background: #0284C7; color: white; transform: scale(1.2); }
+  
+  .content-card { background: white; border: 1px solid #E2E8F0; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+  .myth-box { background: #FFF7ED; border-left: 4px solid #F97316; padding: 1rem; margin-top: 1.5rem; font-size: 0.9rem; }
+</style>
+
+<div class="journey-container">
+  <div class="steps" id="stepBar">
+    <div class="step-node active" onclick="showStep(1)">1</div>
+    <div class="step-node" onclick="showStep(2)">2</div>
+    <div class="step-node" onclick="showStep(3)">3</div>
+    <div class="step-node" onclick="showStep(4)">4</div>
+  </div>
+
+  <div class="content-card" id="contentCard">
+    <h2 id="stepTitle">The Initial Consultation</h2>
+    <p id="stepDesc">You will meet with your clinical oncologist to discuss your diagnosis and the rationale for radiotherapy. We focus on personalizing the approach to your lifestyle.</p>
+    <div class="myth-box">
+      <strong>Common Myth:</strong> "Radiotherapy makes me radioactive." <br>
+      <em>The Reality:</em> No, external beam therapy and CXB do not leave any radiation in your body. You are safe to be around family and pets immediately.
+    </div>
+  </div>
+</div>
+
+<script>
+  const stepData = {
+    1: { title: "The Initial Consultation", desc: "A 45-minute deep dive into your records, scans, and goals. We decide together if SRS or Papillon is the right fit." },
+    2: { title: "Planning & Simulation", desc: "We take a 'map' of your body using a CT scanner. This allows us to target the tumor with sub-millimeter precision." },
+    3: { title: "Treatment Sessions", desc: "Actual treatment is quick and painless. Most patients continue to work or drive themselves to appointments." },
+    4: { title: "The Recovery Phase", desc: "We monitor you closely for the first 6 weeks post-treatment to manage any transient side effects." }
+  };
+
+  function showStep(num) {
+    document.querySelectorAll('.step-node').forEach((node, i) => {
+      node.classList.toggle('active', i + 1 === num);
+    });
+    document.getElementById('stepTitle').innerText = stepData[num].title;
+    document.getElementById('stepDesc').innerText = stepData[num].desc;
+  }
+</script>
