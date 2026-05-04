@@ -242,8 +242,8 @@ const HIGH_IMPACT_JOURNALS = [
 const TABS = {
   glioma: { accent: '#0284C7', baseQuery: '(glioblastoma[tiab] OR "glioma"[tiab] OR "astrocytoma"[tiab] OR "oligodendroglioma"[tiab]) AND ("humans"[MeSH Terms])' },
   skull: { accent: '#0D9488', baseQuery: '(meningioma[tiab] OR "vestibular schwannoma"[tiab] OR "acoustic neuroma"[tiab] OR "skull base"[tiab] OR "PitNET"[tiab]) AND ("humans"[MeSH Terms])' },
-  srs: { accent: '#4338CA', baseQuery: '("stereotactic radiosurgery"[tiab] OR "stereotactic radiotherapy"[tiab] OR "gamma knife"[tiab] OR "cyberknife"[tiab] OR "hyperarc"[tiab]) AND ("brain"[tiab] OR "spine"[tiab]) AND ("humans"[MeSH Terms])' },
-  ocular: { accent: '#2563EB', baseQuery: '("uveal melanoma"[tiab] OR "orbital tumor"[tiab] OR "thyroid eye disease"[tiab]) AND ("humans"[MeSH Terms])' }
+  srs: { accent: '#4338CA', baseQuery: '("stereotactic radiosurgery"[tiab] OR "SRS"[tiab] OR "SRT"[tiab] OR "fSRT"[tiab] OR "SBRT"[tiab] OR "SABR"[tiab] OR "gamma knife"[tiab] OR "cyberknife"[tiab] OR "ZAP-X"[tiab] OR "hyperarc"[tiab] OR "Novalis"[tiab]) AND ("brain"[tiab] OR "spine"[tiab] OR "spinal"[tiab] OR "intracranial"[tiab] OR "meningioma"[tiab] OR "schwannoma"[tiab] OR "metasta*"[tiab] OR "AVM"[tiab] OR "trigeminal neuralgia"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' },  
+  ocular: { accent: '#2563EB', baseQuery: '("uveal melanoma"[tiab] OR "choroidal melanoma"[tiab] OR "conjunctival melanoma"[tiab] OR "retinoblastoma"[tiab] OR "thyroid eye disease"[tiab] OR "Graves orbitopathy"[tiab] OR "Graves ophthalmopathy"[tiab] OR "orbital lymphoma"[tiab] OR "adnexal lymphoma"[tiab] OR "orbital pseudotumor"[tiab] OR "idiopathic orbital inflammation"[tiab] OR "choroidal hemangioma"[tiab] OR "pterygium"[tiab] OR "optic nerve sheath meningioma"[tiab] OR "optic nerve meningioma"[tiab] OR "ONSM"[tiab]) AND ("radiotherapy"[tiab] OR "radiation"[tiab] OR "brachytherapy"[tiab] OR "plaque"[tiab] OR "proton beam"[tiab] OR "SBRT"[tiab]) AND ("humans"[MeSH Terms] OR "human"[tiab])' }
 };
 
 let activeTab = 'glioma';
