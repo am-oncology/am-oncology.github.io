@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treatment Comparison | Papillon vs. Surgery</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text-main: #1E293B; --text-muted: #64748B; --bg-body: #F8FAFC;
+    --bg-card: #FFFFFF; --border-color: #E2E8F0; --primary-blue: #0284C7;
+    --header-bg: #0F172A; --surgery-color: #EF4444; --papillon-color: #10B981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); line-height: 1.6; }
+
+  /* Navigation Header */
+  .masthead { background: var(--header-bg); color: white; padding: 3rem 2rem; text-align: center; border-bottom: 4px solid var(--primary-blue); }
+  .masthead h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+  
+  .view-toggle { 
+    display: inline-flex; background: #1E293B; padding: 0.3rem; border-radius: 8px; margin-top: 1rem; border: 1px solid #334155;
+  }
+  .view-btn { 
+    padding: 0.5rem 1.25rem; border: none; border-radius: 6px; background: none; color: #94A3B8; 
+    font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+  }
+  .view-btn.active { background: var(--primary-blue); color: white; }
+
+  .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+
+  /* Comparison Table */
+  .comp-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+  .comp-table th { background: #F1F5F9; padding: 1.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); text-align: left; }
+  .comp-table td { padding: 1.5rem; border-top: 1px solid var(--border-color); vertical-align: top; }
+  
+  .feature-name { font-weight: 700; font-size: 0.9rem; color: var(--text-main); width: 30%; }
+  .surgery-col { background: rgba(239, 68, 68, 0.02); width: 35%; border-left: 1px solid var(--border-color); }
+  .papillon-col { background: rgba(16, 185, 129, 0.02); width: 35%; border-left: 1px solid var(--border-color); }
+
+  .status-pill { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .pill-red { background: #FEE2E2; color: #B91C1C; }
+  .pill-green { background: #D1FAE5; color: #065F46; }
+
+  .desc { font-size: 0.85rem; color: #475569; }
+  
+  .cta-box { 
+    margin-top: 3rem; background: white; border: 2px solid var(--primary-blue); border-radius: 12px; 
+    padding: 2rem; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+  .cta-btn { 
+    display: inline-block; background: var(--primary-blue); color: white; padding: 0.8rem 2rem; 
+    border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 1rem; transition: transform 0.2s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); }
+
+  /* Mobile Layout */
+  @media (max-width: 600px) {
+    .comp-table th:nth-child(1), .comp-table td:nth-child(1) { display: block; width: 100%; border: none; }
+    .comp-table td { display: block; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <h1>Treatment Options for Early Rectal Cancer</h1>
+  <div class="view-toggle">
+    <button class="view-btn active" onclick="switchView('patient')">Patient View</button>
+    <button class="view-btn" onclick="switchView('clinician')">Clinician View</button>
+  </div>
+</div>
+
+<div class="container">
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Surgery (TME)</th>
+        <th>Papillon (CXB)</th>
+      </tr>
+    </thead>
+    <tbody id="comp-body">
+      <!-- Content injected by JS -->
+    </tbody>
+  </table>
+
+  <div class="cta-box">
+    <h3>Is Organ Preservation Right for You?</h3>
+    <p class="desc" style="margin-top:0.5rem">Every case is unique. Contact our clinical team to discuss your staging and suitability for Papillon Brachytherapy.</p>
+    <a href="contact.html" class="cta-btn">Book a Private Consultation</a>
+  </div>
+</div>
+
+<script>
+  const data = {
+    patient: [
+      ["Procedure", "Major abdominal surgery to remove the rectum.", "Targeted X-rays delivered directly to the tumor."],
+      ["Anesthetic", "General anesthetic required.", "No anesthetic or light sedation only."],
+      ["Hospital Stay", "5 to 10 days in hospital.", "Outpatient (approx. 30-60 minutes)."],
+      ["Stoma Risk", "Risk of temporary or permanent bag (stoma).", "No stoma required; rectum is preserved."],
+      ["Recovery", "6 to 12 weeks for full activity.", "Return to normal activity next day."]
+    ],
+    clinician: [
+      ["Primary Goal", "Oncological resection (Total Mesorectal Excision).", "Local dose escalation for organ preservation."],
+      ["Target Stage", "T1-T4; Node positive or negative.", "Primarily cT1-cT2 N0; Selected cT3."],
+      ["Dose Delivery", "External Beam (Standard Fractionation).", "50kV Contact X-rays; ~30Gy per fraction."],
+      ["Key Toxicity", "Anastomotic leak, LARS, sexual dysfunction.", "Radiation proctitis, mucosal ulceration."],
+      ["Salvage", "Standard of care.", "Surgery remains an option if incomplete response."]
+    ]
+  };
+
+  function switchView(mode) {
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText.toLowerCase().includes(mode));
+    });
+
+    const body = document.getElementById('comp-body');
+    body.innerHTML = data[mode].map(row => `
+      <tr>
+        <td class="feature-name">${row[0]}</td>
+        <td class="surgery-col"><span class="status-pill pill-red">Surgery</span><br><div class="desc">${row[1]}</div></td>
+        <td class="papillon-col"><span class="status-pill pill-green">Papillon</span><br><div class="desc">${row[2]}</div></td>
+      </tr>
+    `).join('');
+  }
+
+  // Init
+  switchView('patient');
+</script>
+
+</body>
+</html>
