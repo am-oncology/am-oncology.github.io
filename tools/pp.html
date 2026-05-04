@@ -1,212 +1,1427 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oncology Private Practice Dashboard | UK 2026</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <title>OncoPrivate — UK Private Practice Guide 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #005eb8; --secondary: #512da8; }
-        body { font-size: 0.95rem; line-height: 1.6; }
-        nav { border-bottom: 1px solid #e1e4e8; margin-bottom: 2rem; background: white; }
-        .tab-content { display: none; padding-top: 20px; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --navy: #0c1e3c;
+            --navy-light: #152843;
+            --navy-border: #1e3560;
+            --gold: #c9973a;
+            --gold-light: #e8c16a;
+            --bg: #f5f4f0;
+            --surface: #ffffff;
+            --text: #1a2332;
+            --text-muted: #5a6880;
+            --text-light: #8896a8;
+            --border: #dde1e8;
+            --green: #1a7a4a;
+            --green-bg: #f0faf5;
+            --amber: #b45309;
+            --amber-bg: #fef3e2;
+            --red: #be123c;
+            --red-bg: #fff1f2;
+            --blue: #1d4ed8;
+            --blue-bg: #eff6ff;
+            --sidebar-w: 264px;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            font-size: 15px;
+        }
+
+        /* ── Sidebar ─────────────────────────────────────── */
+        aside {
+            width: var(--sidebar-w);
+            background: var(--navy);
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            overflow-y: auto;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--navy-border);
+        }
+        .sidebar-logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .sidebar-logo span { color: var(--gold); }
+        .sidebar-tagline {
+            font-size: 0.68rem;
+            color: #6a8caa;
+            margin-top: 5px;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+        .sidebar-nav { padding: 18px 12px; flex: 1; }
+        .nav-section-label {
+            font-size: 0.63rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #4a6a86;
+            padding: 0 12px;
+            margin: 18px 0 5px;
+            font-weight: 600;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #7aA0be;
+            font-size: 0.875rem;
+            font-weight: 400;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: background 0.12s, color 0.12s;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: #ccdce8; }
+        .nav-item.active { background: rgba(201,151,58,0.14); color: var(--gold-light); font-weight: 500; }
+        .nav-icon { width: 16px; text-align: center; font-size: 0.85rem; flex-shrink: 0; }
+        .nav-badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: var(--navy);
+            font-size: 0.58rem;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .sidebar-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--navy-border);
+            font-size: 0.68rem;
+            color: #3e5870;
+            line-height: 1.6;
+        }
+
+        /* ── Main content ────────────────────────────────── */
+        main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+
+        .page-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 22px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 1px 0 var(--border);
+        }
+        .page-header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: -0.025em;
+        }
+        .page-header p { font-size: 0.84rem; color: var(--text-muted); margin-top: 2px; }
+
+        .tab-content { display: none; padding: 32px 40px; max-width: 980px; }
         .tab-content.active { display: block; }
-        .checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .code-snippet { background: #f4f4f4; padding: 15px; border-left: 5px solid var(--primary); font-family: monospace; position: relative; }
-        .copy-btn { position: absolute; top: 5px; right: 5px; font-size: 0.7rem; }
-        .london-badge { background: #ffd700; color: #000; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 0.7rem; }
-        table { font-size: 0.85rem; }
-        .matrix-card { border: 1px solid #ddd; padding: 1rem; border-radius: 8px; }
+
+        /* ── Cards ───────────────────────────────────────── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            margin-bottom: 18px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-header h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .card-icon {
+            width: 30px; height: 30px;
+            background: var(--navy);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Layout helpers ──────────────────────────────── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+        /* ── Alerts ──────────────────────────────────────── */
+        .alert {
+            padding: 13px 16px;
+            border-radius: var(--radius);
+            font-size: 0.845rem;
+            line-height: 1.65;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+        }
+        .alert-icon { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
+        .alert-green  { background: var(--green-bg);  border: 1px solid #a7f3d0; color: #064e2c; }
+        .alert-amber  { background: var(--amber-bg);  border: 1px solid #fcd34d; color: #78350f; }
+        .alert-red    { background: var(--red-bg);    border: 1px solid #fecdd3; color: #881337; }
+        .alert-blue   { background: var(--blue-bg);   border: 1px solid #bfdbfe; color: #1e3a8a; }
+        .alert-navy   { background: #eef1f8;          border: 1px solid #c8d3e8; color: var(--navy); }
+
+        /* ── Timeline ────────────────────────────────────── */
+        .timeline { position: relative; }
+        .timeline-item { display: flex; gap: 18px; padding-bottom: 26px; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-left { display: flex; flex-direction: column; align-items: center; }
+        .timeline-dot {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 600;
+            flex-shrink: 0; position: relative; z-index: 1;
+        }
+        .timeline-line { width: 2px; flex: 1; background: var(--border); margin-top: 4px; }
+        .timeline-item:last-child .timeline-line { display: none; }
+        .timeline-content { padding-top: 5px; flex: 1; }
+        .timeline-content h4 { font-size: 0.935rem; font-weight: 600; margin-bottom: 5px; }
+        .timeline-content p  { font-size: 0.845rem; color: var(--text-muted); line-height: 1.65; }
+        .timeline-content ul { font-size: 0.845rem; color: var(--text-muted); padding-left: 18px; margin-top: 6px; line-height: 1.75; }
+
+        /* ── Tags ────────────────────────────────────────── */
+        .tag {
+            display: inline-block;
+            font-size: 0.69rem; font-weight: 500;
+            padding: 2px 8px; border-radius: 4px;
+            letter-spacing: 0.03em;
+        }
+        .tag-navy  { background: #e8eef8; color: var(--navy); }
+        .tag-gold  { background: #fef3dc; color: #7c5a0e; }
+        .tag-green { background: var(--green-bg); color: var(--green); }
+        .tag-red   { background: var(--red-bg); color: var(--red); }
+        .tag-imm   { background: #fff0f5; color: #881337; }
+        .meta-row  { display: flex; gap: 7px; margin-top: 8px; flex-wrap: wrap; }
+
+        /* ── Code block ──────────────────────────────────── */
+        .code-block {
+            background: #f0f2f5;
+            border: 1px solid #d4d8e4;
+            border-left: 4px solid var(--navy);
+            border-radius: var(--radius);
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.81rem;
+            line-height: 1.9;
+            color: #2a3a50;
+            position: relative;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: var(--navy); color: white; border: none;
+            padding: 4px 10px; border-radius: 4px;
+            font-size: 0.7rem; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; font-weight: 500;
+        }
+        .copy-btn:hover { background: #1e3560; }
+
+        /* ── Checklist ───────────────────────────────────── */
+        .checklist-item {
+            display: flex; gap: 14px;
+            padding: 17px 0;
+            border-bottom: 1px solid var(--border);
+            transition: opacity 0.2s;
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-item.done { opacity: 0.5; }
+        .check-box {
+            width: 22px; height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 5px; cursor: pointer;
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; margin-top: 2px; background: white;
+            font-size: 0.8rem;
+        }
+        .check-box.checked { background: var(--green); border-color: var(--green); color: white; }
+        .checklist-meta { flex: 1; }
+        .checklist-meta h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 3px; }
+        .checklist-meta p  { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+        .checklist-meta ul { font-size: 0.83rem; color: var(--text-muted); padding-left: 18px; margin-top: 6px; line-height: 1.75; }
+
+        /* ── Progress bar ────────────────────────────────── */
+        .progress-bar-wrap { background: var(--border); border-radius: 10px; height: 7px; overflow: hidden; margin-bottom: 5px; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #34d399); border-radius: 10px; transition: width 0.4s ease; }
+
+        /* ── Data table ──────────────────────────────────── */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        .data-table thead th {
+            background: var(--navy); color: white;
+            padding: 9px 13px; text-align: left;
+            font-weight: 500; font-size: 0.77rem; letter-spacing: 0.03em;
+        }
+        .data-table thead th:first-child  { border-radius: 6px 0 0 0; }
+        .data-table thead th:last-child   { border-radius: 0 6px 0 0; }
+        .data-table tbody tr { border-bottom: 1px solid var(--border); }
+        .data-table tbody tr:hover { background: #f8f9fc; }
+        .data-table tbody td { padding: 9px 13px; vertical-align: middle; }
+        .data-table tbody td:first-child { font-family: monospace; font-size: 0.82rem; color: var(--navy); font-weight: 700; }
+
+        /* ── Filter bar ──────────────────────────────────── */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .search-input {
+            flex: 1; min-width: 200px;
+            padding: 8px 13px;
+            border: 1px solid var(--border); border-radius: var(--radius);
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            background: white; outline: none;
+        }
+        .search-input:focus { border-color: var(--navy); }
+        select.filter-select {
+            padding: 8px 13px;
+            border: 1px solid var(--border); border-radius: var(--radius);
+            font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+            background: white; outline: none; cursor: pointer;
+        }
+
+        /* ── Calculator ──────────────────────────────────── */
+        .calc-input-group { display: flex; flex-direction: column; gap: 3px; margin-bottom: 13px; }
+        .calc-input-group label { font-size: 0.78rem; font-weight: 500; color: var(--text-muted); }
+        .calc-input {
+            padding: 8px 13px;
+            border: 1px solid var(--border); border-radius: var(--radius);
+            font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+            background: white; outline: none; width: 100%;
+        }
+        .calc-input:focus { border-color: var(--navy); }
+        .calc-result {
+            background: var(--navy); color: white;
+            border-radius: var(--radius); padding: 20px;
+        }
+        .calc-result-row {
+            display: flex; justify-content: space-between;
+            font-size: 0.865rem; padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.09);
+        }
+        .calc-result-row:last-child { border-bottom: none; }
+        .calc-result-row.total {
+            font-size: 1.05rem; font-weight: 600;
+            color: var(--gold-light); padding-top: 12px; margin-top: 4px;
+        }
+
+        /* ── Inner tabs ──────────────────────────────────── */
+        .inner-tabs {
+            display: flex; gap: 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 22px;
+        }
+        .inner-tab {
+            padding: 8px 18px; font-size: 0.84rem; font-weight: 500;
+            color: var(--text-muted); cursor: pointer;
+            border-bottom: 2px solid transparent; margin-bottom: -2px;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .inner-tab:hover  { color: var(--text); }
+        .inner-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+        .inner-tab-content { display: none; }
+        .inner-tab-content.active { display: block; }
+
+        /* ── PA grid ─────────────────────────────────────── */
+        .pa-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+        .pa-box {
+            background: #eef1f8; border: 1px solid #d4daea;
+            border-radius: 6px; padding: 10px 6px;
+            text-align: center; font-size: 0.73rem;
+            color: var(--text-muted); line-height: 1.45;
+        }
+        .pa-box strong { display: block; font-size: 1rem; color: var(--navy); margin-bottom: 2px; }
+        .pa-box.private { background: #fef3dc; border-color: #f5d99a; }
+        .pa-box.private strong { color: #7c5a0e; }
+
+        /* ── Workflow arrows ─────────────────────────────── */
+        .workflow { display: flex; overflow-x: auto; margin: 14px 0 24px; }
+        .workflow-step {
+            flex: 1; min-width: 110px;
+            background: var(--navy); color: white;
+            padding: 11px 8px 11px 14px;
+            text-align: center; font-size: 0.73rem; line-height: 1.4;
+            position: relative; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%, 12px 50%);
+        }
+        .workflow-step:first-child { clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-left: 8px; }
+        .workflow-step:last-child  { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 12px 50%); }
+        .workflow-step .step-num   { font-size: 0.62rem; opacity: 0.55; display: block; margin-bottom: 2px; }
+
+        /* ── Compare table ───────────────────────────────── */
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+        .compare-table th { padding: 9px 13px; background: #f0f2f8; font-weight: 600; text-align: left; border-bottom: 1px solid var(--border); }
+        .compare-table td { padding: 9px 13px; border-top: 1px solid var(--border); vertical-align: top; }
+        .compare-table tr:hover td { background: #fafbfd; }
+
+        /* ── Info pills ──────────────────────────────────── */
+        .info-pill-row { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
+        .info-pill {
+            background: #f0f2f8; border: 1px solid #dde1ee;
+            border-radius: 20px; padding: 3px 11px;
+            font-size: 0.76rem; color: var(--text-muted);
+        }
+
+        /* ── Divider ─────────────────────────────────────── */
+        hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+
+        /* ── Responsive ──────────────────────────────────── */
+        @media (max-width: 820px) {
+            :root { --sidebar-w: 56px; }
+            .sidebar-logo, .sidebar-tagline, .nav-section-label,
+            .nav-item span:not(.nav-icon), .nav-badge, .sidebar-footer { display: none; }
+            .nav-item { justify-content: center; padding: 10px; }
+            .tab-content { padding: 20px 18px; }
+            .page-header { padding: 16px 18px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .pa-grid { grid-template-columns: repeat(3,1fr); }
+        }
     </style>
 </head>
 <body>
 
-<nav class="container-fluid">
-    <ul>
-        <li><strong>OncoLaunch 2026</strong> <span class="london-badge">LONDON EDITION</span></li>
-    </ul>
-    <ul>
-        <li><a href="#" onclick="showTab('nhs')">1. NHS Exit</a></li>
-        <li><a href="#" onclick="showTab('registry')">2. Registry</a></li>
-        <li><a href="#" onclick="showTab('billing')">3. Billing (Oncology)</a></li>
-        <li><a href="#" onclick="showTab('tax')">4. Tax & HMRC</a></li>
-        <li><a href="#" onclick="showTab('tech')">5. AI & Admin</a></li>
-    </ul>
-</nav>
+<aside>
+    <div class="sidebar-header">
+        <div class="sidebar-logo">Onco<span>Private</span></div>
+        <div class="sidebar-tagline">UK Private Practice · 2026</div>
+    </div>
 
-<main class="container">
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Getting Started</div>
+        <button class="nav-item active" onclick="showTab('nhs',this)">
+            <span class="nav-icon">🏥</span><span>NHS Transition</span>
+        </button>
+        <button class="nav-item" onclick="showTab('registry',this)">
+            <span class="nav-icon">✅</span><span>Registration</span>
+            <span class="nav-badge">8 steps</span>
+        </button>
 
-    <!-- TAB 1: NHS TRANSITION -->
+        <div class="nav-section-label">Operations</div>
+        <button class="nav-item" onclick="showTab('billing',this)">
+            <span class="nav-icon">📋</span><span>Billing & Coding</span>
+        </button>
+        <button class="nav-item" onclick="showTab('tax',this)">
+            <span class="nav-icon">💼</span><span>Tax & Structure</span>
+        </button>
+
+        <div class="nav-section-label">Practice Tools</div>
+        <button class="nav-item" onclick="showTab('tech',this)">
+            <span class="nav-icon">⚙️</span><span>Admin & Tech</span>
+        </button>
+        <button class="nav-item" onclick="showTab('calc',this)">
+            <span class="nav-icon">🧮</span><span>Income Calculator</span>
+        </button>
+    </nav>
+
+    <div class="sidebar-footer">
+        For guidance only. Always review your contract and seek independent legal and financial advice.<br><br>
+        Oncology Edition · London Focus · 2026
+    </div>
+</aside>
+
+<main>
+    <div class="page-header">
+        <h1 id="pageTitle">NHS Transition &amp; Job Planning</h1>
+        <p  id="pageSubtitle">What you need to know before seeing your first private patient</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 1  ·  NHS TRANSITION
+    ════════════════════════════════════════════════════════════ -->
     <section id="nhs" class="tab-content active">
-        <h2>The NHS Transition</h2>
-        <p>In 2026, most Trusts require a formal "Declaration of Private Practice" under the <strong>Management of Conflicts of Interest Policy</strong>. If you are on a full-time contract, you usually owe the NHS 10 PAs before engaging in private work.</p>
-        
-        <article>
-            <h5>📧 Email Template: Clinical Director/Manager</h5>
-            <p>Subject: Formal Notification of Commencement of Private Practice - Dr. [Name]</p>
-            <div class="code-snippet" id="emailTemplate">
-Dear [Clinical Director Name],<br><br>
-I am writing to formally notify the Trust of my intention to commence private medical practice starting [Date]. <br><br>
-In accordance with my NHS contract and the 2026 GMC Good Medical Practice guidance, I confirm that:<br>
-1. Private work will be conducted outside of my agreed NHS Job Plan PAs.<br>
-2. I will ensure no conflict of interest arises regarding patient waiting lists.<br>
-3. My NHS commitment remains my primary professional priority.<br><br>
-I have updated my 'Declaration of Interests' on the Trust portal. Please let me know if we need to review my Job Plan to ensure continued transparency.<br><br>
-Best regards,<br>
-[Your Name]
+
+        <div class="alert alert-amber">
+            <span class="alert-icon">⚠️</span>
+            <span>Your NHS contract is the starting point for everything. Request a copy from HR if you don't have one. Rules differ meaningfully between full-time consultant, part-time, and SAS contracts.</span>
+        </div>
+
+        <!-- JOB PLAN -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📄</div>
+                <h3>Understanding Your Contract &amp; Job Plan</h3>
             </div>
-        </article>
+            <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:14px;">A full-time NHS consultant contract comprises <strong>10 Programmed Activities (PAs) per week</strong>, each representing 4 hours. Private practice must occur entirely outside these committed PAs.</p>
+
+            <div class="pa-grid">
+                <div class="pa-box"><strong>PA 1–2</strong>Outpatient Clinics<br>(DCC)</div>
+                <div class="pa-box"><strong>PA 3–4</strong>Ward rounds &amp; procedures<br>(DCC)</div>
+                <div class="pa-box"><strong>PA 5–6</strong>On-call / MDT<br>(DCC)</div>
+                <div class="pa-box"><strong>PA 7–8</strong>Teaching &amp; admin<br>(SPA)</div>
+                <div class="pa-box"><strong>PA 9–10</strong>Research &amp; CPD<br>(SPA)</div>
+            </div>
+            <div class="pa-grid" style="margin-top:8px;">
+                <div class="pa-box private" style="grid-column:span 5;text-align:left;padding:10px 16px;">
+                    <strong style="display:inline;font-size:0.9rem;">⏰ Private Work</strong> — Evenings, weekends, or negotiated PA reductions. You cannot do private work during an on-call shift, even if not called in.
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:16px;gap:12px;">
+                <div class="alert alert-blue" style="margin-bottom:0;">
+                    <span class="alert-icon">ℹ️</span>
+                    <div><strong>Part-time contracts:</strong> Working fewer than 10 PAs does not automatically free the remaining time for private work without Trust notification. The same declaration rules apply.</div>
+                </div>
+                <div class="alert alert-blue" style="margin-bottom:0;">
+                    <span class="alert-icon">ℹ️</span>
+                    <div><strong>SAS grades:</strong> Specialty doctors and associates have different contractual provisions. Check specifically for any clause restricting outside practice and consult your BMA rep if unclear.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 STAGES TIMELINE -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🗺️</div>
+                <h3>The 5 Stages: From Considering to Billing</h3>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot">1</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content">
+                        <h4>Review Your Contract &amp; the Trust's Conflicts of Interest Policy</h4>
+                        <p>Request your full employment contract from NHS HR. Look specifically for:</p>
+                        <ul>
+                            <li>Explicit clauses permitting or restricting private practice</li>
+                            <li>Any private practice agreement that formed part of your appointment</li>
+                            <li>The Trust's <em>Management of Conflicts of Interest Policy</em> (usually on the intranet)</li>
+                            <li>The NHSE 2023 updated guidance on consultant private practice</li>
+                        </ul>
+                        <div class="info-pill-row">
+                            <div class="info-pill">⏱ Allow 1–2 weeks</div>
+                            <div class="info-pill">📁 Request from NHS HR</div>
+                            <div class="info-pill">🔎 Search Trust intranet for "conflicts of interest"</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot">2</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content">
+                        <h4>Informal Conversation with Your Clinical Director</h4>
+                        <p>Before formal paperwork, have a collegial conversation. Most CDs are supportive — many have done the same. Discuss:</p>
+                        <ul>
+                            <li>Where you intend to work (which private hospital or clinic, which days)</li>
+                            <li>Confirmation that there is no conflict with NHS waiting lists</li>
+                            <li>Whether any change to your job plan is needed or desired</li>
+                        </ul>
+                        <div class="info-pill-row">
+                            <div class="info-pill">💬 Informal first</div>
+                            <div class="info-pill">📅 Follow up in writing</div>
+                            <div class="info-pill">📝 Keep a note of the conversation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot">3</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content">
+                        <h4>Submit Your Declaration of Interests</h4>
+                        <p>Most Trusts require submission via their online portal within 28 days of commencing private work. Your declaration must cover:</p>
+                        <ul>
+                            <li><strong>Financial interest type:</strong> "Direct financial — paid for clinical services"</li>
+                            <li><strong>Details:</strong> Name of private facility, estimated income bracket</li>
+                            <li><strong>Management plan:</strong> How you will prevent conflict (e.g., no NHS-to-private migration of patients)</li>
+                        </ul>
+                        <div class="alert alert-amber" style="margin-top:10px;margin-bottom:0;font-size:0.82rem;">
+                            <span class="alert-icon">⚠️</span>
+                            <span>Declarations must be renewed annually and updated within 28 days of any material change. Non-declaration is a conduct matter under the NHS Code of Conduct.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot">4</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content">
+                        <h4>Formal Written Notification to the Trust</h4>
+                        <p>Send the email template (below) to your Clinical Director, cc-ing the Medical Director and your PA. This establishes a documented record satisfying GMC <em>Good Medical Practice</em> (2024) and your employer's policy requirements.</p>
+                        <div class="info-pill-row">
+                            <div class="info-pill">📧 Template below ↓</div>
+                            <div class="info-pill">📋 Keep a copy in your own records</div>
+                            <div class="info-pill">📩 Request a read receipt</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot">5</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content">
+                        <h4>Begin Parallel Registration &amp; Facility Onboarding</h4>
+                        <p>Once your Trust is notified, proceed with the Registration checklist. Private hospital credentialing (HCA, Nuffield, Spire) typically takes 6–8 weeks and is the most common bottleneck — start it immediately, in parallel with everything else.</p>
+                        <div class="info-pill-row">
+                            <div class="info-pill">🏥 HCA credentialing: 6–8 weeks</div>
+                            <div class="info-pill">🏥 Spire / Nuffield: 4–6 weeks</div>
+                            <div class="info-pill">🏥 UCLH Private: 6–8 weeks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMAIL TEMPLATE -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📧</div>
+                <h3>Email Template — Formal Notification of Private Practice</h3>
+            </div>
+            <div class="code-block" id="emailTemplate">Subject: Formal Notification — Commencement of Private Medical Practice
+To: [Clinical Director Name]
+CC: [Medical Director], [Your PA / Secretary]
+
+Dear [Clinical Director Name],
+
+I am writing to formally notify the Trust of my intention to commence private medical
+practice, with effect from [proposed start date].
+
+I confirm the following in accordance with my NHS contract and the Trust's Management
+of Conflicts of Interest Policy:
+
+1. Private practice will be conducted exclusively outside my agreed NHS Job Plan PAs,
+   in my own time. It will not affect my contracted NHS commitment.
+
+2. I intend to practise at [Private Hospital / Clinic Name]. I will not use NHS
+   facilities, equipment, or support staff in the provision of private services.
+
+3. I will not accept privately those patients who are on, or eligible for, an NHS
+   waiting list under my care, where doing so would compromise their access to
+   NHS treatment.
+
+4. My Declaration of Interests has been updated on the Trust portal as of [date]
+   to reflect this activity as a direct financial interest.
+
+5. My primary professional commitment remains my NHS contract. The commencement
+   of private practice will not adversely affect my NHS duties or the department.
+
+I am happy to discuss any aspect of this arrangement or to arrange a job plan review
+at your convenience. Please confirm receipt of this notification.
+
+Yours sincerely,
+Dr [Your Name]
+Consultant [Your Specialty]
+[Department], [Trust Name]
+GMC No: [Your GMC Number]</div>
+            <button class="copy-btn" onclick="copyEmail()">📋 Copy</button>
+            <p style="font-size:0.77rem;color:var(--text-light);margin-top:10px;">Amend items 2 and 3 to reflect your specific circumstances before sending.</p>
+        </div>
+
+        <!-- PITFALLS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🚫</div>
+                <h3>Common Pitfalls</h3>
+            </div>
+            <div class="grid-2">
+                <div class="alert alert-red" style="margin-bottom:0;">
+                    <div><strong style="display:block;margin-bottom:3px;">Using NHS resources</strong>
+                    <span style="font-size:0.82rem;">Rooms, equipment, imaging systems, PACS, or support staff cannot be used for private patients — even incidentally or "after hours."</span></div>
+                </div>
+                <div class="alert alert-red" style="margin-bottom:0;">
+                    <div><strong style="display:block;margin-bottom:3px;">NHS → private patient migration</strong>
+                    <span style="font-size:0.82rem;">Seeing a patient privately who is concurrently on your NHS list — without explicit agreement and a documented rationale — is a serious conduct issue.</span></div>
+                </div>
+                <div class="alert alert-red" style="margin-bottom:0;">
+                    <div><strong style="display:block;margin-bottom:3px;">Private work in NHS time</strong>
+                    <span style="font-size:0.82rem;">Includes writing private reports, taking private referral calls, or responding to private administration queries during contracted NHS hours.</span></div>
+                </div>
+                <div class="alert alert-red" style="margin-bottom:0;">
+                    <div><strong style="display:block;margin-bottom:3px;">Claims-made indemnity</strong>
+                    <span style="font-size:0.82rem;">If you ever stop paying premiums, historical claims are unprotected. Oncology claims can emerge 5–10 years later. Always use occurrence-based cover.</span></div>
+                </div>
+            </div>
+        </div>
+
     </section>
 
-    <!-- TAB 2: REGISTRY -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 2  ·  REGISTRATION
+    ════════════════════════════════════════════════════════════ -->
     <section id="registry" class="tab-content">
-        <h2>The Registration Checklist</h2>
-        <p>You cannot legally bill a patient until these 5 entities are satisfied.</p>
-        <div class="grid">
-            <div class="matrix-card">
-                <h5>1. GMC & Indemnity</h5>
-                <ul>
-                    <li><a href="https://www.gmc-uk.org/" target="_blank">GMC:</a> Ensure "License to Practise" is active.</li>
-                    <li><strong>Indemnity:</strong> Must be "Occurrence-based" for London private work (MDU/MPS/Howden).</li>
-                </ul>
+
+        <div class="card" style="padding:18px 22px 14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <h3 style="font-family:'Fraunces',serif;font-size:1rem;">Compliance Progress</h3>
+                <span id="checkCount" style="font-size:0.82rem;color:var(--text-muted);">0 of 8 complete</span>
             </div>
-            <div class="matrix-card">
-                <h5>2. Data & Privacy</h5>
-                <ul>
-                    <li><a href="https://ico.org.uk/" target="_blank">ICO:</a> Register as a Data Controller (£40 fee).</li>
-                    <li><strong>DBS:</strong> Ensure you have an "Enhanced" certificate dated within 3 years.</li>
-                </ul>
-            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+            <p style="font-size:0.76rem;color:var(--text-light);margin-top:5px;">Do not see your first private patient until all 8 are satisfied. Tick off as you complete each.</p>
         </div>
-        <br>
-        <div class="grid">
-            <div class="matrix-card">
-                <h5>3. Quality & Transparency</h5>
-                <ul>
-                    <li><a href="https://www.cqc.org.uk/" target="_blank">CQC:</a> Mandatory if you treat patients in your own rooms.</li>
-                    <li><a href="https://www.phin.org.uk/" target="_blank">PHIN:</a> Mandatory fee & outcome disclosure.</li>
-                </ul>
+
+        <div class="card">
+
+            <div class="checklist-item" id="cl1">
+                <div class="check-box" onclick="toggleCheck('cl1')"></div>
+                <div class="checklist-meta">
+                    <h4>1. GMC Licence to Practise</h4>
+                    <p>Log into GMC Online and confirm your Licence to Practise is active. Check your revalidation date — if it falls within 6 months of your planned start, address revalidation first. Private hospitals independently verify your GMC status before granting practising privileges.</p>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">gmc-uk.org</span>
+                        <span class="tag tag-gold">Included in annual GMC fee</span>
+                        <span class="tag tag-green">Immediate — just verify</span>
+                    </div>
+                </div>
             </div>
-            <div class="matrix-card">
-                <h5>4. The Billing Gateway</h5>
-                <ul>
-                    <li><a href="https://www.healthcode.co.uk/" target="_blank">Healthcode:</a> Register for an 'ePractice' account to send invoices.</li>
-                    <li><a href="https://www.ccsd.org.uk/" target="_blank">CCSD:</a> The database for procedure codes.</li>
-                </ul>
+
+            <div class="checklist-item" id="cl2">
+                <div class="check-box" onclick="toggleCheck('cl2')"></div>
+                <div class="checklist-meta">
+                    <h4>2. Medical Indemnity — Occurrence-Based Only</h4>
+                    <p>This is the most commonly misunderstood requirement. For private practice in oncology you must have <strong>occurrence-based</strong> indemnity, not claims-made. The distinction is critical.</p>
+                    <div class="alert alert-amber" style="margin:8px 0;font-size:0.8rem;">
+                        <span class="alert-icon">⚠️</span>
+                        <div>
+                            <strong>Occurrence-based:</strong> You are protected for any incident that occurred while your policy was active — even if a claim is made years after you stop paying.<br>
+                            <strong>Claims-made:</strong> Only protects you if the claim is lodged while the policy is still active. If you stop paying, historical claims are unprotected.<br><br>
+                            In oncology, claims routinely emerge 5–10 years after treatment. Claims-made cover is therefore unsuitable.
+                        </div>
+                    </div>
+                    <p style="font-size:0.83rem;color:var(--text-muted);">Main providers: <strong>MDU</strong>, <strong>MPS</strong>, <strong>Howden</strong>, <strong>MDAM</strong>. Get quotes from at least two. Howden has been competitive for oncology in 2025–26.</p>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">MDU / MPS / Howden / MDAM</span>
+                        <span class="tag tag-gold">~£3,000–£8,000/yr (oncology)</span>
+                        <span class="tag tag-green">1–2 weeks to arrange</span>
+                    </div>
+                </div>
             </div>
+
+            <div class="checklist-item" id="cl3">
+                <div class="check-box" onclick="toggleCheck('cl3')"></div>
+                <div class="checklist-meta">
+                    <h4>3. ICO Registration — Data Controller</h4>
+                    <p>As soon as you process any patient data (including bookings and enquiries) you are a Data Controller under UK GDPR and must register with the ICO. This applies even if you use a third-party practice management system. Registration takes approximately 10 minutes online.</p>
+                    <ul>
+                        <li>Visit ico.org.uk/registration → "Register for a data protection fee"</li>
+                        <li>Select Tier 1 (small organisation / sole trader) — <strong>£40/year</strong></li>
+                        <li>You receive a Registration Reference Number — record it; hospitals will ask for it</li>
+                        <li>You must publish a <strong>Privacy Notice</strong> on your website; the ICO provides a template</li>
+                    </ul>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">ico.org.uk</span>
+                        <span class="tag tag-gold">£40/year</span>
+                        <span class="tag tag-green">Same-day registration</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checklist-item" id="cl4">
+                <div class="check-box" onclick="toggleCheck('cl4')"></div>
+                <div class="checklist-meta">
+                    <h4>4. Enhanced DBS Certificate</h4>
+                    <p>Required for all patient-facing practitioners. There is no official statutory expiry, but most private hospitals require a certificate issued within the last <strong>3 years</strong>. If yours is older, apply for a new one. Consider joining the <strong>DBS Update Service</strong> (£13/year) — it allows hospitals to check your certificate status in real time without re-application each time.</p>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">gov.uk/dbs-check</span>
+                        <span class="tag tag-gold">£38 standard / ~£60–70 via umbrella body</span>
+                        <span class="tag tag-green">2–4 weeks</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checklist-item" id="cl5">
+                <div class="check-box" onclick="toggleCheck('cl5')"></div>
+                <div class="checklist-meta">
+                    <h4>5. CQC Registration <span style="font-weight:400;color:var(--text-muted)">(Conditional — most will not need this)</span></h4>
+                    <p>CQC registration is mandatory only if you provide regulated activities in premises that <em>you</em> control — e.g., your own consulting rooms or an independent clinic you operate. If you work exclusively as a sessional consultant at an established private hospital (HCA, Nuffield, Spire, UCLH Private), their CQC registration covers your practice. You do <strong>not</strong> need your own registration in this scenario.</p>
+                    <div class="alert alert-blue" style="margin:8px 0;font-size:0.8rem;">
+                        <span class="alert-icon">ℹ️</span>
+                        <span><strong>Uncertain?</strong> Call the CQC helpline (03000 616161) to describe your arrangements. The answer is almost always "no separate registration needed" for standard sessional work. Only pursue CQC registration if you plan to operate independent premises.</span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">cqc.org.uk</span>
+                        <span class="tag tag-gold">£1,500+ fee + significant paperwork</span>
+                        <span class="tag tag-red">3–6 months if required</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checklist-item" id="cl6">
+                <div class="check-box" onclick="toggleCheck('cl6')"></div>
+                <div class="checklist-meta">
+                    <h4>6. PHIN Registration — Fee Transparency (Legal Requirement)</h4>
+                    <p>Since 2019 it has been a legal requirement for all consultants treating PMI patients to publish their fees via the <strong>Private Healthcare Information Network (PHIN)</strong> and submit outcome data for specified procedures. PMI companies check this independently — some will not process claims from unregistered consultants.</p>
+                    <ul>
+                        <li>Register at phin.org.uk → "Register as a consultant"</li>
+                        <li>Publish your consultation fee and any procedure fees</li>
+                        <li>Submit outcome data annually for relevant PHIN-defined procedures</li>
+                        <li>Ensure your fees are also visible on your website (hyperlink to PHIN profile is acceptable)</li>
+                    </ul>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">phin.org.uk</span>
+                        <span class="tag tag-gold">Free</span>
+                        <span class="tag tag-green">1 week to register</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checklist-item" id="cl7">
+                <div class="check-box" onclick="toggleCheck('cl7')"></div>
+                <div class="checklist-meta">
+                    <h4>7. Healthcode ePractice Account</h4>
+                    <p>Healthcode is the electronic data interchange gateway used by virtually all PMI companies in the UK. Without an ePractice account you cannot submit electronic invoices to Bupa, AXA, Aviva, Cigna, or most others. Your <strong>Healthcode Billing Reference</strong> appears on every invoice.</p>
+                    <ul>
+                        <li>Register at healthcode.co.uk → "Join Healthcode"</li>
+                        <li>You'll need: GMC number, indemnity policy number, bank details, and ICO registration number</li>
+                        <li>Most practice management systems (Semble, WriteUpp) integrate directly with Healthcode</li>
+                        <li>Healthcode also runs compliance checks — most complete within 1–2 weeks</li>
+                    </ul>
+                    <div class="meta-row">
+                        <span class="tag tag-navy">healthcode.co.uk</span>
+                        <span class="tag tag-gold">~£15/month</span>
+                        <span class="tag tag-green">1–2 weeks</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checklist-item" id="cl8">
+                <div class="check-box" onclick="toggleCheck('cl8')"></div>
+                <div class="checklist-meta">
+                    <h4>8. Private Hospital Credentialing <span style="font-weight:400;color:var(--red)">(Start immediately — biggest bottleneck)</span></h4>
+                    <p>Each private hospital runs its own credentialing process, completely independent of your NHS post and GMC registration. Expect to provide: full CV, GMC certificate, DBS certificate, indemnity confirmation, two consultant referees, and a completed privileges application specifying exactly what procedures you are credentialed to perform.</p>
+                    <ul>
+                        <li><strong>HCA UK</strong> (The Harley Street Clinic, The Lister, The Wellington, The Portland): 6–8 weeks, highly structured process, online portal</li>
+                        <li><strong>Nuffield Health</strong> (Cromwell, Woking, Brighton): 4–6 weeks</li>
+                        <li><strong>Spire Healthcare</strong> (Spire London East, St Anthony's, Spire Bushey): 4–6 weeks</li>
+                        <li><strong>UCLH Private</strong>: 6–8 weeks; requires separate application to UCLH's private healthcare arm</li>
+                        <li><strong>The London Clinic</strong> / <strong>King Edward VII's</strong>: 6–10 weeks; more bespoke</li>
+                    </ul>
+                    <div class="alert alert-navy" style="margin-top:10px;margin-bottom:0;font-size:0.82rem;">
+                        <span class="alert-icon">💡</span>
+                        <span>Apply to <em>at least two</em> hospitals simultaneously. Credentialing at one does not automatically transfer to another. Many consultants begin credentialing well before their Trust notification to avoid delays.</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
-    <!-- TAB 3: BILLING & ONCOLOGY -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 3  ·  BILLING
+    ════════════════════════════════════════════════════════════ -->
     <section id="billing" class="tab-content">
-        <h2>Oncology Billing Engine</h2>
-        <p>London rates are typically 15-20% higher than national averages. Below are common <strong>CCSD Oncology Codes</strong>.</p>
-        
-        <input type="text" id="codeSearch" placeholder="Search by code (e.g. 20300) or treatment..." onkeyup="filterCodes()">
-        
-        <table id="codeTable">
-            <thead>
-                <tr>
-                    <th>CCSD Code</th>
-                    <th>Description</th>
-                    <th>Est. London Fee (Bupa/AXA)</th>
-                    <th>Self-Pay (Rec. Rate)</th>
-                </tr>
-            </thead>
-            <tbody id="codeBody">
-                <tr><td>20300</td><td>Initial Specialist Consultation</td><td>£210 - £260</td><td>£300 - £350</td></tr>
-                <tr><td>20310</td><td>Follow-up Consultation</td><td>£150 - £180</td><td>£200 - £250</td></tr>
-                <tr><td>X7010</td><td>Chemotherapy: Complex IV (Cycle 1)</td><td>£350</td><td>£500+</td></tr>
-                <tr><td>X7040</td><td>Chemotherapy: Simple Oral (per cycle)</td><td>£120</td><td>£200</td></tr>
-                <tr><td>X7002</td><td>Complex Treatment Planning</td><td>£280</td><td>£400</td></tr>
-            </tbody>
-        </table>
 
-        <div class="tool-box" style="background:#fff3cd; padding:15px; border-radius:8px;">
-            <strong>Pro Tip:</strong> In 2026, many PMI companies (like AXA) require <strong>pre-authorisation</strong> for "Complex Planning" codes. Do not start treatment without the patient providing an Auth Code.
+        <div class="inner-tabs">
+            <div class="inner-tab active" onclick="showInnerTab('billing','ccsd',this)">CCSD Code Finder</div>
+            <div class="inner-tab" onclick="showInnerTab('billing','workflow',this)">Invoice Workflow</div>
+            <div class="inner-tab" onclick="showInnerTab('billing','pmi',this)">PMI Company Guide</div>
+            <div class="inner-tab" onclick="showInnerTab('billing','selfpay',this)">Self-Pay Strategy</div>
+        </div>
+
+        <!-- ── CCSD CODE FINDER ── -->
+        <div class="inner-tab-content active" id="billing-ccsd">
+            <div class="alert alert-blue">
+                <span class="alert-icon">ℹ️</span>
+                <span>London rates are typically 15–20% above national averages. PMI rates are set by each insurer's fee schedule; self-pay rates are at your discretion but must be published on PHIN. Drug costs are billed separately by hospital pharmacy and are <em>not</em> included below.</span>
+            </div>
+
+            <div class="filter-bar">
+                <input type="text" class="search-input" id="codeSearch" placeholder="Search by code or description…" oninput="filterCodes()">
+                <select class="filter-select" id="categoryFilter" onchange="filterCodes()">
+                    <option value="">All Categories</option>
+                    <option value="consultation">Consultations</option>
+                    <option value="chemo">Chemotherapy</option>
+                    <option value="immunotherapy">Immunotherapy / Targeted</option>
+                    <option value="procedure">Procedures</option>
+                    <option value="planning">Planning &amp; Admin</option>
+                </select>
+                <select class="filter-select" id="authFilter" onchange="filterCodes()">
+                    <option value="">All Pre-auth status</option>
+                    <option value="no">Pre-auth not usually required</option>
+                    <option value="yes">Pre-auth required</option>
+                </select>
+            </div>
+
+            <div style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);">
+                <table class="data-table" id="codeTable">
+                    <thead>
+                        <tr>
+                            <th>CCSD Code</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Bupa / AXA Est.</th>
+                            <th>Self-Pay (Rec.)</th>
+                            <th>Pre-Auth?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="codeBody">
+                        <tr data-cat="consultation" data-auth="no"><td>20300</td><td>Initial Specialist Consultation (face-to-face)</td><td><span class="tag tag-navy">Consultation</span></td><td>£210–£260</td><td>£300–£380</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="consultation" data-auth="no"><td>20310</td><td>Follow-up Consultation</td><td><span class="tag tag-navy">Consultation</span></td><td>£150–£180</td><td>£200–£270</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="consultation" data-auth="no"><td>20400</td><td>Telephone / Video Consultation</td><td><span class="tag tag-navy">Consultation</span></td><td>£100–£140</td><td>£150–£200</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="consultation" data-auth="no"><td>20350</td><td>MDT Attendance &amp; Written Report</td><td><span class="tag tag-navy">Consultation</span></td><td>£180–£220</td><td>£250–£300</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="consultation" data-auth="no"><td>20500</td><td>Report on Investigations / Second Opinion (Written)</td><td><span class="tag tag-navy">Consultation</span></td><td>£200–£260</td><td>£280–£400</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="chemo" data-auth="yes"><td>X7010</td><td>Chemotherapy: Complex IV Administration (Cycle 1)</td><td><span class="tag tag-gold">Chemo</span></td><td>£350–£420</td><td>£500–£650</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="chemo" data-auth="yes"><td>X7011</td><td>Chemotherapy: Complex IV Administration (Subsequent Cycles)</td><td><span class="tag tag-gold">Chemo</span></td><td>£280–£350</td><td>£400–£500</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="chemo" data-auth="yes"><td>X7040</td><td>Chemotherapy: Oral Agent Supervision (per cycle)</td><td><span class="tag tag-gold">Chemo</span></td><td>£120–£150</td><td>£180–£250</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="immunotherapy" data-auth="yes"><td>X7060</td><td>Immunotherapy Administration (PD-1 / PD-L1 inhibitors)</td><td><span class="tag tag-imm">Immunotherapy</span></td><td>£380–£480</td><td>£550–£750</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="immunotherapy" data-auth="yes"><td>X7065</td><td>Combination Immunotherapy (dual checkpoint blockade)</td><td><span class="tag tag-imm">Immunotherapy</span></td><td>£420–£520</td><td>£620–£800</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="immunotherapy" data-auth="yes"><td>X7070</td><td>Targeted Therapy Administration (EGFR / ALK / BRAF inhibitors)</td><td><span class="tag tag-imm">Immunotherapy</span></td><td>£350–£430</td><td>£500–£680</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="immunotherapy" data-auth="yes"><td>X7080</td><td>Bisphosphonate / RANK-L Inhibitor Infusion (e.g., zoledronic acid, denosumab)</td><td><span class="tag tag-imm">Immunotherapy</span></td><td>£200–£280</td><td>£300–£400</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="planning" data-auth="yes"><td>X7002</td><td>Complex Chemotherapy Treatment Planning</td><td><span class="tag tag-green">Planning</span></td><td>£280–£340</td><td>£380–£500</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="planning" data-auth="yes"><td>X7003</td><td>SACT Plan — Complex Systemic Anti-Cancer Therapy</td><td><span class="tag tag-green">Planning</span></td><td>£300–£380</td><td>£420–£560</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="planning" data-auth="no"><td>X7001</td><td>Simple Systemic Therapy Planning</td><td><span class="tag tag-green">Planning</span></td><td>£180–£240</td><td>£280–£360</td><td><span class="tag tag-green">Usually No</span></td></tr>
+                        <tr data-cat="procedure" data-auth="yes"><td>42900</td><td>Bone Marrow Trephine Biopsy</td><td><span class="tag tag-navy">Procedure</span></td><td>£380–£450</td><td>£550–£700</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="procedure" data-auth="yes"><td>33960</td><td>CT-Guided Biopsy (soft tissue / lymph node)</td><td><span class="tag tag-navy">Procedure</span></td><td>£480–£580</td><td>£700–£900</td><td><span class="tag tag-red">Required</span></td></tr>
+                        <tr data-cat="procedure" data-auth="yes"><td>41820</td><td>PICC Line Insertion</td><td><span class="tag tag-navy">Procedure</span></td><td>£320–£400</td><td>£480–£600</td><td><span class="tag tag-red">Required</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p id="noResults" style="display:none;text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem;">No codes match your search. Try different terms or clear the filters.</p>
+            <p style="font-size:0.74rem;color:var(--text-light);margin-top:10px;">Rates are indicative for London, 2026. Verify current rates with each insurer's fee schedule. Source: CCSD schedule.</p>
+        </div>
+
+        <!-- ── INVOICE WORKFLOW ── -->
+        <div class="inner-tab-content" id="billing-workflow">
+
+            <div style="overflow-x:auto;margin-bottom:22px;">
+                <div class="workflow">
+                    <div class="workflow-step"><span class="step-num">Step 1</span>Verify Insurance</div>
+                    <div class="workflow-step"><span class="step-num">Step 2</span>Pre-Authorise</div>
+                    <div class="workflow-step"><span class="step-num">Step 3</span>See Patient</div>
+                    <div class="workflow-step"><span class="step-num">Step 4</span>Generate Invoice</div>
+                    <div class="workflow-step"><span class="step-num">Step 5</span>Submit via Healthcode</div>
+                    <div class="workflow-step"><span class="step-num">Step 6</span>Reconcile &amp; Chase</div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:14px;">
+                <h4 style="font-weight:600;margin-bottom:8px;">Step 1 — Insurance Verification</h4>
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:8px;">Before booking a PMI patient, verify active cover. You or your secretary should confirm:</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li>Policy is active and not lapsed</li>
+                    <li>Planned consultation / treatment is covered under their specific plan (not all plans cover cancer treatment)</li>
+                    <li>Whether a GP referral letter is required (most insurers still mandate this)</li>
+                    <li>The patient's excess amount — they pay this directly; invoice accordingly</li>
+                    <li>Your Healthcode Billing Reference is on the insurer's recognised consultant list</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom:14px;">
+                <h4 style="font-weight:600;margin-bottom:8px;">Step 2 — Pre-Authorisation</h4>
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:10px;">Many treatments require pre-auth before you start. Without a valid auth code, the insurer can legitimately decline the claim entirely.</p>
+                <div class="grid-2">
+                    <div>
+                        <p style="font-size:0.8rem;font-weight:600;color:var(--green);margin-bottom:5px;">✅ Usually NOT required for:</p>
+                        <ul style="font-size:0.83rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                            <li>Initial consultations (20300)</li>
+                            <li>Standard follow-ups (20310)</li>
+                            <li>Video consultations (20400)</li>
+                            <li>Second opinion letters (20500)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p style="font-size:0.8rem;font-weight:600;color:var(--red);margin-bottom:5px;">🔴 ALWAYS required for:</p>
+                        <ul style="font-size:0.83rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                            <li>All chemotherapy (X70xx)</li>
+                            <li>Immunotherapy / biologics</li>
+                            <li>All complex treatment planning</li>
+                            <li>All invasive procedures</li>
+                            <li>Infusions (bisphosphonates, etc.)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-amber" style="margin-top:12px;margin-bottom:0;font-size:0.82rem;">
+                    <span class="alert-icon">⚠️</span>
+                    <span><strong>Record the authorisation code on every invoice line item.</strong> Bupa and AXA have become significantly stricter since 2024. A missing code will delay payment by 4–6 weeks minimum.</span>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:14px;">
+                <h4 style="font-weight:600;margin-bottom:8px;">Steps 4–5 — Generating &amp; Submitting the Invoice</h4>
+                <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:8px;">Submit within 7 days of service (most insurers have claim submission windows; some are 3 months, but earlier is always better). A correctly formed invoice must include:</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li>Your Healthcode Billing Reference</li>
+                    <li>Patient name, date of birth, policy number, and membership number</li>
+                    <li>Date of service and treating site</li>
+                    <li>CCSD code(s) with pre-auth reference where applicable</li>
+                    <li>ICD-10 diagnosis code (increasingly mandatory for all major insurers)</li>
+                    <li>Your bank details (set once in Healthcode; applied automatically)</li>
+                </ul>
+                <div class="alert alert-green" style="margin-top:10px;margin-bottom:0;font-size:0.82rem;">
+                    <span class="alert-icon">✅</span>
+                    <span><strong>Payment timeline:</strong> Bupa and AXA typically pay within 28–30 days of a correctly submitted invoice. Smaller insurers 45–60 days. Build a simple reconciliation tracker in Xero or a spreadsheet.</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4 style="font-weight:600;margin-bottom:10px;">Handling Declined Claims</h4>
+                <table class="compare-table" style="font-size:0.82rem;">
+                    <thead><tr><th>Reason for Decline</th><th>Resolution</th></tr></thead>
+                    <tbody>
+                        <tr><td>Missing / invalid pre-auth code</td><td>Call insurer immediately. If clinically urgent, submit retrospective authorisation with clinical justification in writing.</td></tr>
+                        <tr><td>Pre-existing condition exclusion</td><td>Patient must challenge with their insurer. Write a supporting clinical letter; do not expect quick resolution. Check policy start date.</td></tr>
+                        <tr><td>Incorrect CCSD code</td><td>Review with Healthcode. Resubmit with corrected code within the submission window.</td></tr>
+                        <tr><td>Policy lapsed at time of treatment</td><td>Invoice the patient directly for the full amount. Reinforce Step 1 verification to prevent recurrence.</td></tr>
+                        <tr><td>Consultant not recognised by insurer</td><td>Check your PHIN listing and Healthcode registration are current. Bupa has a separate recognition process (4–6 weeks — see PMI tab).</td></tr>
+                        <tr><td>Benefit limit exceeded</td><td>Patient is liable for the excess. Notify them promptly; include a clear payment terms clause in your booking confirmation.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── PMI GUIDE ── -->
+        <div class="inner-tab-content" id="billing-pmi">
+            <h3 style="font-family:'Fraunces',serif;margin-bottom:4px;">PMI Company Guide — 2026</h3>
+            <p style="font-size:0.855rem;color:var(--text-muted);margin-bottom:18px;">Key differences for oncology consultants practising in London.</p>
+
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Insurer</th>
+                        <th>Est. Market Share</th>
+                        <th>London Rate</th>
+                        <th>Pre-Auth Strictness</th>
+                        <th>Oncology Notes</th>
+                        <th>Avg. Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Bupa</strong></td>
+                        <td>~38–40%</td>
+                        <td>National +15%</td>
+                        <td><span style="color:var(--red);">🔴 Very strict</span></td>
+                        <td>Requires <em>separate Bupa consultant recognition</em> (bupa.co.uk/consultants, 4–6 wks). Pre-auth needed per cycle for all chemo and biologics.</td>
+                        <td>28–30 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AXA Health</strong></td>
+                        <td>~22–25%</td>
+                        <td>National +15%</td>
+                        <td><span style="color:var(--red);">🔴 Very strict</span></td>
+                        <td>Robust digital pre-auth portal. Clinical review panels for complex oncology packages. Good payer if correctly authorised.</td>
+                        <td>28–35 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aviva</strong></td>
+                        <td>~12%</td>
+                        <td>National +10%</td>
+                        <td><span style="color:#b45309;">🟡 Moderate</span></td>
+                        <td>Growing cancer care portfolio. More flexible on planning codes than Bupa/AXA. Improving oncology pathways.</td>
+                        <td>30–35 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cigna</strong></td>
+                        <td>~8%</td>
+                        <td>Negotiated; often +20%</td>
+                        <td><span style="color:#b45309;">🟡 Moderate</span></td>
+                        <td>Predominantly international / corporate plans. Always verify the specific plan — coverage varies widely. Potentially higher fees possible via negotiation.</td>
+                        <td>35–45 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WPA</strong></td>
+                        <td>~5%</td>
+                        <td>National standard</td>
+                        <td><span style="color:var(--green);">🟢 Less strict</span></td>
+                        <td>More consultant-friendly; less bureaucracy. Smaller patient volume. Good for a less complex administrative start.</td>
+                        <td>25–30 days</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VitalityHealth</strong></td>
+                        <td>~5%</td>
+                        <td>National +10%</td>
+                        <td><span style="color:#b45309;">🟡 Moderate</span></td>
+                        <td>Wellness-focused. Cancer cover improving but still patchy on some plans. Always verify plan specifics before starting treatment.</td>
+                        <td>30–40 days</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-amber" style="margin-top:16px;">
+                <span class="alert-icon">⚠️</span>
+                <span><strong>Bupa Recognition — critical first step.</strong> Bupa operates a completely separate consultant recognition scheme from Healthcode and GMC. Without Bupa recognition, Bupa patients cannot use their insurance with you. Apply at bupa.co.uk/consultants. The process takes 4–6 weeks and requires proof of indemnity, GMC certificate, and two consultant references.</span>
+            </div>
+        </div>
+
+        <!-- ── SELF-PAY STRATEGY ── -->
+        <div class="inner-tab-content" id="billing-selfpay">
+            <h3 style="font-family:'Fraunces',serif;margin-bottom:4px;">Self-Pay Strategy</h3>
+            <p style="font-size:0.855rem;color:var(--text-muted);margin-bottom:18px;">Self-pay patients pay you directly. No pre-auth, no insurer fee schedule, no claim submissions — and the highest margin.</p>
+
+            <div class="grid-2" style="margin-bottom:16px;">
+                <div class="card" style="margin-bottom:0;">
+                    <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:10px;">✅ Advantages</h4>
+                    <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.9;">
+                        <li>No pre-authorisation at all</li>
+                        <li>You set the rates (publish on PHIN)</li>
+                        <li>Faster payment — upfront or same-day card charge</li>
+                        <li>No claim submissions or reconciliation delays</li>
+                        <li>No insurer recognition requirements</li>
+                    </ul>
+                </div>
+                <div class="card" style="margin-bottom:0;">
+                    <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:10px;">⚠️ Considerations</h4>
+                    <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.9;">
+                        <li>Fees must be published on PHIN (legal)</li>
+                        <li>Drug costs still billed by hospital — clarify upfront</li>
+                        <li>Cancellation / DNA policy must be in writing at booking</li>
+                        <li>Patients may be unaware of total cost trajectory</li>
+                        <li>Some patients will ask if you can "help" with insurance — you cannot</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:12px;">Recommended Self-Pay Rates — London Oncology 2026</h4>
+                <table class="compare-table" style="font-size:0.83rem;">
+                    <thead><tr><th>Service</th><th>Suggested Range</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        <tr><td>New Patient Consultation (60 min)</td><td>£320–£420</td><td>Include review of all prior investigations, imaging, histology</td></tr>
+                        <tr><td>Follow-up (30 min, in person)</td><td>£220–£280</td><td>Standard oncology follow-up</td></tr>
+                        <tr><td>Video / Telephone Follow-up</td><td>£160–£220</td><td>Slightly lower for remote; still invoice formally</td></tr>
+                        <tr><td>Second Opinion (written report)</td><td>£380–£600</td><td>Review of imaging, pathology + MDT context + written recommendations</td></tr>
+                        <tr><td>Complex Treatment Planning</td><td>£450–£650</td><td>SACT planning, multidrug protocols, molecular tumour board</td></tr>
+                        <tr><td>DNA / Late cancellation</td><td>50–100% of booked fee</td><td>Must be stated in booking confirmation and intake paperwork</td></tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-green" style="margin-top:12px;margin-bottom:0;font-size:0.82rem;">
+                    <span class="alert-icon">✅</span>
+                    <span><strong>Payment tip:</strong> Require card details at booking and charge after the appointment via Stripe integrated into Semble. This reduces DNA rate by 30–40% and eliminates chasing invoices entirely.</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- TAB 4: TAX & HMRC -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 4  ·  TAX
+    ════════════════════════════════════════════════════════════ -->
     <section id="tax" class="tab-content">
-        <h2>HMRC & Business Structure</h2>
-        <p>In 2026, <strong>Making Tax Digital (MTD)</strong> is mandatory. You must use compatible software (Xero/FreeAgent).</p>
-        
-        <div class="grid">
-            <article>
-                <h4>Option A: Sole Trader</h4>
-                <p><strong>Pros:</strong> Zero setup cost, total privacy of accounts.</p>
-                <p><strong>Cons:</strong> Pay 40-45% tax on everything over the threshold; personally liable for debts.</p>
-                <footer>Best for: Annual profits < £40k</footer>
-            </article>
-            <article>
-                <h4>Option B: Ltd Company</h4>
-                <p><strong>Pros:</strong> Limited liability, 19-25% Corp Tax. Can pay spouse a salary (if they work in the biz).</p>
-                <p><strong>Cons:</strong> Public filing at Companies House, higher accountancy fees (£2k+/year).</p>
-                <footer>Best for: Annual profits > £50k</footer>
-            </article>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4 style="font-family:'Fraunces',serif;margin-bottom:12px;">Option A: Sole Trader</h4>
+                <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:10px;">You are the business. All profits taxed as personal income via Self Assessment.</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li>Zero setup cost; total privacy of accounts</li>
+                    <li>40–45% tax on income above the higher-rate threshold</li>
+                    <li>Personal liability for any business debts</li>
+                    <li>Simple: just register on gov.uk for Self Assessment</li>
+                </ul>
+                <div class="tag tag-gold" style="margin-top:12px;display:inline-block;">Best if annual private profit &lt; £40k</div>
+            </div>
+            <div class="card">
+                <h4 style="font-family:'Fraunces',serif;margin-bottom:12px;">Option B: Limited Company</h4>
+                <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:10px;">You are a director and shareholder. More complex but significantly more tax-efficient at higher incomes.</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li>19–25% Corporation Tax (vs 40%+ income tax)</li>
+                    <li>Draw salary (below NI threshold) + dividends structure</li>
+                    <li>Employ a spouse/partner if they genuinely contribute to the business</li>
+                    <li>Public filing at Companies House; accountancy fees £2,000–4,000/yr</li>
+                </ul>
+                <div class="tag tag-gold" style="margin-top:12px;display:inline-block;">Best if annual private profit &gt; £50k</div>
+            </div>
         </div>
 
-        <h5>HMRC Checklist</h5>
-        <ul>
-            <li><strong>Start:</strong> Register for 'Self Assessment' as soon as you earn >£1,000.</li>
-            <li><strong>VAT:</strong> Medical care is exempt, but <i>Legal Reports</i> are not. If legal work exceeds £90k, you must register.</li>
-            <li><strong>Annual:</strong> Submit accounts by Jan 31st. Set aside 35% of every private invoice for the tax man!</li>
-        </ul>
+        <div class="card">
+            <div class="card-header"><div class="card-icon">📋</div><h3>HMRC Checklist</h3></div>
+            <ul style="font-size:0.875rem;color:var(--text-muted);line-height:2.1;padding-left:18px;">
+                <li><strong>Register for Self Assessment</strong> as soon as private income exceeds £1,000. Do not wait until year end.</li>
+                <li><strong>Making Tax Digital (MTD)</strong> is mandatory. Use Xero, FreeAgent, or QuickBooks — all MTD-compliant and integrate with Healthcode.</li>
+                <li><strong>VAT:</strong> Medical care is VAT-exempt. Medicolegal reports and expert witness work are <em>not</em> exempt. If non-exempt income exceeds £90,000, you must register for VAT.</li>
+                <li><strong>Set aside 35% of every invoice</strong> into a separate savings account from day one. Payment on Account can catch consultants off guard in year two.</li>
+                <li><strong>Submit by 31 January</strong> for the preceding tax year. Payments on Account may also be due in July.</li>
+                <li><strong>NHS Pension:</strong> Private income does not contribute to your NHS pension. Consider a SIPP for private income — take advice from a specialist medical accountant.</li>
+            </ul>
+        </div>
     </section>
 
-    <!-- TAB 5: AI & ADMIN -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 5  ·  TECH & ADMIN
+    ════════════════════════════════════════════════════════════ -->
     <section id="tech" class="tab-content">
-        <h2>The 2026 Modern Practice</h2>
-        <p>Don't hire a full-time secretary immediately. Use the "Hybrid Approach."</p>
-        
-        <div class="grid">
-            <article>
-                <h5>1. Virtual Secretary (VMT)</h5>
-                <p>Services like <strong>Medserv</strong> or <strong>The Medical Secretary</strong> answer your calls and book slots in London clinics on a pay-per-minute or % basis.</p>
-            </article>
-            <article>
-                <h5>2. AI Scribe (The Future)</h5>
-                <p>Tools like <strong>Heidi Health</strong> or <strong>Freed</strong> record the consult on your phone and generate a GP letter in 30 seconds. This replaces traditional audio typing.</p>
-            </article>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4 style="font-family:'Fraunces',serif;margin-bottom:10px;">Virtual Medical Secretary</h4>
+                <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:10px;">Do not hire a full-time secretary at the outset. A virtual service answers calls under your name, books appointments, handles pre-auth calls, and chases invoices.</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li><strong>Medserv</strong> — pay-per-minute; oncology-experienced teams</li>
+                    <li><strong>The Medical Secretary</strong> — monthly retainer; fully managed</li>
+                    <li><strong>In-house allocated PA</strong> — some hospitals offer this for sessional consultants</li>
+                </ul>
+                <div class="tag tag-gold" style="margin-top:10px;">~£500–£1,500/month depending on volume</div>
+            </div>
+            <div class="card">
+                <h4 style="font-family:'Fraunces',serif;margin-bottom:10px;">AI Clinical Scribe</h4>
+                <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:10px;">Record the consultation on your phone; AI generates a structured GP letter in under 30 seconds. Eliminates audio typing and most dictation costs.</p>
+                <ul style="font-size:0.84rem;color:var(--text-muted);padding-left:18px;line-height:1.8;">
+                    <li><strong>Heidi Health</strong> — UK GDPR-compliant; widely adopted</li>
+                    <li><strong>Freed</strong> — US-origin but used in UK private practice</li>
+                    <li><strong>Ambio</strong> — UK-first, emerging option</li>
+                </ul>
+                <p style="font-size:0.78rem;color:var(--text-light);margin-top:8px;">Always review AI output before sending — errors do occur, particularly with drug names and dosing.</p>
+                <div class="tag tag-gold" style="margin-top:6px;">~£100–£200/month</div>
+            </div>
         </div>
 
-        <div class="matrix-card">
-            <h5>Automated Onboarding Flow</h5>
-            <ol>
-                <li>Patient books via your website (integrated with <strong>Semble</strong>).</li>
-                <li>System automatically sends GDPR consent and "Self-Pay" terms.</li>
-                <li>Patient uploads insurance details via secure link.</li>
-                <li>You see the patient; AI Scribe generates the letter.</li>
-                <li><strong>Healthcode</strong> sends the invoice automatically upon letter completion.</li>
-            </ol>
+        <div class="card">
+            <div class="card-header"><div class="card-icon">⚙️</div><h3>Recommended Practice Stack — 2026</h3></div>
+            <table class="compare-table" style="font-size:0.83rem;">
+                <thead><tr><th>Function</th><th>Tool</th><th>Cost</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td>Practice Management</td><td><strong>Semble</strong></td><td>~£150/month</td><td>UK-built; Healthcode integration; good oncology templates; Stripe payment built-in</td></tr>
+                    <tr><td>Online Booking &amp; Profile</td><td><strong>Doctify</strong></td><td>~£75–£120/month</td><td>Adds verified patient review credibility; significant for self-pay referrals</td></tr>
+                    <tr><td>PMI Invoicing</td><td><strong>Healthcode ePractice</strong></td><td>~£15/month</td><td>Essential for all PMI billing — not optional</td></tr>
+                    <tr><td>Accounting</td><td><strong>Xero + Medical Accountant</strong></td><td>£35/month + £2k+/yr fees</td><td>MTD-compliant; links to Healthcode for reconciliation</td></tr>
+                    <tr><td>AI Scribe</td><td><strong>Heidi Health</strong></td><td>~£100/month</td><td>Review before sending; good for complex oncology consultations</td></tr>
+                    <tr><td>Secure Patient Messaging</td><td><strong>Hospify / AccuMail</strong></td><td>Free – £30/month</td><td>Required for GDPR-compliant patient communication</td></tr>
+                    <tr><td>Website</td><td><strong>Simple site + PHIN link</strong></td><td>Variable</td><td>Must display your PHIN fee schedule; a Doctify profile can function as a website initially</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header"><div class="card-icon">🔄</div><h3>Automated Patient Journey</h3></div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot" style="background:var(--green);">1</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content"><h4>Patient books via Doctify or your website</h4><p>Integrated with Semble. NHS diary blocked automatically. Confirmation email sent with intake questionnaire and GDPR consent link.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot" style="background:var(--green);">2</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content"><h4>Card details collected (self-pay) / insurance upload (PMI)</h4><p>Self-pay: Semble/Stripe holds card. PMI: patient uploads policy card via secure link. No card → no confirmed appointment.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot" style="background:var(--green);">3</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content"><h4>Secretary verifies insurance and obtains pre-auth</h4><p>Semble flags PMI patients; secretary calls insurer 48 hrs before the appointment. Pre-auth code logged in the patient record.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot" style="background:var(--green);">4</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content"><h4>Consultation; AI Scribe records</h4><p>Heidi generates GP letter draft. You review, edit, and approve. Letter sent securely via Hospify or AccuMail. Copy filed in Semble.</p></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-left"><div class="timeline-dot" style="background:var(--green);">5</div><div class="timeline-line"></div></div>
+                    <div class="timeline-content"><h4>Invoice auto-generated and submitted</h4><p>Semble generates invoice; Healthcode submits electronically to PMI. Self-pay card charged automatically. Payment logged in Xero. Zero paper.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TAB 6  ·  INCOME CALCULATOR
+    ════════════════════════════════════════════════════════════ -->
+    <section id="calc" class="tab-content">
+
+        <div class="alert alert-amber">
+            <span class="alert-icon">⚠️</span>
+            <span>Estimates only. Assumes higher-rate UK income tax (40%). Does not account for NI contributions, pension implications, or Ltd company structures. Consult a specialist medical accountant before making decisions.</span>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3 style="font-family:'Fraunces',serif;font-size:1rem;margin-bottom:20px;">Your Practice Parameters</h3>
+
+                <div class="calc-input-group">
+                    <label>Private sessions per week</label>
+                    <input type="number" class="calc-input" id="sessionsPerWeek" value="2" min="0.5" max="10" step="0.5" oninput="calculate()">
+                </div>
+                <div class="calc-input-group">
+                    <label>Consultations per session</label>
+                    <input type="number" class="calc-input" id="consPerSession" value="4" min="1" max="10" oninput="calculate()">
+                </div>
+                <div class="calc-input-group">
+                    <label>Average fee per consultation (£)</label>
+                    <input type="number" class="calc-input" id="feePerCons" value="280" min="50" max="1000" oninput="calculate()">
+                </div>
+                <div class="calc-input-group">
+                    <label>Additional procedure / planning revenue per session (£)</label>
+                    <input type="number" class="calc-input" id="extraPerSession" value="200" min="0" max="3000" oninput="calculate()">
+                </div>
+                <div class="calc-input-group">
+                    <label>Overhead % (secretary, indemnity, subscriptions, accountant)</label>
+                    <input type="number" class="calc-input" id="overheadPct" value="25" min="5" max="70" oninput="calculate()">
+                </div>
+                <div class="calc-input-group">
+                    <label>Weeks worked privately per year (allow for leave)</label>
+                    <input type="number" class="calc-input" id="weeksWorked" value="44" min="10" max="52" oninput="calculate()">
+                </div>
+            </div>
+
+            <div>
+                <div class="calc-result">
+                    <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;opacity:0.55;margin-bottom:14px;">Estimated Annual Income</div>
+                    <div class="calc-result-row"><span>Gross revenue</span><span id="r-gross">—</span></div>
+                    <div class="calc-result-row"><span>Less overheads (<span id="r-overhead-pct">—</span>%)</span><span id="r-overhead">—</span></div>
+                    <div class="calc-result-row"><span>Taxable profit</span><span id="r-taxable">—</span></div>
+                    <div class="calc-result-row"><span>Est. income tax (40% higher rate)</span><span id="r-tax">—</span></div>
+                    <div class="calc-result-row total"><span>Est. net take-home</span><span id="r-net">—</span></div>
+                    <hr style="border-color:rgba(255,255,255,0.12);margin:14px 0;">
+                    <div class="calc-result-row" style="font-size:0.8rem;opacity:0.65;"><span>Per session (net)</span><span id="r-per-session">—</span></div>
+                    <div class="calc-result-row" style="font-size:0.8rem;opacity:0.65;"><span>Per consultation (net)</span><span id="r-per-cons">—</span></div>
+                    <div class="calc-result-row" style="font-size:0.8rem;opacity:0.65;"><span>Total annual sessions</span><span id="r-sessions">—</span></div>
+                </div>
+
+                <div class="card" style="margin-top:16px;background:#fef8f0;border-color:#f5e5c0;">
+                    <h4 style="font-size:0.88rem;font-weight:600;margin-bottom:12px;">📊 London Oncology Benchmarks</h4>
+                    <table style="font-size:0.8rem;width:100%;border-collapse:collapse;">
+                        <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 0;color:var(--text-muted);">Starting out (1 session/wk, 2–3 patients)</td><td style="text-align:right;font-weight:500;">~£15–25k net/yr</td></tr>
+                        <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 0;color:var(--text-muted);">Establishing (2 sessions/wk, 4 patients each)</td><td style="text-align:right;font-weight:500;">~£40–65k net/yr</td></tr>
+                        <tr style="border-bottom:1px solid var(--border);"><td style="padding:7px 0;color:var(--text-muted);">Established (3–4 sessions/wk + procedures)</td><td style="text-align:right;font-weight:500;">~£80–140k net/yr</td></tr>
+                        <tr><td style="padding:7px 0;color:var(--text-muted);">Busy / high-volume (4+ sessions + chemo suite)</td><td style="text-align:right;font-weight:500;">£150k+ net/yr</td></tr>
+                    </table>
+                    <p style="font-size:0.73rem;color:var(--text-light);margin-top:10px;">Benchmarks include procedure and planning income. Excludes drug costs (billed by hospital). Net of 25% overhead and 40% tax.</p>
+                </div>
+            </div>
         </div>
     </section>
 
 </main>
 
 <script>
-    function showTab(tabId) {
-        // Hide all tabs
-        const tabs = document.querySelectorAll('.tab-content');
-        tabs.forEach(tab => tab.classList.remove('active'));
-        
-        // Show selected tab
-        document.getElementById(tabId).classList.add('active');
-        
-        // Update Nav styling if needed
+    /* ── Tab navigation ─────────────────────────────────────────── */
+    const meta = {
+        nhs:      { title: 'NHS Transition & Job Planning',          sub: 'What you need to know before seeing your first private patient' },
+        registry: { title: 'Registration & Compliance',              sub: '8 steps you must complete before billing any patient' },
+        billing:  { title: 'Billing, CCSD Codes & PMI',              sub: 'How to invoice correctly and get paid on time' },
+        tax:      { title: 'Tax & Business Structure',               sub: 'HMRC, Making Tax Digital, and choosing your trading vehicle' },
+        tech:     { title: 'Admin, Tech & AI Tools',                 sub: 'The modern lean private practice stack' },
+        calc:     { title: 'Income Calculator',                      sub: 'Estimate your private practice earnings — for guidance only' }
+    };
+
+    function showTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (btn) btn.classList.add('active');
+        document.getElementById('pageTitle').textContent    = meta[id].title;
+        document.getElementById('pageSubtitle').textContent = meta[id].sub;
+        if (id === 'calc') calculate();
     }
 
-    function filterCodes() {
-        const input = document.getElementById('codeSearch').value.toUpperCase();
-        const rows = document.getElementById('codeBody').getElementsByTagName('tr');
-        
-        for (let i = 0; i < rows.length; i++) {
-            const text = rows[i].innerText.toUpperCase();
-            rows[i].style.display = text.includes(input) ? "" : "none";
+    /* ── Inner tabs ─────────────────────────────────────────────── */
+    function showInnerTab(section, tabId, btn) {
+        const par = document.getElementById(section);
+        par.querySelectorAll('.inner-tab-content').forEach(t => t.classList.remove('active'));
+        par.querySelectorAll('.inner-tab').forEach(b => b.classList.remove('active'));
+        document.getElementById(section + '-' + tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    /* ── Checklist ──────────────────────────────────────────────── */
+    const checks = {};
+    function toggleCheck(id) {
+        checks[id] = !checks[id];
+        const item = document.getElementById(id);
+        const box  = item.querySelector('.check-box');
+        if (checks[id]) {
+            box.classList.add('checked');
+            box.innerHTML = '✓';
+            item.classList.add('done');
+        } else {
+            box.classList.remove('checked');
+            box.innerHTML = '';
+            item.classList.remove('done');
         }
+        const done = Object.values(checks).filter(Boolean).length;
+        document.getElementById('progressBar').style.width = (done / 8 * 100) + '%';
+        document.getElementById('checkCount').textContent  = done + ' of 8 complete';
     }
-</script>
 
+    /* ── CCSD filter ────────────────────────────────────────────── */
+    function filterCodes() {
+        const q    = document.getElementById('codeSearch').value.toUpperCase();
+        const cat  = document.getElementById('categoryFilter').value;
+        const auth = document.getElementById('authFilter').value;
+        const rows = document.getElementById('codeBody').querySelectorAll('tr');
+        let visible = 0;
+        rows.forEach(r => {
+            const txt     = r.innerText.toUpperCase();
+            const rowCat  = r.dataset.cat  || '';
+            const rowAuth = r.dataset.auth || '';
+            const okQ    = !q    || txt.includes(q);
+            const okCat  = !cat  || rowCat  === cat;
+            const okAuth = !auth || rowAuth === auth;
+            const show   = okQ && okCat && okAuth;
+            r.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    /* ── Email copy ─────────────────────────────────────────────── */
+    function copyEmail() {
+        const text = document.getElementById('emailTemplate').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy', 2200);
+        }).catch(() => {
+            /* Fallback for browsers without clipboard API */
+            const ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => btn.textContent = '📋 Copy', 2200);
+        });
+    }
+
+    /* ── Calculator ─────────────────────────────────────────────── */
+    function fmt(n) { return '£' + Math.round(n).toLocaleString('en-GB'); }
+
+    function calculate() {
+        const sessions = parseFloat(document.getElementById('sessionsPerWeek').value) || 0;
+        const cons     = parseFloat(document.getElementById('consPerSession').value)   || 0;
+        const fee      = parseFloat(document.getElementById('feePerCons').value)       || 0;
+        const extra    = parseFloat(document.getElementById('extraPerSession').value)  || 0;
+        const oh       = parseFloat(document.getElementById('overheadPct').value)      || 0;
+        const weeks    = parseFloat(document.getElementById('weeksWorked').value)      || 0;
+
+        const grossPerSess = (cons * fee) + extra;
+        const gross        = grossPerSess * sessions * weeks;
+        const ohAmt        = gross * (oh / 100);
+        const taxable      = gross - ohAmt;
+        const tax          = taxable * 0.40;
+        const net          = taxable - tax;
+        const totalSess    = sessions * weeks;
+
+        document.getElementById('r-gross').textContent       = fmt(gross);
+        document.getElementById('r-overhead').textContent    = '− ' + fmt(ohAmt);
+        document.getElementById('r-overhead-pct').textContent= oh;
+        document.getElementById('r-taxable').textContent     = fmt(taxable);
+        document.getElementById('r-tax').textContent         = '− ' + fmt(tax);
+        document.getElementById('r-net').textContent         = fmt(net);
+        document.getElementById('r-per-session').textContent = totalSess > 0 ? fmt(net / totalSess) : '—';
+        document.getElementById('r-per-cons').textContent    = (totalSess * cons) > 0 ? fmt(net / (totalSess * cons)) : '—';
+        document.getElementById('r-sessions').textContent    = Math.round(totalSess);
+    }
+
+    calculate();
+</script>
 </body>
 </html>
