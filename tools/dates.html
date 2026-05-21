@@ -634,42 +634,22 @@ function prevWorkDay(d) {
 // ════════════════════════════════════════════════════════════
 const PRESETS = {
   rectal: [
-    { n:6,  u:'w', label:'Post-RT review' },
-    { n:3,  u:'m', label:'Clinical assessment' },
-    { n:6,  u:'m', label:'CT chest/abdomen/pelvis' },
-    { n:9,  u:'m', label:'Clinical assessment' },
-    { n:12, u:'m', label:'CT CAP + MRI pelvis' },
-    { n:18, u:'m', label:'CT chest/abdomen/pelvis' },
-    { n:24, u:'m', label:'CT chest/abdomen/pelvis' },
+    { n:4,  u:'w', label:'Post-RT review TC' },
+    { n:8,  u:'w', label:'CT CAP + MRI pelvis' },
+    { n:10,  u:'w', label:'MDT review' },
+    { n:12,  u:'w', label:'Post-MDT review F2F' },
   ],
-  prostate: [
-    { n:6,  u:'w', label:'Post-RT review + PSA' },
-    { n:3,  u:'m', label:'PSA check' },
-    { n:6,  u:'m', label:'PSA + clinical review' },
-    { n:12, u:'m', label:'Annual review + PSA' },
-    { n:24, u:'m', label:'Annual review + PSA' },
-  ],
-  breast: [
-    { n:6,  u:'w', label:'Post-RT review' },
-    { n:3,  u:'m', label:'Clinical review' },
-    { n:6,  u:'m', label:'Mammogram + clinical review' },
-    { n:12, u:'m', label:'Annual mammogram' },
-  ],
-  lung: [
-    { n:6,  u:'w', label:'Post-SABR CT' },
-    { n:3,  u:'m', label:'CT chest' },
-    { n:6,  u:'m', label:'CT chest' },
-    { n:12, u:'m', label:'CT chest + clinical review' },
-    { n:24, u:'m', label:'CT chest' },
-  ],
-  hn: [
-    { n:6,  u:'w', label:'Post-RT review' },
-    { n:3,  u:'m', label:'ENT + clinical review' },
-    { n:6,  u:'m', label:'CT neck + clinical review' },
-    { n:9,  u:'m', label:'Clinical review' },
-    { n:12, u:'m', label:'CT + clinical review' },
+   anal: [
+    { n:4,  u:'w', label:'Post-RT review TC' },
+    { n:11,  u:'w', label:'MRI pelvis' },
+    { n:13,  u:'w', label:'MDT review' },
+    { n:13,  u:'w', label:'Clinical assessment F2F' },
+    { n:26,  u:'w', label:'MRI pelvis + FDG PET CT' },
+    { n:28,  u:'w', label:'MDT review' },
+    { n:28,  u:'w', label:'Clinical assessment F2F' },
   ],
 };
+ 
 
 // ════════════════════════════════════════════════════════════
 //  STATE
