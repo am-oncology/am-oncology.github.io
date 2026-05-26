@@ -1,392 +1,2208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The UK Private Medical Practice Blueprint</title>
-    <style>
-        /* CSS Paged Media Configuration for WeasyPrint & Web Layout */
-        @page {
-            size: A4;
-            margin: 22mm 18mm;
-            background-color: #f8fafc;
-            @bottom-right {
-                content: "Page " counter(page);
-                font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-                font-size: 8.5pt;
-                color: #64748b;
-            }
-            @bottom-left {
-                content: "The UK Private Medical Practice Blueprint • Consultant Guide";
-                font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-                font-size: 8.5pt;
-                color: #64748b;
-            }
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The UK Private Medical Practice Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-        /* Global Reset and Typography */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            font-size: 10.5pt;
-            line-height: 1.6;
-            color: #1e293b;
-            background-color: #f8fafc;
-            -webkit-print-color-adjust: exact;
-        }
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS & CUSTOM PROPERTIES
+───────────────────────────────────────── */
+:root {
+  --navy-900:  #080f1c;
+  --navy-800:  #0d1a30;
+  --navy-700:  #122044;
+  --navy-600:  #1a2d5a;
+  --navy-500:  #1e3a8a;
+  --navy-400:  #2952b3;
+  --gold-600:  #8a6a0a;
+  --gold-500:  #b8900e;
+  --gold-400:  #d4aa3a;
+  --gold-300:  #e8c96a;
+  --gold-100:  #fdf6e3;
+  --ivory:     #f7f4ef;
+  --white:     #ffffff;
+  --slate-600: #445579;
+  --slate-400: #7a8fad;
+  --slate-200: #c5cfde;
+  --slate-100: #e8edf5;
+  --slate-050: #f2f5fa;
+  --red-700:   #9a1e1e;
+  --red-100:   #fff1f1;
+  --green-700: #145a28;
+  --green-100: #f0faf4;
+  --text-primary: #0d1a30;
+  --text-body:    #2e3f5c;
+  --text-muted:   #6b7fa0;
+  --border:    #dde4ef;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 3px rgba(8,15,28,.06), 0 1px 2px rgba(8,15,28,.04);
+  --shadow-md: 0 4px 16px rgba(8,15,28,.08), 0 1px 4px rgba(8,15,28,.06);
+  --shadow-lg: 0 12px 40px rgba(8,15,28,.12), 0 4px 12px rgba(8,15,28,.08);
+  --sidebar-w: 280px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+}
 
-        /* Layout Structure without Flex/Grid for PDF Compatibility */
-        .container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-        }
+/* ─────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
 
-        /* Decorative Header Block */
-        .master-header {
-            background-color: #1e3a8a;
-            color: #ffffff;
-            padding: 30px;
-            margin-bottom: 30px;
-            border-radius: 6px;
-            border-left: 6px solid #0284c7;
-        }
+body {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text-body);
+  background: var(--ivory);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-        .master-header h1 {
-            font-size: 22pt;
-            margin: 0 0 8px 0;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-        }
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
 
-        .master-header p {
-            font-size: 11pt;
-            margin: 0;
-            color: #93c5fd;
-            font-weight: 400;
-        }
+a { color: var(--navy-500); text-decoration: none; }
+a:hover { color: var(--gold-500); }
 
-        /* Section Headings Styling Variety */
-        h2 {
-            font-size: 14pt;
-            color: #0f172a;
-            margin-top: 28px;
-            margin-bottom: 14px;
-            padding-left: 10px;
-            border-left: 4px solid #1e3a8a;
-            page-break-after: avoid;
-        }
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
 
-        h3 {
-            font-size: 11.5pt;
-            color: #1e3a8a;
-            margin-top: 18px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            page-break-after: avoid;
-        }
+/* ─────────────────────────────────────────
+   SIDEBAR NAVIGATION
+───────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--navy-800);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-600) transparent;
+}
 
-        p {
-            margin-top: 0;
-            margin-bottom: 12px;
-            text-align: justify;
-        }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--navy-600); border-radius: 2px; }
 
-        /* Custom Sequence / Step List Design */
-        .step-block {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 16px;
-            page-break-inside: avoid;
-        }
+.sidebar-header {
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
 
-        .step-badge {
-            display: inline-block;
-            background-color: #e0f2fe;
-            color: #0369a1;
-            font-size: 8.5pt;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
 
-        .step-title {
-            font-size: 12pt;
-            font-weight: bold;
-            color: #0f172a;
-            margin-bottom: 6px;
-        }
+.sidebar-logo-mark {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-        /* Tables via Standard display: table to maintain strict print cross-rendering */
-        .table-row-container {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-            margin-bottom: 16px;
-            page-break-inside: avoid;
-        }
+.sidebar-logo-mark svg { width: 16px; height: 16px; fill: white; }
 
-        .table-column {
-            display: table-cell;
-            vertical-align: top;
-            padding: 10px;
-        }
+.sidebar-logo-text {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
 
-        /* Data Matrix Tables */
-        table.data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            background-color: #ffffff;
-            page-break-inside: avoid;
-        }
+.sidebar-subtitle {
+  font-size: 0.7rem;
+  color: var(--slate-400);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+}
 
-        table.data-table th {
-            background-color: #0f172a;
-            color: #ffffff;
-            font-weight: 600;
-            text-align: left;
-            padding: 10px 12px;
-            font-size: 9.5pt;
-            border: 1px solid #0f172a;
-        }
+.sidebar-progress-bar {
+  height: 2px;
+  background: rgba(255,255,255,.08);
+  border-radius: 1px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
 
-        table.data-table td {
-            padding: 10px 12px;
-            font-size: 9.5pt;
-            border: 1px solid #e2e8f0;
-        }
+.sidebar-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-400), var(--gold-300));
+  border-radius: 1px;
+  width: 0%;
+  transition: width 0.2s ease;
+}
 
-        table.data-table tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
+.sidebar-nav { padding: 1rem 0 2rem; flex: 1; }
 
-        /* Alert Callout Block Alternative */
-        .warning-callout {
-            background-color: #fff7ed;
-            border-left: 4px solid #ea580c;
-            padding: 14px;
-            border-radius: 0 6px 6px 0;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            page-break-inside: avoid;
-        }
+.nav-section-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--slate-400);
+  padding: 0.75rem 1.5rem 0.35rem;
+}
 
-        .warning-callout-title {
-            font-weight: bold;
-            color: #9a3412;
-            margin-bottom: 4px;
-            font-size: 10pt;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--slate-400);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+}
 
-        /* Math Typography Class (Tier 1 Integration) */
-        .math-block {
-            text-align: center;
-            margin: 16px 0;
-            padding: 12px;
-            background-color: #f1f5f9;
-            border-radius: 6px;
-            page-break-inside: avoid;
-        }
+.nav-item:hover {
+  color: var(--white);
+  background: rgba(255,255,255,.04);
+}
 
-        .math {
-            font-family: 'Times New Roman', Times, serif;
-            font-style: italic;
-            font-weight: bold;
-            font-size: 12pt;
-            color: #1e3a8a;
-        }
+.nav-item.active {
+  color: var(--gold-300);
+  border-left-color: var(--gold-400);
+  background: rgba(212,170,58,.06);
+}
 
-        /* Unordered Lists Styling */
-        ul {
-            margin-top: 0;
-            margin-bottom: 12px;
-            padding-left: 20px;
-        }
+.nav-item-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
 
-        li {
-            margin-bottom: 6px;
-        }
+.nav-item.active .nav-item-dot { opacity: 1; }
 
-        .checkbox-list {
-            list-style: none;
-            padding-left: 0;
-        }
+.nav-item-number {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
 
-        .checkbox-list li::before {
-            content: "☐  ";
-            color: #64748b;
-            font-weight: bold;
-        }
-    </style>
+.nav-item.active .nav-item-number { opacity: 0.8; }
+
+.sidebar-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+  font-size: 0.7rem;
+  color: var(--slate-400);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   MAIN CONTENT
+───────────────────────────────────────── */
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero {
+  background: linear-gradient(155deg, var(--navy-900) 0%, var(--navy-700) 60%, #1c3668 100%);
+  padding: 5rem 4rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,170,58,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: 20%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(41,82,179,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(212,170,58,.12);
+  border: 1px solid rgba(212,170,58,.25);
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  margin-bottom: 1.75rem;
+}
+
+.hero-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-400);
+  animation: pulse 2.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hero-eyebrow-text {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold-300);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--gold-300);
+}
+
+.hero-subtitle {
+  font-size: 1rem;
+  color: rgba(255,255,255,.55);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-meta-icon {
+  width: 28px;
+  height: 28px;
+  background: rgba(255,255,255,.07);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-meta-icon svg { width: 13px; height: 13px; stroke: var(--gold-300); fill: none; stroke-width: 1.8; }
+
+.hero-meta-text {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,.5);
+}
+
+.hero-meta-text strong {
+  color: rgba(255,255,255,.8);
+  display: block;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.hero-rule {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-400) 0%, rgba(212,170,58,.2) 40%, transparent 80%);
+  margin-top: 2.5rem;
+}
+
+/* ─────────────────────────────────────────
+   CONTENT AREA
+───────────────────────────────────────── */
+.content-area {
+  padding: 3.5rem 4rem;
+  max-width: 860px;
+}
+
+/* ─────────────────────────────────────────
+   SECTION HEADINGS
+───────────────────────────────────────── */
+.phase-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin: 3.5rem 0 1.75rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.phase-header:first-of-type {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.phase-number {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--navy-800);
+  color: var(--gold-300);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(212,170,58,.2);
+  margin-top: 4px;
+}
+
+.phase-heading-group {}
+
+.phase-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold-500);
+  margin-bottom: 0.2rem;
+}
+
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.section-intro {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+  border-left: 3px solid var(--gold-300);
+  padding-left: 1rem;
+}
+
+h3.subsection {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 2.25rem 0 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--text-body);
+  font-size: 0.93rem;
+  line-height: 1.8;
+}
+
+/* ─────────────────────────────────────────
+   STEP CARDS
+───────────────────────────────────────── */
+.step-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+  position: relative;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  overflow: hidden;
+}
+
+.step-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--gold-400), var(--gold-600));
+}
+
+.step-card-inner { padding-left: 0.25rem; }
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--navy-800);
+  color: var(--gold-300);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.step-card p:last-child { margin-bottom: 0; }
+
+/* Sub-list within step cards */
+.step-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+}
+
+.step-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  font-size: 0.88rem;
+  border-bottom: 1px solid var(--slate-100);
+  line-height: 1.6;
+}
+
+.step-list li:last-child { border-bottom: none; }
+
+.step-list-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gold-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3px;
+}
+
+.step-list-icon svg { width: 8px; height: 8px; stroke: var(--gold-600); fill: none; stroke-width: 2.5; }
+
+/* ─────────────────────────────────────────
+   DATA TABLES
+───────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  margin: 1.5rem 0 2rem;
+}
+
+table.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  font-size: 0.85rem;
+}
+
+table.styled-table thead tr {
+  background: var(--navy-800);
+}
+
+table.styled-table th {
+  color: var(--white);
+  font-weight: 500;
+  text-align: left;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.77rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+table.styled-table th:first-child { border-radius: 0; }
+
+table.styled-table td {
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--slate-100);
+  vertical-align: top;
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+table.styled-table tr:last-child td { border-bottom: none; }
+table.styled-table tr:hover td { background: var(--slate-050); }
+
+table.styled-table .cell-highlight {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+table.styled-table .tag {
+  display: inline-block;
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  margin-top: 0.25rem;
+}
+
+.tag-green { background: var(--green-100); color: var(--green-700); }
+.tag-amber { background: #fff8e6; color: #7a5000; }
+.tag-red   { background: var(--red-100); color: var(--red-700); }
+.tag-blue  { background: #e8f0fe; color: #1a3a7a; }
+
+/* ─────────────────────────────────────────
+   CALLOUT BLOCKS
+───────────────────────────────────────── */
+.callout {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.callout-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.callout-icon svg { width: 17px; height: 17px; stroke-width: 2; fill: none; }
+
+.callout-body {}
+.callout-title {
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.4rem;
+}
+
+.callout-text {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Warning */
+.callout-warning {
+  background: #fff8f0;
+  border: 1px solid #fbc98a;
+  border-left: 3px solid #e27d20;
+}
+.callout-warning .callout-icon { background: #feecd6; }
+.callout-warning .callout-icon svg { stroke: #c25a00; }
+.callout-warning .callout-title { color: #8a3d00; }
+.callout-warning .callout-text { color: #5c3010; }
+
+/* Info */
+.callout-info {
+  background: #f0f6ff;
+  border: 1px solid #9bbcee;
+  border-left: 3px solid var(--navy-500);
+}
+.callout-info .callout-icon { background: #dbeafe; }
+.callout-info .callout-icon svg { stroke: var(--navy-500); }
+.callout-info .callout-title { color: var(--navy-700); }
+.callout-info .callout-text { color: #2a3c62; }
+
+/* Success */
+.callout-success {
+  background: var(--green-100);
+  border: 1px solid #a3d4b5;
+  border-left: 3px solid #1a7a40;
+}
+.callout-success .callout-icon { background: #c6efd6; }
+.callout-success .callout-icon svg { stroke: var(--green-700); }
+.callout-success .callout-title { color: var(--green-700); }
+.callout-success .callout-text { color: #0f3a1c; }
+
+/* ─────────────────────────────────────────
+   FORMULA BLOCK
+───────────────────────────────────────── */
+.formula-block {
+  background: var(--navy-800);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.formula-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(212,170,58,.1) 0%, transparent 70%);
+}
+
+.formula-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--slate-400);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.formula-math {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--gold-300);
+  position: relative;
+  z-index: 1;
+}
+
+.formula-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.formula-term {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  position: relative;
+  z-index: 1;
+}
+
+.formula-term code {
+  font-family: var(--font-mono);
+  font-style: italic;
+  color: var(--gold-300);
+  background: rgba(212,170,58,.1);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  font-size: 0.8em;
+}
+
+/* ─────────────────────────────────────────
+   TWO-COLUMN GRID
+───────────────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.metric-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at 100% 100%, var(--slate-100) 0%, transparent 70%);
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.metric-value sup {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  vertical-align: super;
+}
+
+.metric-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.metric-trend {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 100px;
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.trend-up { background: var(--green-100); color: var(--green-700); }
+.trend-down { background: var(--red-100); color: var(--red-700); }
+.trend-neutral { background: var(--slate-100); color: var(--slate-600); }
+
+/* ─────────────────────────────────────────
+   INCOME PROJECTION TABLE
+───────────────────────────────────────── */
+.projection-grid {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+
+.projection-header {
+  background: var(--navy-800);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.projection-header-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--white);
+  font-weight: 600;
+}
+
+.projection-header-sub {
+  font-size: 0.72rem;
+  color: var(--slate-400);
+}
+
+.projection-body {
+  overflow-x: auto;
+}
+
+.projection-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.projection-table th {
+  background: var(--slate-050);
+  padding: 0.7rem 1rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.projection-table th:first-child { text-align: left; }
+
+.projection-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--slate-100);
+  text-align: right;
+  color: var(--text-body);
+}
+
+.projection-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.projection-table tr:last-child td {
+  border-bottom: none;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--slate-050);
+}
+
+.projection-table .positive { color: var(--green-700); }
+.projection-table .negative { color: var(--red-700); }
+
+/* ─────────────────────────────────────────
+   CHECKLIST
+───────────────────────────────────────── */
+.checklist {
+  list-style: none;
+  margin: 0;
+}
+
+.checklist-section {
+  margin-bottom: 1.5rem;
+}
+
+.checklist-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.checklist-item:hover { background: var(--slate-050); }
+
+.checklist-box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: 4px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: var(--white);
+}
+
+.checklist-item.checked .checklist-box {
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+}
+
+.checklist-item.checked .checklist-box svg { opacity: 1; }
+
+.checklist-box svg {
+  width: 10px;
+  height: 10px;
+  stroke: var(--gold-300);
+  fill: none;
+  stroke-width: 2.5;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.checklist-content {}
+.checklist-title {
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.checklist-item.checked .checklist-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.checklist-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────
+   INLINE BADGE
+───────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 100px;
+}
+
+.badge-navy { background: var(--navy-800); color: var(--gold-300); }
+.badge-gold { background: var(--gold-100); color: var(--gold-600); border: 1px solid rgba(184,144,14,.2); }
+
+/* ─────────────────────────────────────────
+   REFERRAL PATHWAY DIAGRAM
+───────────────────────────────────────── */
+.pathway {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.pathway-step {
+  flex: 1;
+  min-width: 110px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 1rem 0.75rem;
+  text-align: center;
+  position: relative;
+}
+
+.pathway-step:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.pathway-step:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+.pathway-step::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
+  color: var(--gold-400);
+  font-size: 1.1rem;
+  z-index: 2;
+}
+
+.pathway-step:last-child::after { display: none; }
+
+.pathway-icon {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 0.5rem;
+  background: var(--navy-800);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pathway-icon svg { width: 14px; height: 14px; stroke: var(--gold-300); fill: none; stroke-width: 1.8; }
+
+.pathway-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.pathway-sublabel {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+.footer {
+  margin-top: 4rem;
+  padding: 2rem 4rem;
+  background: var(--navy-900);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-left {}
+
+.footer-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--white);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.footer-disclaimer {
+  font-size: 0.72rem;
+  color: var(--slate-400);
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.footer-version {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--slate-400);
+}
+
+/* ─────────────────────────────────────────
+   SCROLL REVEAL ANIMATION
+───────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* staggered delay for groups */
+.reveal-group .reveal:nth-child(1) { transition-delay: 0s; }
+.reveal-group .reveal:nth-child(2) { transition-delay: 0.08s; }
+.reveal-group .reveal:nth-child(3) { transition-delay: 0.16s; }
+.reveal-group .reveal:nth-child(4) { transition-delay: 0.24s; }
+.reveal-group .reveal:nth-child(5) { transition-delay: 0.32s; }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-shrink: 0;
+  }
+  .sidebar-header { display: none; }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+    gap: 0.25rem;
+    white-space: nowrap;
+  }
+  .nav-section-label { display: none; }
+  .nav-item { border-left: none; border-bottom: 2px solid transparent; padding: 0.5rem 0.75rem; font-size: 0.75rem; }
+  .nav-item.active { border-bottom-color: var(--gold-400); }
+  .sidebar-footer { display: none; }
+  .hero { padding: 2.5rem 1.5rem 2rem; }
+  .content-area { padding: 2rem 1.5rem; }
+  .two-col { grid-template-columns: 1fr; }
+  .footer { padding: 1.5rem; }
+  .footer-inner { flex-direction: column; }
+  .footer-right { text-align: left; }
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    
-    <!-- Header Blueprint Banner -->
-    <div class="master-header">
-        <h1>The UK Private Medical Practice Blueprint</h1>
-        <p>A Comprehensive Operational & Strategic Roadmap for NHS Consultants Entering Independent Practice</p>
+<div class="layout">
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR NAVIGATION
+  ═══════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">
+          <svg viewBox="0 0 16 16"><path d="M8 1L10 6H15L11 9.5L12.5 15L8 11.5L3.5 15L5 9.5L1 6H6Z"/></svg>
+        </div>
+        <div>
+          <div class="sidebar-logo-text">Private Practice<br>Blueprint</div>
+        </div>
+      </div>
+      <div class="sidebar-subtitle">NHS Consultant Reference Guide</div>
+      <div class="sidebar-progress-bar">
+        <div class="sidebar-progress-fill" id="progressFill"></div>
+      </div>
     </div>
 
-    <p>Transitioning from a purely institutional National Health Service (NHS) framework into independent private practice represents a profound operational shift. As a private consultant, you function simultaneously as an elite clinical authority and an independent corporate entity. Navigating this transition successfully requires a meticulous alignment of regulatory, technological, legal, and financial processes.</p>
-    
-    <p>This master blueprint outlines the exact sequential onboarding pathways, structural safeguards, and technology assessments required to build an efficient, fully compliant, and legally optimized private practice within the United Kingdom.</p>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Foundation</div>
+      <a class="nav-item active" href="#phase1">
+        <span class="nav-item-number">01</span>
+        <span class="nav-item-dot"></span>
+        Legal & Regulatory Safeguards
+      </a>
+      <div class="nav-section-label">Infrastructure</div>
+      <a class="nav-item" href="#phase2">
+        <span class="nav-item-number">02</span>
+        <span class="nav-item-dot"></span>
+        Technology & Administration
+      </a>
+      <a class="nav-item" href="#phase3">
+        <span class="nav-item-number">03</span>
+        <span class="nav-item-dot"></span>
+        Accreditation & Launch
+      </a>
+      <div class="nav-section-label">Finance</div>
+      <a class="nav-item" href="#taxation">
+        <span class="nav-item-number">04</span>
+        <span class="nav-item-dot"></span>
+        Taxation & Cash Flow
+      </a>
+      <a class="nav-item" href="#fees">
+        <span class="nav-item-number">05</span>
+        <span class="nav-item-dot"></span>
+        Fee Setting & Income
+      </a>
+      <div class="nav-section-label">Growth</div>
+      <a class="nav-item" href="#referrals">
+        <span class="nav-item-number">06</span>
+        <span class="nav-item-dot"></span>
+        Referral Network
+      </a>
+      <a class="nav-item" href="#pitfalls">
+        <span class="nav-item-number">07</span>
+        <span class="nav-item-dot"></span>
+        Common Pitfalls
+      </a>
+      <a class="nav-item" href="#checklist">
+        <span class="nav-item-number">08</span>
+        <span class="nav-item-dot"></span>
+        Pre-Launch Checklist
+      </a>
+    </nav>
 
-    <!-- Phase 1 Layout -->
-    <h2>Phase 1: Legal, Regulatory & Financial Safeguards</h2>
-    <p>Before engaging with private medical facilities or admitting your first patient, you must firmly establish your business foundation and personal legal protections. Skipping these baseline steps exposes you to severe regulatory and professional risk.</p>
-
-    <div class="step-block">
-        <span class="step-badge">Step 1.1</span>
-        <div class="step-title">The NHS Job Plan & The "11-PA" Clause Alignment</div>
-        <p>Under the standard UK Consultant Contract, you must formalize your private practice intentions with your clinical director or trust management before commencing operations. If you maintain a standard 10-PA schedule, the Trust holds the right of first refusal to offer you an additional clinical Programmed Activity (the 11th PA). If an additional PA is formally offered and you refuse it to pursue private work, you run the risk of losing your annual salary progression. Ensure all private clinics, operating lists, and administration windows take place strictly outside your scheduled NHS hours, flexible working arrangements, or active on-call commitments.</p>
+    <div class="sidebar-footer">
+      <strong style="color:rgba(255,255,255,.5); display:block; margin-bottom:0.25rem; font-size:0.72rem;">Disclaimer</strong>
+      This guide is for informational purposes. Always seek professional legal, financial, and regulatory advice before commencing practice.
     </div>
+  </aside>
 
-    <div class="step-block">
-        <span class="step-badge">Step 1.2</span>
-        <div class="step-title">Commercial Medical Indemnity Optimization</div>
-        <p>The standard Crown Indemnity framework protects you exclusively from clinical negligence within your NHS employment. It provides zero coverage for private medical practice. You must upgrade your membership with a traditional Medical Defence Organisation (such as the MDU, MPS, or MDDUS) or pivot to a specialist commercial Lloyd's-backed insurer.</p>
-        <p>Your premium is strictly determined by your specialty risk category and your <strong>projected private gross turnover</strong>. For low-volume startups, premiums can be minimized by declaring a restricted introductory turnover scale, which then increases proportionally as your practice volume climbs.</p>
-    </div>
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════ -->
+  <main class="main">
 
-    <div class="step-block">
-        <span class="step-badge">Step 1.3</span>
-        <div class="step-title">Information Commissioner's Office (ICO) Data Governance</div>
-        <p>Operating as an independent private practitioner means you are legally classified as a separate and sole Data Controller. Under UK GDPR and the Data Protection Act 2018, you are handling highly sensitive Special Category Data (patient medical histories, diagnoses, and financial information). You are legally mandated to register with the ICO and settle the statutory data protection fee. For solo consultants operating as micro-businesses or sole traders, this falls under Tier 1, carrying a modest annual cost of £47 via direct debit.</p>
-    </div>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        <span class="hero-eyebrow-text">Consultant Reference · UK Private Practice</span>
+      </div>
+      <h1 class="hero-title">The UK Private Medical<br>Practice <em>Blueprint</em></h1>
+      <p class="hero-subtitle">A comprehensive operational and strategic roadmap for NHS consultants entering independent practice — covering regulatory, financial, technological, and clinical governance requirements.</p>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <div class="hero-meta-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/></svg>
+          </div>
+          <div class="hero-meta-text">
+            <strong>All Specialties</strong>
+            Applicable across UK consultant grades
+          </div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <div class="hero-meta-text">
+            <strong>Current Guidance</strong>
+            Reflects GMC, HMRC & CQC frameworks
+          </div>
+        </div>
+        <div class="hero-meta-item">
+          <div class="hero-meta-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="hero-meta-text">
+            <strong>8 Core Phases</strong>
+            From NHS contract review to Year 1 income
+          </div>
+        </div>
+      </div>
+      <div class="hero-rule"></div>
+    </section>
 
-    <div class="step-block">
-        <span class="step-badge">Step 1.4</span>
-        <div class="step-title">Isolated Financial Architecture</div>
-        <p>Even when operating under a sole trader model where you and your business share a single legal identity, mixing personal and professional revenue is a severe operational risk. You must establish a dedicated, separate business bank account. All patient payments, insurer remittances, and medical fees must flow exclusively into this account, and all business outgoings (indemnity, software subscriptions, clinical secretarial costs) must leave it. This structural isolation guarantees transparent bookkeeping and minimizes accounting fees during your year-end self-assessment calculations.</p>
-    </div>
+    <!-- CONTENT -->
+    <div class="content-area">
 
-    <!-- Phase 2 Layout -->
-    <h2>Phase 2: Modern Practice Infrastructure & Technology</h2>
-    <p>A modern private practice relies on digital workflow automation to operate efficiently. To protect your time, you should keep your fixed overheads low and lean on flexible, pay-as-you-go tech solutions that can easily scale as your practice grows.</p>
+      <!-- INTRODUCTORY OVERVIEW -->
+      <div class="reveal">
+        <p style="font-size:1rem; line-height:1.85; color:var(--text-body);">Transitioning from a purely institutional NHS framework into independent private practice represents one of the most consequential professional decisions a consultant will make. You are no longer only a clinician — you become simultaneously an elite clinical authority and an independent corporate entity operating in a complex regulated marketplace. The financial rewards can be substantial, but only for those who approach the transition with disciplined operational planning.</p>
+        <p>This blueprint outlines the exact sequential onboarding pathways, structural safeguards, and technology assessments required to build an efficient, fully compliant, and legally optimised private practice within the United Kingdom. It is written from the perspective of a clinical oncologist building a London-based practice, but the regulatory, financial, and operational principles apply uniformly across all consultant specialties.</p>
+      </div>
 
-    <h3>Practice Management Software (EPR) Multi-Criteria Appraisal</h3>
-    <p>Your Electronic Patient Record (EPR) system serves as the central operating hub of your daily practice. It must feature cloud accessibility for your remote support team, native integrations with secure invoicing clearhouses, and electronic prescribing architectures. Below is an operational assessment of the leading platforms currently deployed across the UK market:</p>
+      <!-- ══════════════════════════════
+           PHASE 1
+      ══════════════════════════════ -->
+      <div id="phase1" class="phase-header reveal">
+        <div class="phase-number">01</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase One</div>
+          <h2 class="phase-title">Legal, Regulatory & Financial Safeguards</h2>
+        </div>
+      </div>
 
-    <table class="data-table">
-        <thead>
+      <p class="section-intro">Before engaging with any private medical facility or admitting your first patient, your business foundation and personal legal protections must be firmly in place. These are non-negotiable prerequisites, not administrative formalities. Skipping or deferring any of these steps exposes you to regulatory censure, personal financial liability, and potential GMC fitness-to-practise proceedings.</p>
+
+      <div class="reveal-group">
+
+        <div class="step-card reveal">
+          <span class="step-badge">Step 1.1</span>
+          <div class="step-title">The NHS Contract & The 11-PA Clause</div>
+          <p>Under the standard 2003 NHS Consultant Contract, your private practice intentions must be formally declared to your clinical director and trust management before commencing any activity. If you hold a standard 10-Programmed Activity schedule, your trust retains the right of first refusal to offer you an 11th clinical PA. If formally offered and refused — for the purpose of conducting private work — you risk losing incremental salary progression under the contract's additional PA provisions.</p>
+          <p>All private clinics, operating lists, and administrative windows must be conducted strictly outside your contracted NHS hours, outside any flexible working arrangements, and never during active on-call responsibilities. Many trusts require a formal declaration of outside interests form on an annual basis, and this must be updated to reflect your private practice once established.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <span class="step-badge">Step 1.2</span>
+          <div class="step-title">Commercial Medical Indemnity</div>
+          <p>The Crown Indemnity framework — which covers you for clinical negligence within your NHS employment — provides precisely zero coverage for private medical practice. This is a frequently misunderstood gap that carries catastrophic financial consequences if not addressed.</p>
+          <p>You must either upgrade your membership tier with a traditional Medical Defence Organisation (MDU, MPS, or MDDUS) or transition to a specialist commercial Lloyd's-backed indemnity insurer. Your premium is calculated against your specialty risk category and your <strong>projected gross private turnover</strong>. For new entrants, premiums can be minimised by declaring a restricted introductory turnover band, which is then adjusted upward on annual renewal as your practice volume grows.</p>
+          <ul class="step-list">
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Coverage floor:</strong> Practising privileges at major hospital groups require a minimum indemnity cover of £10 million per claim</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Claims-made vs. occurrence:</strong> Understand which policy type you hold — claims-made policies require a tail (run-off) policy when you cease practice</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Cyber liability:</strong> As a sole data controller, consider adding a cyber liability rider to your policy, as patient data breaches carry separate ICO penalties</span></li>
+          </ul>
+        </div>
+
+        <div class="step-card reveal">
+          <span class="step-badge">Step 1.3</span>
+          <div class="step-title">ICO Data Governance Registration</div>
+          <p>Operating as an independent private practitioner means you are legally classified as a separate and sole <strong>Data Controller</strong> under UK GDPR and the Data Protection Act 2018. You are handling Special Category Data — patient medical histories, diagnoses, prescriptions, and financial information — which carries the highest tier of regulatory obligation.</p>
+          <p>You are legally mandated to register with the Information Commissioner's Office and pay the statutory data protection fee. For solo consultants or micro-businesses, this falls under Tier 1 (£47/year via direct debit). You are also required to maintain a Record of Processing Activities (RoPA), have a lawful basis for each type of processing, publish a compliant privacy notice, and document your data retention and disposal policies. If you use any cloud-based EPR or messaging system with servers outside the UK, you must conduct a Transfer Impact Assessment.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <span class="step-badge">Step 1.4</span>
+          <div class="step-title">Business Structure: Sole Trader vs. Limited Company</div>
+          <p>Most consultants begin as sole traders — the simplest structure, requiring only self-assessment registration with HMRC. However, once your private practice generates consistent profits above approximately £50,000–£60,000 per year, a limited company structure can become significantly more tax-efficient, allowing you to pay yourself a combination of salary and dividends and to control the timing of your personal income.</p>
+          <div class="callout callout-info" style="margin-top:0.75rem; margin-bottom:0.75rem;">
+            <div class="callout-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="callout-body">
+              <div class="callout-title">IR35 Awareness</div>
+              <p class="callout-text">If you operate through a limited company and provide services to a private hospital that controls your working pattern, IR35 "off-payroll" rules may apply. HMRC scrutinises medical service companies closely. Take specialist tax advice before incorporating.</p>
+            </div>
+          </div>
+          <p>Regardless of structure, establishing a dedicated, isolated business bank account from day one is essential. All patient payments, insurer remittances, and professional fees must flow exclusively through this account. All business outgoings — indemnity, software subscriptions, secretarial costs — must leave from it. This structural isolation is not optional best practice; it is foundational to transparent bookkeeping and minimises accounting costs at year-end.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <span class="step-badge">Step 1.5</span>
+          <div class="step-title">CQC Registration Considerations</div>
+          <p>The Care Quality Commission regulates healthcare providers in England. If you intend to provide regulated activities — which includes most clinical consultations, investigations, and treatments — the registration requirements depend critically on your working model.</p>
+          <ul class="step-list">
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Practising at an existing registered provider</strong> (e.g., Spire, Nuffield, HCA): You do not require your own CQC registration — the hospital's registration covers the regulated activity</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Operating your own consulting rooms</strong> (e.g., a leased clinic space, rooms in a medical centre not already registered): You must register directly with the CQC as a provider of regulated activities</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span><strong>Telemedicine / remote consultations only:</strong> Advice of a specialist health regulatory solicitor is recommended, as the position is nuanced and evolving</span></li>
+          </ul>
+        </div>
+
+      </div><!-- /reveal-group -->
+
+      <!-- ══════════════════════════════
+           PHASE 2
+      ══════════════════════════════ -->
+      <div id="phase2" class="phase-header reveal">
+        <div class="phase-number">02</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Two</div>
+          <h2 class="phase-title">Practice Infrastructure & Technology</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">A modern private practice operates on digital workflow automation. Every unnecessary administrative burden consumes time that could either be clinical or simply your own. The goal is to achieve a lean overhead model with fixed costs proportional to your actual activity level.</p>
+
+      <h3 class="subsection reveal">Electronic Patient Record (EPR) — Comparative Assessment</h3>
+
+      <p class="reveal">Your EPR is the operational nucleus of your daily practice. It must provide cloud accessibility for remote support teams, native integration with the Healthcode clearinghouse, electronic prescribing with FP10 private prescription support, and GDPR-compliant data architecture. Below is an operational assessment of the leading platforms currently deployed across the UK private market:</p>
+
+      <div class="table-wrapper reveal">
+        <table class="styled-table">
+          <thead>
             <tr>
-                <th style="width: 25%;">System Platform</th>
-                <th style="width: 40%;">Core Operational Strengths</th>
-                <th style="width: 35%;">Strategic Trade-offs</th>
+              <th style="width:18%;">Platform</th>
+              <th style="width:32%;">Core Strengths</th>
+              <th style="width:28%;">Strategic Limitations</th>
+              <th style="width:12%;">Best Fit</th>
+              <th style="width:10%;">Indicative Cost</th>
             </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
             <tr>
-                <td><strong>Carebit</strong></td>
-                <td>Advanced automation workflows; integrated native AI ambient scribe features for real-time consultation charting; automated patient recall alerts; built-in electronic prescriptions.</td>
-                <td>Premium pricing model; can feel financially heavy during low-volume startup periods.</td>
-            </tr>
-            <tr>
-                <td><strong>Semble</strong><br>(Formerly Heydoc)</td>
-                <td>Modern, ultra-intuitive UI; highly favored by premium remote medical secretarial agencies; flawless open API connections to third-party tools and accounting suites.</td>
-                <td>Tiered cost structures require active management to avoid underutilized feature charges.</td>
-            </tr>
-            <tr>
-                <td><strong>Pabau</strong></td>
-                <td>Robust multi-calendar syncing frameworks; powerful automation capabilities for clinical documentation and patient-facing follow-ups.</td>
-                <td>Steep initial software onboarding curve due to a dense configuration layer.</td>
+              <td class="cell-highlight">Carebit</td>
+              <td>Advanced automation workflows; native AI ambient scribing for real-time consultation charting; automated patient recall; integrated e-prescriptions; Healthcode native link</td>
+              <td>Premium pricing can feel financially heavy during low-volume startup periods; functionality depth may exceed early-stage needs</td>
+              <td><span class="tag tag-blue">Established practices</span></td>
+              <td>£250–400/mo</td>
             </tr>
             <tr>
-                <td><strong>Medesk</strong></td>
-                <td>Highly granular pay-per-consultation scaling models; extremely cost-effective option for low-volume starters or pilot practices.</td>
-                <td>Lacks the advanced AI scribing and deep workflow automations seen in premium suites.</td>
+              <td class="cell-highlight">Semble<br><small style="color:var(--text-muted);">(formerly Heydoc)</small></td>
+              <td>Modern, intuitive UI favoured by premium secretarial agencies; excellent open API ecosystem; seamless integrations with Xero/QuickBooks and third-party tools</td>
+              <td>Tiered cost structures require active management to avoid charges for underutilised features; reporting suite can lag competitors</td>
+              <td><span class="tag tag-green">Growing practice</span></td>
+              <td>£150–300/mo</td>
             </tr>
             <tr>
-                <td><strong>Legacy Systems</strong><br>(e.g., DGL, MidexPRO)</td>
-                <td>Long-standing market presence; deeply entrenched historical data models.</td>
-                <td>Outdated, non-intuitive text-heavy interfaces; lacks modern API integrations.</td>
+              <td class="cell-highlight">Pabau</td>
+              <td>Robust multi-calendar syncing; powerful clinical documentation automation; patient-facing communications; strong aesthetics module for dermatology/cosmetics</td>
+              <td>Steep initial onboarding due to dense configuration layer; support quality variable</td>
+              <td><span class="tag tag-amber">Mid-stage</span></td>
+              <td>£120–250/mo</td>
             </tr>
-        </tbody>
-    </table>
+            <tr>
+              <td class="cell-highlight">Medesk</td>
+              <td>Granular pay-per-consultation model; highly cost-effective for low-volume or pilot phases; clean interface; good Healthcode integration</td>
+              <td>Lacks advanced AI scribing and deep workflow automation; reporting is functional but not sophisticated</td>
+              <td><span class="tag tag-green">Startup / low volume</span></td>
+              <td>£40–120/mo</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">DGL / MidexPRO</td>
+              <td>Long-standing market presence; familiar to older cohort of secretaries; robust historical data models</td>
+              <td>Outdated interfaces; lacks modern API integrations; no native AI features; declining adoption by premium agencies</td>
+              <td><span class="tag tag-red">Legacy only</span></td>
+              <td>£80–160/mo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div class="warning-callout">
-        <div class="warning-callout-title">The Calendar Desynchronization Risk</div>
-        <p>While premium practice management platforms offer seamless public-facing online booking forms for your patients, these external modules do not automatically sync back into the internal booking grids of private hospital providers (e.g., Nuffield Health, Spire, HCA). To avoid double-booking errors, your administrative team must regularly cross-check and manually align your hospital room allocations with your digital calendar.</p>
-    </div>
+      <div class="callout callout-warning reveal">
+        <div class="callout-icon">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="callout-body">
+          <div class="callout-title">The Calendar Desynchronisation Risk</div>
+          <p class="callout-text">Premium practice management platforms offer public-facing online booking forms for patients, but these do not automatically synchronise with the internal room booking grids of private hospital providers (Nuffield Health, Spire, HCA, etc.). Your administrative team must cross-check and manually align hospital room allocations with your digital calendar at every booking cycle to avoid costly double-booking errors and the reputational damage of cancelled patient appointments.</p>
+        </div>
+      </div>
 
-    <h3>The Clearinghouse & The Administrative Engine</h3>
-    <p>To invoice insurance companies, you cannot simply send standard email attachments, as this violates data protection rules. Instead, you must use <strong>Healthcode</strong>, which acts as the encrypted, secure digital clearance hub for the entire UK private medical industry. Your chosen EPR must link directly with Healthcode to instantly transmit claims to providers like Bupa and AXA Health.</p>
-    <p>To manage this setup, avoid taking on a fixed-salary employee when starting out. Instead, protect your cash flow by partnering with a specialized, pay-as-you-go medical secretarial agency or a dedicated billing service. These providers charge either a flexible hourly rate (typically £25–£35 per hour) or a flat commission on your successfully collected fees (typically 4%–10%), ensuring your administrative expenses stay aligned with your actual income.</p>
+      <h3 class="subsection reveal">Healthcode: The Clearinghouse Architecture</h3>
 
-    <!-- Phase 3 Layout -->
-    <h2>Phase 3: Accreditation, Compliance & Launch</h2>
-    <p>The final phase requires matching your clinical credentials with private hospital providers and private healthcare insurance networks.</p>
+      <p class="reveal">Invoicing private medical insurers is not a matter of sending a PDF attachment. Transmitting unencrypted patient claims data via standard email is a UK GDPR violation. All claims to insurance providers — Bupa, AXA Health, Aviva, Vitality, WPA, Cigna — must route through <strong>Healthcode</strong>, the encrypted, standards-compliant digital clearance hub for the entire UK private medical industry. Your chosen EPR must hold a live, tested Healthcode integration before you see your first insured patient.</p>
 
-    <div class="step-block">
-        <span class="step-badge">Step 3.1</span>
-        <div class="step-title">Securing Practising Privileges</div>
-        <p>Private consultants do not lease clinical space in the traditional commercial sense. Instead, you apply for <strong>Practising Privileges</strong> at your chosen independent hospital network. This gives you an honorary contract to use their facilities, outpatient spaces, and inpatient wards. Your application is reviewed by the hospital's Medical Advisory Committee (MAC), which will look closely at your GMC status, specialist registration, your substantive NHS contract, and your references. You will also need to show proof of enhanced DBS clearance and a professional indemnity certificate covering you up to £10 million.</p>
-    </div>
+      <h3 class="subsection reveal">Administrative Support Model</h3>
 
-    <div class="step-block">
-        <span class="step-badge">Step 3.2</span>
-        <div class="step-title">Clinical Governance & Multidisciplinary Integration</div>
-        <p>You cannot operate your private practice in a clinical vacuum. Any high-risk treatment protocols, complex surgical interventions, or advanced therapies must follow strict peer-review guidelines. You must formally align your practice with the private hospital's internal Multidisciplinary Team (MDT) or secure a clear reciprocal agreement that allows your NHS trust's MDT to cross-govern and review your private cases. Every piece of private activity—including clinical outcomes, metrics, audits, and any patient complaints—must be fully declared and reviewed during your annual NHS appraisal.</p>
-    </div>
+      <p class="reveal">The temptation to employ a fixed-salary medical secretary from day one is a common and costly early mistake. Until your practice volume is reliably generating 15–20+ consultations per week, a fixed employee creates a structural overhead that persists during slow periods and introduces employment law obligations. The operationally optimal model for a new practice is a specialist pay-as-you-go medical secretarial agency or a dedicated billing service.</p>
 
-    <div class="step-block">
-        <span class="step-badge">Step 3.3</span>
-        <div class="step-title">Private Medical Insurer (PMI) Recognition</div>
-        <p>To treat patients insured by major providers like Bupa, AXA Health, Aviva, Vitality, and WPA, you must formally register and be recognized as an approved specialist. Most insurers require newer consultants to agree to a "fee-assured" model. Under this agreement, you accept their pre-set fee caps as full payment for your consultations and procedures, and you agree not to "top-up" bill the patient for any difference.</p>
-    </div>
+      <div class="table-wrapper reveal">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Support Model</th>
+              <th>Indicative Cost</th>
+              <th>Best For</th>
+              <th>Key Consideration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-highlight">Specialist medical secretarial agency</td>
+              <td>£25–35/hour, flexible</td>
+              <td>Startup and growing practices</td>
+              <td>Ensure agency has Semble/Carebit/Healthcode fluency before contracting</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Commission-based billing service</td>
+              <td>4–10% of collected fees</td>
+              <td>Consultants prioritising zero fixed admin overhead</td>
+              <td>Incentive-aligned model; confirm what is included and excluded in the commission scope</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Dedicated employed secretary</td>
+              <td>£28,000–38,000/year + NI + pension</td>
+              <td>Established high-volume practices (20+ patients/week)</td>
+              <td>Triggers employment law obligations; maternity/sickness cover must be planned for</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Virtual PA + billing software</td>
+              <td>£15–25/hour + SaaS costs</td>
+              <td>Tech-comfortable consultants with lower admin volume</td>
+              <td>Requires you to take an active role in overseeing billing accuracy</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <!-- Taxation Section Layout -->
-    <h2>Taxation Mechanics & Financial Compliance</h2>
-    <p>Operating as a sole trader offers a low-cost, straightforward setup for a new business, but it requires careful planning to manage your tax obligations properly. Because your NHS consultant salary already places you in a higher or additional tax bracket, almost every pound of profit your private practice generates will be taxed at your top marginal rate (40% or 45%), along with Class 4 National Insurance contributions.</p>
+      <!-- ══════════════════════════════
+           PHASE 3
+      ══════════════════════════════ -->
+      <div id="phase3" class="phase-header reveal">
+        <div class="phase-number">03</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Three</div>
+          <h2 class="phase-title">Accreditation, Governance & Launch</h2>
+        </div>
+      </div>
 
-    <div class="warning-callout">
-        <div class="warning-callout-title">The "Payment on Account" Cash Flow Trap</div>
-        <p>When you cross the threshold of owing more than £1,000 in self-assessed tax, HMRC requires you to make advanced "Payments on Account" for the upcoming tax year. In your first filing January, this can create an unexpected financial squeeze, as you are required to pay 100% of your current tax year's bill plus an additional 50% advance payment toward the next year.</p>
-    </div>
+      <p class="section-intro">The final launch phase aligns your clinical credentials with private hospital providers and insurance networks. The processes involved are not rapid — allow three to six months for practising privileges and PMI recognition to be fully approved.</p>
 
-    <h3>The 80% Protective Shield Rule</h3>
-    <p>As an active NHS employee, you have a valuable built-in safety net. If **80% or more** of your total tax liability is automatically collected at source through your NHS PAYE payroll, you are completely exempt from these advanced Payments on Account. Your annual private tax obligations will simply be settled as a single balancing payment each January, as long as your private earnings remain small relative to your core NHS salary.</p>
-    
-    <div class="math-block">
-        <span class="math">T<sub>total</sub> = (R<sub>gross</sub> - E<sub>allowable</sub>) &times; M<sub>rate</sub> + N<sub>class4</sub></span>
-    </div>
+      <div class="reveal-group">
 
-    <p>To maintain tax efficiency, you must meticulously log all deductible business expenses to offset your gross revenue. This includes your commercial indemnity premiums, ICO registration fees, software subscriptions, virtual secretary costs, business travel, and professional membership renewals.</p>
+        <div class="step-card reveal">
+          <span class="step-badge">Step 3.1</span>
+          <div class="step-title">Securing Practising Privileges</div>
+          <p>Private consultants do not lease clinical space in the conventional commercial sense. You apply for <strong>Practising Privileges</strong> at your chosen independent hospital network, which grants you an honorary contract to use their facilities, outpatient rooms, theatres, and inpatient wards. Applications are reviewed by the hospital's Medical Advisory Committee (MAC) and typically require:</p>
+          <ul class="step-list">
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Current full GMC registration with Specialist Register entry in your clinical specialty</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Substantive NHS consultant contract — locum or fixed-term contracts may not satisfy all hospitals' requirements</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Enhanced DBS certificate (within 3 years) or subscription to the DBS Update Service</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Professional indemnity certificate evidencing cover of at least £10 million per claim</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Two professional references, typically from your clinical director and a senior colleague</span></li>
+            <li><span class="step-list-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span><span>Evidence of current appraisal and revalidation status — a Responsible Officer letter is often required</span></li>
+          </ul>
+        </div>
 
-    <!-- Pre-Launch Verification Checklist -->
-    <h2>Pre-Launch Verification Checklist</h2>
-    <p>Ensure every item below is fully completed and signed off before admitting your first private patient into a consulting room:</p>
-    
-    <ul class="checkbox-list">
-        <li><strong>NHS Contract Review:</strong> Job plan formally discussed and authorized by Clinical Director.</li>
-        <li><strong>Clinical Indemnity Active:</strong> Professional policy upgraded to include private liability up to £10M.</li>
-        <li><strong>ICO Registration Complete:</strong> Statutory data controller fee paid and UTR logged.</li>
-        <li><strong>Banking Separation:</strong> Dedicated, independent business account opened and active.</li>
-        <li><strong>EPR Infrastructure Live:</strong> Cloud-based system deployed with secure e-prescribing active.</li>
-        <li><strong>Healthcode Link Active:</strong> Secure clearinghouse integration tested and connected to your EPR.</li>
-        <li><strong>Practising Privileges Granted:</strong> Formal approval letter received from the hospital's MAC.</li>
-        <li><strong>Clinical Governance Aligned:</strong> Private or reciprocal NHS MDT review pathways confirmed.</li>
-        <li><strong>PMI Registrations Approved:</strong> Provider numbers issued and active for all major insurance networks.</li>
-        <li><strong>Tax Records Prepared:</strong> Accounting software connected and a 45% tax reserve account established.</li>
-    </ul>
+        <div class="step-card reveal">
+          <span class="step-badge">Step 3.2</span>
+          <div class="step-title">Clinical Governance & MDT Integration</div>
+          <p>You cannot operate your private practice in a clinical vacuum, and the regulatory framework makes no allowance for it. Any high-risk treatment protocols, complex surgical interventions, or advanced therapies must follow peer-reviewed guidelines and be subject to structured oversight.</p>
+          <p>You must formally align with either the private hospital's internal Multidisciplinary Team or secure a documented reciprocal agreement allowing your NHS trust's MDT to cross-govern and review your private cases. Every element of private activity — clinical outcomes, adverse incident metrics, audits, and patient complaints — must be declared and reviewed at your annual NHS appraisal. Failure to do so constitutes a serious governance breach and can trigger a Responsible Officer referral to the GMC.</p>
+        </div>
 
+        <div class="step-card reveal">
+          <span class="step-badge">Step 3.3</span>
+          <div class="step-title">Private Medical Insurer (PMI) Recognition</div>
+          <p>Recognition as an approved specialist with each major insurer is a separate application process from practising privileges and must be pursued in parallel. Most insurers require newer consultants to accept a <strong>"fee-assured"</strong> model — you accept their pre-set fee schedules as full payment and agree not to apply any patient top-up billing.</p>
+          <p>Recognition timescales vary considerably: Bupa and AXA Health typically process applications within 8–12 weeks, while smaller providers can be faster. The major UK PMI providers are:</p>
+          <div class="two-col" style="margin-top:0.75rem;">
+            <div style="background:var(--slate-050); border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.82rem;">
+              <strong style="display:block; color:var(--text-primary); margin-bottom:0.25rem;">Tier 1 Providers</strong>
+              <span style="color:var(--text-muted);">Bupa · AXA Health · Aviva</span>
+            </div>
+            <div style="background:var(--slate-050); border-radius:var(--radius-sm); padding:0.75rem 1rem; font-size:0.82rem;">
+              <strong style="display:block; color:var(--text-primary); margin-bottom:0.25rem;">Tier 2 Providers</strong>
+              <span style="color:var(--text-muted);">Vitality · WPA · Cigna · Healix · BUPA Global</span>
+            </div>
+          </div>
+          <div class="callout callout-warning" style="margin-top:0.85rem; margin-bottom:0;">
+            <div class="callout-icon">
+              <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="callout-body">
+              <div class="callout-title">Top-Up Billing Prohibition</div>
+              <p class="callout-text">Under Bupa's recognition terms, billing an insured patient for any amount above the agreed fee schedule — including so-called "shortfall" charges — results in immediate de-recognition. The Competition and Markets Authority (CMA) has investigated consultant billing practices. Self-pay patients are not subject to these restrictions, but all charges must be transparently communicated in writing in advance of treatment.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /reveal-group -->
+
+      <!-- ══════════════════════════════
+           TAXATION
+      ══════════════════════════════ -->
+      <div id="taxation" class="phase-header reveal">
+        <div class="phase-number">04</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Four</div>
+          <h2 class="phase-title">Taxation Mechanics & Financial Compliance</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">Because your NHS consultant salary already places you in the higher or additional rate bracket, virtually every pound of private practice profit will be taxed at your top marginal rate. Without active financial planning, a significant portion of gross revenue will be consumed by deferred tax liabilities that accumulate silently during your first operating year.</p>
+
+      <div class="two-col reveal">
+        <div class="metric-card">
+          <div class="metric-label">Higher Rate Threshold</div>
+          <div class="metric-value">40<sup>%</sup></div>
+          <div class="metric-sub">Income tax on earnings £50,271 – £125,140</div>
+          <span class="metric-trend trend-neutral">Plus Class 4 NI at 2%</span>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Additional Rate (>£125,140)</div>
+          <div class="metric-value">45<sup>%</sup></div>
+          <div class="metric-sub">Income tax — personal allowance also fully withdrawn</div>
+          <span class="metric-trend trend-down">Effective rate can exceed 60% near £100K</span>
+        </div>
+      </div>
+
+      <div class="callout callout-warning reveal">
+        <div class="callout-icon">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="callout-body">
+          <div class="callout-title">The £100,000 Personal Allowance Trap</div>
+          <p class="callout-text">If your total income (NHS salary + private profits) exceeds £100,000, HMRC withdraws your £12,570 personal allowance at a rate of £1 for every £2 earned above the threshold. This creates an effective marginal tax rate of approximately 60% on income between £100,000 and £125,140. Pension contributions made during this income band are consequently one of the most tax-efficient moves available to a consultant.</p>
+        </div>
+      </div>
+
+      <h3 class="subsection reveal">The Payment on Account Cash-Flow Trap</h3>
+
+      <p class="reveal">When your self-assessed tax liability first exceeds £1,000, HMRC requires <strong>Payments on Account</strong> — advance payments toward your anticipated next-year tax bill. In your first self-assessment January, you face a double payment: 100% of the current year's tax bill, plus 50% in advance for the following year. Without an established reserve, this can generate a severe cash-flow crisis.</p>
+
+      <div class="callout callout-success reveal">
+        <div class="callout-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="callout-body">
+          <div class="callout-title">The 80% Protective Shield Rule</div>
+          <p class="callout-text">If 80% or more of your total tax liability is collected at source through your NHS PAYE payroll, you are completely exempt from Payments on Account. Your annual private tax obligation settles as a single January balancing payment, without advance requirements — provided your private earnings remain relatively modest against your NHS salary. As your private income grows, this exemption may cease to apply, making a mid-year tax review with your accountant essential.</p>
+        </div>
+      </div>
+
+      <div class="formula-block reveal">
+        <div class="formula-label">Annual Net Tax Liability Formula (Sole Trader)</div>
+        <div class="formula-math">T<sub>net</sub> = (R<sub>gross</sub> &minus; E<sub>allowable</sub>) &times; M<sub>rate</sub> + NI<sub>class4</sub> &minus; C<sub>paye</sub></div>
+        <div class="formula-legend">
+          <span class="formula-term"><code>R<sub>gross</sub></code> = Gross private revenue</span>
+          <span class="formula-term"><code>E<sub>allowable</sub></code> = Deductible business expenses</span>
+          <span class="formula-term"><code>M<sub>rate</sub></code> = Marginal income tax rate (40% or 45%)</span>
+          <span class="formula-term"><code>NI<sub>class4</sub></code> = Class 4 National Insurance (2% above upper limit)</span>
+          <span class="formula-term"><code>C<sub>paye</sub></code> = Tax already collected via NHS payroll</span>
+        </div>
+      </div>
+
+      <h3 class="subsection reveal">Allowable Business Deductions</h3>
+
+      <p class="reveal">Meticulous expense tracking is not optional — it is the primary legal mechanism for reducing your tax exposure. The following represent the principal allowable deductions for a private medical practice operating under self-assessment:</p>
+
+      <div class="table-wrapper reveal">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Expense Category</th>
+              <th>Examples</th>
+              <th>Allowability</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-highlight">Professional indemnity</td>
+              <td>MDU/MPS/Lloyd's annual premium (private proportion only)</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">ICO registration</td>
+              <td>Annual data protection fee</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Software & IT</td>
+              <td>EPR subscription, Healthcode fees, accounting software, secure email</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Administrative support</td>
+              <td>Secretarial agency fees, billing service commissions, bookkeeping</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Professional memberships</td>
+              <td>Royal College subscriptions (private proportion), specialist society fees</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Business travel</td>
+              <td>Hospital-to-hospital travel (HMRC approved rate 45p/mile), parking, rail</td>
+              <td><span class="tag tag-green">Fully allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">CPD & conferences</td>
+              <td>Registration fees, accommodation — private practice relevance must be documented</td>
+              <td><span class="tag tag-amber">Partially allowable</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Home office costs</td>
+              <td>Proportion of utilities, broadband — requires dedicated workspace</td>
+              <td><span class="tag tag-amber">Subject to HMRC rules</span></td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Entertainment</td>
+              <td>Client or referrer entertaining</td>
+              <td><span class="tag tag-red">Not allowable</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ══════════════════════════════
+           FEES & INCOME
+      ══════════════════════════════ -->
+      <div id="fees" class="phase-header reveal">
+        <div class="phase-number">05</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Five</div>
+          <h2 class="phase-title">Fee Setting & Income Modelling</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">Setting fees correctly is one of the most consequential decisions in your first year. Underpricing erodes professional positioning and creates a ceiling you will find difficult to raise. Overpricing without the referral volume to justify it will leave your clinic lists empty. A dual framework — one for insured patients, one for self-pay — governs the practical reality.</p>
+
+      <h3 class="subsection reveal">The Insured vs. Self-Pay Distinction</h3>
+
+      <p class="reveal">For insured patients, your fee is not your decision — it is the PMI's. The major insurers maintain internal fee schedules (often referenced to the British United Provident Association schedule or their own proprietary rate cards). Your obligation under recognition agreements is to accept these as full settlement. The self-pay market, by contrast, gives you full pricing autonomy, and this is where thoughtful fee architecture matters most.</p>
+
+      <div class="table-wrapper reveal">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Consultation Type</th>
+              <th>Insured Rate (Bupa/AXA)</th>
+              <th>Self-Pay (London)</th>
+              <th>Self-Pay (Regional)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-highlight">New patient consultation (30–45 min)</td>
+              <td>£180–250</td>
+              <td>£250–450</td>
+              <td>£180–320</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Follow-up consultation (20–30 min)</td>
+              <td>£90–150</td>
+              <td>£150–280</td>
+              <td>£120–200</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Procedure / minor op (outpatient)</td>
+              <td>Fee schedule varies by code</td>
+              <td>£300–1,200+</td>
+              <td>£200–900+</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Report / medico-legal letter</td>
+              <td>Not typically covered</td>
+              <td>£200–600</td>
+              <td>£150–450</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Video / telephone review</td>
+              <td>£70–120 (insurer-dependent)</td>
+              <td>£100–200</td>
+              <td>£80–160</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-info reveal">
+        <div class="callout-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="callout-body">
+          <div class="callout-title">Fee Transparency Obligation</div>
+          <p class="callout-text">The Private Healthcare Information Network (PHIN) requires consultants and providers to publish fee information. The CMA also mandated improved price transparency following its 2014 market investigation. You must provide self-pay patients with a clear written breakdown of anticipated costs — including facility fees, anaesthetic fees, and any likely follow-up charges — before obtaining consent to treat. Failure to do so is increasingly a source of complaints and medicolegal risk.</p>
+        </div>
+      </div>
+
+      <h3 class="subsection reveal">Year 1 Income Projection Model</h3>
+
+      <div class="projection-grid reveal">
+        <div class="projection-header">
+          <div class="projection-header-title">Indicative Year 1 Financial Model — Solo Consultant</div>
+          <div class="projection-header-sub">London-based · Mixed insured/self-pay · Solo practice</div>
+        </div>
+        <div class="projection-body">
+          <table class="projection-table">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Consults/Week</th>
+                <th>Avg Fee</th>
+                <th>Gross Revenue</th>
+                <th>Net (post-tax ~42%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Conservative (startup)</td>
+                <td style="text-align:right;">4–6</td>
+                <td style="text-align:right;">£200</td>
+                <td style="text-align:right; color:var(--text-muted);">~£45,000</td>
+                <td style="text-align:right;" class="positive">~£26,000</td>
+              </tr>
+              <tr>
+                <td>Moderate (Year 1 target)</td>
+                <td style="text-align:right;">8–12</td>
+                <td style="text-align:right;">£220</td>
+                <td style="text-align:right; color:var(--text-muted);">~£95,000</td>
+                <td style="text-align:right;" class="positive">~£55,000</td>
+              </tr>
+              <tr>
+                <td>Established (Year 2–3)</td>
+                <td style="text-align:right;">15–20</td>
+                <td style="text-align:right;">£250</td>
+                <td style="text-align:right; color:var(--text-muted);">~£190,000</td>
+                <td style="text-align:right;" class="positive">~£110,000</td>
+              </tr>
+              <tr>
+                <td>High volume (top quartile)</td>
+                <td style="text-align:right;">25+</td>
+                <td style="text-align:right;">£280</td>
+                <td style="text-align:right; color:var(--text-muted);">£340,000+</td>
+                <td style="text-align:right;" class="positive">£185,000+</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="reveal" style="font-size:0.78rem; color:var(--text-muted);">* Projections are illustrative only. Net figures assume 42% effective marginal tax rate including NI, allowable deductions averaging £12,000–18,000/year, and no procedure income. Procedure revenue, medicolegal work, and self-pay premiums can substantially increase both gross and net figures. Consult a specialist medical accountant for a personalised model.</p>
+
+      <!-- ══════════════════════════════
+           REFERRAL NETWORK
+      ══════════════════════════════ -->
+      <div id="referrals" class="phase-header reveal">
+        <div class="phase-number">06</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Six</div>
+          <h2 class="phase-title">Building Your Referral Network</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">The clinical quality of your private practice is necessary but not sufficient. Your income trajectory is ultimately determined by the volume and quality of your referral pipeline. This requires deliberate, sustained relationship-building across GP networks, allied consultant colleagues, and the private hospital ecosystem.</p>
+
+      <h3 class="subsection reveal">The Referral Pathway</h3>
+
+      <div class="pathway reveal">
+        <div class="pathway-step">
+          <div class="pathway-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="pathway-label">GP / Referring Physician</div>
+          <div class="pathway-sublabel">Primary referral source for most specialties</div>
+        </div>
+        <div class="pathway-step">
+          <div class="pathway-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="pathway-label">Referral Letter</div>
+          <div class="pathway-sublabel">Routes via Choose & Book or direct to secretary</div>
+        </div>
+        <div class="pathway-step">
+          <div class="pathway-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
+          <div class="pathway-label">Triage / Booking</div>
+          <div class="pathway-sublabel">Medical secretary books into EPR calendar</div>
+        </div>
+        <div class="pathway-step">
+          <div class="pathway-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="pathway-label">Consultation</div>
+          <div class="pathway-sublabel">Outpatient appointment at hospital facility</div>
+        </div>
+        <div class="pathway-step">
+          <div class="pathway-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="pathway-label">Outcome Letter</div>
+          <div class="pathway-sublabel">Timely, high-quality letter back to referrer</div>
+        </div>
+      </div>
+
+      <h3 class="subsection reveal">GP Engagement Strategy</h3>
+
+      <p class="reveal">General practitioners are the gatekeepers of the largest referral volume in the UK private system. The most effective GP engagement strategies combine professional visibility with genuine clinical utility:</p>
+
+      <div class="reveal-group">
+        <div class="step-card reveal" style="margin-bottom:0.85rem;">
+          <div class="step-title" style="font-size:1rem; margin-bottom:0.5rem;">Clinic Open Days</div>
+          <p style="margin-bottom:0;">Host brief, CME-accredited educational sessions at your private hospital facility, ideally at lunchtime. These should cover clinical updates in your specialty rather than promotional content about your practice. GPs who attend and respect your expertise become natural referrers.</p>
+        </div>
+        <div class="step-card reveal" style="margin-bottom:0.85rem;">
+          <div class="step-title" style="font-size:1rem; margin-bottom:0.5rem;">Rapid Turnaround Letters</div>
+          <p style="margin-bottom:0;">The single most effective referral retention tool is a high-quality, same-day or next-day consultation letter. GPs who receive your letters within 24 hours — with a clear management plan and explicit follow-up communication — will default to sending you their complex cases.</p>
+        </div>
+        <div class="step-card reveal" style="margin-bottom:0.85rem;">
+          <div class="step-title" style="font-size:1rem; margin-bottom:0.5rem;">Accessibility & Responsiveness</div>
+          <p style="margin-bottom:0;">Make it simple for GPs to reach you directly for advice on whether a patient needs a private referral. A direct email address for clinical queries — answered within one business day — is a powerful differentiator from NHS pathways and builds significant goodwill.</p>
+        </div>
+        <div class="step-card reveal">
+          <div class="step-title" style="font-size:1rem; margin-bottom:0.5rem;">Directory Listings & Digital Presence</div>
+          <p style="margin-bottom:0;">Ensure your profile is complete and accurate on the major private referral platforms: <strong>Doctify</strong>, <strong>Top Doctors</strong>, and your hospital provider's consultant directory. Patient-facing reviews on these platforms are now a significant driver of self-pay referrals. Claim and verify your NHS Choices profile as it ranks prominently in Google searches.</p>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════
+           PITFALLS
+      ══════════════════════════════ -->
+      <div id="pitfalls" class="phase-header reveal">
+        <div class="phase-number">07</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Seven</div>
+          <h2 class="phase-title">Common Pitfalls & How to Avoid Them</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">The following represent the most frequently encountered operational, financial, and medicolegal errors made by consultants in their first two years of independent practice. Forewarned is forearmed.</p>
+
+      <div class="table-wrapper reveal">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th style="width:30%;">Pitfall</th>
+              <th style="width:40%;">Why It Happens</th>
+              <th style="width:30%;">Mitigation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-highlight">Delayed invoicing</td>
+              <td>Busy clinical weeks cause invoices to lag weeks or months behind consultations — debtors age, insurers apply time limits</td>
+              <td>Invoice within 24–48 hours of every consultation. Commission billing service if volume is a problem</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">No signed consent to charges</td>
+              <td>Self-pay patients dispute invoices if they were not explicitly informed of fees in advance</td>
+              <td>Obtain signed financial consent before every self-pay appointment. Document clearly in EPR</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Mixing NHS and private clinical records</td>
+              <td>Temptation to use NHS infrastructure for private documentation to save time</td>
+              <td>Maintain entirely separate clinical records in your private EPR. Using NHS systems for private work is a serious governance breach</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Underestimating tax reserves</td>
+              <td>Private income feels like "extra money" and is spent rather than ring-fenced</td>
+              <td>Reserve 45% of every private payment into a separate account immediately on receipt. Treat it as already spent</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Not declaring at NHS appraisal</td>
+              <td>Confusion about what needs declaring, or wish to avoid awkward conversations</td>
+              <td>Declare all private income, complaints, adverse events, and medicolegal work annually. Non-disclosure is a GMC fitness-to-practise matter</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Treating insured patients as self-pay</td>
+              <td>Administrative error or patient confusion about their policy status</td>
+              <td>Verify insurance authorisation — including specific authorisation code and approved number of sessions — before every first appointment</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">No chasing debtors policy</td>
+              <td>Clinical culture makes billing follow-up feel uncomfortable</td>
+              <td>Establish a clear written policy: automated reminder at 14 days, formal letter at 30, referral to collection service at 60</td>
+            </tr>
+            <tr>
+              <td class="cell-highlight">Premature practice expansion</td>
+              <td>Enthusiasm leads to hiring staff, leasing consulting rooms, or opening multiple sites before revenue is stable</td>
+              <td>Maintain a lean overhead model for at least 18–24 months. Scale expenses in response to proven revenue, not projected revenue</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ══════════════════════════════
+           CHECKLIST
+      ══════════════════════════════ -->
+      <div id="checklist" class="phase-header reveal">
+        <div class="phase-number">08</div>
+        <div class="phase-heading-group">
+          <div class="phase-label">Phase Eight</div>
+          <h2 class="phase-title">Pre-Launch Verification Checklist</h2>
+        </div>
+      </div>
+
+      <p class="section-intro">Every item below must be fully completed and signed off before your first private patient is admitted to a consulting room. This is not a box-ticking exercise — it is your legal and professional protection framework. Click each item as you complete it.</p>
+
+      <div style="background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem; reveal">
+
+        <div class="checklist-section">
+          <div class="checklist-section-title">Regulatory & Legal Foundation</div>
+          <ul class="checklist" id="checklistEl">
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">NHS Contract & Job Plan Reviewed</div>
+                <div class="checklist-desc">Private practice intentions formally discussed with Clinical Director. Outside interests form updated.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Clinical Indemnity Active & Adequate</div>
+                <div class="checklist-desc">Policy upgraded to include private liability. Minimum £10M per claim. Claims-made vs. occurrence confirmed.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">ICO Registration Completed</div>
+                <div class="checklist-desc">Registered as Data Controller. Tier 1 fee paid. Privacy notice drafted and RoPA documented.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Business Banking Separated</div>
+                <div class="checklist-desc">Dedicated business account opened. Personal and professional revenue completely separated from day one.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">HMRC Self-Assessment Registration</div>
+                <div class="checklist-desc">Registered for self-assessment by 5 October following your first year of trading. UTR number obtained.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">CQC Registration Status Clarified</div>
+                <div class="checklist-desc">Confirmed whether direct registration is required for your operating model. Legal advice obtained if needed.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="checklist-section">
+          <div class="checklist-section-title">Technology & Administration</div>
+          <ul class="checklist">
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">EPR System Live & Configured</div>
+                <div class="checklist-desc">Cloud-based system deployed. Secure e-prescribing active. Patient record templates built and tested.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Healthcode Integration Tested</div>
+                <div class="checklist-desc">Clearinghouse integration confirmed live with at least one test claim submitted and accepted.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Administrative Support Contracted</div>
+                <div class="checklist-desc">Secretarial agency or billing service engaged. Agency has confirmed familiarity with your chosen EPR.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Accounting Software Connected</div>
+                <div class="checklist-desc">Xero, QuickBooks, or equivalent configured. 45% tax reserve account established. Accountant briefed.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="checklist-section" style="margin-bottom:0;">
+          <div class="checklist-section-title">Clinical Accreditation</div>
+          <ul class="checklist">
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Practising Privileges Granted</div>
+                <div class="checklist-desc">Formal approval letter received from the hospital's Medical Advisory Committee. Facility induction completed.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Clinical Governance Pathway Confirmed</div>
+                <div class="checklist-desc">Private or reciprocal NHS MDT review pathways documented in writing. Private cases flagged at NHS appraisal process confirmed.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">PMI Registrations Active</div>
+                <div class="checklist-desc">Provider numbers issued for all target insurers. Fee schedules reviewed and understood. No outstanding application queries.</div>
+              </div>
+            </li>
+            <li class="checklist-item" onclick="toggleCheck(this)">
+              <div class="checklist-box"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="checklist-content">
+                <div class="checklist-title">Patient Fee Consent Process Established</div>
+                <div class="checklist-desc">Written fee schedule prepared. Financial consent form drafted. Fee transparency obligations (PHIN/CMA) understood and complied with.</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Progress counter -->
+      <div id="checklistProgress" style="margin-top:0.75rem; font-size:0.8rem; color:var(--text-muted); text-align:right;">
+        <span id="checkCount">0</span> of <span id="totalCount">14</span> items completed
+      </div>
+
+    </div><!-- /content-area -->
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <div class="footer-title">The UK Private Medical Practice Blueprint</div>
+          <p class="footer-disclaimer">This document provides general informational guidance only and does not constitute legal, financial, or regulatory advice. The private medical practice landscape evolves continuously. Always consult with a specialist medical solicitor, a qualified medical accountant, and your Medical Defence Organisation before making material operational decisions. Verify all regulatory requirements directly with the GMC, ICO, HMRC, and CQC.</p>
+        </div>
+        <div class="footer-right">
+          <div class="footer-version">v2.0 · All Specialties</div>
+          <div style="font-size:0.7rem; color:var(--slate-400); margin-top:0.25rem;">UK Private Practice Reference</div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
 </div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+// ─────────────────────────────────────────
+// Scroll Progress Bar
+// ─────────────────────────────────────────
+const progressFill = document.getElementById('progressFill');
+function updateProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  progressFill.style.width = pct + '%';
+}
+
+// ─────────────────────────────────────────
+// Active Navigation Highlight
+// ─────────────────────────────────────────
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('[id]');
+
+function updateNav() {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if (top <= 120) current = section.id;
+  });
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    const href = item.getAttribute('href');
+    if (href && href === '#' + current) item.classList.add('active');
+  });
+}
+
+// ─────────────────────────────────────────
+// Scroll Reveal
+// ─────────────────────────────────────────
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+
+// ─────────────────────────────────────────
+// Scroll Event
+// ─────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  updateProgress();
+  updateNav();
+}, { passive: true });
+
+updateProgress();
+updateNav();
+
+// ─────────────────────────────────────────
+// Checklist Toggle
+// ─────────────────────────────────────────
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  updateChecklistCount();
+}
+
+function updateChecklistCount() {
+  const total = document.querySelectorAll('.checklist-item').length;
+  const checked = document.querySelectorAll('.checklist-item.checked').length;
+  document.getElementById('checkCount').textContent = checked;
+  document.getElementById('totalCount').textContent = total;
+}
+
+updateChecklistCount();
+
+// ─────────────────────────────────────────
+// Smooth reveal on first load
+// ─────────────────────────────────────────
+window.addEventListener('load', () => {
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      el.classList.add('visible');
+    }
+  });
+});
+</script>
 
 </body>
 </html>
