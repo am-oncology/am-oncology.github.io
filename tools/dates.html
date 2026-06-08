@@ -520,8 +520,9 @@ button:active { transform: scale(0.98); }
     <!-- Presets -->
     <div class="section-title">Preset follow-up schedules</div>
     <div class="preset-row">
-      <button class="preset-btn" onclick="applyPreset('rectal')">Post-RT rectal</button>
-      <button class="preset-btn" onclick="applyPreset('anal')">Post-RT anal</button>
+      <button class="preset-btn" onclick="applyPreset('rectal')">Rectal post-TNT</button>
+      <button class="preset-btn" onclick="applyPreset('anal1')">Anal post-CRT high-risk</button>
+      <button class="preset-btn" onclick="applyPreset('anal2')">Anal post-CRT low-risk</button>
       <button class="btn-danger preset-btn" onclick="clearIntervals()" style="margin-left:auto;">
         <i class="ti ti-trash"></i> Clear all
       </button>
@@ -631,13 +632,25 @@ function prevWorkDay(d) {
 // ════════════════════════════════════════════════════════════
 const PRESETS = {
   rectal: [
-    { n:4,  u:'w', label:'Post-RT review TC' },
+    { n:4,  u:'w', label:'Post-TNT review TC' },
     { n:8,  u:'w', label:'CT CAP + MRI pelvis' },
     { n:10,  u:'w', label:'MDT review' },
-    { n:12,  u:'w', label:'Post-MDT review F2F' },
+    { n:12,  u:'w', label:'Post-MDT review F2F + ctDNA' },
   ],
-   anal: [
-    { n:4,  u:'w', label:'Post-RT review TC' },
+   anal1: [
+    { n:6,  u:'w', label:'Clinical review TC' },
+    { n:11,  u:'w', label:'MRI pelvis' },
+    { n:13,  u:'w', label:'Anal MDT' },
+    { n:13,  u:'w', label:'Clinical review F2F' },
+    { n:26,  u:'w', label:'MRI pelvis + FDG PET CT' },
+    { n:28,  u:'w', label:'Anal MDT' },
+    { n:28,  u:'w', label:'Clinical review F2F' },
+    { n:9,  u:'m', label:'Clinical review F2F' },
+    { n:12,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+    { n:12,  u:'m', label:'HRA at HUH HANS' },
+  ],
+ anal2: [
+    { n:6,  u:'w', label:'Post-RT review TC' },
     { n:11,  u:'w', label:'MRI pelvis' },
     { n:13,  u:'w', label:'MDT review' },
     { n:13,  u:'w', label:'Clinical assessment F2F' },
