@@ -523,6 +523,8 @@ button:active { transform: scale(0.98); }
       <button class="preset-btn" onclick="applyPreset('rectal')">Rectal post-TNT</button>
       <button class="preset-btn" onclick="applyPreset('anal1')">Anal post-CRT high-risk (T3-4 or N1)</button>
       <button class="preset-btn" onclick="applyPreset('anal2')">Anal post-CRT low-risk (T1-2 and N0)</button>
+      <button class="preset-btn" onclick="applyPreset('cxb1')">Papillon CXB > EBRT (<3cm)</button>
+      <button class="preset-btn" onclick="applyPreset('cxb2')">Papillon EBRT > CXB (>3cm)</button>
       <button class="btn-danger preset-btn" onclick="clearIntervals()" style="margin-left:auto;">
         <i class="ti ti-trash"></i> Clear all
       </button>
@@ -663,6 +665,38 @@ const PRESETS = {
     { n:260,  u:'w', label:'Clinical review F2F' },
   ],
  anal2: [
+    { n:6,  u:'w', label:'Clinical review TC' },
+    { n:11,  u:'w', label:'MRI pelvis' },
+    { n:13,  u:'w', label:'Anal MDT' },
+    { n:13,  u:'w', label:'Clinical review F2F' },
+    { n:26,  u:'w', label:'MRI pelvis + FDG PET CT' },
+    { n:28,  u:'w', label:'Anal MDT' },
+    { n:28,  u:'w', label:'Clinical review F2F' },
+    { n:9,  u:'m', label:'Clinical review F2F' },
+    { n:12,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+    { n:12,  u:'m', label:'HRA at HUH HANS' },
+    { n:18,  u:'m', label:'MRI pelvis + Clinical review F2F' },
+    { n:24,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+    { n:30,  u:'m', label:'MRI pelvis + Clinical review F2F' },
+    { n:36,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+  ],
+  cxb1: [
+    { n:6,  u:'w', label:'Clinical review TC' },
+    { n:11,  u:'w', label:'MRI pelvis' },
+    { n:13,  u:'w', label:'Anal MDT' },
+    { n:13,  u:'w', label:'Clinical review F2F' },
+    { n:26,  u:'w', label:'MRI pelvis + FDG PET CT' },
+    { n:28,  u:'w', label:'Anal MDT' },
+    { n:28,  u:'w', label:'Clinical review F2F' },
+    { n:9,  u:'m', label:'Clinical review F2F' },
+    { n:12,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+    { n:12,  u:'m', label:'HRA at HUH HANS' },
+    { n:18,  u:'m', label:'MRI pelvis + Clinical review F2F' },
+    { n:24,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+    { n:30,  u:'m', label:'MRI pelvis + Clinical review F2F' },
+    { n:36,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+  ],
+   cxb2: [
     { n:6,  u:'w', label:'Clinical review TC' },
     { n:11,  u:'w', label:'MRI pelvis' },
     { n:13,  u:'w', label:'Anal MDT' },
