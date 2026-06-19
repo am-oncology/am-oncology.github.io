@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -302,6 +302,16 @@ button:active { transform: scale(0.98); }
 .chip-w { background: var(--blue-pale); color: #185FA5; }
 .chip-m { background: var(--green-pale); color: var(--green); }
 .chip-d { background: var(--gray-pale); color: #5F5E5A; }
+.chip-day { background: var(--amber-pale); color: var(--amber); border: 1px solid #FCD34D; }
+
+/* ── FIELD HINT ── */
+.field-hint {
+  font-size: 0.6rem;
+  color: var(--ink-muted);
+  margin-top: 3px;
+  font-style: italic;
+  line-height: 1.3;
+}
 
 /* ── RESULTS TABLE ── */
 .results-table {
@@ -361,8 +371,9 @@ button:active { transform: scale(0.98); }
   margin-top: 5px;
 }
 
-.bh-flag-warn { background: var(--amber-pale); color: var(--amber); border: 1px solid #FCD34D; }
-.bh-flag-moved { background: var(--green-pale); color: var(--green); border: 1px solid #C0DD97; }
+.bh-flag-warn    { background: var(--amber-pale); color: var(--amber); border: 1px solid #FCD34D; }
+.bh-flag-moved   { background: var(--green-pale); color: var(--green); border: 1px solid #C0DD97; }
+.bh-flag-weekend { background: var(--blue-pale);  color: var(--blue);  border: 1px solid #BFDBFE; }
 
 /* ── BH STATUS ── */
 .bh-status {
@@ -415,6 +426,23 @@ button:active { transform: scale(0.98); }
   .form-row button, .form-row .form-field { width: 100%; }
   input[type="date"], input[type="number"], input[type="text"], select { width: 100%; }
 }
+
+/* ── PRINT ── */
+@media print {
+  .header { position: static; background: #fff !important; border-bottom: 2px solid var(--ink); }
+  .header-logo { color: var(--ink) !important; border-color: var(--ink) !important; }
+  .header-title { color: var(--ink) !important; }
+  .header-title small { color: var(--ink-muted) !important; }
+  .live-indicator, .header-spacer { display: none; }
+  .main { padding: 0.25rem 0; max-width: 100%; }
+  .card:not(#results-card) { display: none !important; }
+  .result-actions { display: none !important; }
+  #results-card { border: none; padding: 0; margin: 0; box-shadow: none; }
+  .results-table { border: 1px solid #999; }
+  .result-row { break-inside: avoid; }
+  .chip, .bh-flag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .result-header, .result-stripe { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 </head>
 <body>
@@ -439,6 +467,19 @@ button:active { transform: scale(0.98); }
   <!-- ══ INPUT CARD ══ -->
   <div class="card">
 
+    <!-- Patient / session -->
+    <div class="form-row" style="margin-bottom:0.6rem;">
+      <div class="form-field" style="flex:1;">
+        <label class="field-label" for="patient-ref">Patient name / ref</label>
+        <input type="text" id="patient-ref" placeholder="e.g. Smith J · 01/01/1960 · RN 123456" style="width:100%;" oninput="render()">
+      </div>
+      <button onclick="resetAll()" title="Clear all data and start a new patient" style="flex-shrink:0;">
+        <i class="ti ti-user-plus"></i> New patient
+      </button>
+    </div>
+
+    <hr class="divider">
+
     <!-- Start date & preferences -->
     <div class="section-title">Start date &amp; clinic preferences</div>
     <div class="form-row">
@@ -452,7 +493,7 @@ button:active { transform: scale(0.98); }
 
     <div class="form-row">
       <div class="form-field" style="min-width:170px;">
-        <label class="field-label" for="pref-day">Preferred clinic day</label>
+        <label class="field-label" for="pref-day">Default clinic day</label>
         <select id="pref-day" onchange="render()">
           <option value="0">No preference</option>
           <option value="1">Monday</option>
@@ -461,6 +502,7 @@ button:active { transform: scale(0.98); }
           <option value="4">Thursday</option>
           <option value="5">Friday</option>
         </select>
+        <span class="field-hint">Fallback when no per-interval day is set</span>
       </div>
       <div class="form-field" style="min-width:200px;">
         <label class="field-label" for="bh-action">If date falls on bank holiday</label>
@@ -487,6 +529,17 @@ button:active { transform: scale(0.98); }
           <option value="w">Weeks</option>
           <option value="m">Months</option>
           <option value="d">Days</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="interval-day">Force to day</label>
+        <select id="interval-day" style="width:120px;">
+          <option value="0">Use default</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
         </select>
       </div>
       <div class="form-field" style="flex:1; min-width:150px;">
@@ -543,6 +596,7 @@ button:active { transform: scale(0.98); }
     <div class="result-actions" id="result-actions" style="display:none;">
       <button onclick="copySchedule()"><i class="ti ti-copy"></i> Copy schedule</button>
       <button onclick="copyCSV()"><i class="ti ti-download"></i> Copy as CSV</button>
+      <button onclick="downloadICS()"><i class="ti ti-calendar-plus"></i> Export .ics</button>
       <button onclick="window.print()"><i class="ti ti-printer"></i> Print</button>
     </div>
   </div>
@@ -630,80 +684,85 @@ function prevWorkDay(d) {
 }
 
 // ════════════════════════════════════════════════════════════
-//  PRESETS
+//  CONSTANTS
+// ════════════════════════════════════════════════════════════
+const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DAY_SHORT = ['', 'MON',    'TUE',     'WED',       'THU',      'FRI'   ];
+
+// ════════════════════════════════════════════════════════════
+//  PRESETS — prefDay: 0 = use global default, 1–5 = Mon–Fri forced
 // ════════════════════════════════════════════════════════════
 const PRESETS = {
   rectal: [
-    { n:4,  u:'w', label:'Post-TNT review TC' },
-    { n:8,  u:'w', label:'CT CAP + MRI pelvis' },
-    { n:10,  u:'w', label:'MDT review' },
-    { n:12,  u:'w', label:'Post-MDT review F2F + ctDNA' },
+    { n:4,  u:'w', label:'Post-TNT review TC',          prefDay:0 },
+    { n:8,  u:'w', label:'CT CAP + MRI pelvis',         prefDay:0 },
+    { n:10, u:'w', label:'MDT review',                  prefDay:0 },
+    { n:12, u:'w', label:'Post-MDT review F2F + ctDNA', prefDay:0 },
   ],
-   anal1: [
-    { n:6,  u:'w', label:'6w: Clinical review TC' },
-    { n:12,  u:'w', label:'3m: MRI pelvis' },
-    { n:14,  u:'w', label:'3m: Anal MDT' },
-    { n:14,  u:'w', label:'3m: Clinical review F2F' },
-    { n:26,  u:'w', label:'6m: MRI pelvis + FDG PET CT' },
-    { n:28,  u:'w', label:'6m: Anal MDT' },
-    { n:28,  u:'w', label:'6m: Clinical review F2F' },
-    { n:39,  u:'w', label:'9m: Clinical review F2F' },
-    { n:52,  u:'w', label:'1y: MRI pelvis + FDG PET CT' },
-    { n:54,  u:'w', label:'1y: Clinical review F2F' },
-    { n:12,  u:'m', label:'1y: HRA at HUH HANS' },
-    { n:65,  u:'w', label:'1y3m: Clinical review F2F' },
-    { n:78,  u:'w', label:'1y6m: MRI pelvis' },
-    { n:80,  u:'w', label:'1y6m: Clinical review F2F' },
-    { n:91,  u:'w', label:'Clinical review F2F' },
-    { n:104,  u:'w', label:'MRI pelvis + CT CAP' },
-    { n:106,  u:'w', label:'Clinical review F2F' },
-    { n:130,  u:'w', label:'MRI pelvis' },
-    { n:132,  u:'w', label:'Clinical review F2F' },
-    { n:156,  u:'w', label:'MRI pelvis + CT CAP' },
-    { n:158,  u:'w', label:'Clinical review F2F' },
-    { n:208,  u:'w', label:'Clinical review F2F' },
-    { n:260,  u:'w', label:'Clinical review F2F' },
+  anal1: [
+    { n:6,   u:'w', label:'6w: Clinical review TC',                   prefDay:0 },
+    { n:12,  u:'w', label:'3m: MRI pelvis',                           prefDay:0 },
+    { n:14,  u:'w', label:'3m: Anal MDT',                             prefDay:4 }, // Thu
+    { n:14,  u:'w', label:'3m: Clinical review F2F',                  prefDay:0 },
+    { n:26,  u:'w', label:'6m: MRI pelvis + FDG PET CT',             prefDay:0 },
+    { n:28,  u:'w', label:'6m: Anal MDT',                             prefDay:4 }, // Thu
+    { n:28,  u:'w', label:'6m: Clinical review F2F',                  prefDay:0 },
+    { n:39,  u:'w', label:'9m: Clinical review F2F',                  prefDay:0 },
+    { n:52,  u:'w', label:'1y: MRI pelvis + FDG PET CT',             prefDay:0 },
+    { n:54,  u:'w', label:'1y: Clinical review F2F',                  prefDay:0 },
+    { n:12,  u:'m', label:'1y: HRA at HUH HANS',                     prefDay:0 },
+    { n:65,  u:'w', label:'1y3m: Clinical review F2F',               prefDay:0 },
+    { n:78,  u:'w', label:'1y6m: MRI pelvis',                        prefDay:0 },
+    { n:80,  u:'w', label:'1y6m: Clinical review F2F',               prefDay:0 },
+    { n:91,  u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:104, u:'w', label:'MRI pelvis + CT CAP',                     prefDay:0 },
+    { n:106, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:130, u:'w', label:'MRI pelvis',                               prefDay:0 },
+    { n:132, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:156, u:'w', label:'MRI pelvis + CT CAP',                     prefDay:0 },
+    { n:158, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:208, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:260, u:'w', label:'Clinical review F2F',                      prefDay:0 },
   ],
- anal2: [
-    { n:6,  u:'w', label:'Clinical review TC' },
-    { n:11,  u:'w', label:'MRI pelvis' },
-    { n:13,  u:'w', label:'Anal MDT' },
-    { n:13,  u:'w', label:'Clinical review F2F' },
-    { n:26,  u:'w', label:'MRI pelvis + FDG PET CT' },
-    { n:28,  u:'w', label:'Anal MDT' },
-    { n:28,  u:'w', label:'Clinical review F2F' },
-    { n:9,  u:'m', label:'Clinical review F2F' },
-    { n:12,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
-    { n:12,  u:'m', label:'HRA at HUH HANS' },
-    { n:18,  u:'m', label:'MRI pelvis + Clinical review F2F' },
-    { n:24,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
-    { n:30,  u:'m', label:'MRI pelvis + Clinical review F2F' },
-    { n:36,  u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F' },
+  anal2: [
+    { n:6,  u:'w', label:'Clinical review TC',                        prefDay:0 },
+    { n:11, u:'w', label:'MRI pelvis',                                prefDay:0 },
+    { n:13, u:'w', label:'Anal MDT',                                  prefDay:4 }, // Thu
+    { n:13, u:'w', label:'Clinical review F2F',                       prefDay:0 },
+    { n:26, u:'w', label:'MRI pelvis + FDG PET CT',                  prefDay:0 },
+    { n:28, u:'w', label:'Anal MDT',                                  prefDay:4 }, // Thu
+    { n:28, u:'w', label:'Clinical review F2F',                       prefDay:0 },
+    { n:9,  u:'m', label:'Clinical review F2F',                       prefDay:0 },
+    { n:12, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
+    { n:12, u:'m', label:'HRA at HUH HANS',                          prefDay:0 },
+    { n:18, u:'m', label:'MRI pelvis + Clinical review F2F',         prefDay:0 },
+    { n:24, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
+    { n:30, u:'m', label:'MRI pelvis + Clinical review F2F',         prefDay:0 },
+    { n:36, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
   ],
   cxb1: [
-    { n:0,  u:'w', label:'CXB #1' },
-    { n:2,  u:'w', label:'CXB #2' },
-    { n:4,  u:'w', label:'CXB #3' },
-    { n:7,  u:'w', label:'EBRT start' },
-    { n:11,  u:'w', label:'EBRT end' },
-    { n:17,  u:'w', label:'F/up clinic' },
-    { n:23,  u:'w', label:'MRI pelvis + CT CAP + Flexi sig' },
-    { n:25,  u:'m', label:'CRC MDT' },
-    { n:26,  u:'m', label:'F/up clinic' },
+    { n:0,  u:'w', label:'CXB #1',                           prefDay:0 },
+    { n:2,  u:'w', label:'CXB #2',                           prefDay:0 },
+    { n:4,  u:'w', label:'CXB #3',                           prefDay:0 },
+    { n:7,  u:'w', label:'EBRT start',                       prefDay:0 },
+    { n:11, u:'w', label:'EBRT end',                         prefDay:5 }, // Fri
+    { n:17, u:'w', label:'F/up clinic',                      prefDay:0 },
+    { n:23, u:'w', label:'MRI pelvis + CT CAP + Flexi sig', prefDay:0 },
+    { n:25, u:'m', label:'CRC MDT',                          prefDay:2 }, // Tue
+    { n:26, u:'m', label:'F/up clinic',                      prefDay:0 },
   ],
-   cxb2: [
-    { n:0,  u:'w', label:'EBRT start' },
-    { n:5,  u:'w', label:'EBRT end' },
-    { n:10,  u:'w', label:'CXB #1' },
-    { n:12,  u:'w', label:'CXB #2' },
-    { n:14,  u:'w', label:'CXB #3' },
-    { n:20,  u:'w', label:'F/up clinic' },
-    { n:26,  u:'w', label:'MRI pelvis + CT CAP + Flexi sig' },
-    { n:28,  u:'m', label:'CRC MDT' },
-    { n:29,  u:'m', label:'F/up clinic' },
+  cxb2: [
+    { n:0,  u:'w', label:'EBRT start',                       prefDay:0 },
+    { n:5,  u:'w', label:'EBRT end',                         prefDay:5 }, // Fri
+    { n:10, u:'w', label:'CXB #1',                           prefDay:0 },
+    { n:12, u:'w', label:'CXB #2',                           prefDay:0 },
+    { n:14, u:'w', label:'CXB #3',                           prefDay:0 },
+    { n:20, u:'w', label:'F/up clinic',                      prefDay:0 },
+    { n:26, u:'w', label:'MRI pelvis + CT CAP + Flexi sig', prefDay:0 },
+    { n:28, u:'m', label:'CRC MDT',                          prefDay:2 }, // Tue
+    { n:29, u:'m', label:'F/up clinic',                      prefDay:0 },
   ],
 };
- 
 
 // ════════════════════════════════════════════════════════════
 //  STATE
@@ -780,6 +839,72 @@ function toWeeks(item) {
   return item.n / 7;
 }
 
+function formatFromNow(diffD) {
+  if (diffD === 0) return 'Today';
+  const abs  = Math.abs(diffD);
+  const past = diffD < 0;
+  let str;
+  if (abs < 14)       str = `${abs}d`;
+  else if (abs < 60)  str = `${Math.round(abs / 7)}w`;
+  else if (abs < 730) str = `${Math.round(abs / 30.44)}m`;
+  else {
+    const yrs  = Math.floor(abs / 365.25);
+    const mths = Math.round((abs - yrs * 365.25) / 30.44);
+    str = mths > 0 ? `${yrs}y ${mths}m` : `${yrs}y`;
+  }
+  return past ? `${str} ago` : `in ${str}`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  LOCAL STORAGE PERSISTENCE
+// ════════════════════════════════════════════════════════════
+function saveState() {
+  try {
+    localStorage.setItem('cxb_schedule', JSON.stringify({
+      v: 1,
+      startDate:  document.getElementById('start-date').value,
+      patientRef: document.getElementById('patient-ref').value,
+      prefDay:    document.getElementById('pref-day').value,
+      bhAction:   document.getElementById('bh-action').value,
+      intervals:  intervals.map(({ n, u, label, prefDay }) => ({ n, u, label, prefDay }))
+    }));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('cxb_schedule');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (s.patientRef) document.getElementById('patient-ref').value = s.patientRef;
+    if (s.prefDay)    document.getElementById('pref-day').value    = s.prefDay;
+    if (s.bhAction)   document.getElementById('bh-action').value   = s.bhAction;
+    if (s.intervals && s.intervals.length) {
+      intervals.length = 0;
+      s.intervals.forEach(i => intervals.push({ ...i, id: nextId++ }));
+      renderIntervalList();
+    }
+    if (s.startDate) {
+      document.getElementById('start-date').value = s.startDate;
+      return true;
+    }
+    return false;
+  } catch(e) { return false; }
+}
+
+function resetAll() {
+  if (!confirm('Start a new patient? This will clear all current data.')) return;
+  intervals.length = 0;
+  document.getElementById('start-date').value  = '';
+  document.getElementById('patient-ref').value = '';
+  document.getElementById('pref-day').value    = '0';
+  document.getElementById('bh-action').value   = 'flag';
+  document.getElementById('interval-day').value = '0';
+  try { localStorage.removeItem('cxb_schedule'); } catch(e) {}
+  renderIntervalList();
+  setToday();
+}
+
 // ════════════════════════════════════════════════════════════
 //  INTERVAL MANAGEMENT
 // ════════════════════════════════════════════════════════════
@@ -787,16 +912,18 @@ function addInterval() {
   const n = parseInt(document.getElementById('interval-num').value);
   const u = document.getElementById('interval-unit').value;
   const label = document.getElementById('interval-label').value.trim();
+  const prefDay = parseInt(document.getElementById('interval-day').value);
   if (!n || n < 1) return;
-  intervals.push({ id: nextId++, n, u, label });
+  intervals.push({ id: nextId++, n, u, label, prefDay });
   intervals.sort((a, b) => toWeeks(a) - toWeeks(b));
   document.getElementById('interval-label').value = '';
+  document.getElementById('interval-day').value = '0';
   renderIntervalList();
   render();
 }
 
 function quickAdd(n, u, label) {
-  intervals.push({ id: nextId++, n, u, label });
+  intervals.push({ id: nextId++, n, u, label, prefDay: 0 });
   intervals.sort((a, b) => toWeeks(a) - toWeeks(b));
   renderIntervalList();
   render();
@@ -828,9 +955,13 @@ function renderIntervalList() {
   el.innerHTML = intervals.map(i => {
     const cls = i.u === 'w' ? 'chip-w' : i.u === 'm' ? 'chip-m' : 'chip-d';
     const ul  = i.u === 'w' ? 'wk'    : i.u === 'm' ? 'mo'    : 'd';
+    const dayBadge = i.prefDay
+      ? `<span class="chip chip-day" title="Forced to ${DAY_NAMES[i.prefDay]}">${DAY_SHORT[i.prefDay]}</span>`
+      : '';
     return `<div class="interval-item">
       <span class="chip ${cls}">${i.n}${ul}</span>
       <span class="interval-item-label">${i.label || '—'}</span>
+      ${dayBadge}
       <button class="remove-btn" onclick="removeInterval(${i.id})" aria-label="Remove interval">
         <i class="ti ti-x"></i>
       </button>
@@ -842,11 +973,11 @@ function renderIntervalList() {
 //  RENDER RESULTS
 // ════════════════════════════════════════════════════════════
 function render() {
-  const startVal = document.getElementById('start-date').value;
-  const inner    = document.getElementById('results-inner');
-  const actions  = document.getElementById('result-actions');
-  const prefDay  = parseInt(document.getElementById('pref-day').value);
-  const bhAction = document.getElementById('bh-action').value;
+  const startVal      = document.getElementById('start-date').value;
+  const inner         = document.getElementById('results-inner');
+  const actions       = document.getElementById('result-actions');
+  const globalPrefDay = parseInt(document.getElementById('pref-day').value);
+  const bhAction      = document.getElementById('bh-action').value;
 
   if (!startVal || !intervals.length) {
     inner.innerHTML = `<div class="empty-state">
@@ -854,32 +985,37 @@ function render() {
       Add a start date and at least one interval above
     </div>`;
     actions.style.display = 'none';
+    saveState();
     return;
   }
 
   const base  = new Date(startVal + 'T12:00:00');
   const today = new Date(); today.setHours(12, 0, 0, 0);
-  const PREF_DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
   const rows = intervals.map(item => {
+    // n=0 items are anchors (start date itself) — immune to day shifting
+    const effectivePrefDay = (item.n === 0) ? 0 : (item.prefDay || globalPrefDay);
     const raw = calcDate(base, item);
-    const { date: pa, shifted, shiftDays } = applyPrefDay(raw, prefDay);
+    const { date: pa, shifted, shiftDays } = applyPrefDay(raw, effectivePrefDay);
     const { date: fd, bhMoved, isBHFlag, bhHolidayName } = applyBHAction(pa, bhAction);
     const wc      = mondayOf(fd);
     const diffMs  = fd - today;
     const diffD   = Math.round(diffMs / 86400000);
-    const daysStr = diffD === 0 ? 'Today' : diffD > 0 ? `in ${diffD}d` : `${Math.abs(diffD)}d ago`;
+    const daysStr = formatFromNow(diffD);
     const chipCls = item.u === 'w' ? 'chip-w' : item.u === 'm' ? 'chip-m' : 'chip-d';
     const ul      = item.u === 'w' ? 'wk'    : item.u === 'm' ? 'mo'    : 'd';
-    return { item, raw, fd, wc, daysStr, chipCls, ul, shifted, shiftDays, bhMoved, isBHFlag, bhHolidayName };
+    const isWknd  = isWeekend(fd);
+    return { item, raw, fd, wc, daysStr, chipCls, ul, shifted, shiftDays, bhMoved, isBHFlag, bhHolidayName, effectivePrefDay, isWknd };
   });
 
-  const prefNote = prefDay
-    ? `&nbsp;&nbsp;·&nbsp;&nbsp;Preferred day: <strong>${PREF_DAY_NAMES[prefDay]}</strong>`
+  const patRef   = document.getElementById('patient-ref').value.trim();
+  const prefNote = globalPrefDay
+    ? `&nbsp;&nbsp;·&nbsp;&nbsp;Default day: <strong>${DAY_NAMES[globalPrefDay]}</strong>`
     : '';
 
   inner.innerHTML = `
     <div class="start-info">
+      ${patRef ? `<div style="font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:0.25rem;">${esc(patRef)}</div>` : ''}
       Start: <strong>${fmtDate(base)}</strong>${prefNote}
     </div>
     <div class="results-table">
@@ -889,7 +1025,14 @@ function render() {
         <div>Week commencing</div>
         <div style="text-align:right;">From now</div>
       </div>
-      ${rows.map((r, i) => `
+      ${rows.map((r, i) => {
+        let adjustedNote = '';
+        if (r.shifted && !r.bhMoved) {
+          const verb = r.item.prefDay ? 'forced to' : 'adjusted to';
+          const sign = r.shiftDays > 0 ? `+${r.shiftDays}` : `${r.shiftDays}`;
+          adjustedNote = `<div class="result-adjusted">${verb} ${DAY_NAMES[r.effectivePrefDay]} (${sign}d from ${fmtDateShort(r.raw)})</div>`;
+        }
+        return `
         <div class="result-row ${i % 2 === 1 ? 'result-stripe' : ''}">
           <div>
             <span class="chip ${r.chipCls}">${r.item.n}${r.ul}</span>
@@ -898,31 +1041,34 @@ function render() {
           <div>
             <div class="result-date-main">${fmtDate(r.fd)}</div>
             <div class="result-day-name">${fmtDay(r.fd)}</div>
-            ${r.shifted && !r.bhMoved ? `<div class="result-adjusted">adjusted ${r.shiftDays > 0 ? '+' + r.shiftDays : r.shiftDays}d from ${fmtDateShort(r.raw)}</div>` : ''}
+            ${adjustedNote}
             ${r.bhMoved  ? `<div class="bh-flag bh-flag-moved"><i class="ti ti-arrow-right" style="font-size:10px;"></i> ${esc(r.bhHolidayName)} — moved</div>` : ''}
             ${r.isBHFlag ? `<div class="bh-flag bh-flag-warn"><i class="ti ti-alert-triangle" style="font-size:10px;"></i> ${esc(r.bhHolidayName)}</div>` : ''}
+            ${r.isWknd   ? `<div class="bh-flag bh-flag-weekend"><i class="ti ti-moon" style="font-size:10px;"></i> Weekend</div>` : ''}
           </div>
           <div class="result-wc">w/c ${fmtDateShort(r.wc)}</div>
           <div class="result-days">${r.daysStr}</div>
-        </div>
-      `).join('')}
+        </div>`;
+      }).join('')}
     </div>`;
 
   actions.style.display = 'flex';
+  saveState();
 }
 
 // ════════════════════════════════════════════════════════════
 //  COPY / EXPORT
 // ════════════════════════════════════════════════════════════
 function buildRows() {
-  const startVal = document.getElementById('start-date').value;
+  const startVal      = document.getElementById('start-date').value;
   if (!startVal) return null;
-  const base     = new Date(startVal + 'T12:00:00');
-  const prefDay  = parseInt(document.getElementById('pref-day').value);
-  const bhAction = document.getElementById('bh-action').value;
+  const base          = new Date(startVal + 'T12:00:00');
+  const globalPrefDay = parseInt(document.getElementById('pref-day').value);
+  const bhAction      = document.getElementById('bh-action').value;
   return intervals.map(item => {
+    const effectivePrefDay = (item.n === 0) ? 0 : (item.prefDay || globalPrefDay);
     const raw = calcDate(base, item);
-    const { date: pa } = applyPrefDay(raw, prefDay);
+    const { date: pa } = applyPrefDay(raw, effectivePrefDay);
     const { date: fd, bhMoved, isBHFlag, bhHolidayName } = applyBHAction(pa, bhAction);
     return { item, raw, fd, wc: mondayOf(fd), bhMoved, isBHFlag, bhHolidayName };
   });
@@ -932,14 +1078,19 @@ function copySchedule() {
   const startVal = document.getElementById('start-date').value;
   const rows = buildRows();
   if (!rows) return;
-  const base  = new Date(startVal + 'T12:00:00');
-  let txt = `Follow-up schedule\nStart date: ${fmtDate(base)}\n\n`;
+  const base     = new Date(startVal + 'T12:00:00');
+  const patRef   = document.getElementById('patient-ref').value.trim();
+  let txt = `Follow-up schedule\n`;
+  if (patRef) txt += `Patient: ${patRef}\n`;
+  txt += `Start date: ${fmtDate(base)}\n\n`;
   rows.forEach(r => {
-    const ul = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
-    txt += `${r.item.n}${ul}${r.item.label ? ' — ' + r.item.label : ''}\n`;
+    const ul     = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const dayTag = r.item.prefDay ? ` [→ ${DAY_NAMES[r.item.prefDay]}]` : '';
+    txt += `${r.item.n}${ul}${r.item.label ? ' — ' + r.item.label : ''}${dayTag}\n`;
     txt += `  ${fmtDate(r.fd)}  (${fmtDay(r.fd)})  ·  w/c ${fmtDateShort(r.wc)}`;
-    if (r.bhMoved)  txt += `  [moved from ${r.bhHolidayName || 'bank holiday'}]`;
-    if (r.isBHFlag) txt += `  [⚠ ${r.bhHolidayName}]`;
+    if (r.bhMoved)        txt += `  [moved from ${r.bhHolidayName || 'bank holiday'}]`;
+    if (r.isBHFlag)       txt += `  [⚠ ${r.bhHolidayName}]`;
+    if (isWeekend(r.fd))  txt += `  [⚠ Weekend]`;
     txt += '\n\n';
   });
   copyText(txt.trim(), 0);
@@ -948,15 +1099,83 @@ function copySchedule() {
 function copyCSV() {
   const rows = buildRows();
   if (!rows) return;
-  let csv = 'Interval,Label,Date,Day,Week commencing,Bank holiday note\n';
+  let csv = 'Interval,Label,Forced day,Date,Day,Week commencing,Bank holiday note\n';
   rows.forEach(r => {
-    const ul   = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
-    const note = r.bhMoved  ? `Moved from ${r.bhHolidayName || 'bank holiday'}`
-               : r.isBHFlag ? r.bhHolidayName || 'Bank holiday'
-               : '';
-    csv += `${r.item.n}${ul},"${r.item.label || ''}","${fmtDateShort(r.fd)}","${fmtDay(r.fd)}","${fmtDateShort(r.wc)}","${note}"\n`;
+    const ul     = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const forced = r.item.prefDay ? DAY_NAMES[r.item.prefDay] : '';
+    const note   = r.bhMoved  ? `Moved from ${r.bhHolidayName || 'bank holiday'}`
+                 : r.isBHFlag ? r.bhHolidayName || 'Bank holiday'
+                 : isWeekend(r.fd) ? 'Weekend'
+                 : '';
+    csv += `${r.item.n}${ul},"${r.item.label || ''}","${forced}","${fmtDateShort(r.fd)}","${fmtDay(r.fd)}","${fmtDateShort(r.wc)}","${note}"\n`;
   });
   copyText(csv, 1);
+}
+
+function toICSDate(d) {
+  return d.getFullYear() +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0');
+}
+
+function downloadICS() {
+  const rows = buildRows();
+  if (!rows) return;
+  const startVal   = document.getElementById('start-date').value;
+  const patientRef = document.getElementById('patient-ref').value.trim();
+
+  const now   = new Date();
+  const stamp = now.getFullYear() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') + 'T' +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0') +
+    String(now.getSeconds()).padStart(2, '0') + 'Z';
+
+  const calName = [patientRef, 'Follow-up Schedule'].filter(Boolean).join(' — ');
+
+  let ics  = 'BEGIN:VCALENDAR\r\n';
+  ics     += 'VERSION:2.0\r\n';
+  ics     += 'PRODID:-//CXB Tools//Follow-up Date Calculator//EN\r\n';
+  ics     += 'CALSCALE:GREGORIAN\r\n';
+  ics     += 'METHOD:PUBLISH\r\n';
+  ics     += `X-WR-CALNAME:${calName}\r\n`;
+
+  rows.forEach((r, idx) => {
+    const ul      = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const summary = r.item.label || `${r.item.n}${ul} follow-up`;
+    const dtStart = toICSDate(r.fd);
+    const next    = new Date(r.fd); next.setDate(r.fd.getDate() + 1);
+    const dtEnd   = toICSDate(next);
+    const notes   = [
+      `w/c ${fmtDateShort(r.wc)}`,
+      r.bhMoved       ? `Moved from ${r.bhHolidayName}` : '',
+      r.isBHFlag      ? `⚠ ${r.bhHolidayName}` : '',
+      isWeekend(r.fd) ? '⚠ Weekend' : '',
+    ].filter(Boolean).join(' · ');
+
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:cxb-${stamp}-${idx}@cxbtools\r\n`;
+    ics += `DTSTAMP:${stamp}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${dtStart}\r\n`;
+    ics += `DTEND;VALUE=DATE:${dtEnd}\r\n`;
+    ics += `SUMMARY:${summary}\r\n`;
+    ics += `DESCRIPTION:${notes}\r\n`;
+    if (patientRef) ics += `COMMENT:${patientRef}\r\n`;
+    ics += 'END:VEVENT\r\n';
+  });
+
+  ics += 'END:VCALENDAR';
+
+  const blob  = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href      = url;
+  a.download  = `${patientRef ? patientRef.replace(/[^\w]/g, '_') + '_' : ''}followup.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function copyText(text, btnIdx) {
@@ -979,7 +1198,8 @@ document.getElementById('start-date').addEventListener('change', render);
 document.getElementById('interval-num').addEventListener('keydown', e => { if (e.key === 'Enter') addInterval(); });
 document.getElementById('interval-label').addEventListener('keydown', e => { if (e.key === 'Enter') addInterval(); });
 
-setToday();
+const hasSaved = loadState();
+if (!hasSaved) setToday(); else render();
 loadBankHolidays();
 </script>
 
