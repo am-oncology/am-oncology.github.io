@@ -12,12 +12,15 @@
             --card-bg: #ffffff;
             --text-main: #111827;
         }
+        * {
+            box-sizing: border-box; /* Fixes mobile overflow issues */
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -25,27 +28,31 @@
             background: var(--card-bg);
             max-width: 800px;
             width: 100%;
-            padding: 30px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         h1, h2, h3 { color: var(--nhs-dark); }
+        h1 { font-size: 1.8rem; margin-top: 0; }
+        p { font-size: 0.95rem; line-height: 1.4; margin-bottom: 20px; }
+        
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 15px 20px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: flex;
             flex-direction: column;
         }
-        label { font-weight: 600; margin-bottom: 5px; font-size: 0.9rem;}
+        label { font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;}
         select, input {
             padding: 10px;
             border: 1px solid #d1d5db;
             border-radius: 5px;
             font-size: 1rem;
+            width: 100%;
         }
         .section {
             border-top: 2px solid var(--bg-color);
@@ -58,7 +65,7 @@
             color: white;
             padding: 20px;
             border-radius: 8px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
         .results-grid {
             display: grid;
@@ -70,8 +77,22 @@
             padding: 15px;
             border-radius: 5px;
         }
-        .result-item span { display: block; font-size: 0.85rem; opacity: 0.9; }
-        .result-item strong { font-size: 1.5rem; }
+        .result-item span { display: block; font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px; }
+        .result-item strong { font-size: 1.4rem; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr; /* Collapse grid into single column */
+                gap: 10px;
+            }
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -100,6 +121,7 @@
         </div>
     </div>
 
+    <!-- RESIDENT FIELDS -->
     <div id="resident-fields" class="section">
         <h3>Resident Contract Inputs (Hours)</h3>
         <div class="grid-2">
@@ -123,9 +145,17 @@
                     <option value="0.15">1 in 3 (15%)</option>
                 </select>
             </div>
+            <div class="form-group">
+                <label>Non-Resident On-Call (NROC) Allowance</label>
+                <select id="res-nroc">
+                    <option value="0">None (0%)</option>
+                    <option value="0.08">NROC Availability (8%)</option>
+                </select>
+            </div>
         </div>
     </div>
 
+    <!-- CONSULTANT / SAS FIELDS -->
     <div id="consultant-fields" class="section hidden">
         <h3>Consultant / SAS Inputs (PAs)</h3>
         <div class="grid-2">
@@ -148,9 +178,18 @@
                 <label>NCIAs / Clinical Excellence Awards (£)</label>
                 <input type="number" id="con-ncias" value="0" step="1000" min="0">
             </div>
+            <div class="form-group">
+                <label>Responsibility / Management Allowance (£)</label>
+                <input type="number" id="con-resp" value="0" step="500" min="0">
+            </div>
+            <div class="form-group">
+                <label>Waiting List Initiatives (WLI) (£/yr)</label>
+                <input type="number" id="con-wli" value="0" step="500" min="0">
+            </div>
         </div>
     </div>
 
+    <!-- UNIVERSAL FIELDS -->
     <div class="section">
         <h3>General Allowances & Deductions</h3>
         <div class="grid-2">
@@ -168,6 +207,7 @@
         </div>
     </div>
 
+    <!-- RESULTS -->
     <div class="results-box">
         <h2>Estimated Take-Home Pay</h2>
         <div class="results-grid">
@@ -231,7 +271,6 @@
     const residentFields = document.getElementById('resident-fields');
     const consultantFields = document.getElementById('consultant-fields');
     const nciaContainer = document.getElementById('ncia-container');
-    const inputs = document.querySelectorAll('input, select');
 
     // Populate Grades based on Role
     function populateGrades() {
@@ -251,7 +290,7 @@
         } else {
             residentFields.classList.add('hidden');
             consultantFields.classList.remove('hidden');
-            nciaContainer.style.display = role === 'sas' ? 'none' : 'block';
+            nciaContainer.style.display = role === 'sas' ? 'none' : 'flex';
         }
         calculate();
     }
@@ -290,10 +329,8 @@
         tax += basicBand * 0.20;
         incomeToTax -= basicBand;
 
-        // Higher Rate 40% (up to £125,140 total income limit threshold conceptually)
+        // Higher Rate 40% (up to £125,140 total income limit threshold)
         if (incomeToTax > 0) {
-            let higherBandLimit = 125140 - (personalAllowance + 37700); 
-            // In reality, 45% kicks in at £125,140 flat.
             let higherBand = Math.min(incomeToTax, 125140 - (taxableIncome - incomeToTax));
             if(higherBand > 0) {
                 tax += higherBand * 0.40;
@@ -337,6 +374,7 @@
             const hours = parseFloat(document.getElementById('res-hours').value) || 40;
             const nightHours = parseFloat(document.getElementById('res-nights').value) || 0;
             const weekendMult = parseFloat(document.getElementById('res-weekend').value);
+            const nrocMult = parseFloat(document.getElementById('res-nroc').value);
             
             // Hourly rate calculation
             const hourlyRate = basePay / (40 * 52.143);
@@ -352,7 +390,10 @@
             // Weekend Allowance is a % of basic pay
             const weekendPay = basePay * weekendMult;
 
-            grossAnnual = basicPayElement + extraHoursPay + nightPay + weekendPay + londonWeighting;
+            // NROC Allowance is a % of basic pay
+            const nrocPay = basePay * nrocMult;
+
+            grossAnnual = basicPayElement + extraHoursPay + nightPay + weekendPay + nrocPay + londonWeighting;
             pensionablePay = basicPayElement + londonWeighting; // Extra hours/enhancements generally not pensionable in the 2016 contract
 
         } else {
@@ -360,6 +401,8 @@
             const pas = parseFloat(document.getElementById('con-pas').value) || 10;
             const oncallMult = parseFloat(document.getElementById('con-oncall').value);
             const ncias = parseFloat(document.getElementById('con-ncias').value) || 0;
+            const respAllowance = parseFloat(document.getElementById('con-resp').value) || 0;
+            const wli = parseFloat(document.getElementById('con-wli').value) || 0;
 
             const extraPas = Math.max(0, pas - 10);
             const payPerPa = basePay / 10;
@@ -368,8 +411,10 @@
             const extraPaPay = extraPas * payPerPa;
             const oncallPay = basePay * oncallMult;
 
-            grossAnnual = basicPayElement + extraPaPay + oncallPay + ncias + londonWeighting;
-            pensionablePay = basicPayElement + ncias + londonWeighting; // NCIAs are pensionable
+            grossAnnual = basicPayElement + extraPaPay + oncallPay + ncias + respAllowance + wli + londonWeighting;
+            
+            // Allowances like Responsibility/Management are typically pensionable, WLI usually is not.
+            pensionablePay = basicPayElement + ncias + respAllowance + londonWeighting; 
         }
 
         // Deductions
@@ -389,6 +434,7 @@
     }
 
     // Attach event listeners to all inputs to update instantly
+    const inputs = document.querySelectorAll('input, select');
     inputs.forEach(input => input.addEventListener('input', calculate));
     
     // Initialize
