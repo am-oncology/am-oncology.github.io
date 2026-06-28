@@ -11,9 +11,10 @@
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #111827;
+            --nhs-green: #007f3b;
         }
         * {
-            box-sizing: border-box; /* Fixes mobile overflow issues */
+            box-sizing: border-box;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -32,10 +33,32 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        h1, h2, h3 { color: var(--nhs-dark); }
-        h1 { font-size: 1.8rem; margin-top: 0; }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        h1, h2, h3 { color: var(--nhs-dark); margin-top: 0;}
+        h1 { font-size: 1.8rem; margin-bottom: 0;}
         p { font-size: 0.95rem; line-height: 1.4; margin-bottom: 20px; }
         
+        .btn-share {
+            background-color: var(--nhs-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .btn-share:hover { background-color: var(--nhs-dark); }
+        .btn-share.copied { background-color: var(--nhs-green); }
+
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -80,26 +103,21 @@
         .result-item span { display: block; font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px; }
         .result-item strong { font-size: 1.4rem; }
 
-        /* Mobile Responsiveness */
         @media (max-width: 600px) {
-            .grid-2 {
-                grid-template-columns: 1fr; /* Collapse grid into single column */
-                gap: 10px;
-            }
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-            .container {
-                padding: 15px;
-            }
+            .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+            .results-grid { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>UK Doctors Salary Calculator</h1>
-    <p>Model 2025/2026 NHS pay, pensions, and taxes, including future DDRB uplifts.</p>
+    <div class="header-row">
+        <h1>UK Doctors Salary Calculator</h1>
+        <button id="copy-btn" class="btn-share" onclick="copyLink()">🔗 Copy Link to Share</button>
+    </div>
+    <p>Model 2025/2026 NHS pay, pensions, and taxes. Supports LTFT schedules and link sharing.</p>
 
     <div class="form-group">
         <label>Future DDRB Uplift Model (%)</label>
@@ -121,13 +139,13 @@
         </div>
     </div>
 
-    <!-- RESIDENT FIELDS -->
     <div id="resident-fields" class="section">
         <h3>Resident Contract Inputs (Hours)</h3>
+        <p style="font-size: 0.85rem; color: #6b7280; margin-top: -10px;">Enter under 40 hours to automatically apply LTFT scaling and the £1,000 allowance.</p>
         <div class="grid-2">
             <div class="form-group">
                 <label>Average Weekly Hours (Base is 40)</label>
-                <input type="number" id="res-hours" value="40" step="0.5" min="40" max="48">
+                <input type="number" id="res-hours" value="40" step="0.5" min="0" max="48">
             </div>
             <div class="form-group">
                 <label>Average Weekly Night Hours</label>
@@ -155,13 +173,13 @@
         </div>
     </div>
 
-    <!-- CONSULTANT / SAS FIELDS -->
     <div id="consultant-fields" class="section hidden">
         <h3>Consultant / SAS Inputs (PAs)</h3>
+        <p style="font-size: 0.85rem; color: #6b7280; margin-top: -10px;">Enter under 10 PAs to automatically apply LTFT pro-rata scaling.</p>
         <div class="grid-2">
             <div class="form-group">
                 <label>Total Programmed Activities (PAs) (Base is 10)</label>
-                <input type="number" id="con-pas" value="10" step="0.25" min="10">
+                <input type="number" id="con-pas" value="10" step="0.25" min="1">
             </div>
             <div class="form-group">
                 <label>On-Call Availability Supplement (%)</label>
@@ -189,7 +207,6 @@
         </div>
     </div>
 
-    <!-- UNIVERSAL FIELDS -->
     <div class="section">
         <h3>General Allowances & Deductions</h3>
         <div class="grid-2">
@@ -207,13 +224,16 @@
         </div>
     </div>
 
-    <!-- RESULTS -->
     <div class="results-box">
         <h2>Estimated Take-Home Pay</h2>
         <div class="results-grid">
             <div class="result-item">
                 <span>Annual Gross Pay</span>
                 <strong id="out-gross">£0.00</strong>
+            </div>
+            <div class="result-item" id="ltft-result-container" style="display: none;">
+                <span>LTFT Allowance (Included)</span>
+                <strong id="out-ltft">£0.00</strong>
             </div>
             <div class="result-item">
                 <span>Pension Deduction (Annual)</span>
@@ -227,11 +247,11 @@
                 <span>National Insurance (Annual)</span>
                 <strong id="out-ni">£0.00</strong>
             </div>
-            <div class="result-item" style="background: #007f3b;">
+            <div class="result-item" style="background: var(--nhs-green);">
                 <span>Net Annual Take-Home</span>
                 <strong id="out-net-annual">£0.00</strong>
             </div>
-            <div class="result-item" style="background: #007f3b;">
+            <div class="result-item" style="background: var(--nhs-green);">
                 <span>Net Monthly Take-Home</span>
                 <strong id="out-net-monthly">£0.00</strong>
             </div>
@@ -240,8 +260,6 @@
 </div>
 
 <script>
-    // --- PAYSCALES CONFIGURATION (2025/2026 Base Rates) ---
-    // Manually update these when new DDRB figures are released.
     const payscales = {
         resident: [
             { name: "FY1", base: 38831 },
@@ -265,16 +283,17 @@
         ]
     };
 
-    // DOM Elements
     const roleSelect = document.getElementById('role-select');
     const gradeSelect = document.getElementById('grade-select');
     const residentFields = document.getElementById('resident-fields');
     const consultantFields = document.getElementById('consultant-fields');
     const nciaContainer = document.getElementById('ncia-container');
+    const inputs = document.querySelectorAll('input, select');
 
-    // Populate Grades based on Role
     function populateGrades() {
         const role = roleSelect.value;
+        const currentGrade = gradeSelect.value;
+        
         gradeSelect.innerHTML = '';
         payscales[role].forEach((grade, index) => {
             let opt = document.createElement('option');
@@ -283,7 +302,10 @@
             gradeSelect.appendChild(opt);
         });
         
-        // Toggle UI Fields
+        if (currentGrade && gradeSelect.querySelector(`option[value="${currentGrade}"]`)) {
+            gradeSelect.value = currentGrade;
+        }
+
         if (role === 'resident') {
             residentFields.classList.remove('hidden');
             consultantFields.classList.add('hidden');
@@ -292,16 +314,15 @@
             consultantFields.classList.remove('hidden');
             nciaContainer.style.display = role === 'sas' ? 'none' : 'flex';
         }
-        calculate();
     }
 
-    roleSelect.addEventListener('change', populateGrades);
+    roleSelect.addEventListener('change', () => {
+        populateGrades();
+        calculate();
+    });
 
-    // --- TAX, NI & PENSION LOGIC (UK 2024/2025/2026 Bands) ---
-    
     function calculatePension(pensionablePay) {
         if (document.getElementById('pension-opt').value === 'no') return 0;
-        // 2024+ NHS Pension Tiers
         let rate = 0;
         if (pensionablePay <= 13246) rate = 0.052;
         else if (pensionablePay <= 17673) rate = 0.065;
@@ -314,8 +335,6 @@
 
     function calculateTax(taxableIncome) {
         let personalAllowance = 12570;
-        
-        // PA Tapering for high earners (loss of £1 for every £2 over £100,000)
         if (taxableIncome > 100000) {
             let taper = (taxableIncome - 100000) / 2;
             personalAllowance = Math.max(0, personalAllowance - taper);
@@ -324,12 +343,10 @@
         let tax = 0;
         let incomeToTax = Math.max(0, taxableIncome - personalAllowance);
 
-        // Basic Rate 20% (up to £37,700 above PA)
         let basicBand = Math.min(incomeToTax, 37700);
         tax += basicBand * 0.20;
         incomeToTax -= basicBand;
 
-        // Higher Rate 40% (up to £125,140 total income limit threshold)
         if (incomeToTax > 0) {
             let higherBand = Math.min(incomeToTax, 125140 - (taxableIncome - incomeToTax));
             if(higherBand > 0) {
@@ -338,16 +355,13 @@
             }
         }
 
-        // Additional Rate 45%
         if (incomeToTax > 0) {
             tax += incomeToTax * 0.45;
         }
-
         return tax;
     }
 
     function calculateNI(gross) {
-        // Class 1 NI (8% between £12,570 and £50,270, 2% above)
         let ni = 0;
         if (gross > 12570) {
             let band1 = Math.min(gross - 12570, 50270 - 12570);
@@ -359,16 +373,16 @@
         return ni;
     }
 
-    // --- MAIN CALCULATION ENGINE ---
     function calculate() {
         const role = roleSelect.value;
-        const gradeIndex = gradeSelect.value;
+        const gradeIndex = gradeSelect.value || 0;
         const ddrbMultiplier = 1 + (parseFloat(document.getElementById('ddrb-slider').value) / 100);
-        const basePay = payscales[role][gradeIndex].base * ddrbMultiplier;
+        const basePayFullTime = payscales[role][gradeIndex].base * ddrbMultiplier;
         const londonWeighting = parseFloat(document.getElementById('london-weighting').value) || 0;
         
         let grossAnnual = 0;
         let pensionablePay = 0;
+        let ltftAllowance = 0;
 
         if (role === 'resident') {
             const hours = parseFloat(document.getElementById('res-hours').value) || 40;
@@ -376,70 +390,124 @@
             const weekendMult = parseFloat(document.getElementById('res-weekend').value);
             const nrocMult = parseFloat(document.getElementById('res-nroc').value);
             
-            // Hourly rate calculation
-            const hourlyRate = basePay / (40 * 52.143);
-            const basicPayElement = basePay;
+            const hourlyRate = basePayFullTime / (40 * 52.143);
+            let basicPayElement = 0;
+            let extraHoursPay = 0;
+
+            if (hours < 40) {
+                // LTFT Mode
+                basicPayElement = basePayFullTime * (hours / 40);
+                ltftAllowance = 1000;
+            } else {
+                // Full Time / Extra Hours
+                basicPayElement = basePayFullTime;
+                extraHoursPay = (hours - 40) * hourlyRate * 52.143;
+            }
             
-            // Additional hours
-            const extraHours = Math.max(0, hours - 40);
-            const extraHoursPay = extraHours * hourlyRate * 52.143;
-            
-            // Nights (37% premium)
             const nightPay = nightHours * hourlyRate * 0.37 * 52.143;
-            
-            // Weekend Allowance is a % of basic pay
-            const weekendPay = basePay * weekendMult;
+            const weekendPay = basicPayElement * weekendMult;
+            const nrocPay = basicPayElement * nrocMult;
 
-            // NROC Allowance is a % of basic pay
-            const nrocPay = basePay * nrocMult;
-
-            grossAnnual = basicPayElement + extraHoursPay + nightPay + weekendPay + nrocPay + londonWeighting;
-            pensionablePay = basicPayElement + londonWeighting; // Extra hours/enhancements generally not pensionable in the 2016 contract
+            grossAnnual = basicPayElement + extraHoursPay + nightPay + weekendPay + nrocPay + ltftAllowance + londonWeighting;
+            pensionablePay = basicPayElement + londonWeighting; 
 
         } else {
-            // Consultants and SAS
             const pas = parseFloat(document.getElementById('con-pas').value) || 10;
             const oncallMult = parseFloat(document.getElementById('con-oncall').value);
             const ncias = parseFloat(document.getElementById('con-ncias').value) || 0;
             const respAllowance = parseFloat(document.getElementById('con-resp').value) || 0;
             const wli = parseFloat(document.getElementById('con-wli').value) || 0;
 
-            const extraPas = Math.max(0, pas - 10);
-            const payPerPa = basePay / 10;
-            
-            const basicPayElement = basePay;
-            const extraPaPay = extraPas * payPerPa;
-            const oncallPay = basePay * oncallMult;
+            let basicPayElement = 0;
+            let extraPaPay = 0;
 
+            if (pas < 10) {
+                // LTFT Mode
+                basicPayElement = basePayFullTime * (pas / 10);
+            } else {
+                basicPayElement = basePayFullTime;
+                extraPaPay = (pas - 10) * (basePayFullTime / 10);
+            }
+
+            const oncallPay = basicPayElement * oncallMult;
             grossAnnual = basicPayElement + extraPaPay + oncallPay + ncias + respAllowance + wli + londonWeighting;
-            
-            // Allowances like Responsibility/Management are typically pensionable, WLI usually is not.
             pensionablePay = basicPayElement + ncias + respAllowance + londonWeighting; 
         }
 
-        // Deductions
         const annualPension = calculatePension(pensionablePay);
-        const taxableIncome = grossAnnual - annualPension; // Pension is tax-deductible
+        const taxableIncome = grossAnnual - annualPension; 
         const annualTax = calculateTax(taxableIncome);
         const annualNI = calculateNI(grossAnnual);
         const netAnnual = grossAnnual - annualPension - annualTax - annualNI;
 
-        // Output to UI
         document.getElementById('out-gross').textContent = `£${grossAnnual.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('out-pension').textContent = `£${annualPension.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('out-tax').textContent = `£${annualTax.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('out-ni').textContent = `£${annualNI.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('out-net-annual').textContent = `£${netAnnual.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('out-net-monthly').textContent = `£${(netAnnual / 12).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+        // Handle LTFT UI
+        const ltftContainer = document.getElementById('ltft-result-container');
+        if (ltftAllowance > 0) {
+            ltftContainer.style.display = 'block';
+            document.getElementById('out-ltft').textContent = `£${ltftAllowance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        } else {
+            ltftContainer.style.display = 'none';
+        }
+
+        updateURL();
     }
 
-    // Attach event listeners to all inputs to update instantly
-    const inputs = document.querySelectorAll('input, select');
+    function updateURL() {
+        const params = new URLSearchParams();
+        inputs.forEach(input => {
+            if(input.value && input.value !== "0") {
+                params.set(input.id, input.value);
+            }
+        });
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+    }
+
+    function loadFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let paramsFound = false;
+
+        // Set Role first to populate grades
+        if (params.has('role-select')) {
+            roleSelect.value = params.get('role-select');
+            paramsFound = true;
+        }
+        populateGrades();
+
+        // Set the rest of the inputs
+        inputs.forEach(input => {
+            if (params.has(input.id)) {
+                input.value = params.get(input.id);
+                paramsFound = true;
+            }
+        });
+
+        calculate();
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            const btn = document.getElementById('copy-btn');
+            btn.textContent = "✓ Link Copied!";
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = "🔗 Copy Link to Share";
+                btn.classList.remove('copied');
+            }, 3000);
+        });
+    }
+
     inputs.forEach(input => input.addEventListener('input', calculate));
     
-    // Initialize
-    populateGrades();
-</script>
+    // Initialize on page load
+    loadFromURL();
 
+</script>
 </body>
 </html>
