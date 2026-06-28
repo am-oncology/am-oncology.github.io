@@ -1,347 +1,114 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NHS Doctor Salary Calculator 2025/26</title>
-<style>
-:root {
-  --nhs-dark: #003087;
-  --nhs-blue: #005EB8;
-  --nhs-green: #007F3B;
-  --bg: #EFF2F7;
-  --surface: #FFFFFF;
-  --surface-2: #F5F8FC;
-  --border: #DDE3EE;
-  --border-strong: #C0CAD8;
-  --text: #0D1B2E;
-  --text-2: #3D4F66;
-  --text-3: #6E8096;
-  --amber: #B45309;
-  --amber-bg: #FFFBEB;
-  --amber-border: #FDE68A;
-  --red: #B91C1C;
-  --orange: #C2410C;
-  --purple: #6D28D9;
-  --radius: 10px;
-  --c-home: #007F3B;
-  --c-tax: #B91C1C;
-  --c-ni: #C2410C;
-  --c-pension: #005EB8;
-  --c-loan: #6D28D9;
-}
-[data-theme="dark"] {
-  --bg: #0A1525;
-  --surface: #111E30;
-  --surface-2: #192840;
-  --border: #243650;
-  --border-strong: #3A536B;
-  --text: #ECF0F8;
-  --text-2: #A8B8CC;
-  --text-3: #6E85A0;
-  --amber-bg: #1C1200;
-  --amber-border: #3D2800;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NHS Doctor Salary Calculator 2026/27</title>
+  <style>
+    :root {
+      --nhs-dark: #003087; --nhs-blue: #005EB8; --nhs-green: #007F3B;
+      --bg: #EFF2F7; --surface: #FFFFFF; --surface-2: #F5F8FC;
+      --border: #DDE3EE; --border-strong: #C0CAD8;
+      --text: #0D1B2E; --text-2: #3D4F66; --text-3: #6E8096;
+      --amber: #B45309; --amber-bg: #FFFBEB; --amber-border: #FDE68A;
+      --red: #B91C1C; --orange: #C2410C; --purple: #6D28D9;
+      --c-home: #007F3B; --c-tax: #B91C1C; --c-ni: #C2410C;
+      --c-pension: #005EB8; --c-loan: #6D28D9;
+    }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
+    [data-theme="dark"] {
+      --bg: #0A1525; --surface: #111E30; --surface-2: #192840;
+      --border: #243650; --border-strong: #3A536B;
+      --text: #ECF0F8; --text-2: #A8B8CC; --text-3: #6E85A0;
+      --amber-bg: #1C1200; --amber-border: #3D2800;
+    }
 
-/* ── Header ── */
-.header {
-  background: var(--nhs-dark);
-  color: #fff;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  gap: 12px;
-}
-.header-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.header-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.btn-hdr {
-  background: rgba(255,255,255,0.13);
-  border: none;
-  color: #fff;
-  border-radius: 7px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 12px;
-  height: 34px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  transition: background 0.15s;
-  white-space: nowrap;
-}
-.btn-hdr:hover { background: rgba(255,255,255,0.22); }
-.btn-hdr.success { background: #005A30; }
-.btn-icon-only { padding: 0; width: 34px; justify-content: center; font-size: 1rem; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    
+    /* Layout & Header */
+    .header { background: var(--nhs-dark); color: #fff; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 200; }
+    .header-title { font-weight: 700; font-size: 0.95rem; }
+    .btn-hdr { background: rgba(255,255,255,0.13); border: none; color: #fff; border-radius: 7px; cursor: pointer; padding: 6px 12px; font-weight: 600; font-size: 0.82rem; transition: background 0.15s; }
+    .btn-hdr:hover { background: rgba(255,255,255,0.22); }
+    .layout { display: grid; grid-template-columns: 400px 1fr; height: calc(100vh - 52px); max-width: 1080px; margin: 0 auto; }
+    .input-panel { background: var(--surface); border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
+    .results-panel { background: var(--surface-2); padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
 
-/* ── Two-column layout ── */
-.layout {
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  height: calc(100vh - 52px);
-  max-width: 1080px;
-  margin: 0 auto;
-  overflow: hidden;
-}
-.input-panel {
-  overflow-y: auto;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  padding: 20px;
-}
-.results-panel {
-  overflow-y: auto;
-  background: var(--surface-2);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    /* Forms */
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .label { font-size: 0.75rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+    select, input { padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 0.92rem; width: 100%; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236E80%96' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+    select:focus, input:focus { outline: none; border-color: var(--nhs-blue); box-shadow: 0 0 0 3px rgba(0,94,184,0.12); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    
+    /* UI Elements */
+    .sec-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-3); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .sec-label:first-child { margin-top: 0; }
+    .role-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+    .role-pill { border: 1.5px solid var(--border); background: transparent; color: var(--text-2); padding: 9px; border-radius: 9px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+    .role-pill.active { border-color: var(--nhs-blue); background: rgba(0,94,184,0.07); color: var(--nhs-blue); }
+    .tabs { display: flex; gap: 2px; background: var(--surface-2); border-radius: 9px; padding: 3px; margin: 14px 0; }
+    .tab-btn { flex: 1; padding: 7px; border: none; background: transparent; color: var(--text-3); font-weight: 600; border-radius: 7px; cursor: pointer; }
+    .tab-btn.active { background: var(--surface); color: var(--nhs-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .tab-pane, .hidden { display: none; }
+    .tab-pane.active { display: block; }
+    .note { background: var(--surface-2); border-left: 3px solid var(--nhs-blue); padding: 9px 11px; border-radius: 0 6px 6px 0; font-size: 0.79rem; color: var(--text-3); margin-bottom: 13px; }
 
-/* ── Form primitives ── */
-.field { display: flex; flex-direction: column; gap: 5px; }
-.label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-select, input[type="number"] {
-  padding: 9px 11px;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.92rem;
-  background: var(--surface);
-  color: var(--text);
-  width: 100%;
-  transition: border-color 0.12s;
-  appearance: none;
-  -moz-appearance: textfield;
-}
-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236E80%96' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-select:focus, input:focus { outline: none; border-color: var(--nhs-blue); box-shadow: 0 0 0 3px rgba(0,94,184,0.12); }
+    /* Results UI */
+    .hero { background: var(--nhs-dark); border-radius: 14px; padding: 20px 22px; color: #fff; }
+    .hero-eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; opacity: 0.65; }
+    .hero-amount { font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 2px; }
+    .hero-sub { font-size: 0.82rem; opacity: 0.6; margin-bottom: 14px; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hero-stat { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; }
+    .rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .rate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .rate-val { font-size: 1.55rem; font-weight: 800; color: var(--text); }
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .badge-blue { background: rgba(0,94,184,0.1); color: var(--nhs-blue); border-color: rgba(0,94,184,0.2); }
+    .badge-purple { background: rgba(109,40,217,0.1); color: var(--purple); border-color: rgba(109,40,217,0.2); }
+    
+    /* Charts & Tables */
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 18px; }
+    .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .leg-item { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 7px; align-items: center; font-size: 0.8rem; }
+    .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .bkd-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
+    .tier-table { margin-top: 10px; width: 100%; font-size: 0.79rem; }
+    .tier-row { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; padding: 5px 8px; border-radius: 6px; }
+    .tier-row.active-tier { background: rgba(0,94,184,0.08); color: var(--nhs-blue); font-weight: 700; }
 
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.row-2.gap-sm { gap: 8px; }
-
-/* ── Section label ── */
-.sec-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-3);
-  margin: 18px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.sec-label:first-child { margin-top: 0; }
-
-/* ── Role pills ── */
-.role-pills { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 14px; }
-.role-pill {
-  border: 1.5px solid var(--border);
-  background: none;
-  color: var(--text-2);
-  padding: 9px 4px 8px;
-  border-radius: 9px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.13s;
-  line-height: 1.3;
-}
-.role-pill .icon { display: block; font-size: 1.1rem; margin-bottom: 3px; }
-.role-pill.active {
-  border-color: var(--nhs-blue);
-  background: rgba(0,94,184,0.07);
-  color: var(--nhs-blue);
-}
-
-/* ── Tabs ── */
-.tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--surface-2);
-  border-radius: 9px;
-  padding: 3px;
-  margin: 14px 0;
-}
-.tab-btn {
-  flex: 1;
-  padding: 7px 4px;
-  border: none;
-  background: none;
-  color: var(--text-3);
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.13s;
-}
-.tab-btn.active { background: var(--surface); color: var(--nhs-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
-
-/* ── Notes ── */
-.note {
-  background: var(--surface-2);
-  border-left: 3px solid var(--nhs-blue);
-  padding: 9px 11px;
-  border-radius: 0 6px 6px 0;
-  font-size: 0.79rem;
-  color: var(--text-3);
-  margin-bottom: 13px;
-  line-height: 1.5;
-}
-.note.warn {
-  border-left-color: var(--amber);
-  background: var(--amber-bg);
-  color: var(--amber);
-}
-
-/* ── Pension tiers ── */
-.tier-table { margin-top: 10px; width: 100%; }
-.tier-row {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: 6px;
-  font-size: 0.79rem;
-  color: var(--text-3);
-}
-.tier-row.active-tier { background: rgba(0,94,184,0.08); color: var(--nhs-blue); font-weight: 700; }
-.tier-check { font-size: 0.7rem; }
-
-/* ── Hero card ── */
-.hero {
-  background: var(--nhs-dark);
-  border-radius: 14px;
-  padding: 20px 22px;
-  color: #fff;
-}
-.hero-eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.65; margin-bottom: 3px; }
-.hero-amount { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 2px; }
-.hero-sub { font-size: 0.82rem; opacity: 0.6; margin-bottom: 14px; }
-.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.hero-stat { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; }
-.hero-stat-label { font-size: 0.7rem; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-.hero-stat-val { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-/* ── Rate cards ── */
-.rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.rate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-.rate-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); font-weight: 600; margin-bottom: 3px; }
-.rate-val { font-size: 1.55rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
-.rate-val.warn { color: var(--amber); }
-.rate-sub { font-size: 0.69rem; color: var(--text-3); margin-top: 2px; }
-
-/* ── Badges ── */
-.badges { display: flex; gap: 6px; flex-wrap: wrap; min-height: 0; }
-.badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-.badge-blue { background: rgba(0,94,184,0.1); color: var(--nhs-blue); border: 1px solid rgba(0,94,184,0.2); }
-.badge-purple { background: rgba(109,40,217,0.1); color: var(--purple); border: 1px solid rgba(109,40,217,0.2); }
-.badge-gray { background: var(--surface-2); color: var(--text-3); border: 1px solid var(--border); }
-
-/* ── Donut ── */
-.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 18px; }
-.donut-wrap { flex-shrink: 0; }
-.legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
-.leg-item { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 7px; align-items: center; }
-.leg-dot { width: 10px; height: 10px; border-radius: 50%; }
-.leg-name { font-size: 0.8rem; color: var(--text-2); }
-.leg-val { font-size: 0.82rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); }
-.leg-pct { font-size: 0.74rem; color: var(--text-3); text-align: right; min-width: 30px; }
-
-/* ── Breakdown ── */
-.breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-.bkd-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-3); margin-bottom: 10px; }
-.bkd-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); }
-.bkd-row:last-child { border-bottom: none; }
-.bkd-label { font-size: 0.84rem; color: var(--text); }
-.bkd-ann { font-size: 0.84rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; color: var(--text); }
-.bkd-mo { font-size: 0.77rem; font-variant-numeric: tabular-nums; color: var(--text-3); text-align: right; min-width: 66px; }
-.bkd-row.positive .bkd-label { font-weight: 700; color: var(--nhs-green); }
-.bkd-row.positive .bkd-ann { color: var(--nhs-green); }
-.bkd-row.positive .bkd-mo { color: var(--nhs-green); }
-
-.col-header-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 0 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
-.col-hdr { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); font-weight: 600; text-align: right; min-width: 66px; }
-.col-hdr:first-child { text-align: left; }
-
-/* ── Disclaimer ── */
-.disclaimer { font-size: 0.72rem; color: var(--text-3); text-align: center; padding: 4px 0 8px; line-height: 1.5; }
-
-/* ── Hidden ── */
-.hidden { display: none !important; }
-
-/* ── Responsive ── */
-@media (max-width: 760px) {
-  .layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
-  .input-panel { overflow-y: visible; border-right: none; border-bottom: 1px solid var(--border); }
-  .results-panel { overflow-y: visible; padding: 16px; }
-  .hero-amount { font-size: 2.2rem; }
-  .header-title { font-size: 0.82rem; }
-}
-@media (max-width: 400px) {
-  .row-2 { grid-template-columns: 1fr; }
-}
-</style>
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; height: auto; }
+      .input-panel { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="header-title">NHS Doctor Salary Calculator 2025/26</div>
-  <div class="header-actions">
-    <button class="btn-hdr btn-icon-only" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
+  <div class="header-title">NHS Doctor Salary Calculator (England)</div>
+  <div style="display: flex; gap: 6px;">
+    <button class="btn-hdr" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
     <button class="btn-hdr" id="share-btn" onclick="copyLink()">🔗 Share</button>
   </div>
 </header>
 
 <div class="layout">
-
-  <!-- ══════════════ INPUT PANEL ══════════════ -->
+  
   <aside class="input-panel">
-
     <div class="sec-label">Role</div>
     <div class="role-pills">
-      <button class="role-pill active" data-role="resident" onclick="setRole('resident')">
-        <span class="icon">🩺</span>Resident
-      </button>
-      <button class="role-pill" data-role="consultant" onclick="setRole('consultant')">
-        <span class="icon">👨‍⚕️</span>Consultant
-      </button>
-      <button class="role-pill" data-role="sas" onclick="setRole('sas')">
-        <span class="icon">🏥</span>SAS
-      </button>
+      <button class="role-pill active" data-role="resident" onclick="setRole('resident')">🩺 Resident</button>
+      <button class="role-pill" data-role="consultant" onclick="setRole('consultant')">👨‍⚕️ Consultant</button>
+      <button class="role-pill" data-role="sas" onclick="setRole('sas')">🏥 SAS</button>
     </div>
 
-    <div class="field" style="margin-bottom:14px">
+    <div class="field">
       <label class="label">Grade / pay node</label>
       <select id="grade-select"></select>
     </div>
@@ -349,666 +116,339 @@ select:focus, input:focus { outline: none; border-color: var(--nhs-blue); box-sh
     <div class="tabs">
       <button class="tab-btn active" onclick="setTab(0)">Pay</button>
       <button class="tab-btn" onclick="setTab(1)">Deductions</button>
-      <button class="tab-btn" onclick="setTab(2)">Advanced</button>
     </div>
 
-    <!-- TAB 0: PAY -->
     <div class="tab-pane active" id="tab-0">
-
-      <!-- Resident -->
-      <div id="res-fields">
-        <div class="note">Enter under 40 hrs for automatic LTFT scaling + £1,000 LTFT supplement.</div>
-        <div class="row-2" style="margin-bottom:10px">
-          <div class="field">
-            <label class="label">Weekly hours (base 40)</label>
-            <input type="number" id="res-hours" value="40" step="0.5" min="0" max="48">
-          </div>
-          <div class="field">
-            <label class="label">Night hours / week</label>
-            <input type="number" id="res-nights" value="0" step="0.5" min="0">
-          </div>
+      
+      <div class="row-2" style="margin-bottom:14px;">
+        <div class="field">
+          <label class="label">London weighting</label>
+          <select id="london">
+            <option value="0">None</option>
+            <option value="2162">Inner London (£2,162)</option>
+            <option value="527">Outer London (£527)</option>
+            <option value="149">Fringe (£149)</option>
+          </select>
         </div>
-        <div class="row-2" style="margin-bottom:10px">
-          <div class="field">
-            <label class="label">Weekend allowance</label>
+        <div class="field">
+          <label class="label">Model DDRB Uplift (%)</label>
+          <input type="number" id="ddrb" value="0" step="0.5" min="0" max="30">
+        </div>
+      </div>
+
+      <div id="res-fields">
+        <div class="note">Enter under 40 hrs for automatic LTFT scaling.</div>
+        <div class="row-2">
+          <div class="field"><label class="label">Weekly hours</label><input type="number" id="res-hours" value="40" step="0.5" min="0" max="48"></div>
+          <div class="field"><label class="label">Night hours</label><input type="number" id="res-nights" value="0" step="0.5" min="0"></div>
+          <div class="field"><label class="label">Weekend allowance</label>
             <select id="res-weekend">
-              <option value="0">None (0%)</option>
-              <option value="0.03">1 in 8 (3%)</option>
-              <option value="0.04">1 in 7 (4%)</option>
-              <option value="0.05">1 in 6 (5%)</option>
-              <option value="0.075">1 in 5 (7.5%)</option>
-              <option value="0.10">1 in 4 (10%)</option>
+              <option value="0">None (0%)</option><option value="0.03">1 in 8 (3%)</option>
+              <option value="0.04">1 in 7 (4%)</option><option value="0.05">1 in 6 (5%)</option>
+              <option value="0.075">1 in 5 (7.5%)</option><option value="0.10">1 in 4 (10%)</option>
               <option value="0.15">1 in 3 (15%)</option>
             </select>
           </div>
-          <div class="field">
-            <label class="label">NROC on-call</label>
-            <select id="res-nroc">
-              <option value="0">None (0%)</option>
-              <option value="0.08">NROC availability (8%)</option>
-            </select>
+          <div class="field"><label class="label">NROC on-call</label>
+            <select id="res-nroc"><option value="0">None</option><option value="0.08">NROC (8%)</option></select>
           </div>
         </div>
       </div>
 
-      <!-- Consultant / SAS -->
       <div id="con-fields" class="hidden">
         <div class="note">Enter under 10 PAs for automatic LTFT pro-rata scaling.</div>
-        <div class="row-2" style="margin-bottom:10px">
-          <div class="field">
-            <label class="label">Total PAs (base 10)</label>
-            <input type="number" id="con-pas" value="10" step="0.25" min="1">
-          </div>
-          <div class="field">
-            <label class="label">On-call supplement</label>
+        <div class="row-2">
+          <div class="field"><label class="label">Total PAs (base 10)</label><input type="number" id="con-pas" value="10" step="0.25" min="1"></div>
+          <div class="field"><label class="label">On-call supplement</label>
             <select id="con-oncall">
-              <option value="0">None (0%)</option>
-              <option value="0.01">Category B low (1%)</option>
-              <option value="0.02">Category B medium (2%)</option>
-              <option value="0.03">Category A low / B high (3%)</option>
-              <option value="0.05">Category A medium (5%)</option>
-              <option value="0.08">Category A high (8%)</option>
+              <option value="0">None (0%)</option><option value="0.01">Cat B low (1%)</option>
+              <option value="0.02">Cat B med (2%)</option><option value="0.03">Cat A low/B high (3%)</option>
+              <option value="0.05">Cat A med (5%)</option><option value="0.08">Cat A high (8%)</option>
             </select>
           </div>
-        </div>
-        <div class="row-2" style="margin-bottom:10px">
           <div class="field" id="ncia-field">
-            <label class="label">NCIAs / CEAs (£/yr)</label>
-            <input type="number" id="con-ncias" value="0" step="1000" min="0">
+            <label class="label">NCIAs</label>
+            <select id="con-ncias">
+              <option value="0">None</option>
+              <option value="21000">Level N1 (£21,000)</option>
+              <option value="31500">Level N2 (£31,500)</option>
+              <option value="42000">Level N3 (£42,000)</option>
+            </select>
           </div>
-          <div class="field">
-            <label class="label">Management allowance (£/yr)</label>
-            <input type="number" id="con-resp" value="0" step="500" min="0">
-          </div>
+          <div class="field"><label class="label">Management (£/yr)</label><input type="number" id="con-resp" value="0" step="500"></div>
         </div>
-        <div class="field" style="margin-bottom:10px">
-          <label class="label">Waiting list initiative — WLI (£/yr, not pensionable)</label>
-          <input type="number" id="con-wli" value="0" step="500" min="0">
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="label">London weighting (£/yr)</label>
-        <input type="number" id="london" value="0" step="100" min="0">
+        <div class="field"><label class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500"></div>
       </div>
     </div>
 
-    <!-- TAB 1: DEDUCTIONS -->
     <div class="tab-pane" id="tab-1">
       <div class="sec-label" style="margin-top:0">NHS pension</div>
-      <div class="field" style="margin-bottom:12px">
+      <div class="field">
         <label class="label">Pension scheme</label>
-        <select id="pension-opt">
-          <option value="yes">Opted in</option>
-          <option value="no">Opted out</option>
-        </select>
+        <select id="pension-opt"><option value="yes">Opted in</option><option value="no">Opted out</option></select>
       </div>
-
-      <div id="tier-box">
-        <div style="font-size:0.77rem;font-weight:700;color:var(--text-3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">2024/25 employee contribution tiers</div>
-        <div class="tier-table" id="tier-table">
-          <div class="tier-row" data-tier="0"><span>Up to £13,259</span><span>5.2%</span><span class="tier-check"></span></div>
-          <div class="tier-row" data-tier="1"><span>£13,247 – £17,673</span><span>6.5%</span><span class="tier-check"></span></div>
-          <div class="tier-row" data-tier="2"><span>£17,674 – £24,022</span><span>8.3%</span><span class="tier-check"></span></div>
-          <div class="tier-row" data-tier="3"><span>£24,023 – £32,691</span><span>9.8%</span><span class="tier-check"></span></div>
-          <div class="tier-row" data-tier="4"><span>£32,692 – £49,078</span><span>10.7%</span><span class="tier-check"></span></div>
-          <div class="tier-row" data-tier="5"><span>£67,669 and above</span><span>12.5%</span><span class="tier-check"></span></div>
+      <div class="tier-table" id="tier-table">
+        <div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">2026/27 TIERS</div>
         </div>
-      </div>
-
+      
       <div class="sec-label">Student loans</div>
-      <div class="field" style="margin-bottom:10px">
+      <div class="field">
         <label class="label">Repayment plan</label>
         <select id="loan-plan">
           <option value="none">None</option>
-          <option value="plan1">Plan 1 — threshold £24,990 at 9%</option>
-          <option value="plan2">Plan 2 — threshold £27,295 at 9%</option>
-          <option value="plan4">Plan 4 Scotland — threshold £31,395 at 9%</option>
-          <option value="plan5">Plan 5 — threshold £25,000 at 9%</option>
-          <option value="pgl">Postgraduate loan — threshold £21,000 at 6%</option>
-          <option value="plan2pgl">Plan 2 + postgraduate loan</option>
+          <option value="plan1">Plan 1</option>
+          <option value="plan2">Plan 2</option>
+          <option value="plan5">Plan 5</option>
+          <option value="pgl">Postgraduate (PGL)</option>
+          <option value="plan2pgl">Plan 2 + PGL</option>
         </select>
       </div>
-      <div class="note">Most UK graduates hold Plan 2; Scottish graduates hold Plan 4. Repayments are calculated on gross income.</div>
-    </div>
-
-    <!-- TAB 2: ADVANCED -->
-    <div class="tab-pane" id="tab-2">
-      <div class="sec-label" style="margin-top:0">Tax region</div>
-      <div class="field" style="margin-bottom:12px">
-        <label class="label">Income tax jurisdiction</label>
-        <select id="tax-region">
-          <option value="england">England / Wales / Northern Ireland</option>
-          <option value="scotland">Scotland</option>
-        </select>
-      </div>
-      <div class="note">Scotland uses separate bands (19%–48%). NI contributions are the same across the UK.</div>
-
-      <div class="sec-label">Pay modelling</div>
-      <div class="field">
-        <label class="label">DDRB uplift to model (%)</label>
-        <input type="number" id="ddrb" value="0" step="0.5" min="0" max="30">
-      </div>
-      <div class="note" style="margin-top:10px">Applies a percentage increase to base pay to model future DDRB awards.</div>
     </div>
 
   </aside>
 
-  <!-- ══════════════ RESULTS PANEL ══════════════ -->
   <main class="results-panel">
-
-    <!-- Hero -->
+    
     <div class="hero">
       <div class="hero-eyebrow">Monthly take-home</div>
       <div class="hero-amount" id="out-monthly">£0</div>
       <div class="hero-sub" id="out-gross-sub">£0 gross / year</div>
       <div class="hero-grid">
-        <div class="hero-stat">
-          <div class="hero-stat-label">Annual net</div>
-          <div class="hero-stat-val" id="out-net-ann">£0</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-label">Annual gross</div>
-          <div class="hero-stat-val" id="out-gross-ann">£0</div>
-        </div>
+        <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL NET</div><div id="out-net-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
+        <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL GROSS</div><div id="out-gross-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
       </div>
     </div>
 
-    <!-- Rate cards -->
     <div class="rate-row">
-      <div class="rate-card">
-        <div class="rate-label">Effective rate</div>
-        <div class="rate-val" id="out-eff">0%</div>
-        <div class="rate-sub">total deductions ÷ gross</div>
-      </div>
-      <div class="rate-card">
-        <div class="rate-label">Marginal rate</div>
-        <div class="rate-val warn" id="out-marg">0%</div>
-        <div class="rate-sub">deductions on next £1 earned</div>
-      </div>
+      <div class="rate-card"><div style="font-size:0.7rem;color:var(--text-3);font-weight:600;">EFFECTIVE RATE</div><div class="rate-val" id="out-eff">0%</div></div>
+      <div class="rate-card"><div style="font-size:0.7rem;color:var(--text-3);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div></div>
     </div>
 
-    <!-- Badges -->
     <div class="badges" id="badges"></div>
 
-    <!-- Donut chart -->
     <div class="chart-card">
-      <div class="donut-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120" id="donut" role="img" aria-label="Pay breakdown chart">
-          <title>Pay breakdown chart</title>
-          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--border)" stroke-width="18"/>
-        </svg>
-      </div>
+      <div id="donut" style="flex-shrink:0;"></div>
       <div class="legend" id="legend"></div>
     </div>
 
-    <!-- Breakdown table -->
     <div class="breakdown">
-      <div class="bkd-title">Full breakdown</div>
-      <div class="col-header-row">
-        <span class="col-hdr">Item</span>
-        <span class="col-hdr">Annual</span>
-        <span class="col-hdr">Monthly</span>
-      </div>
-      <div class="bkd-row"><div class="bkd-label">Pensionable / basic pay</div><div class="bkd-ann" id="bd-pen-pay"></div><div class="bkd-mo" id="bd-pen-pay-m"></div></div>
-      <div class="bkd-row" id="bd-extras-row"><div class="bkd-label">Supplements &amp; extras</div><div class="bkd-ann" id="bd-extras"></div><div class="bkd-mo" id="bd-extras-m"></div></div>
-      <div class="bkd-row"><div class="bkd-label" style="font-weight:600">Gross pay</div><div class="bkd-ann" id="bd-gross"></div><div class="bkd-mo" id="bd-gross-m"></div></div>
-      <div class="bkd-row"><div class="bkd-label" style="color:var(--c-pension)">− NHS pension</div><div class="bkd-ann" id="bd-pension"></div><div class="bkd-mo" id="bd-pension-m"></div></div>
-      <div class="bkd-row"><div class="bkd-label" style="color:var(--c-tax)">− Income tax</div><div class="bkd-ann" id="bd-tax"></div><div class="bkd-mo" id="bd-tax-m"></div></div>
-      <div class="bkd-row"><div class="bkd-label" style="color:var(--c-ni)">− National insurance</div><div class="bkd-ann" id="bd-ni"></div><div class="bkd-mo" id="bd-ni-m"></div></div>
-      <div class="bkd-row" id="bd-loan-row"><div class="bkd-label" style="color:var(--c-loan)">− Student loan</div><div class="bkd-ann" id="bd-loan"></div><div class="bkd-mo" id="bd-loan-m"></div></div>
-      <div class="bkd-row positive"><div class="bkd-label">= Take-home pay</div><div class="bkd-ann" id="bd-net"></div><div class="bkd-mo" id="bd-net-m"></div></div>
+      <div style="font-weight:700;color:var(--text-3);font-size:0.72rem;margin-bottom:10px;">BREAKDOWN</div>
+      <div class="bkd-row" style="color:var(--text-3);font-weight:600;border:none;"><span>Item</span><span style="text-align:right">Annual</span><span style="text-align:right">Monthly</span></div>
+      <div class="bkd-row"><span>Pensionable pay (Inc. London)</span><span id="bd-pen-pay" style="text-align:right"></span><span id="bd-pen-pay-m" style="text-align:right"></span></div>
+      <div class="bkd-row" id="bd-extras-row"><span>Non-pensionable extras</span><span id="bd-extras" style="text-align:right"></span><span id="bd-extras-m" style="text-align:right"></span></div>
+      <div class="bkd-row" style="font-weight:700;"><span>Gross pay</span><span id="bd-gross" style="text-align:right"></span><span id="bd-gross-m" style="text-align:right"></span></div>
+      <div class="bkd-row" style="color:var(--c-pension);"><span>− NHS pension</span><span id="bd-pension" style="text-align:right"></span><span id="bd-pension-m" style="text-align:right"></span></div>
+      <div class="bkd-row" style="color:var(--c-tax);"><span>− Income tax</span><span id="bd-tax" style="text-align:right"></span><span id="bd-tax-m" style="text-align:right"></span></div>
+      <div class="bkd-row" style="color:var(--c-ni);"><span>− National insurance</span><span id="bd-ni" style="text-align:right"></span><span id="bd-ni-m" style="text-align:right"></span></div>
+      <div class="bkd-row" id="bd-loan-row" style="color:var(--c-loan);"><span>− Student loan</span><span id="bd-loan" style="text-align:right"></span><span id="bd-loan-m" style="text-align:right"></span></div>
+      <div class="bkd-row" style="font-weight:700;color:var(--nhs-green);"><span>= Take-home pay</span><span id="bd-net" style="text-align:right"></span><span id="bd-net-m" style="text-align:right"></span></div>
     </div>
 
-    <p class="disclaimer">Estimates only — 2025/26 rates. Does not account for all individual circumstances. Verify with your NHS employer or an accountant.</p>
-
+    <p style="font-size:0.7rem;color:var(--text-3);text-align:center;margin-top:10px;">Estimates only — England 2026/27 rates.</p>
   </main>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════
-   PAY SCALES 2025/26
-═══════════════════════════════════════════ */
+/* --- CORE DATA MODELS --- */
 const SCALES = {
-  resident: [
-    { name: 'FY1', base: 38831 },
-    { name: 'FY2', base: 44439 },
-    { name: 'CT1–CT2 / ST1–ST2', base: 52656 },
-    { name: 'CT3 / ST3–ST5', base: 65048 },
-    { name: 'ST6–ST8', base: 73992 },
-  ],
-  consultant: [
-    { name: 'Year 0–3', base: 109725 },
-    { name: 'Year 4–7', base: 116182 },
-    { name: 'Year 8–13', base: 131058 },
-    { name: 'Year 14+', base: 145478 },
-  ],
-  sas: [
-    { name: 'Specialty Doctor — minimum', base: 61542 },
-    { name: 'Specialty Doctor — mid', base: 79038 },
-    { name: 'Specialty Doctor — maximum', base: 99216 },
-    { name: 'Specialist — minimum', base: 100870 },
-    { name: 'Specialist — maximum', base: 111441 },
-  ],
+  resident:   [{ name: 'FY1', base: 38831 }, { name: 'FY2', base: 44439 }, { name: 'CT1-2/ST1-2', base: 52656 }, { name: 'CT3/ST3-5', base: 65048 }, { name: 'ST6-8', base: 73992 }],
+  consultant: [{ name: 'Year 0-3', base: 109725 }, { name: 'Year 4-7', base: 116182 }, { name: 'Year 8-13', base: 131058 }, { name: 'Year 14+', base: 145478 }],
+  sas:        [{ name: 'Specialty - Min', base: 61542 }, { name: 'Specialty - Mid', base: 79038 }, { name: 'Specialty - Max', base: 99216 }, { name: 'Specialist - Min', base: 100870 }, { name: 'Specialist - Max', base: 111441 }]
 };
 
-/* ═══════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════ */
-let role = 'resident';
-
-/* ═══════════════════════════════════════════
-   PENSION
-═══════════════════════════════════════════ */
 const PENSION_TIERS = [
-  { max: 13246,    rate: 0.052, idx: 0 },
-  { max: 17673,    rate: 0.065, idx: 1 },
-  { max: 24022,    rate: 0.083, idx: 2 },
-  { max: 32691,    rate: 0.098, idx: 3 },
-  { max: 49078,    rate: 0.107, idx: 4 },
-  { max: 72030,    rate: 0.125, idx: 5 },
-  { max: Infinity, rate: 0.135, idx: 6 },
+  { max: 13258, rate: 0.052 }, { max: 27796, rate: 0.065 }, { max: 33867, rate: 0.083 },
+  { max: 50844, rate: 0.098 }, { max: 65190, rate: 0.107 }, { max: Infinity, rate: 0.125 }
 ];
 
-function getPensionTier(pp) {
-  return PENSION_TIERS.find(t => pp <= t.max) || PENSION_TIERS[6];
-}
+const LOAN_PLANS = { plan1: { th: 24990, r: 0.09 }, plan2: { th: 27295, r: 0.09 }, plan5: { th: 25000, r: 0.09 }, pgl: { th: 21000, r: 0.06 } };
+let role = 'resident';
 
-function calcPension(pp) {
-  if (document.getElementById('pension-opt').value === 'no') return 0;
-  return pp * getPensionTier(pp).rate;
-}
+/* --- UTILITIES --- */
+const g = id => document.getElementById(id);
+const fv = (id, def = 0) => parseFloat(g(id)?.value) || def;
+const fmt = v => `£${Math.round(v).toLocaleString('en-GB')}`;
 
-/* ═══════════════════════════════════════════
-   TAX
-═══════════════════════════════════════════ */
-function calcTax(adjIncome, region) {
-  let pa = 12570;
-  if (adjIncome > 100000) pa = Math.max(0, pa - (adjIncome - 100000) / 2);
+/* --- PURE MATH FUNCTIONS (England 2026/27) --- */
+const getPensionRate = pay => PENSION_TIERS.find(t => pay <= t.max).rate;
 
-  if (region === 'scotland') return calcScottishTax(adjIncome, pa);
-
-  // England / Wales / NI
-  let tax = 0, rem = Math.max(0, adjIncome - pa);
+function calcDeductions(gross, pensionable, plan, optIn) {
+  const pension = optIn === 'yes' ? pensionable * getPensionRate(pensionable) : 0;
+  
+  // Tax
+  let tax = 0, inc = gross - pension;
+  let pa = inc > 100000 ? Math.max(0, 12570 - (inc - 100000) / 2) : 12570;
+  let rem = Math.max(0, inc - pa);
+  
   const basic = Math.min(rem, Math.max(0, 50270 - pa));
   tax += basic * 0.20; rem -= basic;
-  if (rem > 0) {
-    const higher = Math.min(rem, Math.max(0, 125140 - Math.max(pa, 50270)));
-    tax += higher * 0.40; rem -= higher;
-  }
+  if (rem > 0) { const higher = Math.min(rem, Math.max(0, 125140 - Math.max(pa, 50270))); tax += higher * 0.40; rem -= higher; }
   if (rem > 0) tax += rem * 0.45;
-  return tax;
-}
 
-function calcScottishTax(income, pa) {
-  const bands = [
-    { lo: pa,     hi: 14876,    rate: 0.19 },
-    { lo: 14876,  hi: 26561,    rate: 0.20 },
-    { lo: 26561,  hi: 43662,    rate: 0.21 },
-    { lo: 43662,  hi: 75000,    rate: 0.42 },
-    { lo: 75000,  hi: 125140,   rate: 0.45 },
-    { lo: 125140, hi: Infinity, rate: 0.48 },
-  ];
-  let tax = 0;
-  for (const b of bands) {
-    const lo = Math.max(b.lo, pa);
-    if (income <= lo) break;
-    tax += (Math.min(income, b.hi) - lo) * b.rate;
-  }
-  return tax;
-}
-
-/* ═══════════════════════════════════════════
-   NATIONAL INSURANCE
-═══════════════════════════════════════════ */
-function calcNI(gross) {
+  // NI
   let ni = 0;
   if (gross > 12570) ni += Math.min(gross - 12570, 37700) * 0.08;
   if (gross > 50270) ni += (gross - 50270) * 0.02;
-  return ni;
+
+  // Loan
+  let loan = 0;
+  if (plan === 'plan2pgl') loan = Math.max(0, gross - 27295) * 0.09 + Math.max(0, gross - 21000) * 0.06;
+  else if (LOAN_PLANS[plan]) loan = Math.max(0, gross - LOAN_PLANS[plan].th) * LOAN_PLANS[plan].r;
+
+  return { pension, tax, ni, loan, total: pension + tax + ni + loan };
 }
 
-/* ═══════════════════════════════════════════
-   STUDENT LOAN
-═══════════════════════════════════════════ */
-function calcLoan(gross, plan) {
-  if (!plan || plan === 'none') return 0;
-  const plans = {
-    plan1: { th: 24990, r: 0.09 },
-    plan2: { th: 27295, r: 0.09 },
-    plan4: { th: 31395, r: 0.09 },
-    plan5: { th: 25000, r: 0.09 },
-    pgl:   { th: 21000, r: 0.06 },
-  };
-  if (plan === 'plan2pgl')
-    return Math.max(0, gross - 27295) * 0.09 + Math.max(0, gross - 21000) * 0.06;
-  const p = plans[plan];
-  return p ? Math.max(0, gross - p.th) * p.r : 0;
-}
-
-/* ═══════════════════════════════════════════
-   MAIN CALCULATE
-═══════════════════════════════════════════ */
+/* --- MAIN CONTROLLER --- */
 function calculate() {
   const gradeIdx = parseInt(g('grade-select').value) || 0;
-  const ddrb     = 1 + (parseFloat(g('ddrb').value) || 0) / 100;
-  const baseFT   = SCALES[role][gradeIdx].base * ddrb;
-  const london   = fv('london');
-  const region   = g('tax-region').value;
-  const loanPlan = g('loan-plan').value;
-  const pensOpt  = g('pension-opt').value;
+  const ddrb = 1 + (fv('ddrb') / 100);
+  const baseFT = SCALES[role][gradeIdx].base * ddrb;
+  const london = fv('london');
 
-  let gross = 0, pensionable = 0, extras = 0, isLTFT = false;
+  let pensionable = 0, nonPensionable = 0, isLTFT = false;
 
   if (role === 'resident') {
-    const hours   = fv('res-hours', 40);
-    const nights  = fv('res-nights', 0);
-    const wkMult  = fv('res-weekend', 0);
-    const nrocMult= fv('res-nroc', 0);
-    const rate    = baseFT / (40 * 52.143);
-    let basic = 0, ltft = 0, extraH = 0;
+    const hours = fv('res-hours', 40), rate = baseFT / (40 * 52.143);
+    isLTFT = hours < 40;
+    
+    // Pensionable items
+    const basic = isLTFT ? baseFT * (hours / 40) : baseFT;
+    const ltft = isLTFT ? 1000 : 0;
+    const wkPay = basic * fv('res-weekend');
+    pensionable = basic + wkPay + ltft + london;
 
-    if (hours < 40) {
-      isLTFT = true;
-      basic = baseFT * (hours / 40);
-      ltft  = 1000;
-    } else {
-      basic  = baseFT;
-      extraH = (hours - 40) * rate * 52.143;
-    }
-
-    const nightPay = nights * rate * 0.37 * 52.143;
-    const wkPay    = basic * wkMult;
-    const nrocPay  = basic * nrocMult;
-
-    gross       = basic + extraH + nightPay + wkPay + nrocPay + ltft + london;
-    // Weekend, NROC and LTFT allowance ARE pensionable
-    pensionable = basic + wkPay + nrocPay + ltft + london;
-    extras      = extraH + nightPay + wkPay + nrocPay + (ltft > 0 ? ltft : 0);
+    // Non-Pensionable items (NROC & Nights are NOT pensionable in 2016 contract)
+    const extraH = isLTFT ? 0 : (hours - 40) * rate * 52.143;
+    const nightPay = fv('res-nights') * rate * 0.37 * 52.143;
+    const nrocPay = basic * fv('res-nroc');
+    nonPensionable = extraH + nightPay + nrocPay;
 
   } else {
-    const pas      = fv('con-pas', 10);
-    const ocMult   = fv('con-oncall', 0);
-    const ncias    = role !== 'sas' ? fv('con-ncias', 0) : 0;
-    const resp     = fv('con-resp', 0);
-    const wli      = fv('con-wli', 0);
-    let basic = 0, extraPA = 0;
+    const pas = fv('con-pas', 10);
+    isLTFT = pas < 10;
+    
+    // Pensionable items
+    const basic = isLTFT ? baseFT * (pas / 10) : baseFT;
+    const resp = fv('con-resp');
+    pensionable = basic + resp + london;
 
-    if (pas < 10) {
-      isLTFT = true;
-      basic  = baseFT * (pas / 10);
-    } else {
-      basic  = baseFT;
-      extraPA= (pas - 10) * (baseFT / 10);
-    }
-
-    const ocPay  = basic * ocMult;
-    gross        = basic + extraPA + ocPay + ncias + resp + wli + london;
-    // WLI is NOT pensionable
-    pensionable  = basic + ncias + resp + london;
-    extras       = extraPA + ocPay + ncias + resp + wli;
+    // Non-Pensionable items (NCIAs, PAs > 10, On-Call, WLI)
+    const extraPA = isLTFT ? 0 : (pas - 10) * (baseFT / 10);
+    const ocPay = basic * fv('con-oncall');
+    const ncias = role === 'consultant' ? fv('con-ncias') : 0;
+    const wli = fv('con-wli');
+    nonPensionable = extraPA + ocPay + ncias + wli;
   }
 
-  const pension  = calcPension(pensionable);
-  const adjInc   = gross - pension;          // pensionable savings reduce taxable income
-  const tax      = calcTax(adjInc, region);
-  const ni       = calcNI(gross);
-  const loan     = calcLoan(gross, loanPlan);
-  const net      = gross - pension - tax - ni - loan;
+  const gross = pensionable + nonPensionable;
+  const extras = nonPensionable;
 
-  // Marginal rate: inject next £100 as pensionable income for simplicity
-  const dPension = calcPension(pensionable + 100) - pension;
-  const dTax     = calcTax((gross + 100) - (pension + dPension), region) - tax;
-  const dNI      = calcNI(gross + 100) - ni;
-  const dLoan    = calcLoan(gross + 100, loanPlan) - loan;
-  const marginal = ((dPension + dTax + dNI + dLoan) / 100) * 100;
-  const effective= gross > 0 ? ((pension + tax + ni + loan) / gross) * 100 : 0;
+  const plan = g('loan-plan').value, optIn = g('pension-opt').value;
+  const ded = calcDeductions(gross, pensionable, plan, optIn);
+  const net = gross - ded.total;
 
-  updateUI({ gross, pensionable, extras, pension, tax, ni, loan, net, marginal, effective, isLTFT, region, loanPlan, pensOpt });
-  updateDonut(net, tax, ni, pension, loan);
-  updateTierHighlight(pensionable, pensOpt);
-  updateURL({ gross, pensionable, extras, pension, tax, ni, loan, net, marginal, effective, isLTFT });
+  // Marginals (Simulate +£100)
+  const dedNext = calcDeductions(gross + 100, pensionable + 100, plan, optIn);
+  const marginal = dedNext.total - ded.total;
+  const effective = gross > 0 ? (ded.total / gross) * 100 : 0;
+
+  updateUI({ gross, pensionable, extras, net, ded, marginal, effective, isLTFT, optIn });
+  updateURL();
 }
 
-function fv(id, def = 0) {
-  return parseFloat(document.getElementById(id)?.value) || def;
-}
-function g(id) { return document.getElementById(id); }
+/* --- VIEW UPDATES --- */
+function updateUI(st) {
+  const uiMap = {
+    'out-monthly': fmt(st.net / 12), 'out-gross-sub': `${fmt(st.gross)} gross/yr`,
+    'out-net-ann': fmt(st.net), 'out-gross-ann': fmt(st.gross),
+    'out-eff': `${st.effective.toFixed(1)}%`, 'out-marg': `${st.marginal.toFixed(1)}%`,
+    'bd-pen-pay': fmt(st.pensionable), 'bd-pen-pay-m': fmt(st.pensionable/12),
+    'bd-extras': fmt(st.extras), 'bd-extras-m': fmt(st.extras/12),
+    'bd-gross': fmt(st.gross), 'bd-gross-m': fmt(st.gross/12),
+    'bd-pension': fmt(st.ded.pension), 'bd-pension-m': fmt(st.ded.pension/12),
+    'bd-tax': fmt(st.ded.tax), 'bd-tax-m': fmt(st.ded.tax/12),
+    'bd-ni': fmt(st.ded.ni), 'bd-ni-m': fmt(st.ded.ni/12),
+    'bd-loan': fmt(st.ded.loan), 'bd-loan-m': fmt(st.ded.loan/12),
+    'bd-net': fmt(st.net), 'bd-net-m': fmt(st.net/12)
+  };
+  
+  for (const [id, val] of Object.entries(uiMap)) if (g(id)) g(id).textContent = val;
 
-/* ═══════════════════════════════════════════
-   UPDATE UI
-═══════════════════════════════════════════ */
-function updateUI({ gross, pensionable, extras, pension, tax, ni, loan, net, marginal, effective, isLTFT, region, loanPlan, pensOpt }) {
-  const f  = v => '£' + Math.round(v).toLocaleString('en-GB');
-  const fm = v => f(v) + '/mo';
-  const fp = v => v.toFixed(1) + '%';
+  g('bd-extras-row').classList.toggle('hidden', st.extras === 0);
+  g('bd-loan-row').classList.toggle('hidden', st.ded.loan === 0);
 
-  g('out-monthly').textContent  = f(net / 12);
-  g('out-gross-sub').textContent= f(gross) + ' gross / year';
-  g('out-net-ann').textContent  = f(net);
-  g('out-gross-ann').textContent= f(gross);
-  g('out-eff').textContent      = fp(effective);
-  g('out-marg').textContent     = fp(marginal);
+  // Badges & Tiers
+  g('badges').innerHTML = (st.optIn === 'yes' ? `<span class="badge badge-blue">Pension tier: ${(getPensionRate(st.pensionable)*100).toFixed(1)}%</span>` : '') +
+                          (st.isLTFT ? `<span class="badge badge-purple">LTFT Pro-rata</span>` : '');
 
-  const set = (id, v) => { g(id).textContent = v; };
-  set('bd-pen-pay',   f(pensionable));   set('bd-pen-pay-m',  fm(pensionable / 12));
-  set('bd-gross',     f(gross));         set('bd-gross-m',    fm(gross / 12));
-  set('bd-pension',   pension > 0 ? f(pension) : '—');
-  set('bd-pension-m', pension > 0 ? fm(pension / 12) : '');
-  set('bd-tax',       f(tax));           set('bd-tax-m',      fm(tax / 12));
-  set('bd-ni',        f(ni));            set('bd-ni-m',       fm(ni / 12));
-  set('bd-loan',      loan > 0 ? f(loan) : '—');
-  set('bd-loan-m',    loan > 0 ? fm(loan / 12) : '');
-  set('bd-net',       f(net));           set('bd-net-m',      fm(net / 12));
+  const tierHTML = PENSION_TIERS.map((t, i) => {
+    const isAct = st.optIn === 'yes' && getPensionRate(st.pensionable) === t.rate;
+    const maxStr = t.max === Infinity ? '+' : ` – £${t.max.toLocaleString()}`;
+    return `<div class="tier-row ${isAct ? 'active-tier' : ''}"><span>Up to £${maxStr.replace('Up to – ', '')}</span><span>${(t.rate*100).toFixed(1)}%</span><span>${isAct?'✓':''}</span></div>`;
+  }).join('');
+  g('tier-table').innerHTML = `<div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">2026/27 TIERS</div>` + tierHTML;
 
-  const extRow = g('bd-extras-row');
-  if (extras > 0) {
-    extRow.classList.remove('hidden');
-    set('bd-extras',  f(extras));
-    set('bd-extras-m', fm(extras / 12));
-  } else {
-    extRow.classList.add('hidden');
-  }
-
-  g('bd-loan-row').classList.toggle('hidden', loanPlan === 'none');
-
-  // Badges
-  const badgeEl = g('badges');
-  badgeEl.innerHTML = '';
-  if (pensOpt === 'yes') {
-    const tier = getPensionTier(pensionable);
-    badgeEl.innerHTML += `<span class="badge badge-blue">Pension tier: ${(tier.rate * 100).toFixed(1)}%</span>`;
-  }
-  if (isLTFT) {
-    const pct = role === 'resident'
-      ? ((fv('res-hours', 40) / 40) * 100).toFixed(0)
-      : ((fv('con-pas', 10) / 10) * 100).toFixed(0);
-    badgeEl.innerHTML += `<span class="badge badge-purple">LTFT ${pct}%</span>`;
-  }
-  if (region === 'scotland')
-    badgeEl.innerHTML += `<span class="badge badge-gray">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland rates</span>`;
+  drawDonut(st.net, st.ded);
 }
 
-/* ═══════════════════════════════════════════
-   DONUT CHART
-═══════════════════════════════════════════ */
-function updateDonut(home, tax, ni, pension, loan) {
+function drawDonut(net, ded) {
   const segs = [
-    { label: 'Take-home',   val: home,    col: '#007F3B' },
-    { label: 'Income tax',  val: tax,     col: '#B91C1C' },
-    { label: 'Nat. insurance', val: ni,   col: '#C2410C' },
-    { label: 'NHS pension', val: pension, col: '#005EB8' },
-    { label: 'Student loan',val: loan,    col: '#6D28D9' },
-  ].filter(s => s.val > 0);
+    { l: 'Take-home', v: net, c: '#007F3B' }, { l: 'Income tax', v: ded.tax, c: '#B91C1C' },
+    { l: 'NI', v: ded.ni, c: '#C2410C' }, { l: 'Pension', v: ded.pension, c: '#005EB8' },
+    { l: 'Loan', v: ded.loan, c: '#6D28D9' }
+  ].filter(s => s.v > 0);
 
-  const total = segs.reduce((a, s) => a + s.val, 0);
-  if (total <= 0) return;
-
-  const r = 46, cx = 60, cy = 60, C = 2 * Math.PI * r;
-  let svg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="18"/>`;
-  let offset = 0;
-
+  const total = segs.reduce((a, s) => a + s.v, 0), C = 2 * Math.PI * 46;
+  let svg = `<svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" fill="none" stroke="var(--border)" stroke-width="18"/>`;
+  let off = 0;
+  
   segs.forEach(s => {
-    const frac = s.val / total;
-    const dash = frac * C;
-    const rot  = -90 + (offset / C) * 360;
-    svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.col}" stroke-width="18"
-      stroke-dasharray="${dash.toFixed(2)} ${(C - dash).toFixed(2)}"
-      transform="rotate(${rot.toFixed(2)} ${cx} ${cy})"/>`;
-    offset += dash;
+    const dash = (s.v / total) * C;
+    svg += `<circle cx="60" cy="60" r="46" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${dash} ${C-dash}" transform="rotate(${-90 + (off/C)*360} 60 60)"/>`;
+    off += dash;
   });
-
-  const homePct = Math.round(home / total * 100);
-  svg += `<text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="11" fill="var(--text-3)" font-family="-apple-system,sans-serif">home</text>
-  <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700" font-family="-apple-system,sans-serif">${homePct}%</text>`;
-
+  svg += `<text x="60" y="55" text-anchor="middle" font-size="11" fill="var(--text-3)">home</text><text x="60" y="70" text-anchor="middle" font-size="14" fill="var(--text)" font-weight="700">${Math.round(net/total*100)}%</text></svg>`;
   g('donut').innerHTML = svg;
-
-  g('legend').innerHTML = segs.map(s =>
-    `<div class="leg-item">
-      <div class="leg-dot" style="background:${s.col}"></div>
-      <div class="leg-name">${s.label}</div>
-      <div class="leg-val">£${Math.round(s.val).toLocaleString('en-GB')}</div>
-      <div class="leg-pct">${(s.val/total*100).toFixed(0)}%</div>
-    </div>`
-  ).join('');
+  
+  g('legend').innerHTML = segs.map(s => `<div class="leg-item"><div class="leg-dot" style="background:${s.c}"></div><span>${s.l}</span><span style="font-weight:700">£${Math.round(s.v).toLocaleString()}</span><span style="color:var(--text-3)">${Math.round(s.v/total*100)}%</span></div>`).join('');
 }
 
-/* ═══════════════════════════════════════════
-   PENSION TIER HIGHLIGHT
-═══════════════════════════════════════════ */
-function updateTierHighlight(pp, pensOpt) {
-  const active = pensOpt === 'yes' ? getPensionTier(pp).idx : -1;
-  document.querySelectorAll('.tier-row').forEach(row => {
-    const isActive = parseInt(row.dataset.tier) === active;
-    row.classList.toggle('active-tier', isActive);
-    row.querySelector('.tier-check').textContent = isActive ? '✓' : '';
-  });
-}
-
-/* ═══════════════════════════════════════════
-   GRADES
-═══════════════════════════════════════════ */
-function populateGrades(savedVal) {
-  const sel = g('grade-select');
-  sel.innerHTML = '';
-  SCALES[role].forEach((s, i) => {
-    const o = document.createElement('option');
-    o.value = i;
-    o.textContent = `${s.name} — £${s.base.toLocaleString('en-GB')}`;
-    sel.appendChild(o);
-  });
-  if (savedVal !== undefined) sel.value = savedVal;
-}
-
-/* ═══════════════════════════════════════════
-   ROLE SWITCH
-═══════════════════════════════════════════ */
-function setRole(r, savedGrade) {
+/* --- STATE MANAGEMENT --- */
+function setRole(r) {
   role = r;
   document.querySelectorAll('.role-pill').forEach(p => p.classList.toggle('active', p.dataset.role === r));
   g('res-fields').classList.toggle('hidden', r !== 'resident');
   g('con-fields').classList.toggle('hidden', r === 'resident');
-  if (r !== 'sas') g('ncia-field').classList.remove('hidden');
-  else g('ncia-field').classList.add('hidden');
-  populateGrades(savedGrade);
+  g('ncia-field').classList.toggle('hidden', r === 'sas');
+  
+  g('grade-select').innerHTML = SCALES[role].map((s, i) => `<option value="${i}">${s.name} — £${s.base.toLocaleString()}</option>`).join('');
   calculate();
 }
 
-/* ═══════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════ */
 function setTab(i) {
   document.querySelectorAll('.tab-btn').forEach((b, j) => b.classList.toggle('active', i === j));
   document.querySelectorAll('.tab-pane').forEach((p, j) => p.classList.toggle('active', i === j));
 }
 
-/* ═══════════════════════════════════════════
-   DARK MODE
-═══════════════════════════════════════════ */
 function toggleTheme() {
   const html = document.documentElement;
-  const dark  = html.dataset.theme === 'dark';
-  html.dataset.theme = dark ? 'light' : 'dark';
-  g('theme-btn').textContent = dark ? '🌙' : '☀️';
-  localStorage.setItem('nhsCalcTheme', html.dataset.theme);
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  g('theme-btn').textContent = html.dataset.theme === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('nhsTheme', html.dataset.theme);
 }
 
-/* ═══════════════════════════════════════════
-   URL STATE
-═══════════════════════════════════════════ */
 function updateURL() {
-  const p = new URLSearchParams();
-  p.set('role',    role);
-  p.set('grade',   g('grade-select').value || '0');
-  p.set('region',  g('tax-region').value);
-  p.set('loan',    g('loan-plan').value);
-  p.set('pension', g('pension-opt').value);
-  p.set('ddrb',    g('ddrb').value);
-  p.set('london',  g('london').value);
-  if (role === 'resident') {
-    p.set('hours',   g('res-hours').value);
-    p.set('nights',  g('res-nights').value);
-    p.set('weekend', g('res-weekend').value);
-    p.set('nroc',    g('res-nroc').value);
-  } else {
-    p.set('pas',     g('con-pas').value);
-    p.set('oncall',  g('con-oncall').value);
-    if (role !== 'sas') p.set('ncias', g('con-ncias').value);
-    p.set('resp',    g('con-resp').value);
-    p.set('wli',     g('con-wli').value);
-  }
+  const p = new URLSearchParams(new FormData(document.createElement('form'))); 
+  ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','london','ddrb'].forEach(id => { if (g(id) && g(id).value != 0) p.set(id, g(id).value); });
+  p.set('role', role); p.set('grade', g('grade-select').value); p.set('loan', g('loan-plan').value);
   history.replaceState({}, '', location.pathname + '?' + p.toString());
 }
 
-function loadFromURL() {
-  const p = new URLSearchParams(location.search);
-  if (!p.has('role')) return false;
-  const sv = (id, key) => { if (p.has(key) && g(id)) g(id).value = p.get(key); };
-  setRole(p.get('role') || 'resident', p.get('grade') || '0');
-  sv('tax-region', 'region'); sv('loan-plan', 'loan');
-  sv('pension-opt', 'pension'); sv('ddrb', 'ddrb'); sv('london', 'london');
-  sv('res-hours', 'hours'); sv('res-nights', 'nights');
-  sv('res-weekend', 'weekend'); sv('res-nroc', 'nroc');
-  sv('con-pas', 'pas'); sv('con-oncall', 'oncall');
-  sv('con-ncias', 'ncias'); sv('con-resp', 'resp'); sv('con-wli', 'wli');
-  return true;
-}
-
-function copyLink() {
-  navigator.clipboard.writeText(location.href).then(() => {
-    const b = g('share-btn');
-    b.textContent = '✓ Copied!';
-    b.classList.add('success');
-    setTimeout(() => { b.innerHTML = '🔗 Share'; b.classList.remove('success'); }, 2500);
-  });
-}
-
-/* ═══════════════════════════════════════════
-   EVENTS
-═══════════════════════════════════════════ */
-document.querySelectorAll('select, input[type="number"]').forEach(el => {
-  el.addEventListener('input', calculate);
-});
-
-/* ═══════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════ */
-(function init() {
-  // Theme
-  const saved = localStorage.getItem('nhsCalcTheme');
-  if (saved) {
-    document.documentElement.dataset.theme = saved;
-    if (saved === 'dark') g('theme-btn').textContent = '☀️';
-  }
-  // Load state or defaults
-  if (!loadFromURL()) {
-    populateGrades();
-    calculate();
-  } else {
-    calculate();
-  }
-})();
+/* --- INIT --- */
+document.querySelectorAll('select, input').forEach(el => el.addEventListener('input', calculate));
+if (localStorage.getItem('nhsTheme') === 'dark') toggleTheme();
+setRole('resident'); // Kickoff
 </script>
+
 </body>
 </html>
