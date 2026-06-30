@@ -8,17 +8,17 @@
     :root {
       --nhs-dark: #003087; --nhs-blue: #005EB8; --nhs-green: #007F3B;
       --bg: #EFF2F7; --surface: #FFFFFF; --surface-2: #F5F8FC;
-      --border: #DDE3EE; --border-strong: #C0CAD8;
+      --border: #DDE3EE;
       --text: #0D1B2E; --text-2: #3D4F66; --text-3: #6E8096;
       --amber: #B45309; --amber-bg: #FFFBEB; --amber-border: #FDE68A;
-      --red: #B91C1C; --orange: #C2410C; --purple: #6D28D9;
-      --c-home: #007F3B; --c-tax: #B91C1C; --c-ni: #C2410C;
+      --purple: #6D28D9;
+      --c-tax: #B91C1C; --c-ni: #C2410C;
       --c-pension: #005EB8; --c-loan: #6D28D9;
     }
 
     [data-theme="dark"] {
       --bg: #0A1525; --surface: #111E30; --surface-2: #192840;
-      --border: #243650; --border-strong: #3A536B;
+      --border: #243650;
       --text: #ECF0F8; --text-2: #A8B8CC; --text-3: #6E85A0;
       --amber-bg: #1C1200; --amber-border: #3D2800;
     }
@@ -31,6 +31,8 @@
     .header-title { font-weight: 700; font-size: 0.95rem; }
     .btn-hdr { background: rgba(255,255,255,0.13); border: none; color: #fff; border-radius: 7px; cursor: pointer; padding: 6px 12px; font-weight: 600; font-size: 0.82rem; transition: background 0.15s; }
     .btn-hdr:hover { background: rgba(255,255,255,0.22); }
+    .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); border-radius: 7px; cursor: pointer; padding: 4px 10px; font-weight: 600; font-size: 0.72rem; }
+    .btn-ghost:hover { background: var(--border); }
     .layout { display: grid; grid-template-columns: 400px 1fr; height: calc(100vh - 52px); max-width: 1080px; margin: 0 auto; }
     .input-panel { background: var(--surface); border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
     .results-panel { background: var(--surface-2); padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
@@ -39,7 +41,7 @@
     .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
     .label { font-size: 0.75rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
     select, input { padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 0.92rem; width: 100%; }
-    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236E80%96' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236E8096' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
     select:focus, input:focus { outline: none; border-color: var(--nhs-blue); box-shadow: 0 0 0 3px rgba(0,94,184,0.12); }
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
@@ -65,6 +67,7 @@
     .hero-stat { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; }
     .rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .rate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+    .rate-card-marginal { background: var(--amber-bg); border-color: var(--amber-border); }
     .rate-val { font-size: 1.55rem; font-weight: 800; color: var(--text); }
     .badges { display: flex; gap: 6px; flex-wrap: wrap; }
     .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
@@ -109,7 +112,7 @@
     </div>
 
     <div class="field">
-      <label class="label">Grade / pay node</label>
+      <label for="grade-select" class="label">Grade / pay node</label>
       <select id="grade-select"></select>
     </div>
 
@@ -122,7 +125,7 @@
       
       <div class="row-2" style="margin-bottom:14px;">
         <div class="field">
-          <label class="label">London weighting</label>
+          <label for="london" class="label">London weighting</label>
           <select id="london">
             <option value="0">None</option>
             <option value="2162">Inner London (£2,162)</option>
@@ -131,39 +134,44 @@
           </select>
         </div>
         <div class="field">
-          <label class="label">Model DDRB Uplift (%)</label>
+          <label for="ddrb" class="label">Model DDRB Uplift (%)</label>
           <input type="number" id="ddrb" value="0" step="0.5" min="0" max="30">
+          <div style="font-size:0.68rem;color:var(--text-3);">Optional — models a hypothetical future award on top of today's rates</div>
         </div>
       </div>
 
       <div id="res-fields">
         <div class="note">Enter under 40 hrs for automatic LTFT scaling.</div>
         <div class="row-2">
-          <div class="field"><label class="label">Weekly hours</label><input type="number" id="res-hours" value="40" step="0.5" min="0" max="48"></div>
-          <div class="field"><label class="label">Night hours</label><input type="number" id="res-nights" value="0" step="0.5" min="0"></div>
-          <div class="field"><label class="label">Weekend allowance</label>
+          <div class="field"><label for="res-hours" class="label">Weekly hours</label><input type="number" id="res-hours" value="40" step="0.5" min="0" max="48"></div>
+          <div class="field"><label for="res-nights" class="label">Night hours</label><input type="number" id="res-nights" value="0" step="0.5" min="0"></div>
+          <div class="field"><label for="res-weekend" class="label">Weekend allowance</label>
             <select id="res-weekend">
               <option value="0">Less than 1 in 8 (0%)</option>
               <option value="0.03">1-in-7 to 1-in-8 (3%)</option>
               <option value="0.04">1-in-6 to 1 in 7 (4%)</option>
               <option value="0.05">1-in-5 to 1 in 6 (5%)</option>
-              <option value="0.075">1-in-4 to 1 in 5 (6%)</option>
-              <option value="0.075">1-in-3 to 1 in 4 to 1 in 5 (7.5%)</option>
+              <option value="0.06">1-in-4 to 1 in 5 (6%)</option>
+              <option value="0.075">1-in-3 to 1 in 4 (7.5%)</option>
               <option value="0.10">1-in-2 to 1-in-3 (10%)</option>
               <option value="0.15">1 in 2 (15%)</option>
             </select>
           </div>
-          <div class="field"><label class="label">NROC on-call</label>
+          <div class="field"><label for="res-nroc" class="label">NROC on-call</label>
             <select id="res-nroc"><option value="0">None</option><option value="0.08">NROC (8%)</option></select>
           </div>
         </div>
+
+        <div class="sec-label" style="margin-top:14px">Flexible pay premium (FPP)</div>
+        <div class="note">Taxable but <strong>non-pensionable</strong>, pro-rated for LTFT. Applies to GP, Emergency Medicine, Psychiatry, Histopathology, OMFS and Academic trainees — enter the confirmed annual amount from the current pay circular for your programme.</div>
+        <div class="field"><label for="fpp-amount" class="label">Annual FPP (£)</label><input type="number" id="fpp-amount" value="0" step="100" min="0"></div>
       </div>
 
       <div id="con-fields" class="hidden">
         <div class="note">Enter under 10 PAs for automatic LTFT pro-rata scaling.</div>
         <div class="row-2">
-          <div class="field"><label class="label">Total PAs (base 10)</label><input type="number" id="con-pas" value="10" step="0.25" min="1"></div>
-          <div class="field"><label class="label">On-call supplement</label>
+          <div class="field"><label for="con-pas" class="label">Total PAs (base 10)</label><input type="number" id="con-pas" value="10" step="0.25" min="1"></div>
+          <div class="field"><label for="con-oncall" class="label">On-call supplement</label>
             <select id="con-oncall">
               <option value="0">None (0%)</option><option value="0.01">Cat B low (1%)</option>
               <option value="0.02">Cat B med (2%)</option><option value="0.03">Cat A low/B high (3%)</option>
@@ -171,7 +179,7 @@
             </select>
           </div>
           <div class="field" id="ncia-field">
-            <label class="label">NCIAs</label>
+            <label for="con-ncias" class="label">NCIAs</label>
             <select id="con-ncias">
               <option value="0">None</option>
               <option value="21000">Level N1 (£21,000)</option>
@@ -179,16 +187,16 @@
               <option value="42000">Level N3 (£42,000)</option>
             </select>
           </div>
-          <div class="field"><label class="label">Management (£/yr)</label><input type="number" id="con-resp" value="0" step="500"></div>
+          <div class="field"><label for="con-resp" class="label">Management (£/yr)</label><input type="number" id="con-resp" value="0" step="500" min="0"></div>
         </div>
-        <div class="field"><label class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500"></div>
+        <div class="field"><label for="con-wli" class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500" min="0"></div>
       </div>
     </div>
 
     <div class="tab-pane" id="tab-1">
       <div class="sec-label" style="margin-top:0">NHS pension</div>
       <div class="field">
-        <label class="label">Pension scheme</label>
+        <label for="pension-opt" class="label">Pension scheme</label>
         <select id="pension-opt"><option value="yes">Opted in</option><option value="no">Opted out</option></select>
       </div>
       <div class="tier-table" id="tier-table">
@@ -197,7 +205,7 @@
       
       <div class="sec-label">Student loans</div>
       <div class="field">
-        <label class="label">Repayment plan</label>
+        <label for="loan-plan" class="label">Repayment plan</label>
         <select id="loan-plan">
           <option value="none">None</option>
           <option value="plan1">Plan 1</option>
@@ -225,7 +233,7 @@
 
     <div class="rate-row">
       <div class="rate-card"><div style="font-size:0.7rem;color:var(--text-3);font-weight:600;">EFFECTIVE RATE</div><div class="rate-val" id="out-eff">0%</div></div>
-      <div class="rate-card"><div style="font-size:0.7rem;color:var(--text-3);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div></div>
+      <div class="rate-card rate-card-marginal"><div style="font-size:0.7rem;color:var(--amber);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div><div style="font-size:0.68rem;color:var(--text-3);margin-top:2px;">on your next £100 — e.g. an extra shift or PA</div></div>
     </div>
 
     <div class="badges" id="badges"></div>
@@ -236,16 +244,12 @@
     </div>
 
     <div class="breakdown">
-      <div style="font-weight:700;color:var(--text-3);font-size:0.72rem;margin-bottom:10px;">BREAKDOWN</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-weight:700;color:var(--text-3);font-size:0.72rem;">BREAKDOWN</div>
+        <button class="btn-ghost" id="copy-bkd-btn" onclick="copyBreakdown()">📋 Copy as text</button>
+      </div>
       <div class="bkd-row" style="color:var(--text-3);font-weight:600;border:none;"><span>Item</span><span style="text-align:right">Annual</span><span style="text-align:right">Monthly</span></div>
-      <div class="bkd-row"><span>Pensionable pay (Inc. London)</span><span id="bd-pen-pay" style="text-align:right"></span><span id="bd-pen-pay-m" style="text-align:right"></span></div>
-      <div class="bkd-row" id="bd-extras-row"><span>Non-pensionable extras</span><span id="bd-extras" style="text-align:right"></span><span id="bd-extras-m" style="text-align:right"></span></div>
-      <div class="bkd-row" style="font-weight:700;"><span>Gross pay</span><span id="bd-gross" style="text-align:right"></span><span id="bd-gross-m" style="text-align:right"></span></div>
-      <div class="bkd-row" style="color:var(--c-pension);"><span>− NHS pension</span><span id="bd-pension" style="text-align:right"></span><span id="bd-pension-m" style="text-align:right"></span></div>
-      <div class="bkd-row" style="color:var(--c-tax);"><span>− Income tax</span><span id="bd-tax" style="text-align:right"></span><span id="bd-tax-m" style="text-align:right"></span></div>
-      <div class="bkd-row" style="color:var(--c-ni);"><span>− National insurance</span><span id="bd-ni" style="text-align:right"></span><span id="bd-ni-m" style="text-align:right"></span></div>
-      <div class="bkd-row" id="bd-loan-row" style="color:var(--c-loan);"><span>− Student loan</span><span id="bd-loan" style="text-align:right"></span><span id="bd-loan-m" style="text-align:right"></span></div>
-      <div class="bkd-row" style="font-weight:700;color:var(--nhs-green);"><span>= Take-home pay</span><span id="bd-net" style="text-align:right"></span><span id="bd-net-m" style="text-align:right"></span></div>
+      <div id="bkd-rows"></div>
     </div>
 
     <p style="font-size:0.7rem;color:var(--text-3);text-align:center;margin-top:10px;">Estimates only — England 2026/27 rates.</p>
@@ -283,39 +287,60 @@ const SCALES = {
   ]
 };
 
+// All year-specific figures live here so next year's uplift is a one-place edit.
+const RATES_2026_27 = {
+  weeksPerYear: 52.143,
+  nightPremiumRate: 0.37,
+  personalAllowance: 12570,
+  paTaperThreshold: 100000,
+  paTaperRate: 0.5,           // PA reduced by £1 for every £2 over the taper threshold
+  basicRateBand: 50270,       // upper limit of basic rate band (post-PA threshold)
+  basicRate: 0.20,
+  higherRateBand: 125140,     // upper limit of higher rate band
+  higherRate: 0.40,
+  additionalRate: 0.45,
+  niPrimaryThreshold: 12570,
+  niUpperEarningsLimit: 50270,
+  niMainRate: 0.08,
+  niAdditionalRate: 0.02
+};
+
 const PENSION_TIERS = [
   { max: 13258, rate: 0.052 }, { max: 27796, rate: 0.065 }, { max: 33867, rate: 0.083 },
   { max: 50844, rate: 0.098 }, { max: 65190, rate: 0.107 }, { max: Infinity, rate: 0.125 }
 ];
 
 const LOAN_PLANS = { plan1: { th: 24990, r: 0.09 }, plan2: { th: 27295, r: 0.09 }, plan5: { th: 25000, r: 0.09 }, pgl: { th: 21000, r: 0.06 } };
+
 let role = 'resident';
+let lastState = null;
 
 /* --- UTILITIES --- */
 const g = id => document.getElementById(id);
-const fv = (id, def = 0) => parseFloat(g(id)?.value) || def;
+const fv = (id, def = 0) => { const n = parseFloat(g(id)?.value); return isNaN(n) ? def : n; };
 const fmt = v => `£${Math.round(v).toLocaleString('en-GB')}`;
 
 /* --- PURE MATH FUNCTIONS (England 2026/27) --- */
 const getPensionRate = pay => PENSION_TIERS.find(t => pay <= t.max).rate;
 
 function calcDeductions(gross, pensionable, plan, optIn) {
+  const R = RATES_2026_27;
   const pension = optIn === 'yes' ? pensionable * getPensionRate(pensionable) : 0;
-  
+
   // Tax
   let tax = 0, inc = gross - pension;
-  let pa = inc > 100000 ? Math.max(0, 12570 - (inc - 100000) / 2) : 12570;
+  let pa = inc > R.paTaperThreshold ? Math.max(0, R.personalAllowance - (inc - R.paTaperThreshold) * R.paTaperRate) : R.personalAllowance;
   let rem = Math.max(0, inc - pa);
-  
-  const basic = Math.min(rem, Math.max(0, 50270 - pa));
-  tax += basic * 0.20; rem -= basic;
-  if (rem > 0) { const higher = Math.min(rem, Math.max(0, 125140 - Math.max(pa, 50270))); tax += higher * 0.40; rem -= higher; }
-  if (rem > 0) tax += rem * 0.45;
+
+  const basic = Math.min(rem, Math.max(0, R.basicRateBand - pa));
+  tax += basic * R.basicRate; rem -= basic;
+  if (rem > 0) { const higher = Math.min(rem, Math.max(0, R.higherRateBand - Math.max(pa, R.basicRateBand))); tax += higher * R.higherRate; rem -= higher; }
+  if (rem > 0) tax += rem * R.additionalRate;
 
   // NI
   let ni = 0;
-  if (gross > 12570) ni += Math.min(gross - 12570, 37700) * 0.08;
-  if (gross > 50270) ni += (gross - 50270) * 0.02;
+  if (gross > R.niPrimaryThreshold) ni += Math.min(gross - R.niPrimaryThreshold, R.niUpperEarningsLimit - R.niPrimaryThreshold) * R.niMainRate;
+  if (gross > R.niUpperEarningsLimit) ni += (gross - R.niUpperEarningsLimit) * R.niAdditionalRate;
 
   // Loan
   let loan = 0;
@@ -326,16 +351,29 @@ function calcDeductions(gross, pensionable, plan, optIn) {
 }
 
 /* --- MAIN CONTROLLER --- */
+function clampInputs() {
+  document.querySelectorAll('input[type="number"]').forEach(el => {
+    if (el.value === '') return;
+    const v = parseFloat(el.value);
+    if (isNaN(v)) return;
+    let clamped = v;
+    if (el.min !== '' && clamped < parseFloat(el.min)) clamped = parseFloat(el.min);
+    if (el.max !== '' && clamped > parseFloat(el.max)) clamped = parseFloat(el.max);
+    if (clamped !== v) el.value = clamped;
+  });
+}
+
 function calculate() {
+  clampInputs();
   const gradeIdx = parseInt(g('grade-select').value) || 0;
   const ddrb = 1 + (fv('ddrb') / 100);
   const baseFT = SCALES[role][gradeIdx].base * ddrb;
   const london = fv('london');
 
-  let pensionable = 0, nonPensionable = 0, isLTFT = false;
+  let pensionable = 0, nonPensionable = 0, isLTFT = false, fppDisplay = 0;
 
   if (role === 'resident') {
-    const hours = fv('res-hours', 40), rate = baseFT / (40 * 52.143);
+    const hours = fv('res-hours', 40), rate = baseFT / (40 * RATES_2026_27.weeksPerYear);
     isLTFT = hours < 40;
     
     // Pensionable items
@@ -345,10 +383,16 @@ function calculate() {
     pensionable = basic + wkPay + ltft + london;
 
     // Non-Pensionable items (NROC & Nights are NOT pensionable in 2016 contract)
-    const extraH = isLTFT ? 0 : (hours - 40) * rate * 52.143;
-    const nightPay = fv('res-nights') * rate * 0.37 * 52.143;
+    const extraH = isLTFT ? 0 : (hours - 40) * rate * RATES_2026_27.weeksPerYear;
+    const nightPay = fv('res-nights') * rate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
     const nrocPay = basic * fv('res-nroc');
-    nonPensionable = extraH + nightPay + nrocPay;
+
+    // Flexible pay premium — taxable, non-pensionable, pro-rated for LTFT
+    let fpp = fv('fpp-amount');
+    if (isLTFT) fpp *= (hours / 40);
+
+    nonPensionable = extraH + nightPay + nrocPay + fpp;
+    fppDisplay = fpp;
 
   } else {
     const pas = fv('con-pas', 10);
@@ -368,7 +412,7 @@ function calculate() {
   }
 
   const gross = pensionable + nonPensionable;
-  const extras = nonPensionable;
+  const extras = nonPensionable - fppDisplay;
 
   const plan = g('loan-plan').value, optIn = g('pension-opt').value;
   const ded = calcDeductions(gross, pensionable, plan, optIn);
@@ -379,30 +423,46 @@ function calculate() {
   const marginal = dedNext.total - ded.total;
   const effective = gross > 0 ? (ded.total / gross) * 100 : 0;
 
-  updateUI({ gross, pensionable, extras, net, ded, marginal, effective, isLTFT, optIn });
+  updateUI({ gross, pensionable, extras, fpp: fppDisplay, net, ded, marginal, effective, isLTFT, optIn });
   updateURL();
 }
 
 /* --- VIEW UPDATES --- */
+// One source of truth for every line in the breakdown card — used by both renderBreakdown()
+// and copyBreakdown(), so a row only ever needs to be defined in one place.
+const BREAKDOWN_ROWS = [
+  { key: 'pensionable', label: 'Pensionable pay (Inc. London)' },
+  { key: 'extras', label: 'Non-pensionable extras', hideIfZero: true },
+  { key: 'fpp', label: 'Flexible pay premium', hideIfZero: true },
+  { key: 'gross', label: 'Gross pay', bold: true },
+  { key: 'ded.pension', label: '− NHS pension', colorVar: '--c-pension' },
+  { key: 'ded.tax', label: '− Income tax', colorVar: '--c-tax' },
+  { key: 'ded.ni', label: '− National insurance', colorVar: '--c-ni' },
+  { key: 'ded.loan', label: '− Student loan', colorVar: '--c-loan', hideIfZero: true },
+  { key: 'net', label: '= Take-home pay', bold: true, colorVar: '--nhs-green' }
+];
+const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
+
+function renderBreakdown(st) {
+  g('bkd-rows').innerHTML = BREAKDOWN_ROWS.map(row => {
+    const val = getPath(st, row.key);
+    if (row.hideIfZero && !val) return '';
+    const style = [row.bold ? 'font-weight:700' : '', row.colorVar ? `color:var(${row.colorVar})` : ''].filter(Boolean).join(';');
+    return `<div class="bkd-row" style="${style}"><span>${row.label}</span><span style="text-align:right">${fmt(val)}</span><span style="text-align:right">${fmt(val/12)}</span></div>`;
+  }).join('');
+}
+
 function updateUI(st) {
+  lastState = st;
   const uiMap = {
     'out-monthly': fmt(st.net / 12), 'out-gross-sub': `${fmt(st.gross)} gross/yr`,
     'out-net-ann': fmt(st.net), 'out-gross-ann': fmt(st.gross),
-    'out-eff': `${st.effective.toFixed(1)}%`, 'out-marg': `${st.marginal.toFixed(1)}%`,
-    'bd-pen-pay': fmt(st.pensionable), 'bd-pen-pay-m': fmt(st.pensionable/12),
-    'bd-extras': fmt(st.extras), 'bd-extras-m': fmt(st.extras/12),
-    'bd-gross': fmt(st.gross), 'bd-gross-m': fmt(st.gross/12),
-    'bd-pension': fmt(st.ded.pension), 'bd-pension-m': fmt(st.ded.pension/12),
-    'bd-tax': fmt(st.ded.tax), 'bd-tax-m': fmt(st.ded.tax/12),
-    'bd-ni': fmt(st.ded.ni), 'bd-ni-m': fmt(st.ded.ni/12),
-    'bd-loan': fmt(st.ded.loan), 'bd-loan-m': fmt(st.ded.loan/12),
-    'bd-net': fmt(st.net), 'bd-net-m': fmt(st.net/12)
+    'out-eff': `${st.effective.toFixed(1)}%`, 'out-marg': `${st.marginal.toFixed(1)}%`
   };
-  
+
   for (const [id, val] of Object.entries(uiMap)) if (g(id)) g(id).textContent = val;
 
-  g('bd-extras-row').classList.toggle('hidden', st.extras === 0);
-  g('bd-loan-row').classList.toggle('hidden', st.ded.loan === 0);
+  renderBreakdown(st);
 
   // Badges & Tiers
   g('badges').innerHTML = (st.optIn === 'yes' ? `<span class="badge badge-blue">Pension tier: ${(getPensionRate(st.pensionable)*100).toFixed(1)}%</span>` : '') +
@@ -410,8 +470,8 @@ function updateUI(st) {
 
   const tierHTML = PENSION_TIERS.map((t, i) => {
     const isAct = st.optIn === 'yes' && getPensionRate(st.pensionable) === t.rate;
-    const maxStr = t.max === Infinity ? '+' : ` – £${t.max.toLocaleString()}`;
-    return `<div class="tier-row ${isAct ? 'active-tier' : ''}"><span>Up to £${maxStr.replace('Up to – ', '')}</span><span>${(t.rate*100).toFixed(1)}%</span><span>${isAct?'✓':''}</span></div>`;
+    const label = t.max === Infinity ? `Over £${PENSION_TIERS[i-1].max.toLocaleString()}` : `Up to £${t.max.toLocaleString()}`;
+    return `<div class="tier-row ${isAct ? 'active-tier' : ''}"><span>${label}</span><span>${(t.rate*100).toFixed(1)}%</span><span>${isAct?'✓':''}</span></div>`;
   }).join('');
   g('tier-table').innerHTML = `<div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">2026/27 TIERS</div>` + tierHTML;
 
@@ -420,13 +480,21 @@ function updateUI(st) {
 
 function drawDonut(net, ded) {
   const segs = [
-    { l: 'Take-home', v: net, c: '#007F3B' }, { l: 'Income tax', v: ded.tax, c: '#B91C1C' },
-    { l: 'NI', v: ded.ni, c: '#C2410C' }, { l: 'Pension', v: ded.pension, c: '#005EB8' },
-    { l: 'Loan', v: ded.loan, c: '#6D28D9' }
+    { l: 'Take-home', v: net, c: 'var(--nhs-green)' }, { l: 'Income tax', v: ded.tax, c: 'var(--c-tax)' },
+    { l: 'NI', v: ded.ni, c: 'var(--c-ni)' }, { l: 'Pension', v: ded.pension, c: 'var(--c-pension)' },
+    { l: 'Loan', v: ded.loan, c: 'var(--c-loan)' }
   ].filter(s => s.v > 0);
 
   const total = segs.reduce((a, s) => a + s.v, 0), C = 2 * Math.PI * 46;
   let svg = `<svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" fill="none" stroke="var(--border)" stroke-width="18"/>`;
+
+  if (total <= 0) {
+    svg += `<text x="60" y="64" text-anchor="middle" font-size="12" fill="var(--text-3)">No data</text></svg>`;
+    g('donut').innerHTML = svg;
+    g('legend').innerHTML = '';
+    return;
+  }
+
   let off = 0;
   
   segs.forEach(s => {
@@ -461,20 +529,67 @@ function toggleTheme() {
   const html = document.documentElement;
   html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
   g('theme-btn').textContent = html.dataset.theme === 'dark' ? '🌙' : '☀️';
-  localStorage.setItem('nhsTheme', html.dataset.theme);
 }
 
+function copyToClipboard(text, btnId) {
+  if (!navigator.clipboard) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = g(btnId);
+    if (!btn) return;
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = original, 1500);
+  }).catch(() => {});
+}
+
+function copyLink() {
+  copyToClipboard(location.href, 'share-btn');
+}
+
+function copyBreakdown() {
+  if (!lastState) return;
+  const st = lastState;
+  const gradeName = SCALES[role][parseInt(g('grade-select').value) || 0].name;
+
+  const rowLines = BREAKDOWN_ROWS
+    .filter(row => !row.hideIfZero || getPath(st, row.key))
+    .map(row => `${row.label}: ${fmt(getPath(st, row.key))}`);
+
+  const lines = [
+    `NHS Doctor Salary Calculator — England 2026/27 (estimate)`,
+    `Role: ${role.charAt(0).toUpperCase() + role.slice(1)} — ${gradeName}`,
+    ``,
+    ...rowLines,
+    ``,
+    `Monthly take-home: ${fmt(st.net / 12)}`,
+    `Effective rate: ${st.effective.toFixed(1)}% · Marginal rate: ${st.marginal.toFixed(1)}%`,
+    ``,
+    `Estimates only — verify against the current Pay & Conditions Circular and your payslip.`
+  ];
+
+  copyToClipboard(lines.join('\n'), 'copy-bkd-btn');
+}
+
+const URL_FIELDS = ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','london','ddrb','pension-opt','fpp-amount','loan-plan'];
+
 function updateURL() {
-  const p = new URLSearchParams(new FormData(document.createElement('form'))); 
-  ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','london','ddrb'].forEach(id => { if (g(id) && g(id).value != 0) p.set(id, g(id).value); });
-  p.set('role', role); p.set('grade', g('grade-select').value); p.set('loan', g('loan-plan').value);
+  const p = new URLSearchParams();
+  URL_FIELDS.forEach(id => { const el = g(id); if (el && el.value != 0 && el.value !== 'none') p.set(id, el.value); });
+  p.set('role', role); p.set('grade', g('grade-select').value);
   history.replaceState({}, '', location.pathname + '?' + p.toString());
+}
+
+function restoreFromURL() {
+  const p = new URLSearchParams(location.search);
+  setRole(p.get('role') || 'resident');
+  URL_FIELDS.forEach(id => { if (p.has(id) && g(id)) g(id).value = p.get(id); });
+  if (p.has('grade') && g('grade-select')) g('grade-select').value = p.get('grade');
+  calculate();
 }
 
 /* --- INIT --- */
 document.querySelectorAll('select, input').forEach(el => el.addEventListener('input', calculate));
-if (localStorage.getItem('nhsTheme') === 'dark') toggleTheme();
-setRole('resident'); // Kickoff
+restoreFromURL(); // Kickoff — restores a shared scenario if present, otherwise defaults to resident
 </script>
 
 </body>
