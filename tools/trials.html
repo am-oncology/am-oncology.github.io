@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Cancer Trial Finder</title>
+<!--
+  UK Cancer Trial Finder — Phase 1
+  Single-file, static, GitHub Pages-ready.
+  Data source: ClinicalTrials.gov API v2 (JSON, CORS-enabled, no key).
+  UK filtering: query.locn=United Kingdom on the server + exact country
+  confirmation client-side. Biomarker search: synonym expansion into an
+  Essie OR-query, with client-side match transparency.
+
+  Not yet included (Phase 2): ISRCTN + CRUK/ECMC, which need a small proxy
+  because they don't send CORS headers. See the plan for the two options.
+-->
+<style>
+  :root {
+    --ink:        #16232b;
+    --ink-soft:   #35474f;
+    --muted:      #5c6b6f;
+    --faint:      #8a999d;
+    --bg:         #f6f7f6;
+    --card:       #ffffff;
+    --border:     #e3e7e6;
+    --border-str: #cdd4d3;
+    --accent:     #0f766e;
+    --accent-ink: #0b5a54;
+    --accent-sft: #dcefec;
+
+    --ok:      #157347;
+    --ok-bg:   #e4f2ea;
+    --warn:    #a15c07;
+    --warn-bg: #f6ecd9;
+    --grey:    #556169;
+    --grey-bg: #e9edee;
+    --stop:    #9f1239;
+    --stop-bg: #f7e2e7;
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(20,35,43,.04), 0 4px 16px rgba(20,35,43,.05);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.5;
+    font-size: 15px;
+  }
+
+  a { color: var(--accent-ink); }
+
+  /* ---------- Header ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .masthead-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 22px 24px 20px;
+  }
+  .masthead h1 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 650;
+    letter-spacing: -.01em;
+  }
+  .masthead h1 .mark {
+    color: var(--accent);
+  }
+  .masthead p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 62ch;
+  }
+  .source-note {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--faint);
+  }
+  .source-note code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+  }
+
+  /* ---------- Layout ---------- */
+  .layout {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 22px 24px 64px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* ---------- Control panel ---------- */
+  .panel {
+    position: sticky;
+    top: 22px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 18px 20px;
+  }
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field > label,
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .field-hint {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--faint);
+    font-size: 11.5px;
+    margin-left: 6px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    padding: 9px 11px;
+    border: 1px solid var(--border-str);
+    border-radius: 8px;
+    background: #fff;
+  }
+  input[type="text"]:focus,
+  .chip:focus-visible,
+  .btn:focus-visible,
+  .seg button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  /* Segmented control */
+  .seg {
+    display: flex;
+    border: 1px solid var(--border-str);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .seg button {
+    flex: 1;
+    font: inherit;
+    font-size: 13px;
+    padding: 7px 4px;
+    background: #fff;
+    border: 0;
+    border-right: 1px solid var(--border);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] {
+    background: var(--accent-sft);
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+
+  /* Chips (biomarkers) */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 5px 9px;
+    border: 1px solid var(--border-str);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* Checkbox rows */
+  .checks { display: flex; flex-direction: column; gap: 7px; }
+  .check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .check input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+
+  .actions { display: flex; gap: 9px; margin-top: 22px; }
+  .btn {
+    font: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: #fff; flex: 1; }
+  .btn-primary:hover { background: var(--accent-ink); }
+  .btn-ghost { background: #fff; border-color: var(--border-str); color: var(--ink-soft); }
+  .btn-ghost:hover { border-color: var(--muted); }
+
+  /* ---------- Results ---------- */
+  .results-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    min-height: 24px;
+  }
+  .results-count {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .results-count strong { color: var(--ink); font-weight: 650; }
+  .results-query {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--faint);
+    text-align: right;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -.005em;
+  }
+  .card-title a { text-decoration: none; }
+  .card-title a:hover { text-decoration: underline; }
+
+  .pill {
+    flex: none;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: .01em;
+  }
+  .pill.ok   { background: var(--ok-bg);   color: var(--ok); }
+  .pill.warn { background: var(--warn-bg); color: var(--warn); }
+  .pill.grey { background: var(--grey-bg); color: var(--grey); }
+  .pill.stop { background: var(--stop-bg); color: var(--stop); }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 9px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .meta .nct { font-family: var(--mono); font-size: 12px; }
+  .meta .dot { color: var(--border-str); }
+
+  .row { margin-top: 11px; }
+  .row-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--faint);
+    margin-bottom: 5px;
+  }
+  .taglist { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--ink-soft);
+  }
+  .tag.match {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: var(--accent-sft);
+    border-color: #bfe0da;
+    color: var(--accent-ink);
+  }
+  .tag.match .where { color: var(--accent); opacity: .75; margin-left: 5px; }
+  .tag.site .city { color: var(--muted); }
+
+  /* ---------- States ---------- */
+  .state {
+    background: var(--card);
+    border: 1px dashed var(--border-str);
+    border-radius: var(--radius);
+    padding: 40px 28px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .state h2 { margin: 0 0 6px; font-size: 16px; color: var(--ink-soft); font-weight: 600; }
+  .state p { margin: 0 auto; max-width: 46ch; font-size: 14px; }
+  .state.error { border-color: #e6c3cc; background: #fdf6f7; }
+  .state.error h2 { color: var(--stop); }
+
+  .spinner {
+    width: 22px; height: 22px;
+    border: 2.5px solid var(--accent-sft);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .disclaimer {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    font-size: 12px;
+    color: var(--faint);
+    line-height: 1.55;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; gap: 20px; }
+    .panel { position: static; }
+    .results-query { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <h1><span class="mark">◑</span> UK Cancer Trial Finder</h1>
+    <p>Search UK clinical trials by tumour type and molecular biomarker. Pick a condition, add the biomarkers that matter, and see recruiting trials with their UK sites.</p>
+    <span class="source-note">
+      Source: ClinicalTrials.gov v2 <code>/api/v2/studies</code> · UK sites only · live query
+    </span>
+  </div>
+</header>
+
+<main class="layout">
+  <!-- Controls -->
+  <aside class="panel" aria-label="Search filters">
+    <div class="field">
+      <label for="condition">Condition <span class="field-hint">or free text</span></label>
+      <input type="text" id="condition" list="condition-presets" placeholder="e.g. colorectal cancer" autocomplete="off">
+      <datalist id="condition-presets"></datalist>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Biomarker set</span>
+      <div class="seg" id="area-seg" role="group" aria-label="Tumour area">
+        <button type="button" data-area="Colorectal" aria-pressed="true">Colorectal</button>
+        <button type="button" data-area="Neuro-oncology" aria-pressed="false">Neuro-onc</button>
+        <button type="button" data-area="All" aria-pressed="false">All</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Biomarkers <span class="field-hint" id="bm-count"></span></span>
+      <div class="chips" id="biomarkers"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Recruitment status</span>
+      <div class="checks" id="status-checks"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Phase</span>
+      <div class="checks" id="phase-checks"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="search-btn">Search trials</button>
+      <button class="btn btn-ghost" id="reset-btn" title="Clear all filters">Reset</button>
+    </div>
+  </aside>
+
+  <!-- Results -->
+  <section aria-label="Results" aria-live="polite">
+    <div class="results-head">
+      <div class="results-count" id="results-count"></div>
+      <div class="results-query" id="results-query"></div>
+    </div>
+    <div id="results">
+      <div class="state">
+        <h2>No search yet</h2>
+        <p>Choose a condition (and any biomarkers), then search. Trials are matched against titles, eligibility criteria, and study descriptions.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<p class="disclaimer">
+  This tool searches ClinicalTrials.gov only and shows trials with at least one recruiting or active site in the United Kingdom. Biomarker matching relies on free-text terms in trial records, so it can miss trials that describe eligibility differently or include them where the term appears incidentally — always confirm against the source record before acting on it clinically. Not a substitute for the trial protocol or the sponsor's eligibility screening. ISRCTN and CRUK/ECMC are not yet included.
+</p>
+
+<script>
+"use strict";
+
+/* ============================================================
+   Configuration
+   ============================================================ */
+const CONFIG = {
+  apiBase:  "https://clinicaltrials.gov/api/v2/studies",
+  country:  "United Kingdom",
+  pageSize: 100,
+  maxPages: 5,          // safety cap: up to 500 pre-filter records per search
+};
+
+const CONDITION_PRESETS = [
+  "Colorectal cancer", "Rectal cancer", "Colon cancer",
+  "Metastatic colorectal cancer", "Anal cancer",
+  "Glioblastoma", "Glioma", "Astrocytoma", "Oligodendroglioma",
+  "Meningioma", "Diffuse midline glioma", "Brain tumour",
+];
+
+/* Biomarker ontology — the clinical core. Each entry expands to the
+   synonyms actually seen in trial free text. Extend freely. */
+const BIOMARKERS = {
+  "Colorectal": [
+    { label: "KRAS G12C",  synonyms: ["KRAS G12C", "KRASG12C", "sotorasib", "adagrasib", "divarasib"] },
+    { label: "KRAS",       synonyms: ["KRAS", "KRAS-mutant", "KRAS mutation", "RAS-mutant", "RAS mutation"] },
+    { label: "NRAS",       synonyms: ["NRAS", "NRAS-mutant", "NRAS mutation"] },
+    { label: "BRAF V600E", synonyms: ["BRAF V600E", "BRAF V600", "BRAF-mutant", "BRAF mutation", "encorafenib"] },
+    { label: "MSI-H/dMMR", synonyms: ["MSI-H", "MSI-high", "dMMR", "microsatellite instability", "mismatch repair deficient", "mismatch repair-deficient", "mismatch repair deficiency"] },
+    { label: "MSS/pMMR",   synonyms: ["MSS", "microsatellite stable", "pMMR", "mismatch repair proficient"] },
+    { label: "HER2",       synonyms: ["HER2", "ERBB2", "HER2-amplified", "HER2-positive", "trastuzumab", "tucatinib"] },
+    { label: "NTRK",       synonyms: ["NTRK", "TRK fusion", "NTRK fusion", "larotrectinib", "entrectinib"] },
+    { label: "PIK3CA",     synonyms: ["PIK3CA", "PIK3CA-mutant", "PIK3CA mutation"] },
+    { label: "POLE",       synonyms: ["POLE", "POLE mutation", "polymerase epsilon"] },
+    { label: "Lynch",      synonyms: ["Lynch syndrome", "hereditary nonpolyposis"] },
+  ],
+  "Neuro-oncology": [
+    { label: "IDH",        synonyms: ["IDH", "IDH1", "IDH2", "IDH-mutant", "IDH mutation", "vorasidenib", "ivosidenib"] },
+    { label: "MGMT",       synonyms: ["MGMT", "MGMT methylation", "MGMT promoter", "methylated MGMT"] },
+    { label: "1p/19q",     synonyms: ["1p/19q", "1p19q", "1p/19q codeletion", "codeletion", "oligodendroglioma"] },
+    { label: "EGFR",       synonyms: ["EGFR", "EGFRvIII", "EGFR amplification", "EGFR-amplified"] },
+    { label: "BRAF V600E", synonyms: ["BRAF V600E", "BRAF-mutant", "dabrafenib", "trametinib"] },
+    { label: "H3 K27M",    synonyms: ["H3 K27M", "H3K27M", "K27M", "diffuse midline glioma"] },
+    { label: "TERT",       synonyms: ["TERT", "TERT promoter"] },
+    { label: "ATRX",       synonyms: ["ATRX", "ATRX loss"] },
+    { label: "CDKN2A/B",   synonyms: ["CDKN2A", "CDKN2B", "CDKN2A/B"] },
+    { label: "NF2",        synonyms: ["NF2", "neurofibromatosis type 2", "NF2-mutant"] },
+    { label: "FGFR",       synonyms: ["FGFR", "FGFR fusion", "FGFR3-TACC3"] },
+  ],
+};
+
+const STATUS_OPTIONS = [
+  { value: "RECRUITING",             label: "Recruiting",             on: true },
+  { value: "NOT_YET_RECRUITING",     label: "Not yet recruiting",     on: true },
+  { value: "ENROLLING_BY_INVITATION",label: "Enrolling by invitation",on: false },
+  { value: "ACTIVE_NOT_RECRUITING",  label: "Active, not recruiting", on: false },
+  { value: "COMPLETED",              label: "Completed",              on: false },
+];
+
+const PHASE_OPTIONS = [
+  { value: "EARLY_PHASE1", label: "Early Phase 1" },
+  { value: "PHASE1",       label: "Phase 1" },
+  { value: "PHASE2",       label: "Phase 2" },
+  { value: "PHASE3",       label: "Phase 3" },
+  { value: "PHASE4",       label: "Phase 4" },
+  { value: "NA",           label: "N/A (not applicable)" },
+];
+
+const STATUS_STYLE = {
+  RECRUITING:              { cls: "ok",   text: "Recruiting" },
+  NOT_YET_RECRUITING:      { cls: "warn", text: "Not yet recruiting" },
+  ENROLLING_BY_INVITATION: { cls: "warn", text: "Enrolling by invitation" },
+  ACTIVE_NOT_RECRUITING:   { cls: "grey", text: "Active, not recruiting" },
+  COMPLETED:               { cls: "grey", text: "Completed" },
+  SUSPENDED:               { cls: "stop", text: "Suspended" },
+  TERMINATED:              { cls: "stop", text: "Terminated" },
+  WITHDRAWN:               { cls: "stop", text: "Withdrawn" },
+};
+
+const PHASE_LABEL = {
+  EARLY_PHASE1: "Early Phase 1", PHASE1: "Phase 1", PHASE2: "Phase 2",
+  PHASE3: "Phase 3", PHASE4: "Phase 4", NA: "N/A",
+};
+
+/* ============================================================
+   State
+   ============================================================ */
+const state = {
+  area: "Colorectal",
+  selectedBiomarkers: new Set(),   // labels
+};
+
+const $ = (sel) => document.querySelector(sel);
+
+/* ============================================================
+   Build the control panel
+   ============================================================ */
+function initControls() {
+  // Condition presets
+  $("#condition-presets").innerHTML =
+    CONDITION_PRESETS.map((c) => `<option value="${c}">`).join("");
+
+  // Tumour-area segmented control
+  $("#area-seg").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-area]");
+    if (!btn) return;
+    state.area = btn.dataset.area;
+    for (const b of $("#area-seg").children) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    }
+    renderBiomarkers();
+  });
+
+  // Status checkboxes
+  $("#status-checks").innerHTML = STATUS_OPTIONS.map((s) => `
+    <label class="check">
+      <input type="checkbox" name="status" value="${s.value}" ${s.on ? "checked" : ""}>
+      ${s.label}
+    </label>`).join("");
+
+  // Phase checkboxes
+  $("#phase-checks").innerHTML = PHASE_OPTIONS.map((p) => `
+    <label class="check">
+      <input type="checkbox" name="phase" value="${p.value}">
+      ${p.label}
+    </label>`).join("");
+
+  renderBiomarkers();
+
+  $("#search-btn").addEventListener("click", runSearch);
+  $("#reset-btn").addEventListener("click", resetFilters);
+  $("#condition").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") runSearch();
+  });
+}
+
+function activeBiomarkers() {
+  return state.area === "All"
+    ? [...BIOMARKERS.Colorectal, ...BIOMARKERS["Neuro-oncology"]]
+    : BIOMARKERS[state.area];
+}
+
+function renderBiomarkers() {
+  const list = activeBiomarkers();
+  // De-duplicate labels when area is "All" (e.g. BRAF V600E appears twice)
+  const seen = new Set();
+  const unique = list.filter((b) => !seen.has(b.label) && seen.add(b.label));
+
+  $("#biomarkers").innerHTML = unique.map((b) => {
+    const on = state.selectedBiomarkers.has(b.label);
+    return `<button type="button" class="chip" data-label="${b.label}" aria-pressed="${on}">${b.label}</button>`;
+  }).join("");
+
+  for (const chip of $("#biomarkers").children) {
+    chip.addEventListener("click", () => {
+      const label = chip.dataset.label;
+      if (state.selectedBiomarkers.has(label)) state.selectedBiomarkers.delete(label);
+      else state.selectedBiomarkers.add(label);
+      chip.setAttribute("aria-pressed", String(state.selectedBiomarkers.has(label)));
+      updateBiomarkerCount();
+    });
+  }
+  updateBiomarkerCount();
+}
+
+function updateBiomarkerCount() {
+  const n = state.selectedBiomarkers.size;
+  $("#bm-count").textContent = n ? `${n} selected` : "";
+}
+
+function resetFilters() {
+  $("#condition").value = "";
+  state.selectedBiomarkers.clear();
+  document.querySelectorAll('input[name="phase"]').forEach((c) => (c.checked = false));
+  STATUS_OPTIONS.forEach((s) => {
+    const el = document.querySelector(`input[name="status"][value="${s.value}"]`);
+    if (el) el.checked = s.on;
+  });
+  renderBiomarkers();
+  $("#results-count").textContent = "";
+  $("#results-query").textContent = "";
+  $("#results").innerHTML = stateBlock("No search yet",
+    "Choose a condition (and any biomarkers), then search. Trials are matched against titles, eligibility criteria, and study descriptions.");
+}
+
+/* Collected synonyms for the currently selected biomarker labels */
+function selectedSynonyms() {
+  const all = [...BIOMARKERS.Colorectal, ...BIOMARKERS["Neuro-oncology"]];
+  const out = [];
+  for (const label of state.selectedBiomarkers) {
+    const found = all.filter((b) => b.label === label);
+    for (const b of found) out.push(...b.synonyms);
+  }
+  return [...new Set(out)];
+}
+
+/* ============================================================
+   Query building + fetch
+   ============================================================ */
+function buildParams(pageToken) {
+  const params = new URLSearchParams();
+  const condition = $("#condition").value.trim();
+
+  if (condition) params.set("query.cond", condition);
+
+  const syns = selectedSynonyms();
+  if (syns.length) {
+    // Essie OR-group; quote multi-word terms.
+    const term = syns.map((s) => (/\s/.test(s) ? `"${s}"` : s)).join(" OR ");
+    params.set("query.term", term);
+  }
+
+  params.set("query.locn", CONFIG.country);
+
+  const statuses = [...document.querySelectorAll('input[name="status"]:checked')].map((c) => c.value);
+  if (statuses.length) params.set("filter.overallStatus", statuses.join(","));
+
+  params.set("pageSize", String(CONFIG.pageSize));
+  params.set("countTotal", "true");
+  if (pageToken) params.set("pageToken", pageToken);
+
+  return params;
+}
+
+async function fetchStudies() {
+  const collected = [];
+  let pageToken = null;
+  let totalCount = null;
+
+  for (let page = 0; page < CONFIG.maxPages; page++) {
+    const params = buildParams(pageToken);
+    const res = await fetch(`${CONFIG.apiBase}?${params.toString()}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) {
+      throw new Error(`ClinicalTrials.gov returned ${res.status}. ${await res.text().catch(() => "")}`.trim());
+    }
+    const data = await res.json();
+    if (totalCount === null) totalCount = data.totalCount ?? null;
+    collected.push(...(data.studies || []));
+    pageToken = data.nextPageToken || null;
+    if (!pageToken) break;
+  }
+  return { studies: collected, totalCount, capped: !!pageToken };
+}
+
+/* ============================================================
+   Normalise + filter
+   ============================================================ */
+function normalise(study) {
+  const p = study.protocolSection || {};
+  const id = p.identificationModule || {};
+  const st = p.statusModule || {};
+  const cond = p.conditionsModule || {};
+  const des = p.designModule || {};
+  const arm = p.armsInterventionsModule || {};
+  const loc = p.contactsLocationsModule || {};
+  const desc = p.descriptionModule || {};
+  const elig = p.eligibilityModule || {};
+
+  const allLocations = loc.locations || [];
+  const ukSites = allLocations.filter((l) => (l.country || "") === CONFIG.country);
+
+  return {
+    nctId:        id.nctId || "",
+    title:        id.briefTitle || id.officialTitle || "Untitled study",
+    status:       st.overallStatus || "UNKNOWN",
+    updated:      st.lastUpdatePostDateStruct?.date || "",
+    conditions:   cond.conditions || [],
+    phases:       des.phases || [],
+    studyType:    des.studyType || "",
+    interventions:(arm.interventions || []).map((i) => i.name).filter(Boolean),
+    ukSites,
+    haystack: [
+      id.briefTitle, id.officialTitle,
+      desc.briefSummary, elig.eligibilityCriteria,
+      (cond.conditions || []).join(" "),
+      (arm.interventions || []).map((i) => i.name).join(" "),
+    ].filter(Boolean).join("  ").toLowerCase(),
+    _elig:  (elig.eligibilityCriteria || "").toLowerCase(),
+    _title: (id.briefTitle || "").toLowerCase(),
+  };
+}
+
+/* Which of the selected biomarkers actually appear, and roughly where */
+function biomarkerMatches(rec) {
+  const all = [...BIOMARKERS.Colorectal, ...BIOMARKERS["Neuro-oncology"]];
+  const matches = [];
+  for (const label of state.selectedBiomarkers) {
+    const entries = all.filter((b) => b.label === label);
+    const syns = [...new Set(entries.flatMap((b) => b.synonyms))];
+    const hit = syns.find((s) => rec.haystack.includes(s.toLowerCase()));
+    if (!hit) continue;
+    const l = hit.toLowerCase();
+    const where = rec._title.includes(l) ? "title"
+                : rec._elig.includes(l)  ? "eligibility"
+                : "record";
+    matches.push({ label, term: hit, where });
+  }
+  return matches;
+}
+
+function passesPhase(rec, selectedPhases) {
+  if (!selectedPhases.length) return true;
+  const phases = rec.phases.length ? rec.phases : ["NA"];
+  return phases.some((ph) => selectedPhases.includes(ph));
+}
+
+const STATUS_RANK = {
+  RECRUITING: 0, NOT_YET_RECRUITING: 1, ENROLLING_BY_INVITATION: 2, ACTIVE_NOT_RECRUITING: 3,
+};
+
+/* ============================================================
+   Orchestration
+   ============================================================ */
+async function runSearch() {
+  const condition = $("#condition").value.trim();
+  if (!condition && state.selectedBiomarkers.size === 0) {
+    $("#results").innerHTML = stateBlock("Add a search term",
+      "Enter a condition or select at least one biomarker to begin.");
+    $("#results-count").textContent = "";
+    $("#results-query").textContent = "";
+    return;
+  }
+
+  $("#results").innerHTML =
+    `<div class="state"><div class="spinner" role="status"></div><p>Searching ClinicalTrials.gov for UK trials…</p></div>`;
+  $("#results-count").textContent = "";
+
+  const syns = selectedSynonyms();
+  $("#results-query").textContent =
+    [condition && `cond: ${condition}`, syns.length && `terms: ${state.selectedBiomarkers.size}`]
+      .filter(Boolean).join("  ·  ");
+
+  try {
+    const { studies, capped } = await fetchStudies();
+    const selectedPhases = [...document.querySelectorAll('input[name="phase"]:checked')].map((c) => c.value);
+
+    const records = studies
+      .map(normalise)
+      .filter((r) => r.ukSites.length > 0)     // exact UK confirmation
+      .filter((r) => passesPhase(r, selectedPhases))
+      .map((r) => ({ ...r, matches: biomarkerMatches(r) }))
+      // If biomarkers were selected, require at least one to actually match
+      .filter((r) => state.selectedBiomarkers.size === 0 || r.matches.length > 0)
+      .sort((a, b) => {
+        const ra = STATUS_RANK[a.status] ?? 9, rb = STATUS_RANK[b.status] ?? 9;
+        if (ra !== rb) return ra - rb;
+        return (b.updated || "").localeCompare(a.updated || "");
+      });
+
+    renderResults(records, capped);
+  } catch (err) {
+    renderError(err);
+  }
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+function stateBlock(title, body, cls = "") {
+  return `<div class="state ${cls}"><h2>${title}</h2><p>${body}</p></div>`;
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function renderError(err) {
+  $("#results-count").textContent = "";
+  const msg = esc(err.message || String(err));
+  $("#results").innerHTML = stateBlock(
+    "Search couldn't complete",
+    `The request to ClinicalTrials.gov failed: <code>${msg}</code>. If you're viewing this inside a preview pane, the network may be sandboxed — it will work once hosted on GitHub Pages. Otherwise, check your connection and try again.`,
+    "error"
+  );
+}
+
+function renderResults(records, capped) {
+  if (!records.length) {
+    $("#results-count").textContent = "";
+    $("#results").innerHTML = stateBlock("No matching UK trials",
+      "Nothing came back for these filters. Try broadening the condition, removing a biomarker, or including more recruitment statuses.");
+    return;
+  }
+
+  $("#results-count").innerHTML =
+    `<strong>${records.length}</strong> UK ${records.length === 1 ? "trial" : "trials"}` +
+    (capped ? ` <span style="color:var(--faint)">(first ${CONFIG.pageSize * CONFIG.maxPages} scanned — narrow the search for completeness)</span>` : "");
+
+  $("#results").innerHTML = records.map(renderCard).join("");
+}
+
+function renderCard(r) {
+  const s = STATUS_STYLE[r.status] || { cls: "grey", text: r.status };
+  const phase = r.phases.length ? r.phases.map((p) => PHASE_LABEL[p] || p).join(", ") : "N/A";
+  const url = `https://clinicaltrials.gov/study/${r.nctId}`;
+
+  const matchRow = r.matches.length ? `
+    <div class="row">
+      <div class="row-label">Biomarker match</div>
+      <div class="taglist">
+        ${r.matches.map((m) => `<span class="tag match">${esc(m.term)}<span class="where">${m.where}</span></span>`).join("")}
+      </div>
+    </div>` : "";
+
+  const shownSites = r.ukSites.slice(0, 6);
+  const extra = r.ukSites.length - shownSites.length;
+  const sitesRow = `
+    <div class="row">
+      <div class="row-label">UK sites (${r.ukSites.length})</div>
+      <div class="taglist">
+        ${shownSites.map((l) => `<span class="tag site">${esc(l.facility || "Site")}${l.city ? ` <span class="city">${esc(l.city)}</span>` : ""}</span>`).join("")}
+        ${extra > 0 ? `<span class="tag">+${extra} more</span>` : ""}
+      </div>
+    </div>`;
+
+  const intvRow = r.interventions.length ? `
+    <div class="row">
+      <div class="row-label">Interventions</div>
+      <div class="taglist">${r.interventions.slice(0, 8).map((i) => `<span class="tag">${esc(i)}</span>`).join("")}</div>
+    </div>` : "";
+
+  return `
+  <article class="card">
+    <div class="card-top">
+      <h3 class="card-title"><a href="${url}" target="_blank" rel="noopener">${esc(r.title)}</a></h3>
+      <span class="pill ${s.cls}">${esc(s.text)}</span>
+    </div>
+    <div class="meta">
+      <span class="nct">${esc(r.nctId)}</span>
+      <span class="dot">·</span><span>${esc(phase)}</span>
+      <span class="dot">·</span><span>${esc((r.studyType || "").toLowerCase() || "study")}</span>
+      ${r.updated ? `<span class="dot">·</span><span>updated ${esc(r.updated)}</span>` : ""}
+    </div>
+    ${r.conditions.length ? `<div class="row"><div class="row-label">Conditions</div><div class="taglist">${r.conditions.slice(0, 6).map((c) => `<span class="tag">${esc(c)}</span>`).join("")}</div></div>` : ""}
+    ${matchRow}
+    ${intvRow}
+    ${sitesRow}
+  </article>`;
+}
+
+/* ============================================================
+   Go
+   ============================================================ */
+initControls();
+</script>
+</body>
+</html>
