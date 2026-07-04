@@ -123,24 +123,22 @@
 
     <div class="tab-pane active" id="tab-0">
       
-      <div class="row-2" style="margin-bottom:14px;">
-        <div class="field">
-          <label for="london" class="label">London weighting</label>
-          <select id="london">
-            <option value="0">None</option>
-            <option value="2162">Inner London (£2,162)</option>
-            <option value="527">Outer London (£527)</option>
-            <option value="149">Fringe (£149)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="ddrb" class="label">Model DDRB Uplift (%)</label>
-          <input type="number" id="ddrb" value="0" step="0.5" min="0" max="30">
-          <div style="font-size:0.68rem;color:var(--text-3);">Optional — models a hypothetical future award on top of today's rates</div>
-        </div>
-      </div>
-
       <div id="res-fields">
+        <div class="row-2" style="margin-bottom:14px;">
+          <div class="field">
+            <label for="res-london" class="label">London weighting</label>
+            <select id="res-london">
+              <option value="0">None</option>
+              <option value="2162">Inner London (£2,162)</option>
+              <option value="527">Outer London (£527)</option>
+              <option value="149">Fringe (£149)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="res-ddrb" class="label">Model DDRB Uplift (%)</label>
+            <input type="number" id="res-ddrb" value="0" step="0.5" min="0" max="30">
+          </div>
+        </div>
         <div class="note">Enter under 40 hrs for automatic LTFT scaling.</div>
         <div class="row-2">
           <div class="field"><label for="res-hours" class="label">Weekly hours</label><input type="number" id="res-hours" value="40" step="0.5" min="0" max="48"></div>
@@ -163,19 +161,35 @@
         </div>
 
         <div class="sec-label" style="margin-top:14px">Flexible pay premium (FPP)</div>
-        <div class="note">Taxable but <strong>non-pensionable</strong>, pro-rated for LTFT. Applies to GP, Emergency Medicine, Psychiatry, Histopathology, OMFS and Academic trainees — enter the confirmed annual amount from the current pay circular for your programme.</div>
+        <div class="note">Taxable but <strong>non-pensionable</strong>, pro-rated for LTFT.</div>
         <div class="field"><label for="fpp-amount" class="label">Annual FPP (£)</label><input type="number" id="fpp-amount" value="0" step="100" min="0"></div>
       </div>
 
       <div id="con-fields" class="hidden">
         <div class="note">Enter under 10 PAs for automatic LTFT pro-rata scaling.</div>
+        
         <div class="row-2">
           <div class="field"><label for="con-pas" class="label">Total PAs (base 10)</label><input type="number" id="con-pas" value="10" step="0.25" min="1"></div>
           <div class="field"><label for="con-oncall" class="label">On-call supplement</label>
             <select id="con-oncall">
-              <option value="0">None (0%)</option><option value="0.01">Cat B low (1%)</option>
-              <option value="0.02">Cat B med (2%)</option><option value="0.03">Cat A low/B high (3%)</option>
-              <option value="0.05">Cat A med (5%)</option><option value="0.08">Cat A high (8%)</option>
+              <option value="0">None (0%)</option>
+              <option value="0.01">Cat B low (1%)</option>
+              <option value="0.02">Cat B med (2%)</option>
+              <option value="0.03">Cat A low/B high (3%)</option>
+              <option value="0.05">Cat A med (5%)</option>
+              <option value="0.08">Cat A high (8%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row-2" style="margin-top: 10px;">
+          <div class="field">
+            <label for="con-london" class="label">London weighting</label>
+            <select id="con-london">
+              <option value="0">None</option>
+              <option value="2162">Inner London (£2,162)</option>
+              <option value="527">Outer London (£527)</option>
+              <option value="149">Fringe (£149)</option>
             </select>
           </div>
           <div class="field" id="ncia-field">
@@ -187,9 +201,19 @@
               <option value="42000">Level N3 (£42,000)</option>
             </select>
           </div>
-          <div class="field"><label for="con-resp" class="label">Management (£/yr)</label><input type="number" id="con-resp" value="0" step="500" min="0"></div>
         </div>
-        <div class="field"><label for="con-wli" class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500" min="0"></div>
+
+        <div class="sec-label" style="margin-top:14px">Additional non-pensionable income</div>
+        <div class="row-2">
+          <div class="field"><label for="con-wli" class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500" min="0"></div>
+          <div class="field"><label for="con-resp" class="label">Management (or other) supplements (£/yr)</label><input type="number" id="con-resp" value="0" step="500" min="0"></div>
+        </div>
+
+        <div class="field" style="margin-top: 14px;">
+          <label for="con-ddrb" class="label">Model DDRB Uplift (%)</label>
+          <input type="number" id="con-ddrb" value="0" step="0.5" min="0" max="30">
+          <div style="font-size:0.68rem;color:var(--text-3);margin-top:2px;">Optional — models a hypothetical future award on top of today's rates</div>
+        </div>
       </div>
     </div>
 
@@ -199,21 +223,25 @@
         <label for="pension-opt" class="label">Pension scheme</label>
         <select id="pension-opt"><option value="yes">Opted in</option><option value="no">Opted out</option></select>
       </div>
-      <div class="tier-table" id="tier-table">
-        <div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">2026/27 TIERS</div>
-        </div>
+      <div class="tier-table" id="tier-table"></div>
       
-      <div class="sec-label">Student loans</div>
-      <div class="field">
-        <label for="loan-plan" class="label">Repayment plan</label>
-        <select id="loan-plan">
-          <option value="none">None</option>
-          <option value="plan1">Plan 1</option>
-          <option value="plan2">Plan 2</option>
-          <option value="plan5">Plan 5</option>
-          <option value="pgl">Postgraduate (PGL)</option>
-          <option value="plan2pgl">Plan 2 + PGL</option>
-        </select>
+      <div class="sec-label">Deductions & Sacrifices</div>
+      <div class="row-2">
+        <div class="field">
+          <label for="loan-plan" class="label">Repayment plan</label>
+          <select id="loan-plan">
+            <option value="none">None</option>
+            <option value="plan1">Plan 1</option>
+            <option value="plan2">Plan 2</option>
+            <option value="plan5">Plan 5</option>
+            <option value="pgl">Postgraduate (PGL)</option>
+            <option value="plan2pgl">Plan 2 + PGL</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sal-sac" class="label">Salary Sacrifice Schemes (£/yr)</label>
+          <input type="number" id="sal-sac" value="0" step="250" min="0">
+        </div>
       </div>
     </div>
 
@@ -287,16 +315,15 @@ const SCALES = {
   ]
 };
 
-// All year-specific figures live here so next year's uplift is a one-place edit.
 const RATES_2026_27 = {
   weeksPerYear: 52.143,
   nightPremiumRate: 0.37,
   personalAllowance: 12570,
   paTaperThreshold: 100000,
-  paTaperRate: 0.5,           // PA reduced by £1 for every £2 over the taper threshold
-  basicRateBand: 50270,       // upper limit of basic rate band (post-PA threshold)
+  paTaperRate: 0.5,
+  basicRateBand: 50270,
   basicRate: 0.20,
-  higherRateBand: 125140,     // upper limit of higher rate band
+  higherRateBand: 125140,
   higherRate: 0.40,
   additionalRate: 0.45,
   niPrimaryThreshold: 12570,
@@ -320,7 +347,7 @@ const g = id => document.getElementById(id);
 const fv = (id, def = 0) => { const n = parseFloat(g(id)?.value); return isNaN(n) ? def : n; };
 const fmt = v => `£${Math.round(v).toLocaleString('en-GB')}`;
 
-/* --- PURE MATH FUNCTIONS (England 2026/27) --- */
+/* --- PURE MATH FUNCTIONS --- */
 const getPensionRate = pay => PENSION_TIERS.find(t => pay <= t.max).rate;
 
 function calcDeductions(gross, pensionable, plan, optIn) {
@@ -366,9 +393,9 @@ function clampInputs() {
 function calculate() {
   clampInputs();
   const gradeIdx = parseInt(g('grade-select').value) || 0;
-  const ddrb = 1 + (fv('ddrb') / 100);
+  const ddrb = 1 + ((role === 'resident' ? fv('res-ddrb') : fv('con-ddrb')) / 100);
   const baseFT = SCALES[role][gradeIdx].base * ddrb;
-  const london = fv('london');
+  const london = role === 'resident' ? fv('res-london') : fv('con-london');
 
   let pensionable = 0, nonPensionable = 0, isLTFT = false, fppDisplay = 0;
 
@@ -376,18 +403,15 @@ function calculate() {
     const hours = fv('res-hours', 40), rate = baseFT / (40 * RATES_2026_27.weeksPerYear);
     isLTFT = hours < 40;
     
-    // Pensionable items
     const basic = isLTFT ? baseFT * (hours / 40) : baseFT;
     const ltft = isLTFT ? 1000 : 0;
     const wkPay = basic * fv('res-weekend');
     pensionable = basic + wkPay + ltft + london;
 
-    // Non-Pensionable items (NROC & Nights are NOT pensionable in 2016 contract)
     const extraH = isLTFT ? 0 : (hours - 40) * rate * RATES_2026_27.weeksPerYear;
     const nightPay = fv('res-nights') * rate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
     const nrocPay = basic * fv('res-nroc');
 
-    // Flexible pay premium — taxable, non-pensionable, pro-rated for LTFT
     let fpp = fv('fpp-amount');
     if (isLTFT) fpp *= (hours / 40);
 
@@ -398,12 +422,10 @@ function calculate() {
     const pas = fv('con-pas', 10);
     isLTFT = pas < 10;
     
-    // Pensionable items
     const basic = isLTFT ? baseFT * (pas / 10) : baseFT;
     const resp = fv('con-resp');
     pensionable = basic + resp + london;
 
-    // Non-Pensionable items (NCIAs, PAs > 10, On-Call, WLI)
     const extraPA = isLTFT ? 0 : (pas - 10) * (baseFT / 10);
     const ocPay = basic * fv('con-oncall');
     const ncias = role === 'consultant' ? fv('con-ncias') : 0;
@@ -411,30 +433,34 @@ function calculate() {
     nonPensionable = extraPA + ocPay + ncias + wli;
   }
 
-  const gross = pensionable + nonPensionable;
+  const origPensionable = pensionable;
+  const origGross = pensionable + nonPensionable;
+  const salSac = fv('sal-sac');
+
+  // Adjust bases downwards dynamically via Salary Sacrifice logic
+  pensionable = Math.max(0, origPensionable - salSac);
+  const gross = Math.max(0, origGross - salSac);
   const extras = nonPensionable - fppDisplay;
 
   const plan = g('loan-plan').value, optIn = g('pension-opt').value;
   const ded = calcDeductions(gross, pensionable, plan, optIn);
   const net = gross - ded.total;
 
-  // Marginals (Simulate +£100)
   const dedNext = calcDeductions(gross + 100, pensionable + 100, plan, optIn);
   const marginal = dedNext.total - ded.total;
-  const effective = gross > 0 ? (ded.total / gross) * 100 : 0;
+  const effective = origGross > 0 ? (ded.total / gross) * 100 : 0;
 
-  updateUI({ gross, pensionable, extras, fpp: fppDisplay, net, ded, marginal, effective, isLTFT, optIn });
+  updateUI({ gross, pensionable, origPensionable, extras, fpp: fppDisplay, salSac, net, ded, marginal, effective, isLTFT, optIn });
   updateURL();
 }
 
 /* --- VIEW UPDATES --- */
-// One source of truth for every line in the breakdown card — used by both renderBreakdown()
-// and copyBreakdown(), so a row only ever needs to be defined in one place.
 const BREAKDOWN_ROWS = [
-  { key: 'pensionable', label: 'Pensionable pay (Inc. London)' },
+  { key: 'origPensionable', label: 'Pensionable pay (Inc. London)' },
   { key: 'extras', label: 'Non-pensionable extras', hideIfZero: true },
   { key: 'fpp', label: 'Flexible pay premium', hideIfZero: true },
-  { key: 'gross', label: 'Gross pay', bold: true },
+  { key: 'salSac', label: '− Salary sacrifice', hideIfZero: true, colorVar: '--c-tax' },
+  { key: 'gross', label: 'Gross taxable pay', bold: true },
   { key: 'ded.pension', label: '− NHS pension', colorVar: '--c-pension' },
   { key: 'ded.tax', label: '− Income tax', colorVar: '--c-tax' },
   { key: 'ded.ni', label: '− National insurance', colorVar: '--c-ni' },
@@ -464,16 +490,22 @@ function updateUI(st) {
 
   renderBreakdown(st);
 
-  // Badges & Tiers
   g('badges').innerHTML = (st.optIn === 'yes' ? `<span class="badge badge-blue">Pension tier: ${(getPensionRate(st.pensionable)*100).toFixed(1)}%</span>` : '') +
                           (st.isLTFT ? `<span class="badge badge-purple">LTFT Pro-rata</span>` : '');
 
-  const tierHTML = PENSION_TIERS.map((t, i) => {
-    const isAct = st.optIn === 'yes' && getPensionRate(st.pensionable) === t.rate;
-    const label = t.max === Infinity ? `Over £${PENSION_TIERS[i-1].max.toLocaleString()}` : `Up to £${t.max.toLocaleString()}`;
-    return `<div class="tier-row ${isAct ? 'active-tier' : ''}"><span>${label}</span><span>${(t.rate*100).toFixed(1)}%</span><span>${isAct?'✓':''}</span></div>`;
-  }).join('');
-  g('tier-table').innerHTML = `<div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">2026/27 TIERS</div>` + tierHTML;
+  // Isolate and render only the active pension tier
+  let tierHTML = '';
+  if (st.optIn === 'yes') {
+    const activeRate = getPensionRate(st.pensionable);
+    const idx = PENSION_TIERS.findIndex(t => st.pensionable <= t.max);
+    const t = PENSION_TIERS[idx];
+    const prevMax = idx > 0 ? PENSION_TIERS[idx-1].max : 0;
+    const label = t.max === Infinity ? `Earnings over £${prevMax.toLocaleString()}` : `Earnings between £${(prevMax+1).toLocaleString()} and £${t.max.toLocaleString()}`;
+    tierHTML = `<div class="tier-row active-tier"><span>${label}</span><span>${(t.rate*100).toFixed(1)}%</span><span>✓ Active</span></div>`;
+  } else {
+    tierHTML = `<div class="tier-row" style="color:var(--text-3)"><span>Opted out of pension tracking</span><span>0.0%</span><span></span></div>`;
+  }
+  g('tier-table').innerHTML = `<div style="font-weight:700; color:var(--text-3); font-size:0.7rem; margin-bottom:5px;">ACTIVE PENSION TIER</div>` + tierHTML;
 
   drawDonut(st.net, st.ded);
 }
@@ -496,7 +528,6 @@ function drawDonut(net, ded) {
   }
 
   let off = 0;
-  
   segs.forEach(s => {
     const dash = (s.v / total) * C;
     svg += `<circle cx="60" cy="60" r="46" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${dash} ${C-dash}" transform="rotate(${-90 + (off/C)*360} 60 60)"/>`;
@@ -570,7 +601,7 @@ function copyBreakdown() {
   copyToClipboard(lines.join('\n'), 'copy-bkd-btn');
 }
 
-const URL_FIELDS = ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','london','ddrb','pension-opt','fpp-amount','loan-plan'];
+const URL_FIELDS = ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','res-london','con-london','res-ddrb','con-ddrb','pension-opt','fpp-amount','loan-plan','sal-sac'];
 
 function updateURL() {
   const p = new URLSearchParams();
@@ -589,7 +620,7 @@ function restoreFromURL() {
 
 /* --- INIT --- */
 document.querySelectorAll('select, input').forEach(el => el.addEventListener('input', calculate));
-restoreFromURL(); // Kickoff — restores a shared scenario if present, otherwise defaults to resident
+restoreFromURL();
 </script>
 
 </body>
