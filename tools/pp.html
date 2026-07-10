@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oncology Private Practice Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        h1 { margin: 0 0 10px 0; color: #1a202c; }
+        p.subtitle { margin: 0; color: var(--secondary-color); font-size: 1.1em; }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Tab Content Box */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tables styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f1f3f5;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        tr:hover { background-color: #f8f9fa; }
+
+        /* Grid Lists */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        
+        .citation {
+            font-size: 0.75em;
+            color: #a0aec0;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Oncology Private Practice Notes[cite: 1]</h1>
+        <p class="subtitle">East London & Essex Region[cite: 1]</p>
+    </header>
+
+    <!-- Tabs Layout Links -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'hospitals')">Hospitals & Sites</button>
+        <button class="tab-btn" onclick="openTab(event, 'preparation')">Preparation Steps</button>
+        <button class="tab-btn" onclick="openTab(event, 'tax')">Tax Arrangements</button>
+        <button class="tab-btn" onclick="openTab(event, 'billing')">Insurance & Coding</button>
+    </div>
+
+    <!-- Tab 1: Private Hospitals -->
+    <div id="hospitals" class="tab-content active">
+        <h2>Private Hospitals & Practising Privileges</h2>
+        <div class="card" style="margin-bottom: 25px;">
+            <h3>Practising Privileges Definition[cite: 1]</h3>
+            <p>Practising privileges act as a licence a private hospital grants a consultant to treat patients using its facilities without being an employee[cite: 1]. You remain a self-employed independent contractor but utilize the hospital's clinical governance, policies, and CQC registration[cite: 1]. Approval must be obtained from the hospital's Medical Advisory Committee (MAC)[cite: 1]. The hospital typically charges a room fee of £20-45/hr[cite: 1].</p>
+        </div>
+
+        <h3>Providers and Sites Directory[cite: 1]</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Provider (HP Number)[cite: 1]</th>
+                        <th>Site (Site Code)[cite: 1]</th>
+                        <th>Location[cite: 1]</th>
+                        <th>Radiotherapy[cite: 1]</th>
+                        <th>Chemotherapy Facilities[cite: 1]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nuffield[cite: 1]</td>
+                        <td>*Holly Hospital[cite: 1]</td>
+                        <td>Buckhurst Hill IG9 5HX[cite: 1]</td>
+                        <td>No[cite: 1]</td>
+                        <td>Yes - 12: 2 single rooms, 1x 4-chair room, 1x 6-chair room[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>Spire[cite: 1]</td>
+                        <td>Hartswood Hospital[cite: 1]</td>
+                        <td>Brentwood CM13 3LE[cite: 1]</td>
+                        <td>No[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>HCA[cite: 1]</td>
+                        <td>*Leaders in Oncology Care (LOC)[cite: 1]</td>
+                        <td>Harley Street, London W1G 6AF[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>HCA[cite: 1]</td>
+                        <td>Wellington Hospital[cite: 1]</td>
+                        <td>St John's Wood, London NW8 9LE[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>GenesisCare[cite: 1]</td>
+                        <td>Springfield Cancer Centre[cite: 1]</td>
+                        <td>Chelmsford CM1 7GU[cite: 1]</td>
+                        <td>Yes - 1 Linac[cite: 1]</td>
+                        <td>Yes - Ramsay[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>GenesisCare[cite: 1]</td>
+                        <td>Cromwell Hospital[cite: 1]</td>
+                        <td>Cromwell Rd, London SW5 0TU[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                        <td>Yes - BUPA[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>Northwestern Medicine[cite: 1]</td>
+                        <td>The London Clinic (TLC)[cite: 1]</td>
+                        <td>Devonshire Pl, London W1G 6BW[cite: 1]</td>
+                        <td>Yes - CyberKnife[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>Cleveland Clinic[cite: 1]</td>
+                        <td>Cleveland Clinic London Hospital[cite: 1]</td>
+                        <td>Belgravia, London SW1X 7EN[cite: 1]</td>
+                        <td>tbd[cite: 1]</td>
+                        <td>tbd[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>Welbeck[cite: 1]</td>
+                        <td>Welbeck Hospital[cite: 1]</td>
+                        <td>Welbeck St, London W1G 8EN[cite: 1]</td>
+                        <td>tbd[cite: 1]</td>
+                        <td>tbd[cite: 1]</td>
+                    </tr>
+                    <tr>
+                        <td>ICON[cite: 1]</td>
+                        <td>Icon Cancer Centre London[cite: 1]</td>
+                        <td>Wimbledon, London SW19 5NB[cite: 1]</td>
+                        <td>tbd[cite: 1]</td>
+                        <td>Yes[cite: 1]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab 2: Preparation -->
+    <div id="preparation" class="tab-content">
+        <h2>Regulatory & Clinical Setup Checklist</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3>Initial Onboarding Actions</h3>
+                <ul>
+                    <li><strong>Inform NHS:</strong> Notify your NHS department clinical lead of private work[cite: 1]. If offered an 11th PA, you must accept it to perform PP[cite: 1]. Add private practice to your job plan and declare it at your next appraisal[cite: 1].</li>
+                    <li><strong>Purchase Indemnity:</strong> Risk pricing is calculated from specialty risk, specific procedures, and gross turnover[cite: 1]. MDO routes include MPS, MDU, and MDDUS[cite: 1]. Commercial paths include PMP, SEMPRIS, or brokers[cite: 1].</li>
+                    <li><strong>Data Protection:</strong> Register as a data controller with the ICO[cite: 1]. Tier 1 micro-businesses run under &lt;£632k turnover/10 staff costing £52/year[cite: 1]. Tier 2 small/medium sits under &lt;£36m turnover costing £78/year[cite: 1].</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>Billing & Fee Platforms</h3>
+                <ul>
+                    <li><strong>Register for Billing:</strong> Hook up with Healthcode to electronically clear professional invoices[cite: 1]. Join Healthcode's free Private Practice Register (PPR) to universally link provider recognition to individual PMIs[cite: 1].</li>
+                    <li><strong>Fee Declaration:</strong> Create accounts with the Private Healthcare Information Network (PHIN) to declare consultation fees[cite: 1]. This is a statutory framework to openly display initial and follow-up consultation costs[cite: 1].</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Practice Management Software Frameworks[cite: 1]</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Software Name[cite: 1]</th>
+                    <th>Cost Base (£/month)[cite: 1]</th>
+                    <th>Core Identified Feature[cite: 1]</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>CareBit[cite: 1]</td><td>79 - 215[cite: 1]</td><td>AI Scribe[cite: 1]</td></tr>
+                <tr><td>Semble[cite: 1]</td><td>199+[cite: 1]</td><td>AI Scribe[cite: 1]</td></tr>
+                <tr><td>MediOffice[cite: 1]</td><td>119[cite: 1]</td><td>Comprehensive practice suite[cite: 1]</td></tr>
+                <tr><td>TouchPoints.Health[cite: 1]</td><td>99[cite: 1]</td><td>Created natively by a UK surgeon[cite: 1]</td></tr>
+                <tr><td>Medesk[cite: 1]</td><td>19[cite: 1]</td><td>Budget alternative[cite: 1]</td></tr>
+                <tr><td>ePractice[cite: 1]</td><td>79 - 149[cite: 1]</td><td>Healthcode's built-in platform[cite: 1]</td></tr>
+                <tr><td>Manual Entry[cite: 1]</td><td>Free baseline[cite: 1]</td><td>Direct browser inputs on Healthcode[cite: 1]</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Tab 3: Tax Arrangements -->
+    <div id="tax" class="tab-content">
+        <h2>Corporate and Financial Structure</h2>
+        <p>Engage a medical specialist or general accountant early to weigh structures[cite: 1]. The common rule of thumb points to a Sole Trader path if income sits below ~£30,000/year, transitioning to a Limited Company corporate vehicle above that line[cite: 1].</p>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3>Sole Trader Set-Up[cite: 1]</h3>
+                <p>Register as self-employed via HMRC (free setup)[cite: 1]. Viable business banking options include[cite: 1]:</p>
+                <ul>
+                    <li>Tide Sole Trader[cite: 1]</li>
+                    <li>Revolut Pro[cite: 1]</li>
+                    <li>Monzo Lite (Free tier available)[cite: 1]</li>
+                    <li>Starling Sole Trader[cite: 1]</li>
+                    <li>Mettle[cite: 1]</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Limited Company Setup[cite: 1]</h3>
+                <p>Form a registered legal company directly via Companies House[cite: 1]. Business bank infrastructure options include[cite: 1]:</p>
+                <ul>
+                    <li>Tide Registered Company[cite: 1]</li>
+                    <li>Revolut Business[cite: 1]</li>
+                    <li>Monzo Pro (£9/month configuration fee)[cite: 1]</li>
+                    <li>Starling Business[cite: 1]</li>
+                    <li>Mettle+[cite: 1]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab 4: Insurance & Billing Codes -->
+    <div id="billing" class="tab-content">
+        <h2>Private Medical Insurance & CCSD Coding</h2>
+        
+        <div class="card" style="margin-bottom: 25px;">
+            <h3>Standard Insured Workflow[cite: 1]</h3>
+            <p>1. Confirm patient secures prior pre-authorisation numbers from their PMI[cite: 1].<br>
+               2. Deliver medical consultation or procedural intervention[cite: 1].<br>
+               3. Route the structured invoice directly through the Healthcode hub[cite: 1].<br>
+               4. Await electronic clearing, remittance processing, and bank release[cite: 1].</p>
+            <p><em>*Note: Self-pay pathways receive direct billing invoices[cite: 1]. Billing admin can be passed to an outsourcing bureau for roughly 3-6% of gross billed volumes[cite: 1].</em></p>
+        </div>
+
+        <h3>The Primary UK Insurer Environment[cite: 1]</h3>
+        <ul>
+            <li><strong>BUPA:</strong> Market leader (30% share)[cite: 1]. Strictly enforces rigid "fee-assured" caps; shortfalls or client top-ups are banned[cite: 1].</li>
+            <li><strong>AXA Health:</strong> Second largest (25% share)[cite: 1]. Tracks strict fee limits alongside BUPA[cite: 1].</li>
+            <li><strong>Aviva:</strong> Key player holding a 20% clinical market footprint[cite: 1].</li>
+            <li><strong>VitalityHealth:</strong> Mid-tier system commanding a 15% practice footprint[cite: 1].</li>
+            <li><strong>WPA:</strong> Agile niche player (&lt;10% footprint) offering flexible fee frameworks[cite: 1].</li>
+        </ul>
+
+        <h3>Oncology CCSD Reference Fee Table[cite: 1]</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Procedure / Description[cite: 1]</th>
+                        <th>CCSD Code[cite: 1]</th>
+                        <th>BUPA Fee (£)[cite: 1]</th>
+                        <th>AXA Fee (£)[cite: 1]</th>
+                        <th>Aviva Fee (£)[cite: 1]</th>
+                        <th>Vitality Fee (£)[cite: 1]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Consultations -->
+                    <tr style="background:#f8f9fa;"><th colspan="6">General Consultations[cite: 1]</th></tr>
+                    <tr><td>Initial Consultation[cite: 1]</td><td>20300[cite: 1]</td><td>?[cite: 1]</td><td>195[cite: 1]</td><td>-</td><td>-</td></tr>
+                    <tr><td>Follow-up Consultation[cite: 1]</td><td>20310[cite: 1]</td><td>?[cite: 1]</td><td>132[cite: 1]</td><td>-</td><td>-</td></tr>
+                    <tr><td>Inpatient Admission[cite: 1]</td><td>20320[cite: 1]</td><td>-</td><td>60[cite: 1]</td><td>-</td><td>-</td></tr>
+                    <tr><td>Proctoscopy[cite: 1]</td><td>H6260[cite: 1]</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td>Rectoscopy[cite: 1]</td><td>H2510[cite: 1]</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    
+                    <!-- Chemotherapy -->
+                    <tr style="background:#f8f9fa;"><th colspan="6">Chemotherapy Supervision (Billed once per cycle block)[cite: 1]</th></tr>
+                    <tr><td>Chemo Supervision, 0–7 days[cite: 1]</td><td>X0001[cite: 1]</td><td>137[cite: 1]</td><td>125[cite: 1]</td><td>-</td><td>140[cite: 1]</td></tr>
+                    <tr><td>Chemo Supervision, 1–14 days[cite: 1]</td><td>X0002[cite: 1]</td><td>257[cite: 1]</td><td>250[cite: 1]</td><td>-</td><td>262[cite: 1]</td></tr>
+                    <tr><td>Chemo Supervision, 1–21 days[cite: 1]</td><td>X0003[cite: 1]</td><td>386[cite: 1]</td><td>375[cite: 1]</td><td>-</td><td>385[cite: 1]</td></tr>
+                    <tr><td>Chemo Supervision, 1–28 days[cite: 1]</td><td>X0004[cite: 1]</td><td>515[cite: 1]</td><td>500[cite: 1]</td><td>-</td><td>510[cite: 1]</td></tr>
+                    <tr><td>Chemo Supervision, 1–56 days[cite: 1]</td><td>X0005[cite: 1]</td><td>565[cite: 1]</td><td>1000[cite: 1]</td><td>-</td><td>535[cite: 1]</td></tr>
+
+                    <!-- Radiotherapy Planning -->
+                    <tr style="background:#f8f9fa;"><th colspan="6">Radiotherapy Planning (One-off blocks)[cite: 1]</th></tr>
+                    <tr><td>Simple Radiotherapy Planning[cite: 1]</td><td>X6910[cite: 1]</td><td>300[cite: 1]</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td>Complex Radiotherapy Planning[cite: 1]</td><td>X6930[cite: 1]</td><td>600[cite: 1]</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td>Stereotactic Radiosurgery Planning[cite: 1]</td><td>X6950[cite: 1]</td><td>1466[cite: 1]</td><td>-</td><td>-</td><td>-</td></tr>
+
+                    <!-- Radiotherapy Delivery -->
+                    <tr style="background:#f8f9fa;"><th colspan="6">Radiotherapy Delivery Supervision[cite: 1]</th></tr>
+                    <tr><td>Single Fraction Delivery Supervision[cite: 1]</td><td>X6581[cite: 1]</td><td>25[cite: 1]</td><td>-</td><td>-</td><td>25[cite: 1]</td></tr>
+                    <tr><td>External Beam Supervision, &lt;15 fractions[cite: 1]</td><td>X0007[cite: 1]</td><td>380[cite: 1]</td><td>380[cite: 1]</td><td>-</td><td>380[cite: 1]</td></tr>
+                    <tr><td>External Beam Supervision, 16–30 fractions[cite: 1]</td><td>X0008[cite: 1]</td><td>720[cite: 1]</td><td>720[cite: 1]</td><td>-</td><td>685[cite: 1]</td></tr>
+                    <tr><td>External Beam Supervision, &gt;31 fractions[cite: 1]</td><td>X0009[cite: 1]</td><td>960[cite: 1]</td><td>750[cite: 1]</td><td>-</td><td>728[cite: 1]</td></tr>
+                    <tr><td>Low Energy Contact Brachytherapy (Papillon)[cite: 1]</td><td>BT253[cite: 1]</td><td>205[cite: 1]</td><td>200[cite: 1]</td><td>-</td><td>-</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabId) {
+        // Hide all tabs content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
+        }
+
+        // Deactivate all tab buttons
+        const tabButtons = document.getElementsByClassName("tab-btn");
+        for (let i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove("active");
+        }
+
+        // Show targets
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>
