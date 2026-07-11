@@ -14,24 +14,41 @@
       --purple: #6D28D9;
       --c-tax: #B91C1C; --c-ni: #C2410C;
       --c-pension: #005EB8; --c-loan: #6D28D9;
+
+      /* Type scale — six steps, used everywhere instead of one-off rem values */
+      --fs-2xs: 0.7rem;    /* eyebrows, tier-table header, tiny helper captions */
+      --fs-xs: 0.75rem;    /* field labels, badges, breakdown labels */
+      --fs-sm: 0.82rem;    /* buttons, notes, legend, tier rows */
+      --fs-base: 0.92rem;  /* inputs, body copy */
+      --fs-md: 1.05rem;    /* header title, hero secondary stats */
+      --fs-lg: 1.6rem;     /* rate-val (effective rate) */
+      --fs-display: 2.8rem;/* hero amount */
+
+      /* Radius scale — four steps */
+      --radius-sm: 6px;    /* buttons, tier rows, note corners */
+      --radius-md: 9px;    /* inputs, pills, tabs, hero stats */
+      --radius-lg: 14px;   /* cards: hero, chart, breakdown */
+      --radius-pill: 999px;/* badges */
+
+      --transition-fast: 0.15s ease;
     }
 
     [data-theme="dark"] {
       --bg: #0A1525; --surface: #111E30; --surface-2: #192840;
       --border: #243650;
-      --text: #ECF0F8; --text-2: #A8B8CC; --text-3: #6E85A0;
+      --text: #ECF0F8; --text-2: #A8B8CC; --text-3: #93A8C2;
       --amber-bg: #1C1200; --amber-border: #3D2800;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-variant-numeric: tabular-nums; }
+
     /* Layout & Header */
     .header { background: var(--nhs-dark); color: #fff; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 200; }
-    .header-title { font-weight: 700; font-size: 0.95rem; }
-    .btn-hdr { background: rgba(255,255,255,0.13); border: none; color: #fff; border-radius: 7px; cursor: pointer; padding: 6px 12px; font-weight: 600; font-size: 0.82rem; transition: background 0.15s; }
+    .header-title { font-weight: 700; font-size: var(--fs-md); }
+    .btn-hdr { background: rgba(255,255,255,0.13); border: none; color: #fff; border-radius: var(--radius-sm); cursor: pointer; padding: 6px 12px; font-weight: 600; font-size: var(--fs-sm); transition: background var(--transition-fast); }
     .btn-hdr:hover { background: rgba(255,255,255,0.22); }
-    .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); border-radius: 7px; cursor: pointer; padding: 4px 10px; font-weight: 600; font-size: 0.72rem; }
+    .btn-ghost { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); border-radius: var(--radius-sm); cursor: pointer; padding: 4px 10px; font-weight: 600; font-size: var(--fs-xs); transition: background var(--transition-fast); }
     .btn-ghost:hover { background: var(--border); }
     .layout { display: grid; grid-template-columns: 400px 1fr; height: calc(100vh - 52px); max-width: 1080px; margin: 0 auto; }
     .input-panel { background: var(--surface); border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; }
@@ -39,54 +56,55 @@
 
     /* Forms */
     .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
-    .label { font-size: 0.75rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
-    select, input { padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 0.92rem; width: 100%; }
+    .label { font-size: var(--fs-xs); font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+    select, input { padding: 9px 11px; border: 1.5px solid var(--border); border-radius: var(--radius-md); background: var(--surface); color: var(--text); font-size: var(--fs-base); width: 100%; transition: border-color var(--transition-fast), box-shadow var(--transition-fast); }
     select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236E8096' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
     select:focus, input:focus { outline: none; border-color: var(--nhs-blue); box-shadow: 0 0 0 3px rgba(0,94,184,0.12); }
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
     /* UI Elements */
-    .sec-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-3); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .sec-label { font-size: var(--fs-2xs); font-weight: 700; text-transform: uppercase; color: var(--text-3); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
     .sec-label:first-child { margin-top: 0; }
     .role-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
-    .role-pill { border: 1.5px solid var(--border); background: transparent; color: var(--text-2); padding: 9px; border-radius: 9px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+    .role-pill { border: 1.5px solid var(--border); background: transparent; color: var(--text-2); padding: 9px; border-radius: var(--radius-md); cursor: pointer; font-size: var(--fs-sm); font-weight: 600; transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast); }
     .role-pill.active { border-color: var(--nhs-blue); background: rgba(0,94,184,0.07); color: var(--nhs-blue); }
-    .tabs { display: flex; gap: 2px; background: var(--surface-2); border-radius: 9px; padding: 3px; margin: 14px 0; }
-    .tab-btn { flex: 1; padding: 7px; border: none; background: transparent; color: var(--text-3); font-weight: 600; border-radius: 7px; cursor: pointer; }
+    .tabs { display: flex; gap: 2px; background: var(--surface-2); border-radius: var(--radius-md); padding: 3px; margin: 14px 0; }
+    .tab-btn { flex: 1; padding: 7px; border: none; background: transparent; color: var(--text-3); font-weight: 600; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast); }
     .tab-btn.active { background: var(--surface); color: var(--nhs-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .tab-pane, .hidden { display: none; }
     .tab-pane.active { display: block; }
-    .note { background: var(--surface-2); border-left: 3px solid var(--nhs-blue); padding: 9px 11px; border-radius: 0 6px 6px 0; font-size: 0.79rem; color: var(--text-3); margin-bottom: 13px; }
+    .note { background: var(--surface-2); border-left: 3px solid var(--nhs-blue); padding: 9px 11px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: var(--fs-sm); color: var(--text-3); margin-bottom: 13px; }
     .note-warning { border-left-color: var(--amber); background: var(--amber-bg); }
 
     /* Results UI */
-    .hero { background: var(--nhs-dark); border-radius: 14px; padding: 20px 22px; color: #fff; }
-    .hero-eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; opacity: 0.65; }
-    .hero-amount { font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 2px; }
-    .hero-sub { font-size: 0.82rem; opacity: 0.6; margin-bottom: 14px; }
+    .hero { background: var(--nhs-dark); border-radius: var(--radius-lg); padding: 20px 22px; color: #fff; }
+    .hero-eyebrow { font-size: var(--fs-2xs); font-weight: 600; text-transform: uppercase; opacity: 0.65; margin-bottom: 14px; }
+    .hero-amount { font-size: var(--fs-display); font-weight: 800; line-height: 1; margin-bottom: 16px; }
     .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .hero-stat { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; }
-    .rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .rate-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
-    .rate-card-marginal { background: var(--amber-bg); border-color: var(--amber-border); }
-    .rate-val { font-size: 1.55rem; font-weight: 800; color: var(--text); }
+    .hero-stat { background: rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 10px 12px; }
+    .rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: stretch; }
+    .rate-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 14px; transition: border-color var(--transition-fast); }
+    .rate-card-marginal { background: var(--amber-bg); border-color: var(--amber-border); border-width: 1.5px; }
+    .rate-val { font-size: var(--fs-lg); font-weight: 800; color: var(--text); }
+    .rate-card-marginal .rate-val { font-size: 1.9rem; } /* the marginal rate drives the "take the extra shift?" decision, so it gets more weight than effective rate */
+    .rate-keep { font-size: var(--fs-2xs); font-weight: 600; color: var(--text-3); margin-top: 4px; }
     .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid; }
+    .badge { padding: 4px 10px; border-radius: var(--radius-pill); font-size: var(--fs-xs); font-weight: 600; border: 1px solid; }
     .badge-blue { background: rgba(0,94,184,0.1); color: var(--nhs-blue); border-color: rgba(0,94,184,0.2); }
     .badge-purple { background: rgba(109,40,217,0.1); color: var(--purple); border-color: rgba(109,40,217,0.2); }
     
     /* Charts & Tables */
-    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 18px; }
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 18px; }
     .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
-    .leg-item { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 7px; align-items: center; font-size: 0.8rem; }
+    .leg-item { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 7px; align-items: center; font-size: var(--fs-sm); }
     .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
     
     /* Breakdown Table - Sized explicitly to align perfectly across independent rows */
-    .breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-    .bkd-row { display: grid; grid-template-columns: 1fr 100px 100px; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
+    .breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; }
+    .bkd-row { display: grid; grid-template-columns: 1fr 100px 100px; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: var(--fs-base); }
     
-    .tier-table { margin-top: 10px; width: 100%; font-size: 0.79rem; }
-    .tier-row { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; padding: 5px 8px; border-radius: 6px; }
+    .tier-table { margin-top: 10px; width: 100%; font-size: var(--fs-sm); }
+    .tier-row { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; padding: 5px 8px; border-radius: var(--radius-sm); }
     .tier-row.active-tier { background: rgba(0,94,184,0.08); color: var(--nhs-blue); font-weight: 700; }
 
     @media (max-width: 760px) {
@@ -100,8 +118,8 @@
 <header class="header">
   <div class="header-title">NHS Doctor Salary Calculator (England)</div>
   <div style="display: flex; gap: 6px;">
-    <button class="btn-hdr" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
-    <button class="btn-hdr" id="share-btn" onclick="copyLink()">🔗 Share</button>
+    <button class="btn-hdr" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode"></button>
+    <button class="btn-hdr" id="share-btn" onclick="copyLink()"> Share</button>
   </div>
 </header>
 
@@ -110,9 +128,9 @@
   <aside class="input-panel">
     <div class="sec-label">Role</div>
     <div class="role-pills">
-      <button class="role-pill active" data-role="resident" onclick="setRole('resident')">🩺 Resident</button>
-      <button class="role-pill" data-role="consultant" onclick="setRole('consultant')">👨‍⚕️ Consultant</button>
-      <button class="role-pill" data-role="sas" onclick="setRole('sas')">🏥 SAS</button>
+      <button class="role-pill active" data-role="resident" onclick="setRole('resident')"> Resident</button>
+      <button class="role-pill" data-role="consultant" onclick="setRole('consultant')">‍⚕️ Consultant</button>
+      <button class="role-pill" data-role="sas" onclick="setRole('sas')"> SAS</button>
     </div>
 
     <div class="field">
@@ -277,7 +295,6 @@
     <div class="hero">
       <div class="hero-eyebrow">Monthly take-home</div>
       <div class="hero-amount" id="out-monthly">£0</div>
-      <div class="hero-sub">Annual</div>
       <div class="hero-grid">
         <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL NET</div><div id="out-net-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
         <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL GROSS</div><div id="out-gross-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
@@ -285,8 +302,8 @@
     </div>
 
     <div class="rate-row">
-      <div class="rate-card"><div style="font-size:0.7rem;color:var(--text-3);font-weight:600;">EFFECTIVE RATE</div><div class="rate-val" id="out-eff">0%</div></div>
-      <div class="rate-card rate-card-marginal"><div style="font-size:0.7rem;color:var(--amber);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div><div style="font-size:0.68rem;color:var(--text-3);margin-top:2px;">on your next £100 — e.g. an extra shift or PA</div></div>
+      <div class="rate-card"><div style="font-size:var(--fs-2xs);color:var(--text-3);font-weight:600;">EFFECTIVE RATE</div><div class="rate-val" id="out-eff">0%</div></div>
+      <div class="rate-card rate-card-marginal"><div style="font-size:var(--fs-2xs);color:var(--amber);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div><div class="rate-keep" id="out-marg-keep"></div></div>
     </div>
 
     <div class="badges" id="badges"></div>
@@ -299,7 +316,7 @@
     <div class="breakdown">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div style="font-weight:700;color:var(--text-3);font-size:0.72rem;">BREAKDOWN</div>
-        <button class="btn-ghost" id="copy-bkd-btn" onclick="copyBreakdown()">📋 Copy as text</button>
+        <button class="btn-ghost" id="copy-bkd-btn" onclick="copyBreakdown()"> Copy as text</button>
       </div>
       <div class="bkd-row" style="color:var(--text-3);font-weight:600;border:none;">
         <span>Item</span>
@@ -377,7 +394,7 @@ const fv = (id, def = 0) => { const n = parseFloat(g(id)?.value); return isNaN(n
 const fmt = v => `£${Math.round(v).toLocaleString('en-GB')}`;
 
 /* --- PURE MATH FUNCTIONS --- */
-const getPensionRate = pay => PENSION_TIERS.find(t => pay <= t.max).rate;
+const getPensionRate = pay => PENSION_TIERS.find(t => Math.max(0, pay) <= t.max).rate;
 
 function calcDeductions(gross, pensionable, plan, optIn) {
   const R = RATES_2026_27;
@@ -438,7 +455,7 @@ function calculate() {
     const ltftSupplement = isLTFT ? 1000 : 0;
     const weekendPay = calculatedBasePay * fv('res-weekend');
     
-    pensionable = (calculatedBasePay + weekendPay + ltftSupplement + london) * ddrb;
+    pensionable = (calculatedBasePay + weekendPay + ltftSupplement) * ddrb + london;
 
     const nightPay = fv('res-nights') * baseHourlyRate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
     const nrocPay = calculatedBasePay * fv('res-nroc');
@@ -454,14 +471,14 @@ function calculate() {
     isLTFT = pas < 10;
     
     const basic = isLTFT ? baseFT * (pas / 10) : baseFT;
-    const resp = fv('con-resp');
-    pensionable = (basic + resp + london) * ddrb;
+    pensionable = basic * ddrb + london;
 
     const extraPA = isLTFT ? 0 : (pas - 10) * (baseFT / 10);
     const ocPay = basic * fv('con-oncall');
     const ncias = role === 'consultant' ? fv('con-ncias') : 0;
     const wli = fv('con-wli');
-    nonPensionable = (extraPA + ocPay + ncias + wli) * ddrb;
+    const resp = fv('con-resp');
+    nonPensionable = (extraPA + ocPay + ncias + wli + resp) * ddrb;
   }
 
   const origPensionable = pensionable;
@@ -478,7 +495,7 @@ function calculate() {
 
   const dedNext = calcDeductions(gross + 100, pensionable + 100, plan, optIn);
   const marginal = dedNext.total - ded.total;
-  const effective = origGross > 0 ? (ded.total / gross) * 100 : 0;
+  const effective = gross > 0 ? (ded.total / gross) * 100 : 0;
 
   updateUI({ gross, pensionable, origPensionable, extras, fpp: fppDisplay, salSac, net, ded, marginal, effective, isLTFT, optIn });
   updateURL();
@@ -517,6 +534,7 @@ function updateUI(st) {
   };
 
   for (const [id, val] of Object.entries(uiMap)) if (g(id)) g(id).textContent = val;
+  if (g('out-marg-keep')) g('out-marg-keep').textContent = `you keep £${Math.round(100 - st.marginal)} of your next £100 — e.g. an extra shift or PA`;
 
   renderBreakdown(st);
 
@@ -588,7 +606,17 @@ function setTab(i) {
 function toggleTheme() {
   const html = document.documentElement;
   html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
-  g('theme-btn').textContent = html.dataset.theme === 'dark' ? '🌙' : '☀️';
+  g('theme-btn').textContent = html.dataset.theme === 'dark' ? '' : '☀️';
+  try { localStorage.setItem('theme', html.dataset.theme); } catch (e) {}
+}
+
+function restoreTheme() {
+  let saved;
+  try { saved = localStorage.getItem('theme'); } catch (e) { saved = null; }
+  if (saved === 'dark' || saved === 'light') {
+    document.documentElement.dataset.theme = saved;
+    g('theme-btn').textContent = saved === 'dark' ? '' : '☀️';
+  }
 }
 
 function copyToClipboard(text, btnId) {
@@ -649,6 +677,7 @@ function restoreFromURL() {
 
 /* --- INIT --- */
 document.querySelectorAll('select, input').forEach(el => el.addEventListener('input', calculate));
+restoreTheme();
 restoreFromURL();
 </script>
 
