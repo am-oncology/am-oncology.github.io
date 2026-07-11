@@ -80,8 +80,11 @@
     .legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
     .leg-item { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 7px; align-items: center; font-size: 0.8rem; }
     .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+    
+    /* Breakdown Table - Sized explicitly to align perfectly across independent rows */
     .breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
-    .bkd-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
+    .bkd-row { display: grid; grid-template-columns: 1fr 100px 100px; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.84rem; }
+    
     .tier-table { margin-top: 10px; width: 100%; font-size: 0.79rem; }
     .tier-row { display: grid; grid-template-columns: 1fr auto auto; gap: 6px; padding: 5px 8px; border-radius: 6px; }
     .tier-row.active-tier { background: rgba(0,94,184,0.08); color: var(--nhs-blue); font-weight: 700; }
@@ -298,7 +301,11 @@
         <div style="font-weight:700;color:var(--text-3);font-size:0.72rem;">BREAKDOWN</div>
         <button class="btn-ghost" id="copy-bkd-btn" onclick="copyBreakdown()">📋 Copy as text</button>
       </div>
-      <div class="bkd-row" style="color:var(--text-3);font-weight:600;border:none;"><span>Item</span><span style="text-align:right">Annual</span><span style="text-align:right">Monthly</span></div>
+      <div class="bkd-row" style="color:var(--text-3);font-weight:600;border:none;">
+        <span>Item</span>
+        <span style="text-align:right">Annual</span>
+        <span style="text-align:right">Monthly</span>
+      </div>
       <div id="bkd-rows"></div>
     </div>
 
@@ -425,17 +432,14 @@ function calculate() {
     const hours = fv('res-hours', 40);
     isLTFT = hours < 40;
     
-    // Baseline raw pay calculated directly from total hours
     const baseHourlyRate = baseFT / (40 * RATES_2026_27.weeksPerYear);
     const calculatedBasePay = baseHourlyRate * hours * RATES_2026_27.weeksPerYear;
     
     const ltftSupplement = isLTFT ? 1000 : 0;
     const weekendPay = calculatedBasePay * fv('res-weekend');
     
-    // London weighting is added directly into base parameters
     pensionable = (calculatedBasePay + weekendPay + ltftSupplement + london) * ddrb;
 
-    // Night hours calculated safely as a premium-only enhancement subset
     const nightPay = fv('res-nights') * baseHourlyRate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
     const nrocPay = calculatedBasePay * fv('res-nroc');
 
@@ -464,7 +468,6 @@ function calculate() {
   const origGross = pensionable + nonPensionable;
   const salSac = fv('sal-sac');
 
-  // Adjust bases downwards dynamically via Salary Sacrifice logic
   pensionable = Math.max(0, origPensionable - salSac);
   const gross = Math.max(0, origGross - salSac);
   const extras = nonPensionable - fppDisplay;
@@ -520,7 +523,6 @@ function updateUI(st) {
   g('badges').innerHTML = (st.optIn === 'yes' ? `<span class="badge badge-blue">Pension tier: ${(getPensionRate(st.pensionable)*100).toFixed(1)}%</span>` : '') +
                           (st.isLTFT ? `<span class="badge badge-purple">LTFT Pro-rata</span>` : '');
 
-  // Isolate and render only the active pension tier
   let tierHTML = '';
   if (st.optIn === 'yes') {
     const activeRate = getPensionRate(st.pensionable);
