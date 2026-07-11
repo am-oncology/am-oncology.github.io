@@ -57,6 +57,7 @@
     .tab-pane, .hidden { display: none; }
     .tab-pane.active { display: block; }
     .note { background: var(--surface-2); border-left: 3px solid var(--nhs-blue); padding: 9px 11px; border-radius: 0 6px 6px 0; font-size: 0.79rem; color: var(--text-3); margin-bottom: 13px; }
+    .note-warning { border-left-color: var(--amber); background: var(--amber-bg); }
 
     /* Results UI */
     .hero { background: var(--nhs-dark); border-radius: 14px; padding: 20px 22px; color: #fff; }
@@ -124,26 +125,24 @@
     <div class="tab-pane active" id="tab-0">
       
       <div id="res-fields">
-        <div class="row-2" style="margin-bottom:14px;">
-          <div class="field">
-            <label for="res-london" class="label">London weighting</label>
-            <select id="res-london">
-              <option value="0">None</option>
-              <option value="2162">Inner London (£2,162)</option>
-              <option value="527">Outer London (£527)</option>
-              <option value="149">Fringe (£149)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="res-ddrb" class="label">Model DDRB Uplift (%)</label>
-            <input type="number" id="res-ddrb" value="0" step="0.5" min="0" max="30">
-          </div>
-        </div>
         <div class="note">Enter under 40 hrs for automatic LTFT scaling.</div>
         <div class="row-2">
-          <div class="field"><label for="res-hours" class="label">Weekly hours</label><input type="number" id="res-hours" value="40" step="0.5" min="0" max="48"></div>
-          <div class="field"><label for="res-nights" class="label">Night hours</label><input type="number" id="res-nights" value="0" step="0.5" min="0"></div>
-          <div class="field"><label for="res-weekend" class="label">Weekend allowance</label>
+          <div class="field">
+            <label for="res-hours" class="label">Weekly hours</label>
+            <input type="number" id="res-hours" value="40" step="0.5" min="0" max="48">
+          </div>
+          <div class="field">
+            <label for="res-nights" class="label">Night hours</label>
+            <input type="number" id="res-nights" value="0" step="0.5" min="0">
+          </div>
+        </div>
+        <div class="note note-warning" style="margin-top: -6px; margin-bottom: 14px;">
+          <strong>Duplication Check:</strong> Night hours are a subset of (included within) the total weekly hours. They trigger the 37% premium shift allowance enhancement without double-counting base time.
+        </div>
+
+        <div class="row-2" style="margin-bottom: 14px;">
+          <div class="field">
+            <label for="res-weekend" class="label">Weekend allowance</label>
             <select id="res-weekend">
               <option value="0">Less than 1 in 8 (0%)</option>
               <option value="0.03">1-in-7 to 1-in-8 (3%)</option>
@@ -155,14 +154,37 @@
               <option value="0.15">1 in 2 (15%)</option>
             </select>
           </div>
-          <div class="field"><label for="res-nroc" class="label">NROC on-call</label>
-            <select id="res-nroc"><option value="0">None</option><option value="0.08">NROC (8%)</option></select>
+          <div class="field">
+            <label for="res-nroc" class="label">NROC on-call</label>
+            <select id="res-nroc">
+              <option value="0">None</option>
+              <option value="0.08">NROC (8%)</option>
+            </select>
           </div>
         </div>
 
-        <div class="sec-label" style="margin-top:14px">Flexible pay premium (FPP)</div>
-        <div class="note">Taxable but <strong>non-pensionable</strong>, pro-rated for LTFT.</div>
-        <div class="field"><label for="fpp-amount" class="label">Annual FPP (£)</label><input type="number" id="fpp-amount" value="0" step="100" min="0"></div>
+        <div class="row-2">
+          <div class="field">
+            <label for="res-london" class="label">London weighting</label>
+            <select id="res-london">
+              <option value="0">None</option>
+              <option value="2162">Inner London (£2,162)</option>
+              <option value="527">Outer London (£527)</option>
+              <option value="149">Fringe (£149)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fpp-amount" class="label">Annual FPP (£)</label>
+            <input type="number" id="fpp-amount" value="0" step="100" min="0">
+          </div>
+        </div>
+        <div class="note" style="margin-top: 4px; margin-bottom: 14px;">FPP is taxable but non-pensionable, automatically pro-rated if LTFT.</div>
+
+        <div class="field" style="margin-top: 4px;">
+          <label for="res-ddrb" class="label">Model DDRB Uplift (%)</label>
+          <input type="number" id="res-ddrb" value="0" step="0.5" min="0" max="30">
+          <div style="font-size:0.68rem;color:var(--text-3);margin-top:2px;">Applies an annual uplift percentage onto the final calculated resident total.</div>
+        </div>
       </div>
 
       <div id="con-fields" class="hidden">
@@ -394,29 +416,34 @@ function calculate() {
   clampInputs();
   const gradeIdx = parseInt(g('grade-select').value) || 0;
   const ddrb = 1 + ((role === 'resident' ? fv('res-ddrb') : fv('con-ddrb')) / 100);
-  const baseFT = SCALES[role][gradeIdx].base * ddrb;
+  const baseFT = SCALES[role][gradeIdx].base;
   const london = role === 'resident' ? fv('res-london') : fv('con-london');
 
   let pensionable = 0, nonPensionable = 0, isLTFT = false, fppDisplay = 0;
 
   if (role === 'resident') {
-    const hours = fv('res-hours', 40), rate = baseFT / (40 * RATES_2026_27.weeksPerYear);
+    const hours = fv('res-hours', 40);
     isLTFT = hours < 40;
     
-    const basic = isLTFT ? baseFT * (hours / 40) : baseFT;
-    const ltft = isLTFT ? 1000 : 0;
-    const wkPay = basic * fv('res-weekend');
-    pensionable = basic + wkPay + ltft + london;
+    // Baseline raw pay calculated directly from total hours
+    const baseHourlyRate = baseFT / (40 * RATES_2026_27.weeksPerYear);
+    const calculatedBasePay = baseHourlyRate * hours * RATES_2026_27.weeksPerYear;
+    
+    const ltftSupplement = isLTFT ? 1000 : 0;
+    const weekendPay = calculatedBasePay * fv('res-weekend');
+    
+    // London weighting is added directly into base parameters
+    pensionable = (calculatedBasePay + weekendPay + ltftSupplement + london) * ddrb;
 
-    const extraH = isLTFT ? 0 : (hours - 40) * rate * RATES_2026_27.weeksPerYear;
-    const nightPay = fv('res-nights') * rate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
-    const nrocPay = basic * fv('res-nroc');
+    // Night hours calculated safely as a premium-only enhancement subset
+    const nightPay = fv('res-nights') * baseHourlyRate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
+    const nrocPay = calculatedBasePay * fv('res-nroc');
 
     let fpp = fv('fpp-amount');
     if (isLTFT) fpp *= (hours / 40);
 
-    nonPensionable = extraH + nightPay + nrocPay + fpp;
-    fppDisplay = fpp;
+    nonPensionable = (nightPay + nrocPay + fpp) * ddrb;
+    fppDisplay = fpp * ddrb;
 
   } else {
     const pas = fv('con-pas', 10);
@@ -424,13 +451,13 @@ function calculate() {
     
     const basic = isLTFT ? baseFT * (pas / 10) : baseFT;
     const resp = fv('con-resp');
-    pensionable = basic + resp + london;
+    pensionable = (basic + resp + london) * ddrb;
 
     const extraPA = isLTFT ? 0 : (pas - 10) * (baseFT / 10);
     const ocPay = basic * fv('con-oncall');
     const ncias = role === 'consultant' ? fv('con-ncias') : 0;
     const wli = fv('con-wli');
-    nonPensionable = extraPA + ocPay + ncias + wli;
+    nonPensionable = (extraPA + ocPay + ncias + wli) * ddrb;
   }
 
   const origPensionable = pensionable;
