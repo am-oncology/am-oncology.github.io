@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steroid equivalence &amp; taper | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/nav.js" data-tool="steroids" defer></script>
+<style>
+  .grid-2 { display: grid; gap: var(--sp-5); grid-template-columns: 1fr 1fr; align-items: start; }
+  @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
+  .field { margin-bottom: var(--sp-4); }
+  .field input, .field select { width: 100%; }
+  .equiv-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--sp-3);
+    padding: var(--sp-2) 0; border-bottom: 1px solid var(--rule-soft); }
+  .equiv-row:last-child { border-bottom: none; }
+  .equiv-name { font-weight: 500; }
+  .equiv-dose { font-family: var(--font-mono); font-weight: 600; white-space: nowrap; }
+  .equiv-meta { font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .equiv-row.is-source { background: var(--accent-soft); margin: 0 calc(-1 * var(--sp-3));
+    padding-left: var(--sp-3); padding-right: var(--sp-3); border-radius: var(--radius); }
+  .peq-headline { font-family: var(--font-mono); font-size: var(--fs-xl); font-weight: 600; color: var(--accent); }
+  .taper-table td.num, .taper-table th.num { text-align: right; font-family: var(--font-mono); white-space: nowrap; }
+  .taper-table .split { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-muted); }
+  tr.taper-flag { background: var(--amber-soft); }
+  .prompt { border-left: 3px solid var(--ink-muted); background: var(--card-2);
+    border-radius: 0 var(--radius) var(--radius) 0; padding: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-3); }
+  .prompt-high { border-left-color: var(--red); background: var(--red-soft); }
+  .prompt-medium { border-left-color: var(--amber); background: var(--amber-soft); }
+  .prompt-low { border-left-color: var(--blue); background: var(--blue-soft); }
+  .prompt h3 { font-size: var(--fs-sm); margin-bottom: var(--sp-1); }
+  .prompt p { margin: 0; font-size: var(--fs-sm); color: var(--ink-dim); }
+  .prompt .src { display: block; margin-top: var(--sp-2); font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .checks { display: flex; gap: var(--sp-4); flex-wrap: wrap; }
+  .checks label { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-sm); cursor: pointer; }
+  .checks input { min-height: auto; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Neuro-oncology</div>
+      <h1>Steroid equivalence &amp; taper planner</h1>
+      <p>
+        Glucocorticoid dose conversion, a graduated dexamethasone taper, and the
+        monitoring that the dose and duration should trigger. A planning aid, not a prescription.
+      </p>
+    </div>
+    <div class="masthead-meta">
+      <div>No data leaves</div>
+      <div>this browser</div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <div class="notice notice-warn" style="margin-bottom: var(--sp-5);">
+    <strong>Do not enter patient-identifiable information.</strong> This tool holds nothing and
+    saves nothing. Every figure below must be checked against the BNF, the SPC and your local
+    protocol before it reaches a prescription.
+  </div>
+
+  <div class="grid-2">
+
+    <!-- ── INPUTS ── -->
+    <div>
+      <div class="card">
+        <h2 class="card-title">Current regimen</h2>
+
+        <div class="field">
+          <label class="field-label" for="drug">Steroid</label>
+          <select id="drug"></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="dose">Total daily dose (mg)</label>
+          <input type="number" id="dose" value="8" min="0" step="0.5" inputmode="decimal">
+          <div class="field-hint" id="dose-hint"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="weeks">Planned total duration (weeks)</label>
+          <input type="number" id="weeks" value="6" min="0" step="1" inputmode="numeric">
+          <div class="field-hint">Include exposure already given, not just what remains.</div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <span class="field-label">Also applies</span>
+          <div class="checks">
+            <label><input type="checkbox" id="flag-tmz"> Concurrent temozolomide / chemoradiotherapy</label>
+            <label><input type="checkbox" id="flag-dm"> Known diabetes</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Equivalent doses</h2>
+        <div class="eyebrow" style="margin-bottom:var(--sp-1);">Prednisolone-equivalent daily dose</div>
+        <div class="peq-headline" id="peq">—</div>
+        <div class="field-hint" style="margin-bottom:var(--sp-4);">
+          This is the figure guideline thresholds are written against.
+        </div>
+        <div id="equiv-list"></div>
+      </div>
+    </div>
+
+    <!-- ── OUTPUTS ── -->
+    <div>
+      <div class="card">
+        <h2 class="card-title">Taper plan</h2>
+        <div class="controls" style="margin-bottom:var(--sp-4);">
+          <div style="flex:1 1 140px;">
+            <label class="field-label" for="interval">Days at each step</label>
+            <input type="number" id="interval" value="4" min="1" max="28" step="1" style="width:100%;">
+          </div>
+          <div style="flex:1 1 140px;">
+            <label class="field-label" for="floor">Taper to</label>
+            <select id="floor" style="width:100%;">
+              <option value="0">Stop</option>
+              <option value="2">2 mg/day</option>
+              <option value="4">4 mg/day</option>
+            </select>
+          </div>
+          <div style="flex:1 1 140px;">
+            <label class="field-label" for="pattern">Reduction</label>
+            <select id="pattern" style="width:100%;">
+              <option value="graduated">Graduated</option>
+              <option value="halving">Halve each step</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-hint" style="margin-bottom:var(--sp-4);">
+          Steps narrow automatically as the dose falls: 4 mg above 8 mg/day, then 2 mg, then 1 mg,
+          then 0.5 mg. Slow it further if symptoms recur.
+        </div>
+        <div class="table-wrap" style="overflow-x:auto;">
+          <table class="taper-table">
+            <thead><tr>
+              <th class="num">Day</th><th class="num">Dexamethasone</th>
+              <th>Split</th><th>Note</th>
+            </tr></thead>
+            <tbody id="taper-body"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:var(--sp-4); display:flex; gap:var(--sp-3); flex-wrap:wrap;">
+          <button id="copy-btn" type="button">Copy taper</button>
+          <button id="print-btn" type="button">Print</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Triggered by this regimen</h2>
+        <div id="prompts"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="disclaimer">
+  <strong>This is a planning aid and carries no prescribing authority.</strong>
+  Equivalence tables describe anti-inflammatory potency only and do not capture differences in
+  mineralocorticoid activity, half-life or tissue penetration — conversions between agents are
+  approximate and should not be used to switch drugs without pharmacy input. Taper rates here are
+  a generic default, not a protocol; the right rate depends on indication, duration, the reason for
+  tapering and how the patient responds. PJP thresholds differ between guidelines and the tool shows
+  more than one. Check everything against the BNF, the SPC and local policy.
+  <a href="../index.html">All tools</a>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var DATA = null;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function drugById(id) {
+    return DATA.drugs.filter(function (d) { return d.id === id; })[0];
+  }
+
+  /* Round to a dispensable 0.5 mg multiple. */
+  function round05(x) { return Math.round(x * 2) / 2; }
+
+  function fmt(x) {
+    return (Math.round(x * 100) / 100).toString();
+  }
+
+  /* --- Equivalence ---------------------------------------- */
+  function computePeq() {
+    var d = drugById($('drug').value);
+    var dose = parseFloat($('dose').value) || 0;
+    /* equiv = mg of this drug equivalent to prednisolone 5 mg */
+    return dose * (5 / d.equiv);
+  }
+
+  function renderEquiv() {
+    var srcId = $('drug').value;
+    var src = drugById(srcId);
+    var dose = parseFloat($('dose').value) || 0;
+
+    $('peq').textContent = dose ? fmt(computePeq()) + ' mg prednisolone' : '—';
+    $('dose-hint').textContent = src.note || '';
+
+    $('equiv-list').innerHTML = DATA.drugs.map(function (d) {
+      var eq = dose * (d.equiv / src.equiv);
+      return '<div class="equiv-row' + (d.id === srcId ? ' is-source' : '') + '">' +
+        '<div>' +
+          '<div class="equiv-name">' + esc(d.name) + '</div>' +
+          '<div class="equiv-meta">Mineralocorticoid: ' + esc(d.mineralo) +
+            ' · t½ ' + esc(d.halfLife) + '</div>' +
+        '</div>' +
+        '<div class="equiv-dose">' + (dose ? fmt(eq) + ' mg' : '—') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* --- Taper ----------------------------------------------- */
+  function nextDose(dose, pattern) {
+    if (pattern === 'halving') {
+      return dose > 1 ? round05(dose / 2) : round05(dose - 0.5);
+    }
+    var step = dose > 8 ? 4 : dose > 4 ? 2 : dose > 2 ? 1 : 0.5;
+    return round05(dose - step);
+  }
+
+  function buildTaper() {
+    var src = drugById($('drug').value);
+    var dose = parseFloat($('dose').value) || 0;
+    /* Work in dexamethasone-equivalent mg regardless of the input drug. */
+    var dex = round05(dose * (0.75 / src.equiv));
+    var interval = Math.max(1, parseInt($('interval').value, 10) || 4);
+    var floor = parseFloat($('floor').value) || 0;
+    var weeks = parseFloat($('weeks').value) || 0;
+    var pattern = $('pattern').value;
+
+    var rows = [];
+    var day = 1;
+    var guard = 0;
+
+    while (dex > floor && guard++ < 60) {
+      var note = '';
+      var flag = false;
+
+      if (dex <= 0.75 && floor === 0) {
+        note = 'At or below physiological replacement — adrenal insufficiency risk. ' +
+               'Consider endocrine input or a switch to hydrocortisone before stopping.';
+        flag = true;
+      } else if (dex <= 2) {
+        note = 'Slow phase. Extend the interval if symptoms recur.';
+      }
+
+      if (weeks >= 3 && dex <= 2 && !flag) {
+        note = 'Exposure over 3 weeks — do not stop abruptly from here.';
+        flag = true;
+      }
+
+      rows.push({
+        day: day,
+        end: day + interval - 1,
+        dose: dex,
+        split: splitDose(dex),
+        note: note,
+        flag: flag
+      });
+
+      day += interval;
+      dex = Math.max(floor, nextDose(dex, pattern));
+    }
+
+    rows.push({
+      day: day, end: null,
+      dose: floor,
+      split: floor > 0 ? splitDose(floor) : '—',
+      note: floor > 0
+        ? 'Maintenance. Review the need to continue at every clinic visit.'
+        : 'Stopped. Steroid card and sick day rules still apply for several months.',
+      flag: floor === 0 && weeks >= 3
+    });
+
+    return rows;
+  }
+
+  /* Dexamethasone is given morning and early afternoon to limit insomnia. */
+  function splitDose(mg) {
+    if (mg <= 0) return '—';
+    if (mg <= 2) return fmt(mg) + ' mg mane';
+    var am = round05(mg / 2);
+    if (am > mg) am = mg;
+    var pm = round05(mg - am);
+    return pm > 0 ? fmt(am) + ' mg + ' + fmt(pm) + ' mg' : fmt(mg) + ' mg mane';
+  }
+
+  function renderTaper() {
+    var rows = buildTaper();
+    $('taper-body').innerHTML = rows.map(function (r) {
+      var days = r.end ? 'Day ' + r.day + '–' + r.end : 'Day ' + r.day + ' on';
+      return '<tr class="' + (r.flag ? 'taper-flag' : '') + '">' +
+        '<td class="num">' + esc(days) + '</td>' +
+        '<td class="num">' + fmt(r.dose) + ' mg</td>' +
+        '<td class="split">' + esc(r.split) + '</td>' +
+        '<td style="font-size:var(--fs-xs); color:var(--ink-muted);">' + esc(r.note) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function taperText() {
+    return buildTaper().map(function (r) {
+      var days = r.end ? 'Day ' + r.day + '-' + r.end : 'Day ' + r.day + ' onwards';
+      return days + ': dexamethasone ' + fmt(r.dose) + ' mg daily (' + r.split + ')' +
+             (r.note ? '  [' + r.note + ']' : '');
+    }).join('\n');
+  }
+
+  /* --- Prompts --------------------------------------------- */
+  function renderPrompts() {
+    var peq = computePeq();
+    var weeks = parseFloat($('weeks').value) || 0;
+    var src = drugById($('drug').value);
+    var dex = (parseFloat($('dose').value) || 0) * (0.75 / src.equiv);
+    var flags = [];
+    if ($('flag-tmz').checked) flags.push('tmz');
+    if ($('flag-dm').checked) flags.push('dm');
+
+    var rank = { high: 0, medium: 1, low: 2 };
+
+    var fired = DATA.prompts.filter(function (p) {
+      var w = p.when || {};
+      if (w.always) return true;
+      if (w.flags) {
+        return w.flags.some(function (f) { return flags.indexOf(f) !== -1; });
+      }
+      /* All numeric conditions present must hold; at least one must be present. */
+      var any = false;
+      if (w.minPeq   != null) { if (peq   <  w.minPeq)   return false; any = true; }
+      if (w.maxPeq   != null) { if (peq   >= w.maxPeq)   return false; any = true; }
+      if (w.minWeeks != null) { if (weeks <  w.minWeeks) return false; any = true; }
+      if (w.minDex   != null) { if (dex   <  w.minDex)   return false; any = true; }
+      return any;
+    }).sort(function (a, b) { return rank[a.severity] - rank[b.severity]; });
+
+    if (!fired.length) {
+      $('prompts').innerHTML = '<div class="state">Enter a dose and duration to see what applies.</div>';
+      return;
+    }
+
+    $('prompts').innerHTML = fired.map(function (p) {
+      return '<div class="prompt prompt-' + esc(p.severity) + '">' +
+        '<h3>' + esc(p.title) + '</h3>' +
+        '<p>' + esc(p.text) + '</p>' +
+        (p.source ? '<span class="src">' + esc(p.source) + '</span>' : '') +
+      '</div>';
+    }).join('');
+  }
+
+  /* --- Wiring ---------------------------------------------- */
+  function renderAll() { renderEquiv(); renderTaper(); renderPrompts(); }
+
+  ['drug', 'dose', 'weeks', 'interval', 'floor', 'pattern', 'flag-tmz', 'flag-dm'].forEach(function (id) {
+    $(id).addEventListener('input', renderAll);
+    $(id).addEventListener('change', renderAll);
+  });
+
+  $('print-btn').addEventListener('click', function () { window.print(); });
+  $('copy-btn').addEventListener('click', function () {
+    var btn = $('copy-btn');
+    navigator.clipboard.writeText(taperText()).then(function () {
+      btn.textContent = 'Copied';
+      setTimeout(function () { btn.textContent = 'Copy taper'; }, 1800);
+    });
+  });
+
+  fetch('../assets/data/steroids.json')
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      DATA = d;
+      $('drug').innerHTML = d.drugs.map(function (x) {
+        return '<option value="' + esc(x.id) + '"' +
+               (x.id === 'dexamethasone' ? ' selected' : '') + '>' + esc(x.name) + '</option>';
+      }).join('');
+      renderAll();
+    })
+    .catch(function () {
+      $('prompts').innerHTML =
+        '<div class="state state-error">Could not load the steroid data. ' +
+        'If opening from disk, run <code>python3 -m http.server</code> — fetch is blocked on file://.</div>';
+    });
+});
+</script>
+</body>
+</html>

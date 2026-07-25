@@ -70,6 +70,17 @@
           ]
         },
         {
+          "id": "steroids",
+          "name": "Steroid equivalence & taper",
+          "href": "tools/steroids.html",
+          "desc": "Glucocorticoid conversion, graduated dexamethasone taper, and the PJP and glucose monitoring the dose triggers.",
+          "accent": "#7C3AED",
+          "tags": [
+            "Neuro",
+            "Supportive care"
+          ]
+        },
+        {
           "id": "followup",
           "name": "Follow-up scheduler",
           "href": "tools/followup.html",
