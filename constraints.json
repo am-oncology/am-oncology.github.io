@@ -1,0 +1,258 @@
+{
+  "_comment": "Every row carries a source and a status. status='sourced' means the value was transcribed directly from the cited document. status='unverified' means it came from general knowledge and has NOT been checked against the primary source — the UI marks these amber and they must be signed off before clinical use. Change status to 'local' once your centre has ratified a value, and put your own agreed number in.",
+
+  "sources": {
+    "uk-sabr-2017": {
+      "label": "UK SABR Consortium consensus",
+      "citation": "Hanna GG, Murray L, Patel R, et al. UK Consensus on Normal Tissue Dose Constraints for Stereotactic Radiotherapy. Clin Oncol 2018;30(1):5-14.",
+      "url": "https://doi.org/10.1016/j.clon.2017.09.007",
+      "note": "Constraints are for a first course of SABR to a previously non-irradiated site, SABR alone, no concurrent systemic therapy. Cranial and spinal canal near-max = D0.1cc; all other body sites use D0.5cc. Superseded in part by the 2022 consensus — check before use."
+    },
+    "uk-sabr-2022": {
+      "label": "UK SABR Consortium 2022 consensus",
+      "citation": "Diez P, Hanna GG, Aitken KL, et al. UK 2022 Consensus on Normal Tissue Dose-Volume Constraints for Oligometastatic, Primary Lung and Hepatocellular Carcinoma SABR. Clin Oncol 2022;34(5):288-300.",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35272913/",
+      "note": "The current consortium document. Values below marked uk-sabr-2017 have not yet been reconciled against this update."
+    },
+    "quantec": {
+      "label": "QUANTEC",
+      "citation": "Marks LB, Yorke ED, Jackson A, et al. Use of Normal Tissue Complication Probability Models in the Clinic. Int J Radiat Oncol Biol Phys 2010;76(3 Suppl):S10-19, and organ-specific papers in the same issue.",
+      "url": "https://www.redjournal.org/issue/S0360-3016(09)X0027-2",
+      "note": "Conventional fractionation, approximately 1.8-2 Gy per fraction, unless stated otherwise."
+    },
+    "sabr-reirrad-pelvis-2025": {
+      "label": "UK pelvic SABR re-irradiation guidance",
+      "citation": "UK SABR Consortium. Pelvic SABR reirradiation: UK SABR consortium guidance for use in routine clinical care. Clin Transl Radiat Oncol 2025.",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2405632425000277",
+      "note": "Covers patient selection, cumulative dose calculation and planning for pelvic re-irradiation. Directly relevant to recurrent rectal disease. Not yet transcribed into this table."
+    }
+  },
+
+  "groups": [
+    {
+      "id": "cns-sabr",
+      "name": "CNS — SABR and SRS",
+      "site": "neuro",
+      "type": "sabr",
+      "fractions": [1, 3, 5, 8],
+      "note": "Near-point maximum for cranial structures and spinal canal is D0.1cc. Single fraction is recommended for CNS metastases; multi-fraction values are for large lesions. Not designed specifically for SRS, though commonly applied. For treatment of the spine itself, apply spinal canal values to the cord PRV.",
+      "rows": [
+        { "oar": "Optic pathway", "metric": "D0.1cc",
+          "limits": { "1": { "mand": 8 }, "3": { "mand": 15 }, "5": { "mand": 22.5 } },
+          "endpoint": "Grade 3+ optic neuropathy. Hiniker: ~0.8% risk at 3 fractions, ~1.6% at 5 fractions when limited to 0.05cc.",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Cochlea", "metric": "Mean",
+          "limits": { "1": { "opt": 4, "mand": 9 }, "3": { "mand": 17.1 }, "5": { "mand": 25 } },
+          "endpoint": "Grade 3+ hearing loss. Cochlear volume is small enough that mean may be treated as near-point dose.",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Brainstem (excluding medulla)", "metric": "D0.1cc",
+          "limits": { "1": { "opt": 10, "mand": 15 }, "3": { "opt": 18, "mand": 23.1 }, "5": { "opt": 23, "mand": 31 } },
+          "endpoint": "Grade 3+ cranial neuropathy",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Spinal canal (including medulla)", "metric": "D0.1cc",
+          "limits": { "1": { "opt": 10, "mand": 14 }, "3": { "opt": 18, "mand": 21.9 }, "5": { "opt": 23, "mand": 30 }, "8": { "opt": 25, "mand": 32 } },
+          "endpoint": "Grade 3+ myelitis. Grimm: single and 3-fraction optimal doses to 0.1cc limit grade 2-4 myelopathy risk to ≤0.4%.",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Spinal canal (including medulla)", "metric": "D1cc",
+          "limits": { "1": { "opt": 7 }, "3": { "opt": 12.3 }, "5": { "opt": 14.5 } },
+          "endpoint": "Grade 3+ myelitis",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Cauda equina and sacral plexus", "metric": "D0.1cc",
+          "limits": { "1": { "mand": 16 }, "3": { "mand": 24 }, "5": { "mand": 32 } },
+          "endpoint": "Grade 3+ neuritis",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Cauda equina and sacral plexus", "metric": "D5cc",
+          "limits": { "1": { "mand": 14 }, "3": { "mand": 22 }, "5": { "mand": 30 } },
+          "endpoint": "Grade 3+ neuritis",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Normal brain", "metric": "D10cc",
+          "limits": { "1": { "opt": 12 } },
+          "endpoint": "Radiation necrosis (group consensus, not trial-derived)",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Whole brain minus GTV", "metric": "D50%",
+          "limits": { "1": { "opt": 5 } },
+          "endpoint": "Cognitive deterioration (group consensus)",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Lens", "metric": "D0.1cc",
+          "limits": { "1": { "opt": 1.5 } },
+          "endpoint": "Cataract formation (group consensus). Keep as low as reasonably practicable.",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Orbit (surrogate for retina)", "metric": "D0.1cc",
+          "limits": { "1": { "opt": 8 } },
+          "endpoint": "Retinopathy (group consensus). Keep as low as reasonably practicable.",
+          "source": "uk-sabr-2017", "status": "sourced" }
+      ]
+    },
+
+    {
+      "id": "cns-conv",
+      "name": "CNS — conventional fractionation",
+      "site": "neuro",
+      "type": "conventional",
+      "note": "Approximately 1.8-2 Gy per fraction. EVERY ROW BELOW IS UNVERIFIED and must be checked against QUANTEC and your local protocol before use.",
+      "rows": [
+        { "oar": "Spinal cord", "metric": "Dmax", "limit": "50 Gy", "risk": "~0.2% myelopathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Spinal cord", "metric": "Dmax", "limit": "60 Gy", "risk": "~6% myelopathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Brainstem", "metric": "Dmax", "limit": "< 54 Gy", "risk": "< 5% cranial neuropathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Brainstem", "metric": "D1-10cc", "limit": "≤ 59 Gy", "risk": "< 5%",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Optic nerve and chiasm", "metric": "Dmax", "limit": "< 55 Gy", "risk": "< 3% optic neuropathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Optic nerve and chiasm", "metric": "Dmax", "limit": "55-60 Gy", "risk": "3-7% optic neuropathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Brain", "metric": "Dmax", "limit": "< 60 Gy", "risk": "< 3% symptomatic necrosis",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Cochlea", "metric": "Mean", "limit": "≤ 45 Gy", "risk": "< 30% sensorineural hearing loss",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Retina", "metric": "Dmax", "limit": "< 45 Gy", "risk": "Retinopathy",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Lens", "metric": "Dmax", "limit": "< 10 Gy", "risk": "Cataract; ALARP",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Hippocampus", "metric": "D100%", "limit": "≤ 9 Gy", "risk": "Neurocognitive; from NRG CC001 / RTOG 0933 (30 Gy/10#)",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Hippocampus", "metric": "Dmax", "limit": "≤ 16 Gy", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Pituitary", "metric": "Mean", "limit": "< 45 Gy", "risk": "Hypopituitarism (dose-dependent from ~20 Gy)",
+          "source": "quantec", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "pelvis-sabr",
+      "name": "Pelvis and bowel — SABR",
+      "site": "lowergi",
+      "type": "sabr",
+      "fractions": [3, 5],
+      "note": "Near-point maximum for body sites is D0.5cc, not D0.1cc. Pelvic values are for non-prostate primary irradiation; the PACE prostate constraints permit higher bowel dose and are not appropriate for metastatic sites. NOT applicable to re-irradiation — see the 2025 pelvic re-irradiation guidance.",
+      "rows": [
+        { "oar": "Rectum", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 28.2 }, "5": { "mand": 32 } },
+          "endpoint": "Grade 3+ colitis or fistula",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Large bowel", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 28.2 }, "5": { "mand": 32 } },
+          "endpoint": "Grade 3+ colitis or fistula",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Small bowel", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 25.2 }, "5": { "opt": 30, "mand": 35 } },
+          "endpoint": "Grade 3+ enteritis or obstruction",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Small bowel", "metric": "D5cc",
+          "limits": { "3": { "mand": 17.7 }, "5": { "opt": 25 } },
+          "endpoint": "Grade 3+ enteritis or obstruction",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Small bowel", "metric": "D10cc",
+          "limits": { "5": { "mand": 25 } },
+          "endpoint": "Grade 3+ enteritis or obstruction",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Bladder", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 28.2 }, "5": { "mand": 38 } },
+          "endpoint": "Grade 3+ cystitis or fistula",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Bladder", "metric": "D15cc",
+          "limits": { "3": { "mand": 16.8 }, "5": { "mand": 18.3 } },
+          "endpoint": "Grade 3+ cystitis or fistula",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Ureter", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 40 }, "5": { "mand": 45 } },
+          "endpoint": "Stricture (from NRG BR001)",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Femoral head", "metric": "D10cc",
+          "limits": { "3": { "opt": 21.9 }, "5": { "opt": 30 } },
+          "endpoint": "Grade 3+ necrosis",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Skin", "metric": "D0.5cc",
+          "limits": { "3": { "opt": 33 }, "5": { "opt": 39.5 } },
+          "endpoint": "Grade 3+ ulceration",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Skin", "metric": "D10cc",
+          "limits": { "3": { "opt": 30 }, "5": { "opt": 36.5 } },
+          "endpoint": "Grade 3+ ulceration",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Penile bulb", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 42 }, "5": { "mand": 50 } },
+          "endpoint": "Grade 3+ impotence",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Penile bulb", "metric": "D3cc",
+          "limits": { "3": { "mand": 21.9 }, "5": { "mand": 30 } },
+          "endpoint": "Grade 3+ impotence",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Duodenum", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 22.2 }, "5": { "mand": 35 } },
+          "endpoint": "Grade 3+ ulceration",
+          "source": "uk-sabr-2017", "status": "sourced" },
+
+        { "oar": "Stomach", "metric": "D0.5cc",
+          "limits": { "3": { "mand": 22.2 }, "5": { "opt": 33, "mand": 35 } },
+          "endpoint": "Grade 3+ ulceration or fistulation",
+          "source": "uk-sabr-2017", "status": "sourced" }
+      ]
+    },
+
+    {
+      "id": "pelvis-conv",
+      "name": "Pelvis and bowel — conventional fractionation",
+      "site": "lowergi",
+      "type": "conventional",
+      "note": "EVERY ROW BELOW IS UNVERIFIED. Several QUANTEC pelvic constraints were derived in the prostate setting and transfer imperfectly to rectal and anal treatment. Check against your local protocol.",
+      "rows": [
+        { "oar": "Rectum", "metric": "V50Gy", "limit": "< 50%", "risk": "< 15% grade 2+ late toxicity (prostate-derived)",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Rectum", "metric": "V60Gy", "limit": "< 35%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Rectum", "metric": "V65Gy", "limit": "< 25%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Rectum", "metric": "V70Gy", "limit": "< 20%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Rectum", "metric": "V75Gy", "limit": "< 15%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bladder", "metric": "V65Gy", "limit": "≤ 50%", "risk": "Grade 3+ late toxicity",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bladder", "metric": "V70Gy", "limit": "≤ 35%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bladder", "metric": "V75Gy", "limit": "≤ 25%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bladder", "metric": "V80Gy", "limit": "≤ 15%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Small bowel (individual loops)", "metric": "V15Gy", "limit": "< 120 cc", "risk": "< 10% grade 3+ acute toxicity",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Small bowel (peritoneal / bowel bag)", "metric": "V45Gy", "limit": "< 195 cc", "risk": "< 10% grade 3+ acute toxicity",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Femoral heads", "metric": "V50Gy", "limit": "< 5%", "risk": "Femoral neck fracture",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bone marrow (pelvis)", "metric": "V10Gy", "limit": "< 90%", "risk": "Haematological toxicity with concurrent chemoradiation (INTERTECC-derived)",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "Bone marrow (pelvis)", "metric": "V20Gy", "limit": "< 75%", "risk": "As above",
+          "source": "quantec", "status": "unverified" },
+        { "oar": "External genitalia", "metric": "V40Gy", "limit": "< 5%", "risk": "Grade 3+ skin toxicity in anal chemoradiation",
+          "source": "quantec", "status": "unverified" }
+      ]
+    }
+  ]
+}

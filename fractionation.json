@@ -1,0 +1,146 @@
+{
+  "_comment": "Schedules are seeded from general knowledge and are ALL marked unverified. Each carries the trial or guideline that defines it so you can check it quickly against RCR Radiotherapy Dose Fractionation 4th edition (January 2024) and sign it off. Change status to 'local' once ratified against your centre's protocol.",
+
+  "reference": {
+    "label": "RCR Radiotherapy dose fractionation, fourth edition",
+    "citation": "The Royal College of Radiologists. Radiotherapy dose fractionation, fourth edition. London: RCR, January 2024. 22 tumour site chapters. Free to download.",
+    "url": "https://www.rcr.ac.uk/our-services/all-our-publications/clinical-oncology-publications/radiotherapy-dose-fractionation-fourth-edition/"
+  },
+
+  "groups": [
+    {
+      "id": "glioma",
+      "name": "Glioma",
+      "site": "neuro",
+      "rows": [
+        { "indication": "Glioblastoma, radical, fit patient", "dose": "60 Gy", "fractions": 30, "perFraction": "2.0 Gy", "duration": "6 weeks",
+          "concurrent": "Temozolomide 75 mg/m² daily, then 6 cycles adjuvant",
+          "evidence": "Stupp R, et al. NEJM 2005;352:987-96", "status": "unverified" },
+        { "indication": "Glioblastoma, elderly or frail, with TMZ", "dose": "40.05 Gy", "fractions": 15, "perFraction": "2.67 Gy", "duration": "3 weeks",
+          "concurrent": "Temozolomide concurrent and adjuvant",
+          "evidence": "Perry JR, et al. NEJM 2017;376:1027-37", "status": "unverified" },
+        { "indication": "Glioblastoma, elderly, RT alone", "dose": "40.05 Gy", "fractions": 15, "perFraction": "2.67 Gy", "duration": "3 weeks",
+          "concurrent": "None",
+          "evidence": "Roa W, et al. J Clin Oncol 2004;22:1583-8", "status": "unverified" },
+        { "indication": "Glioblastoma, frail or poor performance status", "dose": "34 Gy", "fractions": 10, "perFraction": "3.4 Gy", "duration": "2 weeks",
+          "concurrent": "None",
+          "evidence": "Roa W, et al. J Clin Oncol 2015;33:4145-50 (IAEA)", "status": "unverified" },
+        { "indication": "Glioblastoma, palliative", "dose": "30 Gy", "fractions": 6, "perFraction": "5.0 Gy", "duration": "2 weeks",
+          "concurrent": "None", "evidence": "Local practice; see RCR 4th ed CNS chapter", "status": "unverified" },
+        { "indication": "Low grade glioma (grade 2), post-operative or progressive", "dose": "50.4 Gy", "fractions": 28, "perFraction": "1.8 Gy", "duration": "5.5 weeks",
+          "concurrent": "PCV per RTOG 9802 in high-risk disease",
+          "evidence": "Buckner JC, et al. NEJM 2016;374:1344-55", "status": "unverified" },
+        { "indication": "Anaplastic glioma (grade 3)", "dose": "59.4 Gy", "fractions": 33, "perFraction": "1.8 Gy", "duration": "6.5 weeks",
+          "concurrent": "PCV if 1p/19q co-deleted; TMZ if not",
+          "evidence": "van den Bent MJ, et al. J Clin Oncol 2013 (EORTC 26951); Cairncross G, et al. J Clin Oncol 2013 (RTOG 9402)", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "benign-cns",
+      "name": "Meningioma, schwannoma and pituitary",
+      "site": "neuro",
+      "rows": [
+        { "indication": "Meningioma, WHO grade 1", "dose": "50-54 Gy", "fractions": "30-33", "perFraction": "1.6-1.8 Gy", "duration": "6 weeks",
+          "concurrent": "None", "evidence": "RCR 4th ed CNS chapter", "status": "unverified" },
+        { "indication": "Meningioma, WHO grade 2 (atypical)", "dose": "59.4-60 Gy", "fractions": "33", "perFraction": "1.8 Gy", "duration": "6.5 weeks",
+          "concurrent": "None", "evidence": "ROAM/EORTC-1308; NRG BN003", "status": "unverified" },
+        { "indication": "Vestibular schwannoma, fractionated", "dose": "50 Gy", "fractions": 30, "perFraction": "1.67 Gy", "duration": "6 weeks",
+          "concurrent": "None", "evidence": "RCR 4th ed CNS chapter", "status": "unverified" },
+        { "indication": "Vestibular schwannoma, single fraction SRS", "dose": "12-13 Gy", "fractions": 1, "perFraction": "12-13 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "Prescribed to margin; hearing preservation favours ≤12 Gy", "status": "unverified" },
+        { "indication": "Pituitary adenoma, non-functioning", "dose": "45-50.4 Gy", "fractions": "25-28", "perFraction": "1.8 Gy", "duration": "5-5.5 weeks",
+          "concurrent": "None", "evidence": "RCR 4th ed CNS chapter", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "brain-mets",
+      "name": "Brain metastases",
+      "site": "neuro",
+      "rows": [
+        { "indication": "SRS, lesion ≤ 2 cm", "dose": "20-24 Gy", "fractions": 1, "perFraction": "20-24 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "Shaw E, et al. IJROBP 2000 (RTOG 90-05) maximum tolerated dose", "status": "unverified" },
+        { "indication": "SRS, lesion 2.1-3 cm", "dose": "18 Gy", "fractions": 1, "perFraction": "18 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "RTOG 90-05", "status": "unverified" },
+        { "indication": "SRS, lesion 3.1-4 cm", "dose": "15 Gy", "fractions": 1, "perFraction": "15 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "RTOG 90-05", "status": "unverified" },
+        { "indication": "Fractionated SRT, large lesion or post-operative cavity", "dose": "27 Gy", "fractions": 3, "perFraction": "9 Gy", "duration": "1 week",
+          "concurrent": "None", "evidence": "Common alternative: 25-30 Gy in 5 fractions", "status": "unverified" },
+        { "indication": "Whole brain, good performance status", "dose": "30 Gy", "fractions": 10, "perFraction": "3.0 Gy", "duration": "2 weeks",
+          "concurrent": "None", "evidence": "RCR 4th ed", "status": "unverified" },
+        { "indication": "Whole brain, poor prognosis", "dose": "20 Gy", "fractions": 5, "perFraction": "4.0 Gy", "duration": "1 week",
+          "concurrent": "None", "evidence": "QUARTZ showed no benefit over supportive care in NSCLC unfit for SRS/surgery", "status": "unverified" },
+        { "indication": "Hippocampal-avoidance whole brain", "dose": "30 Gy", "fractions": 10, "perFraction": "3.0 Gy", "duration": "2 weeks",
+          "concurrent": "Memantine", "evidence": "Brown PD, et al. J Clin Oncol 2020;38:1019-29 (NRG CC001)", "status": "unverified" },
+        { "indication": "Prophylactic cranial irradiation, SCLC", "dose": "25 Gy", "fractions": 10, "perFraction": "2.5 Gy", "duration": "2 weeks",
+          "concurrent": "None", "evidence": "RCR 4th ed", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "rectal",
+      "name": "Rectal cancer",
+      "site": "lowergi",
+      "rows": [
+        { "indication": "Short course preoperative radiotherapy", "dose": "25 Gy", "fractions": 5, "perFraction": "5.0 Gy", "duration": "1 week",
+          "concurrent": "None", "evidence": "Swedish Rectal Cancer Trial; MRC CR07", "status": "unverified" },
+        { "indication": "Long course chemoradiotherapy", "dose": "45 Gy", "fractions": 25, "perFraction": "1.8 Gy", "duration": "5 weeks",
+          "concurrent": "Capecitabine 825 mg/m² bd on RT days", "evidence": "± boost to 50.4 Gy in 28 fractions", "status": "unverified" },
+        { "indication": "Total neoadjuvant therapy — RAPIDO", "dose": "25 Gy", "fractions": 5, "perFraction": "5.0 Gy", "duration": "1 week",
+          "concurrent": "Then CAPOX ×6 or FOLFOX ×9, then surgery",
+          "evidence": "Bahadoer RR, et al. Lancet Oncol 2021;22:29-42", "status": "unverified" },
+        { "indication": "Total neoadjuvant therapy — PRODIGE 23", "dose": "50.4 Gy", "fractions": 28, "perFraction": "1.8 Gy", "duration": "5.5 weeks",
+          "concurrent": "Induction FOLFIRINOX ×6, then CRT with capecitabine, then surgery",
+          "evidence": "Conroy T, et al. Lancet Oncol 2021;22:702-15", "status": "unverified" },
+        { "indication": "Organ preservation — OPRA", "dose": "50.4 Gy", "fractions": 28, "perFraction": "1.8 Gy", "duration": "5.5 weeks",
+          "concurrent": "Induction or consolidation FOLFOX/CAPOX; consolidation favoured for organ preservation",
+          "evidence": "Garcia-Aguilar J, et al. J Clin Oncol 2022;40:2546-56", "status": "unverified" },
+        { "indication": "Contact X-ray brachytherapy (Papillon), boost", "dose": "90 Gy", "fractions": 3, "perFraction": "30 Gy", "duration": "Over 4-6 weeks",
+          "concurrent": "50 kV contact X-ray; combined with EBRT. Sequence depends on tumour size.",
+          "evidence": "OPERA trial: Gerard JP, et al. Lancet Gastroenterol Hepatol 2023;8:356-67", "status": "unverified" },
+        { "indication": "Palliative", "dose": "30 Gy", "fractions": 5, "perFraction": "6.0 Gy", "duration": "1 week",
+          "concurrent": "None", "evidence": "Alternatives: 25 Gy/5#, 20 Gy/5#", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "anal",
+      "name": "Anal cancer",
+      "site": "lowergi",
+      "rows": [
+        { "indication": "Radical chemoradiotherapy, standard", "dose": "50.4 Gy", "fractions": 28, "perFraction": "1.8 Gy", "duration": "5.5 weeks",
+          "concurrent": "Mitomycin C + capecitabine or 5-FU",
+          "evidence": "James RD, et al. Lancet Oncol 2013;14:516-24 (ACT II)", "status": "unverified" },
+        { "indication": "Early stage, de-escalated (PLATO ACT 4)", "dose": "41.4 Gy", "fractions": 23, "perFraction": "1.8 Gy", "duration": "4.5 weeks",
+          "concurrent": "Mitomycin C + capecitabine",
+          "evidence": "PLATO ACT 4, T1-2 N0. Trial protocol — confirm current recruitment status.", "status": "unverified" },
+        { "indication": "Locally advanced, escalated (PLATO ACT 5)", "dose": "53.2 Gy", "fractions": 28, "perFraction": "1.9 Gy", "duration": "5.5 weeks",
+          "concurrent": "Mitomycin C + capecitabine",
+          "evidence": "PLATO ACT 5 dose escalation. Trial protocol — confirm current status.", "status": "unverified" },
+        { "indication": "Very early, local excision alone (PLATO ACT 3)", "dose": "41.4 Gy", "fractions": 23, "perFraction": "1.8 Gy", "duration": "4.5 weeks",
+          "concurrent": "Only if excision margin involved",
+          "evidence": "PLATO ACT 3, T1 N0 ≤ 2 cm", "status": "unverified" }
+      ]
+    },
+
+    {
+      "id": "lowergi-other",
+      "name": "Colon and metastatic lower GI",
+      "site": "lowergi",
+      "rows": [
+        { "indication": "Colorectal liver metastasis, SABR", "dose": "45-60 Gy", "fractions": "3-5", "perFraction": "9-20 Gy", "duration": "1-2 weeks",
+          "concurrent": "None. Alternate days for multiple lesions.",
+          "evidence": "Dose depends on OAR proximity; see SABR constraints tab", "status": "unverified" },
+        { "indication": "Oligometastatic disease, SABR", "dose": "30-60 Gy", "fractions": "3-8", "perFraction": "Variable", "duration": "1-2 weeks",
+          "concurrent": "None", "evidence": "Palma DA, et al. Lancet 2019;393:2051-8 (SABR-COMET)", "status": "unverified" },
+        { "indication": "Painful bone metastasis", "dose": "8 Gy", "fractions": 1, "perFraction": "8 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "RCR 4th ed; repeatable", "status": "unverified" },
+        { "indication": "Metastatic spinal cord compression, prognosis < 6 months", "dose": "8 Gy", "fractions": 1, "perFraction": "8 Gy", "duration": "Single",
+          "concurrent": "None", "evidence": "RCR 2024 fractionation guidance, regardless of ambulatory status", "status": "unverified" },
+        { "indication": "Metastatic spinal cord compression, good prognosis or post-operative", "dose": "20-30 Gy", "fractions": "5-10", "perFraction": "3-4 Gy", "duration": "1-2 weeks",
+          "concurrent": "None", "evidence": "RCR 2024 fractionation guidance", "status": "unverified" }
+      ]
+    }
+  ]
+}

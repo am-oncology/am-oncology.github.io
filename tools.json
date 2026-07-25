@@ -12,7 +12,10 @@
           "href": "tools/digest.html?set=cns",
           "desc": "Recent literature across glioma, skull base, stereotactic radiosurgery and ocular tumours.",
           "accent": "#0284C7",
-          "tags": ["Neuro", "PubMed"]
+          "tags": [
+            "Neuro",
+            "PubMed"
+          ]
         },
         {
           "id": "digest-crc",
@@ -20,7 +23,10 @@
           "href": "tools/digest.html?set=crc",
           "desc": "Recent literature across rectal, colon, anal and appendiceal cancer, plus contact X-ray brachytherapy.",
           "accent": "#7C3AED",
-          "tags": ["Lower GI", "PubMed"]
+          "tags": [
+            "Lower GI",
+            "PubMed"
+          ]
         },
         {
           "id": "journals",
@@ -28,7 +34,10 @@
           "href": "tools/journals.html",
           "desc": "Table of contents across the radiation and clinical oncology journals, filtered to what you follow.",
           "accent": "#1A7F4B",
-          "tags": ["General", "PubMed"]
+          "tags": [
+            "General",
+            "PubMed"
+          ]
         },
         {
           "id": "trials",
@@ -36,7 +45,10 @@
           "href": "tools/trials.html",
           "desc": "ClinicalTrials.gov search restricted to studies with a recruiting or active UK site.",
           "accent": "#0F766E",
-          "tags": ["General", "Trials"]
+          "tags": [
+            "General",
+            "Trials"
+          ]
         }
       ]
     },
@@ -46,12 +58,27 @@
       "blurb": "Bedside and clinic tools. All calculation happens in your browser — nothing is transmitted anywhere.",
       "tools": [
         {
+          "id": "constraints",
+          "name": "Constraints & fractionation",
+          "href": "tools/constraints.html",
+          "desc": "Organ-at-risk dose constraints and standard schedules for neuro and lower GI, sourced row by row.",
+          "accent": "#B45309",
+          "tags": [
+            "Neuro",
+            "Lower GI",
+            "Radiotherapy"
+          ]
+        },
+        {
           "id": "followup",
           "name": "Follow-up scheduler",
           "href": "tools/followup.html",
           "desc": "Builds a surveillance schedule from an index date, skips bank holidays, exports to calendar or clipboard.",
           "accent": "#1D4ED8",
-          "tags": ["Lower GI", "Scheduling"]
+          "tags": [
+            "Lower GI",
+            "Scheduling"
+          ]
         },
         {
           "id": "geriatric",
@@ -59,7 +86,10 @@
           "href": "tools/geriatric.html",
           "desc": "G8, PGA, CARG chemotoxicity, Katz ADL, Lawton IADL and GO-PIMS in one place.",
           "accent": "#B45309",
-          "tags": ["General", "Assessment"]
+          "tags": [
+            "General",
+            "Assessment"
+          ]
         }
       ]
     },
@@ -74,7 +104,9 @@
           "href": "tools/salary.html",
           "desc": "Take-home pay for the 2026/27 medical and dental pay scales, with pension tiers and student loan plans.",
           "accent": "#005EB8",
-          "tags": ["Admin"]
+          "tags": [
+            "Admin"
+          ]
         }
       ]
     }
