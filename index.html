@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Oncology Tools</title>
+<meta name="description" content="A small suite of open, browser-based tools for clinical oncologists, with a focus on neuro-oncology and lower GI cancer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<script>
+  /* Set theme before first paint so there is no flash. */
+  try {
+    var t = localStorage.getItem('cot-theme');
+    if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.theme = 'dark';
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Clinical Oncology Tools</div>
+      <h1 style="font-size: var(--fs-2xl);">Tools for the clinic, the planning room and the MDT</h1>
+      <p>
+        An open, browser-based set of calculators and literature tools, weighted towards
+        neuro-oncology and lower GI cancer. Everything runs client-side; queries go
+        straight from your browser to PubMed or ClinicalTrials.gov.
+      </p>
+    </div>
+    <div class="masthead-meta">
+      <button class="theme-btn" id="theme-btn" type="button">Dark</button>
+    </div>
+  </div>
+</div>
+
+<main class="main" id="tool-sections">
+  <div class="state"><div class="spinner"></div>Loading tools…</div>
+</main>
+
+<div class="disclaimer">
+  <strong>Use at your own risk.</strong> These tools are an unofficial personal project.
+  They are not a medical device, are not validated, and carry no institutional endorsement.
+  Nothing here replaces the protocol, the summary of product characteristics, local policy
+  or your own clinical judgement. Check every number against its primary source before it
+  reaches a patient. No patient-identifiable data should be entered into any tool in this suite.
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  function toggleTheme() {
+    var el = document.documentElement;
+    el.dataset.theme = el.dataset.theme === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('cot-theme', el.dataset.theme); } catch (e) {}
+    paint();
+  }
+  function paint() {
+    var b = document.getElementById('theme-btn');
+    var dark = document.documentElement.dataset.theme === 'dark';
+    b.textContent = dark ? 'Light' : 'Dark';
+    b.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  }
+  document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+  paint();
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  fetch('assets/json/tools.json')
+    .then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      var html = data.sections.map(function (sec) {
+        var cards = sec.tools.map(function (t) {
+          var tags = (t.tags || []).map(function (tag) {
+            return '<span class="badge">' + esc(tag) + '</span>';
+          }).join('');
+          return '<a class="tool-card" href="' + esc(t.href) + '" ' +
+                 'style="--card-accent: ' + esc(t.accent || 'var(--brand)') + '">' +
+                   '<h3>' + esc(t.name) + '</h3>' +
+                   '<p>' + esc(t.desc) + '</p>' +
+                   '<div class="tags">' + tags + '</div>' +
+                 '</a>';
+        }).join('');
+        return '<section>' +
+                 '<div class="section-head">' +
+                   '<h2>' + esc(sec.name) + '</h2>' +
+                   '<div class="rule"></div>' +
+                 '</div>' +
+                 (sec.blurb ? '<p style="margin:0 0 var(--sp-4); color:var(--ink-muted); font-size:var(--fs-sm); max-width:65ch;">' + esc(sec.blurb) + '</p>' : '') +
+                 '<div class="tool-grid">' + cards + '</div>' +
+               '</section>';
+      }).join('');
+      document.getElementById('tool-sections').innerHTML = html;
+    })
+    .catch(function () {
+      document.getElementById('tool-sections').innerHTML =
+        '<div class="state state-error">Could not load the tool list. ' +
+        'If you are opening this file directly from disk, run a local server instead — ' +
+        '<code>python3 -m http.server</code> — because <code>fetch</code> is blocked on <code>file://</code>.</div>';
+    });
+})();
+</script>
+</body>
+</html>
