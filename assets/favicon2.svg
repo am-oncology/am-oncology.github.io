@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Isodose contour mark">
-  <rect width="64" height="64" rx="12" fill="#12233b"/>
-  <g fill="none" stroke="#16707a" stroke-width="2.4">
-    <circle cx="32" cy="32" r="22" stroke="#2b8892" stroke-opacity=".55"/>
-    <circle cx="32" cy="32" r="15.5" stroke="#3fa2ac" stroke-opacity=".8"/>
-    <circle cx="32" cy="32" r="9" stroke="#7fd0d8"/>
-  </g>
-  <circle cx="32" cy="32" r="3.6" fill="#c8792d"/>
-</svg>
