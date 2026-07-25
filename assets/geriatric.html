@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geriatric assessment | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/nav.js" data-tool="geriatric" defer></script>
+<style>
+  /* Page-specific only. Colour, type and spacing come from theme.css. */
+  .card-sub { font-size: var(--fs-sm); color: var(--ink-muted); margin-bottom: var(--sp-4); }
+  .calc-container { display: none; }
+  .calc-container.active { display: block; }
+
+  .question-block { padding: var(--sp-4) 0; border-bottom: 1px solid var(--rule-soft); }
+  .question-block:last-of-type { border-bottom: none; }
+  .question-label { font-size: var(--fs-sm); font-weight: 600; color: var(--ink-dim); margin-bottom: var(--sp-3); }
+  .radio-group { display: flex; flex-direction: column; gap: var(--sp-2); }
+  .option-row {
+    display: flex; align-items: flex-start; gap: var(--sp-3);
+    font-size: var(--fs-sm); padding: var(--sp-2) var(--sp-3);
+    border: 1px solid transparent; border-radius: var(--radius); cursor: pointer;
+  }
+  .option-row:hover { background: var(--card-2); }
+  .option-row input { margin-top: 0.2rem; min-height: auto; flex-shrink: 0; }
+  .option-row:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
+
+  .grid-2 { display: grid; gap: var(--sp-4); grid-template-columns: 1fr 1fr; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+  .input-field { width: 100%; }
+
+  .score-banner {
+    display: flex; align-items: center; gap: var(--sp-5); flex-wrap: wrap;
+    background: var(--card-2); border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius); padding: var(--sp-4); margin-top: var(--sp-4);
+  }
+  .score-value { font-family: var(--font-mono); font-size: var(--fs-2xl); font-weight: 600; color: var(--accent); line-height: 1; }
+  .score-metrics { display: flex; gap: var(--sp-5); flex-wrap: wrap; font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .status-bar { margin-bottom: var(--sp-4); }
+  .status-top { font-size: var(--fs-sm); color: var(--ink-muted); margin-bottom: var(--sp-3); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Assessment</div>
+      <h1>Geriatric assessment</h1>
+      <p>G8, the Practical Geriatric Assessment, CARG chemotoxicity, Katz ADL, Lawton IADL and GO-PIMS. Everything is calculated in this browser and nothing is stored.</p>
+    </div>
+    <div class="masthead-meta">
+      <div id="calc-date">—</div>
+      <div>Local calculation</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="main">
+  <div class="status-bar">
+    <div class="status-top">
+      <div>
+        Active Instrument: <span id="active-tool-name" style="color:var(--ink); font-weight:600;">G8 Screening Tool</span>
+      </div>
+    </div>
+    <div class="controls">
+      <select id="tool-selector" onchange="switchTool()">
+        <option value="g8">G8 Score Screening Tool</option>
+        <option value="pga">Practical Geriatric Assessment (PGA)</option>
+        <option value="carg-chemo">CARG Chemo-Toxicity Score</option>
+        <option value="katz">Katz Index of Independence in ADL</option>
+        <option value="lawton">Lawton Instrumental ADL Scale</option>
+        <option value="go-pims">GO-PIMS (Inappropriate Medications)</option>
+      </select>
+      <button class="btn btn" onclick="resetActiveTool()">↺ Clear</button>
+    </div>
+  </div>
+  <div id="calc-g8" class="calc-container active">
+    <div class="card">
+      <div class="card-title">G8 Screening Tool</div>
+      <div class="card-sub">Identifies older cancer patients who would benefit from an exhaustive comprehensive geriatric assessment.</div>
+      <form id="form-g8" onchange="calcG8()">
+        <div class="question-block">
+          <div class="question-label">Food Intake: Has food intake declined over the past 3 months due to loss of appetite, digestive problems, chewing or swallowing difficulties?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-food" value="0"> Severe decrease in food intake</label>
+            <label class="option-row"><input type="radio" name="g8-food" value="1"> Moderate decrease in food intake</label>
+            <label class="option-row"><input type="radio" name="g8-food" value="2" checked> No decrease in food intake</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Weight Loss: Weight loss during the last 3 months?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-weight" value="0"> Weight loss > 3 kg</label>
+            <label class="option-row"><input type="radio" name="g8-weight" value="1"> Does not know</label>
+            <label class="option-row"><input type="radio" name="g8-weight" value="2"> Weight loss between 1 and 3 kg</label>
+            <label class="option-row"><input type="radio" name="g8-weight" value="3" checked> No weight loss</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Mobility: How is the patient's physical capability to move around?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-mobility" value="0"> Bed or chair bound</label>
+            <label class="option-row"><input type="radio" name="g8-mobility" value="1"> Able to get out of bed/chair but does not go out</label>
+            <label class="option-row"><input type="radio" name="g8-mobility" value="2" checked> Goes out / Normal mobility</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Neuropsychological Problems: Does the patient exhibit psychological or cognitive issues?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-neuro" value="0"> Severe dementia or depression</label>
+            <label class="option-row"><input type="radio" name="g8-neuro" value="1"> Mild dementia</label>
+            <label class="option-row"><input type="radio" name="g8-neuro" value="2" checked> No psychological problems</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Body Mass Index (BMI):</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-bmi" value="0"> BMI < 19</label>
+            <label class="option-row"><input type="radio" name="g8-bmi" value="1"> BMI 19 to < 21</label>
+            <label class="option-row"><input type="radio" name="g8-bmi" value="2"> BMI 21 to < 23</label>
+            <label class="option-row"><input type="radio" name="g8-bmi" value="3" checked> BMI 23 or greater</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Polypharmacy: Takes more than 3 prescription drugs per day?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-meds" value="0"> Yes</label>
+            <label class="option-row"><input type="radio" name="g8-meds" value="1" checked> No</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Self-Rated Health: In comparison with other people of the same age, how does the patient consider their health status?</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-health" value="0"> Not as good</label>
+            <label class="option-row"><input type="radio" name="g8-health" value="0.5"> Does not know</label>
+            <label class="option-row"><input type="radio" name="g8-health" value="1"> As good</label>
+            <label class="option-row"><input type="radio" name="g8-health" value="2" checked> Better</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Age:</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="g8-age" value="0"> > 85 years</label>
+            <label class="option-row"><input type="radio" name="g8-age" value="1"> 80 - 85 years</label>
+            <label class="option-row"><input type="radio" name="g8-age" value="2" checked> < 80 years</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="g8-badge" class="badge badge-green">Normal</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="g8-interpretation">Score > 14: Regular geriatric assessment may be bypassed unless clinically indicated.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">G8 Score</div>
+          <div class="score-value" id="g8-score-val">17 / 17</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="calc-pga" class="calc-container">
+    <div class="card">
+      <div class="card-title">Practical Geriatric Assessment (PGA)</div>
+      <div class="card-sub">A streamlined multi-domain framework assessing major physiological and performance matrices.</div>
+      <form id="form-pga" onchange="calcPGA()">
+        <div class="question-block">
+          <div class="question-label">Functional Status (ADLs/IADLs Dependent)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="pga-func" value="0" checked> Completely Independent</label>
+            <label class="option-row"><input type="radio" name="pga-func" value="1"> 1-2 Dependencies</label>
+            <label class="option-row"><input type="radio" name="pga-func" value="2"> ≥3 Dependencies</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Cognition Screening (e.g., Mini-COG / Orientation)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="pga-cog" value="0" checked> Intact / No observed cognitive deficits</label>
+            <label class="option-row"><input type="radio" name="pga-cog" value="2"> Mild cognitive impairment suspected</label>
+            <label class="option-row"><input type="radio" name="pga-cog" value="4"> Severe cognitive impairment / Clear baseline disorientation</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Mobility / Fall Risk (Timed Up and Go or Fall History)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="pga-mob" value="0" checked> Low risk (TUG < 12s, no recent falls)</label>
+            <label class="option-row"><input type="radio" name="pga-mob" value="1"> Moderate risk (TUG 12-20s or 1 fall within past year)</label>
+            <label class="option-row"><input type="radio" name="pga-mob" value="2"> High risk (TUG > 20s or ≥2 falls / injurious fall)</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Comorbidities (Charlson Comorbidity Index equivalent)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="pga-comorb" value="0" checked> Well controlled / No significant systemic disease</label>
+            <label class="option-row"><input type="radio" name="pga-comorb" value="1"> 1-2 major conditions moderately managed</label>
+            <label class="option-row"><input type="radio" name="pga-comorb" value="3"> Severe multi-system burden / Advanced target organ disease</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="pga-badge" class="badge badge-green">Fit</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="pga-interpretation">Score 0-1: Standard oncological paradigms apply without adjustment.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">PGA Hazard Score</div>
+          <div class="score-value" id="pga-score-val">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="calc-carg-chemo" class="calc-container">
+    <div class="card">
+      <div class="card-title">CARG Chemo-Toxicity Score</div>
+      <div class="card-sub">Predicts the probability of severe (Grade 3-5) toxicity from cytotoxic chemotherapy regimens.</div>
+      <form id="form-carg" onchange="calcCARG()">
+        <div class="grid-2">
+          <div class="question-block">
+            <div class="question-label">Chronological Age</div>
+            <div class="radio-group">
+              <label class="option-row"><input type="radio" name="carg-age" value="0" checked> < 72 years</label>
+              <label class="option-row"><input type="radio" name="carg-age" value="2"> ≥ 72 years</label>
+            </div>
+          </div>
+          <div class="question-block">
+            <div class="question-label">Cancer Stratification</div>
+            <div class="radio-group">
+              <label class="option-row"><input type="radio" name="carg-type" value="0" checked> Other malignancies</label>
+              <label class="option-row"><input type="radio" name="carg-type" value="1"> Gastrointestinal / Genitourinary</label>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 1.5rem;">
+          <div class="question-block">
+            <div class="question-label">Planned Intensity / Chemo Dose</div>
+            <div class="radio-group">
+              <label class="option-row"><input type="radio" name="carg-dose" value="0" checked> Reduced baseline dose (< 100%)</label>
+              <label class="option-row"><input type="radio" name="carg-dose" value="2"> Full standard dose (100%)</label>
+            </div>
+          </div>
+          <div class="question-block">
+            <div class="question-label">Number of Chemotherapeutic Agents</div>
+            <div class="radio-group">
+              <label class="option-row"><input type="radio" name="carg-agents" value="0" checked> Monotherapy</label>
+              <label class="option-row"><input type="radio" name="carg-agents" value="2"> Polychemotherapy</label>
+            </div>
+          </div>
+        </div>
+        <div class="question-block" style="margin-top: 1rem;">
+          <div class="question-label">Laboratory Parameters & Clinical Findings (Select all that apply)</div>
+          <div class="checkbox-group">
+            <label class="option-row"><input type="checkbox" name="carg-cl" value="3"> Hemoglobin low (< 11 g/dL for males, < 10 g/dL for females)</label>
+            <label class="option-row"><input type="checkbox" name="carg-cr" value="2"> Renal compromise (Creatinine Clearance < 34 mL/min)</label>
+            <label class="option-row"><input type="checkbox" name="carg-hearing" value="2"> Hearing impairment (Self-reported fair/poor vs excellent/good)</label>
+            <label class="option-row"><input type="checkbox" name="carg-falls" value="1"> Patient reported ≥1 falls within preceding 6 months</label>
+            <label class="option-row"><input type="checkbox" name="carg-walk" value="1"> Restricted physical activity (Difficulty walking 1 block)</label>
+            <label class="option-row"><input type="checkbox" name="carg-iadl" value="1"> Requires tracking assistance with administering medications</label>
+            <label class="option-row"><input type="checkbox" name="carg-social" value="1"> Social isolation/activity limitations due to physical/emotional health</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="carg-badge" class="badge badge-green">Low Risk</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="carg-interpretation">Score 0-5: Toxicity probability approx 30%. Routine clinical follow-up.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">CARG Score</div>
+          <div class="score-value" id="carg-score-val">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="calc-katz" class="calc-container">
+    <div class="card">
+      <div class="card-title">Katz Index of Independence in Activities of Daily Living (ADL)</div>
+      <div class="card-sub">Evaluates basic personal functional viability over 6 foundational requirements.</div>
+      <form id="form-katz" onchange="calcKatz()">
+        <div class="question-block">
+          <div class="question-label">Bathing (Tub, shower, or sponge bath)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-bath" value="1" checked> Independent: Cleans entire body or needs aid with only one part</label>
+            <label class="option-row"><input type="radio" name="katz-bath" value="0"> Dependent: Needs explicit structural assistance for multiple parts</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Dressing (Retrieves clothes from closets/drawers)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-dress" value="1" checked> Independent: Gets clothes and puts them on completely without guidance</label>
+            <label class="option-row"><input type="radio" name="katz-dress" value="0"> Dependent: Requires manual assistance or stays partly undressed</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Toileting (Going to toilet room, cleaning, arranging clothes)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-toilet" value="1" checked> Independent: Manages transfers, attire, and hygiene independently</label>
+            <label class="option-row"><input type="radio" name="katz-toilet" value="0"> Dependent: Requires explicit support mechanism/bedpan support</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Transferring (In and out of bed or chair)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-trans" value="1" checked> Independent: Moves in/out of furniture structures cleanly</label>
+            <label class="option-row"><input type="radio" name="katz-trans" value="0"> Dependent: Complete mechanical assistance or total structural lift needed</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Continence (Control over bowel and bladder functions)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-cont" value="1" checked> Independent: Full self-control or independent catheter management</label>
+            <label class="option-row"><input type="radio" name="katz-cont" value="0"> Dependent: Partial/total fecal or urinary incontinence</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Feeding (Transferring food from plate to mouth)</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="katz-feed" value="1" checked> Independent: Feeds self autonomously (excluding cutting meat/buttering)</label>
+            <label class="option-row"><input type="radio" name="katz-feed" value="0"> Dependent: Needs physical structural feeding or enteral tracking</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="katz-badge" class="badge badge-green">Full Independence</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="katz-interpretation">Score 6/6: High functional reserve capacity.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">Katz Index</div>
+          <div class="score-value" id="katz-score-val">6 / 6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="calc-lawton" class="calc-container">
+    <div class="card">
+      <div class="card-title">Lawton Instrumental Activities of Daily Living (IADL) Scale</div>
+      <div class="card-sub">Assesses complex environmental cognitive-functional adaptations necessary for independent living.</div>
+      <form id="form-lawton" onchange="calcLawton()">
+        <div class="question-block">
+          <div class="question-label">Ability to Use Telephone</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-tel" value="1" checked> Operates phone autonomously, looks up and dials numbers</label>
+            <label class="option-row"><input type="radio" name="l-tel" value="1"> Dials a few well-known numbers</label>
+            <label class="option-row"><input type="radio" name="l-tel" value="1"> Answers phone but does not dial</label>
+            <label class="option-row"><input type="radio" name="l-tel" value="0"> Does not use telephone at all</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Shopping</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-shop" value="1" checked> Takes care of all shopping needs independently</label>
+            <label class="option-row"><input type="radio" name="l-shop" value="0"> Requires accompaniment on any shopping excursion</label>
+            <label class="option-row"><input type="radio" name="l-shop" value="0"> Completely unable to shop</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Food Preparation</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-food" value="1" checked> Plans, prepares, and serves adequate meals independently</label>
+            <label class="option-row"><input type="radio" name="l-food" value="0"> Prepares meals if supplied with ingredients</label>
+            <label class="option-row"><input type="radio" name="l-food" value="0"> Needs prepared meals brought or served</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Housekeeping</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-house" value="1" checked> Maintains house up to acceptable standards completely</label>
+            <label class="option-row"><input type="radio" name="l-house" value="1"> Performs light daily tasks (dishes, bed-making)</label>
+            <label class="option-row"><input type="radio" name="l-house" value="0"> Requires structural assistance with all major tasks</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Laundry</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-laund" value="1" checked> Does personal laundry completely</label>
+            <label class="option-row"><input type="radio" name="l-laund" value="1"> Launders small items only</label>
+            <label class="option-row"><input type="radio" name="l-laund" value="0"> All laundry must be processed by others</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Mode of Transportation</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-trans" value="1" checked> Travels independently on public transit or drives own vehicle</label>
+            <label class="option-row"><input type="radio" name="l-trans" value="1"> Arranges travel via taxi/rideshare but doesn't use transit</label>
+            <label class="option-row"><input type="radio" name="l-trans" value="0"> Travel limited to auto accompanied by another person</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Responsibility for Own Medications</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-med" value="1" checked> Is responsible for taking medications in correct dosages at correct times</label>
+            <label class="option-row"><input type="radio" name="l-med" value="0"> Requires prepared dosages ahead of scheduling window</label>
+          </div>
+        </div>
+        <div class="question-block">
+          <div class="question-label">Ability to Handle Finances</div>
+          <div class="radio-group">
+            <label class="option-row"><input type="radio" name="l-fin" value="1" checked> Manages financial matters autonomously (budgets, checks, bills)</label>
+            <label class="option-row"><input type="radio" name="l-fin" value="0"> Incapable of managing day-to-day transaction parameters</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="lawton-badge" class="badge badge-green">High Function</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="lawton-interpretation">Score 8/8: Environmentally self-sufficient.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">Lawton Scale</div>
+          <div class="score-value" id="lawton-score-val">8 / 8</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="calc-go-pims" class="calc-container">
+    <div class="card">
+      <div class="card-title">GO-PIMS Scale</div>
+      <div class="card-sub">Geriatric Oncology Potentially Inappropriate Medications checklist based on adjusted clinical risk indicators.</div>
+      <form id="form-gopims" onchange="calcGOPIMS()">
+        <div class="question-block">
+          <div class="question-label">Identify if any of the following active prescriptions are therapeutic components for the patient:</div>
+          <div class="checkbox-group">
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="Benzodiazepines"> First/Second Generation Antihistamines (Severe anticholinergic risks)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="NSAIDs"> Systemic Long-term NSAIDs (Gastrointestinal / Renal risks)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="Benzodiazepines"> Benzodiazepines or Z-drugs (Elevated falls risk, severe neuro-cognitive load)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="PPIs"> Long-term Proton Pump Inhibitors (>8 weeks without clear hypersecretory profile)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="Tricyclics"> Tricyclic Antidepressants (Highly anticholinergic, arrhythmogenic risks)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="Sulfonylureas"> Long-acting Sulfonylureas (e.g., Glibenclamide / Glyburide - severe hypoglycemia risks)</label>
+            <label class="option-row"><input type="checkbox" name="pims-item" data-drug="Antipsychotics"> Antipsychotics (Except where indicated for active terminal delirium / end-of-life care)</label>
+          </div>
+        </div>
+      </form>
+      <div class="score-banner">
+        <div>
+          <span id="gopims-badge" class="badge badge-green">Optimized Profile</span>
+          <p style="font-size:0.8rem; color:var(--ink-muted); margin-top:0.25rem;" id="gopims-interpretation">0 Inappropriate Agents Checked: Drug profile optimized for age-adjusted indices.</p>
+        </div>
+        <div class="score-metrics">
+          <div style="font-size:0.65rem; text-transform:uppercase; color:var(--ink-muted);">PIMS Detected</div>
+          <div class="score-value" id="gopims-score-val">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <details class="query-details" open>
+    <summary>Oncological Evaluation Note</summary>
+    <code id="active-summary-text">G8 Metric Interpretation Context: Standard tool endorsed by SIOG (International Society of Geriatric Oncology). Scores ≤14 indicate necessity for tailored clinical evaluation via GA.</code>
+  </details>
+</div>
+<script>
+function ui(id) { return document.getElementById(id); }
+function switchTool() {
+  const selected = ui('tool-selector').value;
+  // Toggle Visibility
+  document.querySelectorAll('.calc-container').forEach(el => el.classList.remove('active'));
+  const displayNames = {
+    'g8': 'G8 Screening Tool',
+    'pga': 'Practical Geriatric Assessment (PGA)',
+    'carg-chemo': 'CARG Chemo-Toxicity Score',
+    'katz': 'Katz Index of Independence in ADL',
+    'lawton': 'Lawton Instrumental ADL Scale',
+    'go-pims': 'GO-PIMS (Inappropriate Medications)'
+  };
+  ui('active-tool-name').textContent = displayNames[selected];
+  if(selected === 'g8') { ui('calc-g8').classList.add('active'); calcG8(); }
+  if(selected === 'pga') { ui('calc-pga').classList.add('active'); calcPGA(); }
+  if(selected === 'carg-chemo') { ui('calc-carg-chemo').classList.add('active'); calcCARG(); }
+  if(selected === 'katz') { ui('calc-katz').classList.add('active'); calcKatz(); }
+  if(selected === 'lawton') { ui('calc-lawton').classList.add('active'); calcLawton(); }
+  if(selected === 'go-pims') { ui('calc-go-pims').classList.add('active'); calcGOPIMS(); }
+}
+function resetActiveTool() {
+  const selected = ui('tool-selector').value;
+  if(selected === 'g8') { ui('form-g8').reset(); calcG8(); }
+  if(selected === 'pga') { ui('form-pga').reset(); calcPGA(); }
+  if(selected === 'carg-chemo') { ui('form-carg').reset(); calcCARG(); }
+  if(selected === 'katz') { ui('form-katz').reset(); calcKatz(); }
+  if(selected === 'lawton') { ui('form-lawton').reset(); calcLawton(); }
+  if(selected === 'go-pims') { ui('form-gopims').reset(); calcGOPIMS(); }
+}
+function calcG8() {
+  let score = 0;
+  const elements = ui('form-g8').elements;
+  const names = ['g8-food', 'g8-weight', 'g8-mobility', 'g8-neuro', 'g8-bmi', 'g8-meds', 'g8-health', 'g8-age'];
+  names.forEach(name => {
+    const radio = elements[name];
+    if(radio) {
+      for (let i = 0; i < radio.length; i++) {
+        if (radio[i].checked) score += parseFloat(radio[i].value);
+      }
+    }
+  });
+  ui('g8-score-val').textContent = `${score} / 17`;
+  const badge = ui('g8-badge');
+  if (score <= 14) {
+    badge.textContent = "Vulnerable / Impaired";
+    badge.className = "badge badge-red";
+    ui('g8-interpretation').textContent = "Score ≤ 14: Comprehensive Geriatric Assessment (CGA) is highly recommended before determining definitive chemo/surgical pathways.";
+  } else {
+    badge.textContent = "Normal / Fit";
+    badge.className = "badge badge-green";
+    ui('g8-interpretation').textContent = "Score > 14: Low risk. Regular oncology protocols can usually proceed without complete multi-domain GA restructuring.";
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (G8):\nHigh sensitivity (~80-92%) for diagnosing underlying physical impairment and survival correlations across older cancer patient cohorts.";
+}
+function calcPGA() {
+  let score = 0;
+  const elements = ui('form-pga').elements;
+  const names = ['pga-func', 'pga-cog', 'pga-mob', 'pga-comorb'];
+  names.forEach(name => {
+    const radio = elements[name];
+    if(radio) {
+      for(let i=0; i<radio.length; i++) {
+        if(radio[i].checked) score += parseInt(radio[i].value);
+      }
+    }
+  });
+  ui('pga-score-val').textContent = score;
+  const badge = ui('pga-badge');
+  if (score <= 1) {
+    badge.textContent = "Fit Profile"; badge.className = "badge badge-green";
+    ui('pga-interpretation').textContent = "Score 0-1: No specialized therapeutic modification required.";
+  } else if (score <= 4) {
+    badge.textContent = "Vulnerable"; badge.className = "badge badge-high";
+    ui('pga-interpretation').textContent = "Score 2-4: Consider individual single-domain toxicity modifications (e.g. prophylactic dose steps or therapy support).";
+  } else {
+    badge.textContent = "Frail"; badge.className = "badge badge-red";
+    ui('pga-interpretation').textContent = "Score ≥ 5: Severe clinical risks. Palliative intent or heavily optimized monotherapy options are primary pathways.";
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (PGA):\nA swift institutional synthesis parameter focusing on dynamic physiological targets instead of chronological thresholds.";
+}
+function calcCARG() {
+  let score = 0;
+  const form = ui('form-carg');
+  const radioFields = ['carg-age', 'carg-type', 'carg-dose', 'carg-agents'];
+  radioFields.forEach(name => {
+    const radio = form.elements[name];
+    for(let i=0; i<radio.length; i++) {
+      if(radio[i].checked) score += parseInt(radio[i].value);
+    }
+  });
+  const checkBoxes = form.querySelectorAll('input[type="checkbox"]:checked');
+  checkBoxes.forEach(cb => { score += parseInt(cb.value); });
+  ui('carg-score-val').textContent = score;
+  const badge = ui('carg-badge');
+  if (score <= 5) {
+    badge.textContent = "Low Toxicity Risk"; badge.className = "badge badge-green";
+    ui('carg-interpretation').textContent = "Score 0-5: Toxicity likelihood ~30%. Proceed with standard monitoring protocols.";
+  } else if (score <= 9) {
+    badge.textContent = "Medium Risk"; badge.className = "badge badge-high";
+    ui('carg-interpretation').textContent = "Score 6-9: Toxicity likelihood ~50%. Consider proactive support and early monitoring cycles.";
+  } else {
+    badge.textContent = "High Risk"; badge.className = "badge badge-red";
+    ui('carg-interpretation').textContent = "Score ≥ 10: Toxicity likelihood ~65-70%. Strong consideration for primary dosing reductions.";
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (CARG Chemo-Toxicity):\nDerived via Hurria et al. (JCO 2011). Predicts Grade 3 (severe), Grade 4 (life-threatening), or Grade 5 (fatal) toxicities.";
+}
+function calcKatz() {
+  let score = 0;
+  const elements = ui('form-katz').elements;
+  const fields = ['katz-bath', 'katz-dress', 'katz-toilet', 'katz-trans', 'katz-cont', 'katz-feed'];
+  fields.forEach(name => {
+    const radio = elements[name];
+    for(let i=0; i<radio.length; i++) {
+      if(radio[i].checked) score += parseInt(radio[i].value);
+    }
+  });
+  ui('katz-score-val').textContent = `${score} / 6`;
+  const badge = ui('katz-badge');
+  if(score === 6) {
+    badge.textContent = "Full Independence"; badge.className = "badge badge-green";
+    ui('katz-interpretation').textContent = "Score 6/6: Complete basic physical functional independence.";
+  } else if(score >= 4) {
+    badge.textContent = "Moderate Impairment"; badge.className = "badge badge-high";
+    ui('katz-interpretation').textContent = "Score 4-5: Partial dependence detected. Target physical therapy assistance.";
+  } else {
+    badge.textContent = "Severe Impairment"; badge.className = "badge badge-red";
+    ui('katz-interpretation').textContent = "Score < 4: High physical functional dependency.";
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (Katz ADL):\nMeasures fundamental bio-physical self-care functions. Disruption indicates basic structural support needs.";
+}
+function calcLawton() {
+  let score = 0;
+  const elements = ui('form-lawton').elements;
+  const fields = ['l-tel', 'l-shop', 'l-food', 'l-house', 'l-laund', 'l-trans', 'l-med', 'l-fin'];
+  fields.forEach(name => {
+    const radio = elements[name];
+    for(let i=0; i<radio.length; i++) {
+      if(radio[i].checked) {
+        score += parseInt(radio[i].value);
+        break; // Count only the chosen selection for the question block
+      }
+    }
+  });
+  ui('lawton-score-val').textContent = `${score} / 8`;
+  const badge = ui('lawton-badge');
+  if(score === 8) {
+    badge.textContent = "High Function"; badge.className = "badge badge-green";
+    ui('lawton-interpretation').textContent = "Score 8/8: Uncompromised logistical independent capacity.";
+  } else if(score >= 5) {
+    badge.textContent = "Mild/Moderate Dependency"; badge.className = "badge badge-high";
+    ui('lawton-interpretation').textContent = "Score 5-7: Minor independent living constraints.";
+  } else {
+    badge.textContent = "Severe Instrumental Dependence"; badge.className = "badge badge-red";
+    ui('lawton-interpretation').textContent = "Score < 5: Highly vulnerable setup. Patient requires sustained administrative assistance.";
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (Lawton IADL):\nParticularly sensitive to early stage neuro-cognitive decline or systemic execution barriers compared to basic ADL metrics.";
+}
+function calcGOPIMS() {
+  const checkBoxes = ui('form-gopims').querySelectorAll('input[type="checkbox"]:checked');
+  const count = checkBoxes.length;
+  ui('gopims-score-val').textContent = count;
+  const badge = ui('gopims-badge');
+  if(count === 0) {
+    badge.textContent = "Optimized Profile"; badge.className = "badge badge-green";
+    ui('gopims-interpretation').textContent = "0 Inappropriate Agents Checked: Drug profile optimized for age-adjusted indices.";
+  } else if(count <= 2) {
+    badge.textContent = "Review Advised"; badge.className = "badge badge-high";
+    ui('gopims-interpretation').textContent = `${count} Potentially Inappropriate Medication(s). De-prescribing or monitoring adjustments strongly considered.`;
+  } else {
+    badge.textContent = "Critical Polypharmacy"; badge.className = "badge badge-red";
+    ui('gopims-interpretation').textContent = `${count} High-risk Agents Checked. Structured pharmaceutical medication review requested immediately.`;
+  }
+  ui('active-summary-text').textContent = "Interpretation Protocol (GO-PIMS):\nSpecific geriatric oncology consensus criteria derived to filter multi-system medications that conflict directly with systemic cancer treatments.";
+}
+// Initial initialization
+window.onload = function() {
+  ui('calc-date').textContent = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  calcG8();
+};
+</script>
+
+<div class="disclaimer">
+  <strong>Do not enter patient-identifiable information.</strong> These instruments are
+  screening and assessment aids, not diagnoses. Scores support a clinical judgement about
+  fitness for treatment; they do not replace one, and cut-offs perform differently across
+  populations from those in which they were derived. Check each instrument against its
+  original publication before acting on a threshold.
+  <a href="../index.html">All tools</a>
+</div>
+
+</body>
+</html>

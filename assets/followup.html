@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Follow-up scheduler | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/nav.js" data-tool="followup" defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  /* Page-specific only. Colour, type and spacing come from theme.css. */
+  .form-field { display: flex; flex-direction: column; }
+  .divider { border: none; border-top: 1px solid var(--rule-soft); margin: var(--sp-4) 0; }
+
+  .tag-row, .preset-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; }
+  .quick-tag, .preset-btn { font-size: var(--fs-xs); padding: var(--sp-2) var(--sp-3); min-height: 32px; }
+
+  .interval-list { display: flex; flex-direction: column; gap: var(--sp-2); margin: var(--sp-3) 0; }
+  .interval-item {
+    display: flex; align-items: center; gap: var(--sp-3);
+    background: var(--card-2); border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: var(--sp-2) var(--sp-3); font-size: var(--fs-sm);
+  }
+  .interval-item-label { color: var(--ink-muted); font-size: var(--fs-xs); }
+  .remove-btn { margin-left: auto; border: none; background: none; color: var(--ink-muted);
+    cursor: pointer; min-height: auto; padding: var(--sp-1); }
+  .remove-btn:hover { color: var(--red); background: none; }
+
+  .chip { font-family: var(--font-mono); font-size: var(--fs-2xs); padding: 0.1rem var(--sp-2);
+    border-radius: 3px; background: var(--card-2); color: var(--ink-muted); }
+  .chip-d { background: var(--blue-soft);  color: var(--blue); }
+  .chip-w { background: var(--green-soft); color: var(--green); }
+  .chip-m { background: var(--accent-soft); color: var(--accent); }
+  .chip-day { background: var(--card-2); color: var(--ink-dim); }
+
+  .results-table { width: 100%; border-collapse: collapse; }
+  .result-row { border-bottom: 1px solid var(--rule-soft); }
+  .result-stripe { width: 3px; padding: 0; background: var(--accent); }
+  .result-date-main { font-family: var(--font-mono); font-weight: 600; white-space: nowrap; }
+  .result-day-name { font-size: var(--fs-xs); color: var(--ink-muted); }
+  .result-days, .result-wc { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-muted); white-space: nowrap; }
+  .result-interval-label { font-size: var(--fs-sm); }
+  .result-adjusted { color: var(--amber); }
+  .result-header { display: flex; justify-content: space-between; align-items: baseline;
+    gap: var(--sp-3); flex-wrap: wrap; margin-bottom: var(--sp-3); }
+  .result-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-4); }
+  .start-info { font-size: var(--fs-xs); color: var(--ink-muted); }
+
+  .bh-flag { font-size: var(--fs-2xs); font-weight: 600; padding: 0.1rem var(--sp-2);
+    border-radius: 3px; white-space: nowrap; }
+  .bh-flag-warn    { background: var(--red-soft);   color: var(--red); }
+  .bh-flag-moved   { background: var(--amber-soft); color: var(--amber); }
+  .bh-flag-weekend { background: var(--card-2);     color: var(--ink-muted); }
+
+  .bh-status, .live-indicator { display: inline-flex; align-items: center; gap: var(--sp-2);
+    font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .bh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-muted); }
+  .bh-dot-ok      { background: var(--green); }
+  .bh-dot-err     { background: var(--red); }
+  .bh-dot-loading { background: var(--amber); animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Scheduling</div>
+      <h1>Follow-up scheduler</h1>
+      <p>Builds a surveillance schedule from an index date, skips England and Wales bank holidays, and exports to calendar, clipboard or print.</p>
+    </div>
+    <div class="masthead-meta">
+      <div class="live-indicator" id="bh-status-bar">
+        <span class="bh-dot bh-dot-loading" id="bh-dot"></span>
+        <span id="bh-status-text">Loading bank holidays…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="main">
+  <!-- ══ INPUT CARD ══ -->
+  <div class="card">
+    <!-- Patient / session -->
+    <div class="controls" style="margin-bottom:0.6rem;">
+      <div class="form-field" style="flex:1;">
+        <label class="field-label" for="patient-ref">Schedule label</label>
+        <input type="text" id="patient-ref" placeholder="e.g. Clinic ref 3 — no patient identifiers" style="width:100%;" oninput="render()">
+      </div>
+      <button onclick="resetAll()" title="Clear the schedule and start again" style="flex-shrink:0;">
+        <i class="ti ti-refresh"></i> New schedule
+      </button>
+    </div>
+    <hr class="divider">
+    <!-- Start date & preferences -->
+    <div class="eyebrow">Start date &amp; clinic preferences</div>
+    <div class="controls">
+      <div class="form-field" style="flex:1; min-width:160px;">
+        <label class="field-label" for="start-date">Start date</label>
+        <input type="date" id="start-date">
+      </div>
+      <button onclick="setToday()"><i class="ti ti-calendar"></i> Today</button>
+      <button onclick="setTomorrow()">Tomorrow</button>
+    </div>
+    <div class="controls">
+      <div class="form-field" style="min-width:170px;">
+        <label class="field-label" for="pref-day">Default clinic day</label>
+        <select id="pref-day" onchange="render()">
+          <option value="0">No preference</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+        </select>
+        <span class="field-hint">Fallback when no per-interval day is set</span>
+      </div>
+      <div class="form-field" style="min-width:200px;">
+        <label class="field-label" for="bh-action">If date falls on bank holiday</label>
+        <select id="bh-action" onchange="render()">
+          <option value="flag">Flag only</option>
+          <option value="next">Move to next working day</option>
+          <option value="prev">Move to previous working day</option>
+        </select>
+      </div>
+    </div>
+    <hr class="divider">
+    <!-- Add intervals -->
+    <div class="eyebrow">Add intervals</div>
+    <div class="controls">
+      <div class="form-field">
+        <label class="field-label" for="interval-num">Number</label>
+        <input type="number" id="interval-num" min="1" max="260" value="6" style="width:72px;">
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="interval-unit">Unit</label>
+        <select id="interval-unit" style="width:105px;">
+          <option value="w">Weeks</option>
+          <option value="m">Months</option>
+          <option value="d">Days</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="interval-day">Force to day</label>
+        <select id="interval-day" style="width:120px;">
+          <option value="0">Use default</option>
+          <option value="1">Monday</option>
+          <option value="2">Tuesday</option>
+          <option value="3">Wednesday</option>
+          <option value="4">Thursday</option>
+          <option value="5">Friday</option>
+        </select>
+      </div>
+      <div class="form-field" style="flex:1; min-width:150px;">
+        <label class="field-label" for="interval-label">Label (optional)</label>
+        <input type="text" id="interval-label" placeholder="e.g. Post-RT review" style="width:100%;">
+      </div>
+      <button onclick="addInterval()" class="btn-primary"><i class="ti ti-plus"></i> Add</button>
+    </div>
+    <div id="interval-list" class="interval-list"></div>
+    <hr class="divider">
+    <!-- Quick add -->
+    <div class="eyebrow">Quick add</div>
+    <div class="tag-row">
+      <span class="quick-tag" onclick="quickAdd(4,'w','')">4w</span>
+      <span class="quick-tag" onclick="quickAdd(6,'w','')">6w</span>
+      <span class="quick-tag" onclick="quickAdd(8,'w','')">8w</span>
+      <span class="quick-tag" onclick="quickAdd(9,'w','')">9w</span>
+      <span class="quick-tag" onclick="quickAdd(3,'m','')">3m</span>
+      <span class="quick-tag" onclick="quickAdd(6,'m','')">6m</span>
+      <span class="quick-tag" onclick="quickAdd(9,'m','')">9m</span>
+      <span class="quick-tag" onclick="quickAdd(12,'m','1 year')">1 year</span>
+      <span class="quick-tag" onclick="quickAdd(18,'m','18 months')">18m</span>
+      <span class="quick-tag" onclick="quickAdd(24,'m','2 years')">2 years</span>
+    </div>
+    <hr class="divider">
+    <!-- Presets -->
+    <div class="eyebrow">Preset follow-up schedules</div>
+    <div class="preset-row">
+      <button class="preset-btn" onclick="applyPreset('rectal')">Rectal post-TNT</button>
+      <button class="preset-btn" onclick="applyPreset('anal1')">Anal post-CRT high-risk (T3-4 or N1)</button>
+      <button class="preset-btn" onclick="applyPreset('anal2')">Anal post-CRT low-risk (T1-2 and N0)</button>
+      <button class="preset-btn" onclick="applyPreset('cxb1')">Papillon CXB > EBRT (<3cm)</button>
+      <button class="preset-btn" onclick="applyPreset('cxb2')">Papillon EBRT > CXB (>3cm)</button>
+      <button class="btn-danger preset-btn" onclick="clearIntervals()" style="margin-left:auto;">
+        <i class="ti ti-trash"></i> Clear all
+      </button>
+    </div>
+  </div>
+  <!-- ══ RESULTS CARD ══ -->
+  <div class="card" id="results-card">
+    <div id="results-inner">
+      <div class="state">
+        <i class="ti ti-calendar-event" style="font-size:2rem; display:block; margin-bottom:0.5rem; color:#DDE1E7;"></i>
+        Add a start date and at least one interval above
+      </div>
+    </div>
+    <div class="result-actions" id="result-actions" style="display:none;">
+      <button onclick="copySchedule()"><i class="ti ti-copy"></i> Copy schedule</button>
+      <button onclick="copyCSV()"><i class="ti ti-download"></i> Copy as CSV</button>
+      <button onclick="downloadICS()"><i class="ti ti-calendar-plus"></i> Export .ics</button>
+      <button onclick="window.print()"><i class="ti ti-printer"></i> Print</button>
+    </div>
+  </div>
+</div>
+<script>
+// ════════════════════════════════════════════════════════════
+//  BANK HOLIDAYS — fetch from GOV.UK, fall back to built-in
+// ════════════════════════════════════════════════════════════
+const FALLBACK_BH = {
+  '2024-01-01':"New Year's Day",
+  '2024-03-29':'Good Friday',
+  '2024-04-01':'Easter Monday',
+  '2024-05-06':'Early May bank holiday',
+  '2024-05-27':'Spring bank holiday',
+  '2024-08-26':'Summer bank holiday',
+  '2024-12-25':'Christmas Day',
+  '2024-12-26':'Boxing Day',
+  '2025-01-01':"New Year's Day",
+  '2025-04-18':'Good Friday',
+  '2025-04-21':'Easter Monday',
+  '2025-05-05':'Early May bank holiday',
+  '2025-05-26':'Spring bank holiday',
+  '2025-08-25':'Summer bank holiday',
+  '2025-12-25':'Christmas Day',
+  '2025-12-26':'Boxing Day',
+  '2026-01-01':"New Year's Day",
+  '2026-04-03':'Good Friday',
+  '2026-04-06':'Easter Monday',
+  '2026-05-04':'Early May bank holiday',
+  '2026-05-25':'Spring bank holiday',
+  '2026-08-31':'Summer bank holiday',
+  '2026-12-25':'Christmas Day',
+  '2026-12-28':'Boxing Day (substitute)',
+  '2027-01-01':"New Year's Day",
+  '2027-03-26':'Good Friday',
+  '2027-03-29':'Easter Monday',
+  '2027-05-03':'Early May bank holiday',
+  '2027-05-31':'Spring bank holiday',
+  '2027-08-30':'Summer bank holiday',
+  '2027-12-27':'Christmas Day (substitute)',
+  '2027-12-28':'Boxing Day (substitute)',
+};
+let bhMap = { ...FALLBACK_BH };
+async function loadBankHolidays() {
+  try {
+    const res  = await fetch('https://www.gov.uk/bank-holidays.json');
+    const data = await res.json();
+    bhMap = {};
+    data['england-and-wales'].events.forEach(e => { bhMap[e.date] = e.title; });
+    document.getElementById('bh-dot').className = 'bh-dot bh-dot-ok';
+    document.getElementById('bh-status-text').textContent =
+      Object.keys(bhMap).length + ' England & Wales bank holidays loaded';
+  } catch {
+    document.getElementById('bh-dot').className = 'bh-dot bh-dot-err';
+    document.getElementById('bh-status-text').textContent = 'Using built-in bank holidays (2024–2027)';
+  }
+  render();
+}
+function toYMD(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+function isBH(d)       { return !!bhMap[toYMD(d)]; }
+function bhName(d)     { return bhMap[toYMD(d)] || 'Bank holiday'; }
+function isWeekend(d)  { return d.getDay() === 0 || d.getDay() === 6; }
+function isNonWork(d)  { return isWeekend(d) || isBH(d); }
+function nextWorkDay(d) {
+  const nd = new Date(d);
+  do { nd.setDate(nd.getDate() + 1); } while (isNonWork(nd));
+  return nd;
+}
+function prevWorkDay(d) {
+  const pd = new Date(d);
+  do { pd.setDate(pd.getDate() - 1); } while (isNonWork(pd));
+  return pd;
+}
+// ════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════════════════════
+const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DAY_SHORT = ['', 'MON',    'TUE',     'WED',       'THU',      'FRI'   ];
+// ════════════════════════════════════════════════════════════
+//  PRESETS — prefDay: 0 = use global default, 1–5 = Mon–Fri forced
+// ════════════════════════════════════════════════════════════
+const PRESETS = {
+  rectal: [
+    { n:4,  u:'w', label:'Post-TNT review TC',          prefDay:0 },
+    { n:8,  u:'w', label:'CT CAP + MRI pelvis',         prefDay:0 },
+    { n:10, u:'w', label:'MDT review',                  prefDay:0 },
+    { n:12, u:'w', label:'Post-MDT review F2F + ctDNA', prefDay:0 },
+  ],
+  anal1: [
+    { n:6,   u:'w', label:'6w: Clinical review TC',                   prefDay:4 }, // Thu
+    { n:12,  u:'w', label:'3m: MRI pelvis',                           prefDay:0 },
+    { n:14,  u:'w', label:'3m: Anal MDT',                             prefDay:4 }, // Thu
+    { n:14,  u:'w', label:'3m: Clinical review F2F',                  prefDay:4 }, // Thu
+    { n:26,  u:'w', label:'6m: MRI pelvis + FDG PET CT',             prefDay:0 },
+    { n:28,  u:'w', label:'6m: Anal MDT',                             prefDay:4 }, // Thu
+    { n:28,  u:'w', label:'6m: Clinical review F2F',                  prefDay:4 }, // Thu
+    { n:39,  u:'w', label:'9m: Clinical review F2F',                  prefDay:4 }, // Thu
+    { n:52,  u:'w', label:'1y: MRI pelvis + FDG PET CT',             prefDay:0 },
+    { n:54,  u:'w', label:'1y: Clinical review F2F',                  prefDay:4 }, // Thu
+    { n:12,  u:'m', label:'1y: HRA at HUH HANS',                     prefDay:0 },
+    { n:65,  u:'w', label:'1y3m: Clinical review F2F',               prefDay:4 }, // Thu
+    { n:78,  u:'w', label:'1y6m: MRI pelvis',                        prefDay:0 },
+    { n:80,  u:'w', label:'1y6m: Clinical review F2F',               prefDay:4 }, // Thu
+    { n:91,  u:'w', label:'1y6m: Clinical review F2F',                      prefDay:4 }, // Thu
+    { n:104, u:'w', label:'2y: MRI pelvis + CT CAP',                     prefDay:0 },
+    { n:106, u:'w', label:'2y: Clinical review F2F',                      prefDay:4 }, // Thu
+    { n:130, u:'w', label:'MRI pelvis',                               prefDay:0 },
+    { n:132, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:156, u:'w', label:'MRI pelvis + CT CAP',                     prefDay:0 },
+    { n:158, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:208, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+    { n:260, u:'w', label:'Clinical review F2F',                      prefDay:0 },
+  ],
+  anal2: [
+    { n:6,  u:'w', label:'Clinical review TC',                        prefDay:0 },
+    { n:11, u:'w', label:'MRI pelvis',                                prefDay:0 },
+    { n:13, u:'w', label:'Anal MDT',                                  prefDay:4 }, // Thu
+    { n:13, u:'w', label:'Clinical review F2F',                       prefDay:0 },
+    { n:26, u:'w', label:'MRI pelvis + FDG PET CT',                  prefDay:0 },
+    { n:28, u:'w', label:'Anal MDT',                                  prefDay:4 }, // Thu
+    { n:28, u:'w', label:'Clinical review F2F',                       prefDay:0 },
+    { n:9,  u:'m', label:'Clinical review F2F',                       prefDay:0 },
+    { n:12, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
+    { n:12, u:'m', label:'HRA at HUH HANS',                          prefDay:0 },
+    { n:18, u:'m', label:'MRI pelvis + Clinical review F2F',         prefDay:0 },
+    { n:24, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
+    { n:30, u:'m', label:'MRI pelvis + Clinical review F2F',         prefDay:0 },
+    { n:36, u:'m', label:'MRI pelvis + CT CAP + Clinical review F2F', prefDay:0 },
+  ],
+  cxb1: [
+    { n:0,  u:'w', label:'CXB #1',                           prefDay:0 },
+    { n:2,  u:'w', label:'CXB #2',                           prefDay:0 },
+    { n:4,  u:'w', label:'CXB #3',                           prefDay:0 },
+    { n:7,  u:'w', label:'EBRT start',                       prefDay:0 },
+    { n:11, u:'w', label:'EBRT end',                         prefDay:5 }, // Fri
+    { n:17, u:'w', label:'F/up clinic',                      prefDay:0 },
+    { n:23, u:'w', label:'MRI pelvis + CT CAP + Flexi sig', prefDay:0 },
+    { n:25, u:'m', label:'CRC MDT',                          prefDay:2 }, // Tue
+    { n:26, u:'m', label:'F/up clinic',                      prefDay:0 },
+  ],
+  cxb2: [
+    { n:0,  u:'w', label:'EBRT start',                       prefDay:0 },
+    { n:5,  u:'w', label:'EBRT end',                         prefDay:5 }, // Fri
+    { n:10, u:'w', label:'CXB #1',                           prefDay:0 },
+    { n:12, u:'w', label:'CXB #2',                           prefDay:0 },
+    { n:14, u:'w', label:'CXB #3',                           prefDay:0 },
+    { n:20, u:'w', label:'F/up clinic',                      prefDay:0 },
+    { n:26, u:'w', label:'MRI pelvis + CT CAP + Flexi sig', prefDay:0 },
+    { n:28, u:'m', label:'CRC MDT',                          prefDay:2 }, // Tue
+    { n:29, u:'m', label:'F/up clinic',                      prefDay:0 },
+  ],
+};
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+const intervals = [];
+let nextId = 1;
+// ════════════════════════════════════════════════════════════
+//  DATE HELPERS
+// ════════════════════════════════════════════════════════════
+function setToday() {
+  document.getElementById('start-date').value = toYMD(new Date());
+  render();
+}
+function setTomorrow() {
+  const d = new Date(); d.setDate(d.getDate() + 1);
+  document.getElementById('start-date').value = toYMD(d);
+  render();
+}
+function calcDate(base, item) {
+  const d = new Date(base);
+  if (item.u === 'w')      d.setDate(d.getDate() + item.n * 7);
+  else if (item.u === 'm') d.setMonth(d.getMonth() + item.n);
+  else                     d.setDate(d.getDate() + item.n);
+  return d;
+}
+function mondayOf(d) {
+  const day = d.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  const m = new Date(d);
+  m.setDate(d.getDate() + diff);
+  return m;
+}
+function applyPrefDay(date, prefDay) {
+  if (!prefDay) return { date: new Date(date), shifted: false, shiftDays: 0 };
+  const cur = date.getDay();
+  if (cur === prefDay) return { date: new Date(date), shifted: false, shiftDays: 0 };
+  const fwd = (prefDay - cur + 7) % 7;
+  const bwd = (cur - prefDay + 7) % 7;
+  const shift = (fwd <= bwd) ? fwd : -bwd;
+  const nd = new Date(date);
+  nd.setDate(date.getDate() + shift);
+  return { date: nd, shifted: true, shiftDays: shift };
+}
+function applyBHAction(date, bhAction) {
+  if (!isBH(date)) return { date: new Date(date), bhMoved: false, isBHFlag: false };
+  const name = bhName(date);
+  if (bhAction === 'flag')  return { date: new Date(date), bhMoved: false, isBHFlag: true,  bhHolidayName: name };
+  if (bhAction === 'next')  return { date: nextWorkDay(date), bhMoved: true, isBHFlag: false, bhHolidayName: name };
+  if (bhAction === 'prev')  return { date: prevWorkDay(date), bhMoved: true, isBHFlag: false, bhHolidayName: name };
+  return { date: new Date(date), bhMoved: false, isBHFlag: false };
+}
+function fmtDate(d) {
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+function fmtDateShort(d) {
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+}
+function fmtDay(d) {
+  return d.toLocaleDateString('en-GB', { weekday:'long' });
+}
+function toWeeks(item) {
+  if (item.u === 'w') return item.n;
+  if (item.u === 'm') return item.n * 4.345;
+  return item.n / 7;
+}
+function formatFromNow(diffD) {
+  if (diffD === 0) return 'Today';
+  const abs  = Math.abs(diffD);
+  const past = diffD < 0;
+  let str;
+  if (abs < 14)       str = `${abs}d`;
+  else if (abs < 60)  str = `${Math.round(abs / 7)}w`;
+  else if (abs < 730) str = `${Math.round(abs / 30.44)}m`;
+  else {
+    const yrs  = Math.floor(abs / 365.25);
+    const mths = Math.round((abs - yrs * 365.25) / 30.44);
+    str = mths > 0 ? `${yrs}y ${mths}m` : `${yrs}y`;
+  }
+  return past ? `${str} ago` : `in ${str}`;
+}
+// ════════════════════════════════════════════════════════════
+//  LOCAL STORAGE PERSISTENCE
+// ════════════════════════════════════════════════════════════
+function saveState() {
+  try {
+    localStorage.setItem('cxb_schedule', JSON.stringify({
+      v: 2,
+      startDate:  document.getElementById('start-date').value,
+      prefDay:    document.getElementById('pref-day').value,
+      bhAction:   document.getElementById('bh-action').value,
+      intervals:  intervals.map(({ n, u, label, prefDay }) => ({ n, u, label, prefDay }))
+    }));
+  } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem('cxb_schedule');
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    if (s.v !== 2) { localStorage.removeItem('cxb_schedule'); return false; }
+    if (s.prefDay)    document.getElementById('pref-day').value    = s.prefDay;
+    if (s.bhAction)   document.getElementById('bh-action').value   = s.bhAction;
+    if (s.intervals && s.intervals.length) {
+      intervals.length = 0;
+      s.intervals.forEach(i => intervals.push({ ...i, id: nextId++ }));
+      renderIntervalList();
+    }
+    if (s.startDate) {
+      document.getElementById('start-date').value = s.startDate;
+      return true;
+    }
+    return false;
+  } catch(e) { return false; }
+}
+function resetAll() {
+  if (!confirm('Start a new patient? This will clear all current data.')) return;
+  intervals.length = 0;
+  document.getElementById('start-date').value  = '';
+  document.getElementById('patient-ref').value = '';
+  document.getElementById('pref-day').value    = '0';
+  document.getElementById('bh-action').value   = 'flag';
+  document.getElementById('interval-day').value = '0';
+  try { localStorage.removeItem('cxb_schedule'); } catch(e) {}
+  renderIntervalList();
+  setToday();
+}
+// ════════════════════════════════════════════════════════════
+//  INTERVAL MANAGEMENT
+// ════════════════════════════════════════════════════════════
+function addInterval() {
+  const n = parseInt(document.getElementById('interval-num').value);
+  const u = document.getElementById('interval-unit').value;
+  const label = document.getElementById('interval-label').value.trim();
+  const prefDay = parseInt(document.getElementById('interval-day').value);
+  if (!n || n < 1) return;
+  intervals.push({ id: nextId++, n, u, label, prefDay });
+  intervals.sort((a, b) => toWeeks(a) - toWeeks(b));
+  document.getElementById('interval-label').value = '';
+  document.getElementById('interval-day').value = '0';
+  renderIntervalList();
+  render();
+}
+function quickAdd(n, u, label) {
+  intervals.push({ id: nextId++, n, u, label, prefDay: 0 });
+  intervals.sort((a, b) => toWeeks(a) - toWeeks(b));
+  renderIntervalList();
+  render();
+}
+function removeInterval(id) {
+  const i = intervals.findIndex(x => x.id === id);
+  if (i > -1) intervals.splice(i, 1);
+  renderIntervalList();
+  render();
+}
+function clearIntervals() {
+  intervals.length = 0;
+  renderIntervalList();
+  render();
+}
+function applyPreset(key) {
+  intervals.length = 0;
+  PRESETS[key].forEach(p => intervals.push({ id: nextId++, ...p }));
+  renderIntervalList();
+  render();
+}
+function renderIntervalList() {
+  const el = document.getElementById('interval-list');
+  if (!intervals.length) { el.innerHTML = ''; return; }
+  el.innerHTML = intervals.map(i => {
+    const cls = i.u === 'w' ? 'chip-w' : i.u === 'm' ? 'chip-m' : 'chip-d';
+    const ul  = i.u === 'w' ? 'wk'    : i.u === 'm' ? 'mo'    : 'd';
+    const dayBadge = i.prefDay
+      ? `<span class="chip chip-day" title="Forced to ${DAY_NAMES[i.prefDay]}">${DAY_SHORT[i.prefDay]}</span>`
+      : '';
+    return `<div class="interval-item">
+      <span class="chip ${cls}">${i.n}${ul}</span>
+      <span class="interval-item-label">${i.label || '—'}</span>
+      ${dayBadge}
+      <button class="remove-btn" onclick="removeInterval(${i.id})" aria-label="Remove interval">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>`;
+  }).join('');
+}
+// ════════════════════════════════════════════════════════════
+//  RENDER RESULTS
+// ════════════════════════════════════════════════════════════
+function render() {
+  const startVal      = document.getElementById('start-date').value;
+  const inner         = document.getElementById('results-inner');
+  const actions       = document.getElementById('result-actions');
+  const globalPrefDay = parseInt(document.getElementById('pref-day').value);
+  const bhAction      = document.getElementById('bh-action').value;
+  if (!startVal || !intervals.length) {
+    inner.innerHTML = `<div class="state">
+      <i class="ti ti-calendar-event" style="font-size:2rem;display:block;margin-bottom:0.5rem;color:#DDE1E7;"></i>
+      Add a start date and at least one interval above
+    </div>`;
+    actions.style.display = 'none';
+    saveState();
+    return;
+  }
+  const base  = new Date(startVal + 'T12:00:00');
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const rows = intervals.map(item => {
+    // n=0 items are anchors (start date itself) — immune to day shifting
+    const effectivePrefDay = (item.n === 0) ? 0 : (item.prefDay || globalPrefDay);
+    const raw = calcDate(base, item);
+    const { date: pa, shifted, shiftDays } = applyPrefDay(raw, effectivePrefDay);
+    const { date: fd, bhMoved, isBHFlag, bhHolidayName } = applyBHAction(pa, bhAction);
+    const wc      = mondayOf(fd);
+    const diffMs  = fd - today;
+    const diffD   = Math.round(diffMs / 86400000);
+    const daysStr = formatFromNow(diffD);
+    const chipCls = item.u === 'w' ? 'chip-w' : item.u === 'm' ? 'chip-m' : 'chip-d';
+    const ul      = item.u === 'w' ? 'wk'    : item.u === 'm' ? 'mo'    : 'd';
+    const isWknd  = isWeekend(fd);
+    return { item, raw, fd, wc, daysStr, chipCls, ul, shifted, shiftDays, bhMoved, isBHFlag, bhHolidayName, effectivePrefDay, isWknd };
+  });
+  const patRef   = document.getElementById('patient-ref').value.trim();
+  const prefNote = globalPrefDay
+    ? `&nbsp;&nbsp;·&nbsp;&nbsp;Default day: <strong>${DAY_NAMES[globalPrefDay]}</strong>`
+    : '';
+  inner.innerHTML = `
+    <div class="start-info">
+      ${patRef ? `<div style="font-size:0.9rem;font-weight:600;color:var(--ink);margin-bottom:0.25rem;">${esc(patRef)}</div>` : ''}
+      Start: <strong>${fmtDate(base)}</strong>${prefNote}
+    </div>
+    <div class="results-table">
+      <div class="result-row result-header">
+        <div>Interval</div>
+        <div>Date</div>
+        <div>Week commencing</div>
+        <div style="text-align:right;">From now</div>
+      </div>
+      ${rows.map((r, i) => {
+        let adjustedNote = '';
+        if (r.shifted && !r.bhMoved) {
+          const verb = r.item.prefDay ? 'forced to' : 'adjusted to';
+          const sign = r.shiftDays > 0 ? `+${r.shiftDays}` : `${r.shiftDays}`;
+          adjustedNote = `<div class="result-adjusted">${verb} ${DAY_NAMES[r.effectivePrefDay]} (${sign}d from ${fmtDateShort(r.raw)})</div>`;
+        }
+        return `
+        <div class="result-row ${i % 2 === 1 ? 'result-stripe' : ''}">
+          <div>
+            <span class="chip ${r.chipCls}">${r.item.n}${r.ul}</span>
+            ${r.item.label ? `<div class="result-interval-label">${esc(r.item.label)}</div>` : ''}
+          </div>
+          <div>
+            <div class="result-date-main">${fmtDate(r.fd)}</div>
+            <div class="result-day-name">${fmtDay(r.fd)}</div>
+            ${adjustedNote}
+            ${r.bhMoved  ? `<div class="bh-flag bh-flag-moved"><i class="ti ti-arrow-right" style="font-size:10px;"></i> ${esc(r.bhHolidayName)} — moved</div>` : ''}
+            ${r.isBHFlag ? `<div class="bh-flag bh-flag-warn"><i class="ti ti-alert-triangle" style="font-size:10px;"></i> ${esc(r.bhHolidayName)}</div>` : ''}
+            ${r.isWknd   ? `<div class="bh-flag bh-flag-weekend"><i class="ti ti-moon" style="font-size:10px;"></i> Weekend</div>` : ''}
+          </div>
+          <div class="result-wc">w/c ${fmtDateShort(r.wc)}</div>
+          <div class="result-days">${r.daysStr}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  actions.style.display = 'flex';
+  saveState();
+}
+// ════════════════════════════════════════════════════════════
+//  COPY / EXPORT
+// ════════════════════════════════════════════════════════════
+function buildRows() {
+  const startVal      = document.getElementById('start-date').value;
+  if (!startVal) return null;
+  const base          = new Date(startVal + 'T12:00:00');
+  const globalPrefDay = parseInt(document.getElementById('pref-day').value);
+  const bhAction      = document.getElementById('bh-action').value;
+  return intervals.map(item => {
+    const effectivePrefDay = (item.n === 0) ? 0 : (item.prefDay || globalPrefDay);
+    const raw = calcDate(base, item);
+    const { date: pa } = applyPrefDay(raw, effectivePrefDay);
+    const { date: fd, bhMoved, isBHFlag, bhHolidayName } = applyBHAction(pa, bhAction);
+    return { item, raw, fd, wc: mondayOf(fd), bhMoved, isBHFlag, bhHolidayName };
+  });
+}
+function copySchedule() {
+  const startVal = document.getElementById('start-date').value;
+  const rows = buildRows();
+  if (!rows) return;
+  const base     = new Date(startVal + 'T12:00:00');
+  const patRef   = document.getElementById('patient-ref').value.trim();
+  let txt = `Follow-up schedule\n`;
+  if (patRef) txt += `Patient: ${patRef}\n`;
+  txt += `Start date: ${fmtDate(base)}\n\n`;
+  rows.forEach(r => {
+    const ul     = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const dayTag = r.item.prefDay ? ` [→ ${DAY_NAMES[r.item.prefDay]}]` : '';
+    txt += `${r.item.n}${ul}${r.item.label ? ' — ' + r.item.label : ''}${dayTag}\n`;
+    txt += `  ${fmtDate(r.fd)}  (${fmtDay(r.fd)})  ·  w/c ${fmtDateShort(r.wc)}`;
+    if (r.bhMoved)        txt += `  [moved from ${r.bhHolidayName || 'bank holiday'}]`;
+    if (r.isBHFlag)       txt += `  [⚠ ${r.bhHolidayName}]`;
+    if (isWeekend(r.fd))  txt += `  [⚠ Weekend]`;
+    txt += '\n\n';
+  });
+  copyText(txt.trim(), 0);
+}
+function copyCSV() {
+  const rows = buildRows();
+  if (!rows) return;
+  let csv = 'Interval,Label,Forced day,Date,Day,Week commencing,Bank holiday note\n';
+  rows.forEach(r => {
+    const ul     = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const forced = r.item.prefDay ? DAY_NAMES[r.item.prefDay] : '';
+    const note   = r.bhMoved  ? `Moved from ${r.bhHolidayName || 'bank holiday'}`
+                 : r.isBHFlag ? r.bhHolidayName || 'Bank holiday'
+                 : isWeekend(r.fd) ? 'Weekend'
+                 : '';
+    csv += `${r.item.n}${ul},"${r.item.label || ''}","${forced}","${fmtDateShort(r.fd)}","${fmtDay(r.fd)}","${fmtDateShort(r.wc)}","${note}"\n`;
+  });
+  copyText(csv, 1);
+}
+function toICSDate(d) {
+  return d.getFullYear() +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0');
+}
+function downloadICS() {
+  const rows = buildRows();
+  if (!rows) return;
+  const startVal   = document.getElementById('start-date').value;
+  const patientRef = document.getElementById('patient-ref').value.trim();
+  const now   = new Date();
+  const stamp = now.getFullYear() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') + 'T' +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0') +
+    String(now.getSeconds()).padStart(2, '0') + 'Z';
+  const calName = [patientRef, 'Follow-up Schedule'].filter(Boolean).join(' — ');
+  let ics  = 'BEGIN:VCALENDAR\r\n';
+  ics     += 'VERSION:2.0\r\n';
+  ics     += 'PRODID:-//CXB Tools//Follow-up Date Calculator//EN\r\n';
+  ics     += 'CALSCALE:GREGORIAN\r\n';
+  ics     += 'METHOD:PUBLISH\r\n';
+  ics     += `X-WR-CALNAME:${calName}\r\n`;
+  rows.forEach((r, idx) => {
+    const ul      = r.item.u === 'w' ? 'wk' : r.item.u === 'm' ? 'mo' : 'd';
+    const summary = r.item.label || `${r.item.n}${ul} follow-up`;
+    const dtStart = toICSDate(r.fd);
+    const next    = new Date(r.fd); next.setDate(r.fd.getDate() + 1);
+    const dtEnd   = toICSDate(next);
+    const notes   = [
+      `w/c ${fmtDateShort(r.wc)}`,
+      r.bhMoved       ? `Moved from ${r.bhHolidayName}` : '',
+      r.isBHFlag      ? `⚠ ${r.bhHolidayName}` : '',
+      isWeekend(r.fd) ? '⚠ Weekend' : '',
+    ].filter(Boolean).join(' · ');
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += `UID:cxb-${stamp}-${idx}@cxbtools\r\n`;
+    ics += `DTSTAMP:${stamp}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${dtStart}\r\n`;
+    ics += `DTEND;VALUE=DATE:${dtEnd}\r\n`;
+    ics += `SUMMARY:${summary}\r\n`;
+    ics += `DESCRIPTION:${notes}\r\n`;
+    if (patientRef) ics += `COMMENT:${patientRef}\r\n`;
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR';
+  const blob  = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href      = url;
+  a.download  = `${patientRef ? patientRef.replace(/[^\w]/g, '_') + '_' : ''}followup.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function copyText(text, btnIdx) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelectorAll('.result-actions button')[btnIdx];
+    const old = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+    setTimeout(() => btn.innerHTML = old, 2000);
+  }).catch(() => alert('Copy failed — please copy manually.'));
+}
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+document.getElementById('start-date').addEventListener('change', render);
+document.getElementById('interval-num').addEventListener('keydown', e => { if (e.key === 'Enter') addInterval(); });
+document.getElementById('interval-label').addEventListener('keydown', e => { if (e.key === 'Enter') addInterval(); });
+const hasSaved = loadState();
+if (!hasSaved) setToday(); else render();
+loadBankHolidays();
+</script>
+
+<div class="disclaimer">
+  <strong>Do not enter patient-identifiable information.</strong> The schedule label is stored in
+  this browser so your settings survive a refresh; it is not encrypted and it is not private on a
+  shared machine. Use a non-identifying reference. Dates are arithmetic only — they carry no
+  knowledge of your protocol, and bank holiday data covers England and Wales, not Scotland or
+  Northern Ireland. Check every date against local policy before booking.
+  <a href="../index.html">All tools</a>
+</div>
+
+</body>
+</html>

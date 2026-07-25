@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journal browser | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/nav.js" data-tool="journals" defer></script>
+<style>
+  /* Page-specific only. Colour, type and spacing come from theme.css. */
+  .shell { display: grid; gap: var(--sp-5); grid-template-columns: 260px 1fr;
+    align-items: start; max-width: var(--maxw); margin: 0 auto; padding: var(--sp-5); }
+  @media (max-width: 900px) { .shell { grid-template-columns: 1fr; } }
+
+  .sidebar { background: var(--card); border: 1px solid var(--rule);
+    border-radius: var(--radius-lg); padding: var(--sp-4);
+    box-shadow: var(--shadow); position: sticky; top: 84px; }
+  @media (max-width: 900px) { .sidebar { position: static; } }
+  .sidebar-section { margin-bottom: var(--sp-5); }
+  .sidebar-section:last-child { margin-bottom: 0; }
+  .sidebar-label { font-size: var(--fs-2xs); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: var(--sp-3); }
+  .sidebar-select { width: 100%; }
+  .journal-scroll { max-height: 320px; overflow-y: auto; padding-right: var(--sp-2); }
+  .journal-group { margin-bottom: var(--sp-3); }
+  .journal-item { display: flex; align-items: flex-start; gap: var(--sp-2);
+    font-size: var(--fs-xs); padding: var(--sp-1) 0; cursor: pointer; }
+  .journal-item input { min-height: auto; margin-top: 0.15rem; }
+  .journal-name { color: var(--ink-dim); }
+  .journal-abbr { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .journal-tag { font-size: var(--fs-2xs); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink-muted); margin-bottom: var(--sp-2); }
+  .tag-radonc  { color: var(--red); }
+  .tag-oncol   { color: var(--accent); }
+  .tag-physics { color: var(--blue); }
+  .select-links { display: flex; gap: var(--sp-3); margin-top: var(--sp-2); }
+  .select-link { font-size: var(--fs-2xs); color: var(--accent); cursor: pointer;
+    background: none; border: none; padding: 0; min-height: auto; }
+
+  .content { min-width: 0; }
+  .toolbar { display: flex; gap: var(--sp-3); align-items: center; flex-wrap: wrap;
+    margin-bottom: var(--sp-4); }
+  .search-box { flex: 1 1 220px; }
+  .status-row { display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--sp-3); flex-wrap: wrap; margin-bottom: var(--sp-3); font-size: var(--fs-xs);
+    color: var(--ink-muted); }
+  .status-count { font-weight: 600; color: var(--ink); }
+
+  .journal-pills { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-4); }
+  .jpill { display: inline-flex; align-items: center; gap: var(--sp-2);
+    font-size: var(--fs-2xs); padding: 0.15rem var(--sp-2);
+    border: 1px solid var(--rule); border-radius: 999px; color: var(--ink-muted); }
+  .jbadge-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  .result-head { display: flex; gap: var(--sp-4); align-items: flex-start; cursor: pointer; }
+  .result-left { flex: 1; min-width: 0; }
+  .result-right { flex-shrink: 0; text-align: right; }
+  .meta-chip { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--ink-muted);
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: var(--radius); padding: 0.1rem var(--sp-2); }
+  .toggle-icon { color: var(--ink-muted); font-size: var(--fs-sm); }
+  .abstract-label { font-size: var(--fs-2xs); font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink-muted); margin-bottom: var(--sp-2); }
+  .pubmed-link, .ext-link { font-size: var(--fs-xs); color: var(--accent); text-decoration: none; }
+  .loading-step { font-size: var(--fs-xs); color: var(--ink-muted); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Literature</div>
+      <h1>Journal browser</h1>
+      <p>Recent tables of contents across the radiation and clinical oncology journals, filtered to the ones you follow.</p>
+    </div>
+    <div class="masthead-meta">
+      <div id="fetch-date">—</div>
+      <div>eutils.ncbi.nlm.nih.gov</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="shell">
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Journals</div>
+      <div class="select-links">
+        <button class="select-link" onclick="selectAll()">Select All</button>
+        <button class="select-link" onclick="selectNone()">None</button>
+        <button class="select-link" onclick="selectPreset('radonc')">Rad Onc Only</button>
+        <button class="select-link" onclick="selectPreset('physics')">Physics</button>
+      </div>
+      <div class="journal-scroll">
+        <div class="journal-group" id="journal-group">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Date Range</div>
+      <select class="sidebar-select" id="date-range">
+        <option value="90">Last 3 Months</option>
+        <option value="180">Last 6 Months</option>
+        <option value="365" selected>Last 1 Year</option>
+        <option value="730">Last 2 Years</option>
+        <option value="1825">Last 5 Years</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Article Type</div>
+      <select class="sidebar-select" id="article-type">
+        <option value="">All Types</option>
+        <option value=' AND "Review"[Publication Type]'>Reviews Only</option>
+        <option value=' AND "Clinical Trial"[Publication Type]'>Clinical Trials</option>
+        <option value=' AND "Randomized Controlled Trial"[Publication Type]'>RCTs Only</option>
+        <option value=' AND "Meta-Analysis"[Publication Type]'>Meta-Analyses</option>
+      </select>
+    </div>
+    <div class="sidebar-section">
+      <button class="btn btn-primary" id="btn btn-primary" onclick="loadFeed(true)">
+        ↺  Fetch Articles
+      </button>
+    </div>
+  </aside>
+  <!-- ══ MAIN ══ -->
+  <main class="content">
+    <div class="toolbar">
+      <input class="search-box" type="text" id="search-bar"
+             placeholder="Filter by title, author, keyword…"
+             oninput="filterResults()">
+      <select class="toolbar-select" id="sort-by" onchange="filterResults()">
+        <option value="date">Newest First</option>
+        <option value="journal">By Journal</option>
+      </select>
+      <button class="btn" onclick="exportCSV()">↓ CSV</button>
+    </div>
+    <div class="status-row" id="status-row">
+      <span class="status-count" id="status-count">—</span>
+      <span id="status-msg">Select journals and click Fetch Articles</span>
+      <div class="journal-pills" id="active-pills"></div>
+    </div>
+    <div class="state" id="loading-state" style="display:none">
+      <div class="spinner"></div>
+      <div id="loading-step">Accessing NCBI E-utilities…</div>
+    </div>
+    <div class="state" id="error-state" style="display:none">
+      <div>⚠ <span id="error-msg">Connection error. Please try again.</span></div>
+    </div>
+    <div id="paper-list"></div>
+    <div class="state" id="no-results" style="display:none">
+      No articles found matching your criteria.
+    </div>
+    <div class="state" id="empty-state">
+      Select one or more journals in the sidebar, then click <strong>Fetch Articles</strong>.
+    </div>
+  </main>
+</div>
+<script>
+// ════════════════════════════════════════════════════════════
+//  JOURNAL DEFINITIONS
+// ════════════════════════════════════════════════════════════
+const JOURNALS = [
+  // Core Radiation Oncology
+  {
+    key: 'ijrobp',
+    name: 'Int J Radiation Oncology Biol Phys',
+    short: 'Red Journal (IJROBP)',
+    pubmedTitle: 'Int J Radiat Oncol Biol Phys',
+    category: 'radonc',
+    color: '#C0392B',
+    defaultOn: true
+  },
+  {
+    key: 'ro',
+    name: 'Radiotherapy & Oncology',
+    short: 'Green Journal',
+    pubmedTitle: 'Radiother Oncol',
+    category: 'radonc',
+    color: '#1A7F4B',
+    defaultOn: true
+  },
+  {
+    key: 'pract',
+    name: 'Practical Radiation Oncology',
+    short: 'Pract Radiat Oncol',
+    pubmedTitle: 'Pract Radiat Oncol',
+    category: 'radonc',
+    color: '#7C3AED',
+    defaultOn: true
+  },
+  {
+    key: 'adv',
+    name: 'Advances in Radiation Oncology',
+    short: 'Adv Radiat Oncol (ASTRO OA)',
+    pubmedTitle: 'Adv Radiat Oncol',
+    category: 'radonc',
+    color: '#0284C7',
+    defaultOn: false
+  },
+  {
+    key: 'radonc_bmc',
+    name: 'Radiation Oncology (BMC)',
+    short: 'Radiat Oncol',
+    pubmedTitle: 'Radiat Oncol',
+    category: 'radonc',
+    color: '#0369A1',
+    defaultOn: false
+  },
+  {
+    key: 'clin_oncol',
+    name: 'Clinical Oncology (RCR)',
+    short: 'Clin Oncol (R Coll Radiol)',
+    pubmedTitle: 'Clin Oncol (R Coll Radiol)',
+    category: 'radonc',
+    color: '#B45309',
+    defaultOn: true
+  },
+  {
+    key: 'strahlen',
+    name: 'Strahlentherapie und Onkologie',
+    short: 'Strahlenther Onkol',
+    pubmedTitle: 'Strahlenther Onkol',
+    category: 'radonc',
+    color: '#9D174D',
+    defaultOn: false
+  },
+  // Physics
+  {
+    key: 'pmb',
+    name: 'Physics in Medicine & Biology',
+    short: 'Phys Med Biol',
+    pubmedTitle: 'Phys Med Biol',
+    category: 'physics',
+    color: '#D97706',
+    defaultOn: false
+  },
+  {
+    key: 'medphys',
+    name: 'Medical Physics',
+    short: 'Med Phys',
+    pubmedTitle: 'Med Phys',
+    category: 'physics',
+    color: '#B45309',
+    defaultOn: false
+  },
+  {
+    key: 'phys_imaging',
+    name: 'Physics & Imaging in Radiation Oncology',
+    short: 'Phys Imaging Radiat Oncol',
+    pubmedTitle: 'Phys Imaging Radiat Oncol',
+    category: 'physics',
+    color: '#92400E',
+    defaultOn: false
+  },
+  // Broader Oncology (selected)
+  {
+    key: 'jco',
+    name: 'Journal of Clinical Oncology',
+    short: 'J Clin Oncol',
+    pubmedTitle: 'J Clin Oncol',
+    category: 'oncol',
+    color: '#1D4ED8',
+    defaultOn: false
+  },
+  {
+    key: 'lancet_oncol',
+    name: 'Lancet Oncology',
+    short: 'Lancet Oncol',
+    pubmedTitle: 'Lancet Oncol',
+    category: 'oncol',
+    color: '#1E40AF',
+    defaultOn: false
+  },
+  {
+    key: 'jama_oncol',
+    name: 'JAMA Oncology',
+    short: 'JAMA Oncol',
+    pubmedTitle: 'JAMA Oncol',
+    category: 'oncol',
+    color: '#1E3A5F',
+    defaultOn: false
+  },
+  {
+    key: 'ann_oncol',
+    name: 'Annals of Oncology',
+    short: 'Ann Oncol',
+    pubmedTitle: 'Ann Oncol',
+    category: 'oncol',
+    color: '#065F46',
+    defaultOn: false
+  },
+  {
+    key: 'eur_urol',
+    name: 'European Urology',
+    short: 'Eur Urol',
+    pubmedTitle: 'Eur Urol',
+    category: 'oncol',
+    color: '#1D4ED8',
+    defaultOn: false
+  },
+];
+// Category display names
+const CAT_LABELS = {
+  radonc: 'Radiation Oncology',
+  physics: 'Medical Physics',
+  oncol: 'Broader Oncology',
+};
+const BASE = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+const API_KEY = '';
+let currentPapers = [];
+let cache = {};
+// ════════════════════════════════════════════════════════════
+//  BUILD SIDEBAR JOURNAL LIST
+// ════════════════════════════════════════════════════════════
+function buildJournalList() {
+  const container = document.getElementById('journal-group');
+  const categories = ['radonc', 'physics', 'oncol'];
+  let html = '';
+  categories.forEach(cat => {
+    const catJournals = JOURNALS.filter(j => j.category === cat);
+    html += `<div style="margin-top:0.6rem; margin-bottom:0.15rem;">
+      <div style="font-family:var(--mono);font-size:0.58rem;font-weight:600;color:var(--ink-muted);letter-spacing:0.08em;text-transform:uppercase;padding:0 0.4rem;margin-bottom:0.25rem;">${CAT_LABELS[cat]}</div>`;
+    catJournals.forEach(j => {
+      const tagClass = `tag-${j.category}`;
+      const tagText = j.category === 'radonc' ? 'RO' : j.category === 'physics' ? 'PHY' : 'ONC';
+      html += `
+        <label class="journal-item" for="j-${j.key}">
+          <input type="checkbox" id="j-${j.key}" value="${j.key}" ${j.defaultOn ? 'checked' : ''}>
+          <div style="flex:1;min-width:0;">
+            <div class="journal-name" style="color:${j.color}">${j.name}</div>
+            <div class="journal-abbr">${j.short}</div>
+          </div>
+          <span class="journal-tag ${tagClass}">${tagText}</span>
+        </label>`;
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+// ════════════════════════════════════════════════════════════
+//  JOURNAL SELECTION HELPERS
+// ════════════════════════════════════════════════════════════
+function getSelected() {
+  return JOURNALS.filter(j => {
+    const el = document.getElementById(`j-${j.key}`);
+    return el && el.checked;
+  });
+}
+function selectAll()  { JOURNALS.forEach(j => { const e = document.getElementById(`j-${j.key}`); if (e) e.checked = true; }); }
+function selectNone() { JOURNALS.forEach(j => { const e = document.getElementById(`j-${j.key}`); if (e) e.checked = false; }); }
+function selectPreset(cat) {
+  JOURNALS.forEach(j => {
+    const e = document.getElementById(`j-${j.key}`);
+    if (e) e.checked = (j.category === cat);
+  });
+}
+// ════════════════════════════════════════════════════════════
+//  DATE HELPER
+// ════════════════════════════════════════════════════════════
+function fromDate() {
+  const days = parseInt(document.getElementById('date-range').value);
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+}
+// ════════════════════════════════════════════════════════════
+//  MAIN FETCH
+// ════════════════════════════════════════════════════════════
+async function loadFeed(force = false) {
+  const selected = getSelected();
+  if (selected.length === 0) {
+    alert('Please select at least one journal.');
+    return;
+  }
+  const typeFilter  = document.getElementById('article-type').value;
+  const range       = document.getElementById('date-range').value;
+  const cacheKey    = `jbrowse-${selected.map(j=>j.key).join('-')}-${range}-${typeFilter}`;
+  // Reset search bar
+  document.getElementById('search-bar').value = '';
+  // Build PubMed query: journal OR journal ... + type filter
+  const journalClause = selected.map(j => `"${j.pubmedTitle}"[Journal]`).join(' OR ');
+  const fullQuery = `(${journalClause})${typeFilter}`;
+  if (!force && cache[cacheKey]) {
+    currentPapers = cache[cacheKey];
+    render(currentPapers, selected);
+    return;
+  }
+  // Show loading
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('paper-list').innerHTML = '';
+  document.getElementById('no-results').style.display = 'none';
+  document.getElementById('error-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'block';
+  document.getElementById('btn btn-primary').disabled = true;
+  const steps = ['Accessing NCBI E-utilities…', 'Running journal search…', 'Fetching article metadata…', 'Building digest…'];
+  let stepIdx = 0;
+  const stepTimer = setInterval(() => {
+    stepIdx = Math.min(stepIdx + 1, steps.length - 1);
+    document.getElementById('loading-step').textContent = steps[stepIdx];
+  }, 1200);
+  try {
+    const auth = API_KEY ? `&api_key=${API_KEY}` : '';
+    // Fetch more results since we're querying multiple journals
+    const searchUrl = `${BASE}esearch.fcgi?db=pubmed&term=${encodeURIComponent(fullQuery)}&sort=pub+date&retmax=80&datetype=pdat&mindate=${fromDate()}&retmode=json${auth}`;
+    const sRes  = await fetch(searchUrl);
+    const sData = await sRes.json();
+    const ids   = sData.esearchresult?.idlist || [];
+    clearInterval(stepTimer);
+    if (!ids.length) {
+      currentPapers = [];
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('status-count').textContent = '0 Results';
+      document.getElementById('status-msg').textContent = 'No articles found for the selected journals and date range.';
+      document.getElementById('no-results').style.display = 'block';
+      document.getElementById('btn btn-primary').disabled = false;
+      return;
+    }
+    // Batch into chunks of 40 to stay within URL limits
+    const chunks = [];
+    for (let i = 0; i < ids.length; i += 40) chunks.push(ids.slice(i, i + 40));
+    let allPapers = [];
+    for (const chunk of chunks) {
+      const sumUrl = `${BASE}esummary.fcgi?db=pubmed&id=${chunk.join(',')}&retmode=json${auth}`;
+      const rRes   = await fetch(sumUrl);
+      const rData  = await rRes.json();
+      const papers = chunk.map(id => {
+        const d = rData.result[id];
+        if (!d) return null;
+        const doi = d.articleids?.find(a => a.idtype === 'doi')?.value;
+        const journalTitle = d.source || '';
+        // Match to one of our known journals for colour coding
+        const matchedJournal = selected.find(j =>
+          journalTitle.toLowerCase().includes(j.pubmedTitle.toLowerCase().split(' ')[0])
+          || j.pubmedTitle.toLowerCase().includes(journalTitle.toLowerCase().split(' ')[0])
+        );
+        const isHighImpact = ['Int J Radiat Oncol Biol Phys','Radiother Oncol','J Clin Oncol','Lancet Oncol','JAMA Oncol','Ann Oncol'].some(h => journalTitle.includes(h.split(' ')[0]));
+        return {
+          pmid: id,
+          doi: doi || '',
+          title: (d.title || 'Untitled').replace(/\.$/, ''),
+          authorsShort: (d.authors || []).map(a => a.name).slice(0, 3).join(', ') + ((d.authors||[]).length > 3 ? ' et al.' : ''),
+          authorsFull: (d.authors || []).map(a => a.name).join(', '),
+          journal: journalTitle,
+          journalColor: matchedJournal ? matchedJournal.color : '#64748B',
+          journalShort: matchedJournal ? matchedJournal.short : journalTitle,
+          isHighImpact,
+          date: d.pubdate || '',
+          sortDate: d.pubdate ? new Date(d.pubdate) : new Date(0),
+          abstract: null,
+          pubtype: (d.pubtype || []).join(', ')
+        };
+      }).filter(Boolean);
+      allPapers = allPapers.concat(papers);
+    }
+    // Sort newest first by default
+    allPapers.sort((a, b) => b.sortDate - a.sortDate);
+    currentPapers = allPapers;
+    cache[cacheKey] = currentPapers;
+    render(currentPapers, selected);
+  } catch (err) {
+    clearInterval(stepTimer);
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('error-state').style.display = 'block';
+    document.getElementById('error-msg').textContent = `PubMed fetch failed: ${err.message}`;
+  } finally {
+    document.getElementById('btn btn-primary').disabled = false;
+  }
+}
+// ════════════════════════════════════════════════════════════
+//  FILTER + SORT (local, after fetch)
+// ════════════════════════════════════════════════════════════
+function filterResults() {
+  const q    = document.getElementById('search-bar').value.toLowerCase().trim();
+  const sort = document.getElementById('sort-by').value;
+  let filtered = q
+    ? currentPapers.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.authorsFull.toLowerCase().includes(q) ||
+        p.journal.toLowerCase().includes(q) ||
+        (p.pubtype && p.pubtype.toLowerCase().includes(q))
+      )
+    : [...currentPapers];
+  if (sort === 'journal') {
+    filtered.sort((a, b) => a.journal.localeCompare(b.journal) || b.sortDate - a.sortDate);
+  } else {
+    filtered.sort((a, b) => b.sortDate - a.sortDate);
+  }
+  renderList(filtered);
+  document.getElementById('status-count').textContent = `${filtered.length} Result${filtered.length !== 1 ? 's' : ''}`;
+}
+// ════════════════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════════════════
+function render(papers, selected) {
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('no-results').style.display = papers.length === 0 ? 'block' : 'none';
+  // Status
+  document.getElementById('status-count').textContent = `${papers.length} Result${papers.length !== 1 ? 's' : ''}`;
+  document.getElementById('status-msg').textContent = 'Fetched ' + new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  // Active journal pills
+  if (selected) {
+    document.getElementById('active-pills').innerHTML = selected.map(j =>
+      `<span class="jpill" style="background:${j.color}18;color:${j.color};">${j.short}</span>`
+    ).join('');
+  }
+  renderList(papers);
+}
+function renderList(papers) {
+  document.getElementById('no-results').style.display = papers.length === 0 ? 'block' : 'none';
+  document.getElementById('paper-list').innerHTML = papers.map(p => `
+    <div class="result-item">
+      <div class="result-head" onclick="toggleDrawer('${p.pmid}')">
+        <div class="result-left">
+          <div class="result-source">
+            <div class="jbadge-dot" style="background:${p.journalColor}"></div>
+            <span style="color:${p.journalColor};font-size:0.6rem;font-weight:600;letter-spacing:0.04em;">${escapeHtml(p.journalShort || p.journal)}</span>
+            ${p.isHighImpact ? '<span class="badge badge-high">★ High Impact</span>' : ''}
+          </div>
+          <div class="result-title">${escapeHtml(p.title)}</div>
+          <div class="result-sub">${escapeHtml(p.authorsShort)}</div>
+          <div class="result-meta">
+            <span class="meta-chip">${escapeHtml(p.date)}</span>
+            ${p.pubtype ? `<span class="meta-chip">${escapeHtml(p.pubtype.split(';')[0].trim())}</span>` : ''}
+          </div>
+        </div>
+        <div class="result-right">
+          <span class="toggle-icon" id="icon-${p.pmid}">▾</span>
+          <a class="ext-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank" onclick="event.stopPropagation()">PMID ${p.pmid}</a>
+          ${p.doi ? `<a class="ext-link" href="https://doi.org/${p.doi}" target="_blank" onclick="event.stopPropagation()">DOI ↗</a>` : ''}
+        </div>
+      </div>
+      <div class="drawer" id="drw-${p.pmid}">
+        <div class="abstract-label">Abstract</div>
+        <div class="drawer-text" id="drw-text-${p.pmid}">Loading…</div>
+        <div class="drawer-footer">
+          <button class="cite-btn" onclick="copyCitation(event,'${p.pmid}')">Copy AMA Citation</button>
+          <a class="pubmed-link" href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/" target="_blank">View Full Record on PubMed ↗</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function escapeHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// ════════════════════════════════════════════════════════════
+//  ABSTRACT DRAWER
+// ════════════════════════════════════════════════════════════
+async function toggleDrawer(pmid) {
+  const drw  = document.getElementById(`drw-${pmid}`);
+  const icon = document.getElementById(`icon-${pmid}`);
+  const isOpen = drw.classList.contains('open');
+  document.querySelectorAll('.drawer.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.toggle-icon').forEach(ic => ic.style.transform = '');
+  if (isOpen) return;
+  drw.classList.add('open');
+  icon.style.transform = 'rotate(180deg)';
+  const p = currentPapers.find(x => x.pmid === pmid);
+  if (p && p.abstract) {
+    document.getElementById(`drw-text-${pmid}`).textContent = p.abstract;
+    return;
+  }
+  try {
+    const auth = API_KEY ? `&api_key=${API_KEY}` : '';
+    const res  = await fetch(`${BASE}efetch.fcgi?db=pubmed&id=${pmid}&retmode=xml${auth}`);
+    const text = await res.text();
+    const doc  = new DOMParser().parseFromString(text, 'text/xml');
+    const nodes = doc.querySelectorAll('AbstractText');
+    const abstract = Array.from(nodes).map(n => {
+      const label = n.getAttribute('Label');
+      return label ? `${label}:\n${n.textContent}` : n.textContent;
+    }).join('\n\n');
+    if (p) p.abstract = abstract || 'No abstract available in the PubMed record.';
+    document.getElementById(`drw-text-${pmid}`).textContent = p ? p.abstract : abstract || 'No abstract available.';
+  } catch {
+    document.getElementById(`drw-text-${pmid}`).textContent = 'Error fetching abstract from NCBI.';
+  }
+}
+// ════════════════════════════════════════════════════════════
+//  CITATION + EXPORT
+// ════════════════════════════════════════════════════════════
+function copyCitation(e, pmid) {
+  e.stopPropagation();
+  const p = currentPapers.find(x => x.pmid === pmid);
+  if (!p) return;
+  const citation = `${p.authorsFull}. ${p.title}. ${p.journal}. ${p.date}. PMID: ${p.pmid}${p.doi ? '. doi:' + p.doi : ''}.`;
+  navigator.clipboard.writeText(citation).catch(() => {});
+  const btn = e.target;
+  const old = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = old, 2000);
+}
+function exportCSV() {
+  if (!currentPapers.length) { alert('No articles to export.'); return; }
+  let csv = 'data:text/csv;charset=utf-8,PMID,Title,Authors,Journal,Date,DOI,PubType,Link\n';
+  currentPapers.forEach(p => {
+    const row = [
+      p.pmid,
+      `"${p.title.replace(/"/g,'""')}"`,
+      `"${p.authorsFull.replace(/"/g,'""')}"`,
+      `"${p.journal}"`,
+      p.date,
+      p.doi,
+      `"${p.pubtype}"`,
+      `https://pubmed.ncbi.nlm.nih.gov/${p.pmid}/`
+    ];
+    csv += row.join(',') + '\n';
+  });
+  const link = document.createElement('a');
+  link.href = encodeURI(csv);
+  link.download = `RadOnc_Journal_Browser_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+buildJournalList();
+</script>
+
+<div class="disclaimer">
+  <strong>A browsing aid, not a search.</strong> This lists recent records from selected journals
+  by publication date; it does not rank by relevance or quality and it will not find work published
+  elsewhere. PubMed indexing lags actual publication, so the most recent issue may be incomplete.
+  Read the full record before citing.
+  <a href="../index.html">All tools</a>
+</div>
+
+</body>
+</html>
