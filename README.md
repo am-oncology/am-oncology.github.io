@@ -35,6 +35,51 @@ it keeps working on a GitHub Pages project subpath
 (`username.github.io/repo-name/`) and would survive the pages being moved into
 a subfolder later.
 
+## Design language
+
+Restyled to match a reference app (RheumTools) the person shared. Dark is now
+the **default** theme — `:root` in `theme.css` holds the dark tokens directly,
+and `[data-theme="light"]` is the override, not the other way round. Anyone
+who explicitly chose light before this change keeps that choice; everyone
+else now sees dark first.
+
+What changed, concretely:
+
+- **Rounder throughout.** `--radius-lg` went from 10px to 18px, and a new
+  `--radius-pill` (999px) is used for every button, badge and toggle.
+- **A second typeface.** `--font-display` (Lora) is for editorial headings —
+  currently the digest and journal browser mastheads — as a deliberate
+  contrast to the humanist sans used everywhere else. Use the `.display-font`
+  class, don't hand-pick a font-family.
+- **New components in `theme.css`**: `.seg-toggle` (a pill-shaped multi-select,
+  see the reference's Standard/High Risk switch), `.step-head`/`.step-num`
+  (numbered wizard steps, ① ② ③ style), `.is-pending` (dashed border, no fill —
+  for "not yet decided" states, the reference's TBC cards).
+- **The theme toggle is now a sun/moon pill**, not a text button. Markup lives
+  in `nav.js` for tool pages and duplicated inline in `index.html` (which
+  doesn't load `nav.js`, since it isn't a tool page).
+- **Every `<details>` on the site animates open/close.** This is handled once,
+  generically, in `nav.js` — any new `<details>` anywhere gets it for free,
+  no per-page code needed.
+- **Per-item recolouring.** The reference's DMARD Helper recolours its whole
+  screen to match the selected medication. `steroids.html` now does the same
+  thing with the selected drug — see `renderEquiv()`, which sets `--accent`
+  from `steroids.json`'s new `color` field on each drug. `--accent-soft` is
+  then derived from it automatically via `color-mix()`, so nothing downstream
+  needed to change. This is the pattern to reach for if a future tool has a
+  natural "pick one of these, then work within it" shape.
+
+Not yet retrofitted with the dashed `.is-pending` treatment: the "unverified"
+rows in `constraints.html` and `fractionation.json` still rely on the amber
+tint alone. Worth adding the dashed border there too for consistency, since
+conceptually it's the same "don't rely on this yet" signal.
+
+One caveat on the colours themselves: they're read off compressed phone
+screenshots, not the site's own CSS, so treat the exact hex values as good
+approximations rather than a pixel-perfect match. If precision matters,
+pull the real values from the reference site's DevTools and swap them in —
+they're all in one place at the top of `theme.css`.
+
 ## The two rules
 
 **1. Adding or removing a tool means editing `tools.json` and nothing else.**
