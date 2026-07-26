@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literature digest | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<script src="assets/js/nav.js" defer></script>
+<script src="assets/js/pubmed.js" defer></script>
+<script src="assets/js/digest-config.js" defer></script>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Literature digest</div>
+      <h1 id="set-title" class="display-font">…</h1>
+      <p id="set-subtitle"></p>
+      <div class="live-badge" style="margin-top: var(--sp-3);">
+        <span class="live-dot"></span> Live · PubMed
+      </div>
+    </div>
+    <div class="masthead-meta">
+      <div id="fetch-time">—</div>
+      <div>eutils.ncbi.nlm.nih.gov</div>
+    </div>
+  </div>
+</div>
+
+<nav class="tab-bar" aria-label="Subspecialty">
+  <div class="tab-bar-inner" id="tab-bar" role="tablist"></div>
+</nav>
+
+<main class="main">
+
+  <div class="card">
+    <div class="controls">
+      <input type="search" id="filter" class="grow" placeholder="Filter these results by title, author or journal">
+      <select id="type-filter" aria-label="Article type"></select>
+      <select id="range-filter" aria-label="Published within"></select>
+      <button id="refresh-btn" type="button">Refresh</button>
+      <button id="csv-btn" type="button">Export CSV</button>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-top:var(--sp-3); font-size:var(--fs-xs); color:var(--ink-muted);">
+      <span id="count">—</span>
+      <details style="text-align:right;">
+        <summary style="cursor:pointer;">Show the search that produced this</summary>
+        <code id="query-text" style="display:block; text-align:left; margin-top:var(--sp-2); padding:var(--sp-3); background:var(--card-2); border-radius:var(--radius); font-size:var(--fs-2xs); word-break:break-word; white-space:pre-wrap;"></code>
+      </details>
+    </div>
+  </div>
+
+  <div id="state" class="state" hidden></div>
+  <div id="results" class="result-list"></div>
+
+</main>
+
+<div class="disclaimer">
+  <strong>Search results are not a systematic review.</strong> These are the most recent
+  records matching a fixed PubMed query, ranked by publication date rather than by quality
+  or relevance. The query will miss papers that describe themselves differently and will
+  include some that are irrelevant. Read the full record before citing or acting on anything.
+  <a href="index.html">All tools</a>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function () {
+  'use strict';
+
+  var esc = PubMed.esc;
+  var $ = function (id) { return document.getElementById(id); };
+
+  var setKey = new URLSearchParams(location.search).get('set') || 'cns';
+  var SET = window.DIGEST_SETS[setKey];
+
+  if (!SET) {
+    $('set-title').textContent = 'Unknown digest';
+    $('state').hidden = false;
+    $('state').className = 'state state-error';
+    $('state').textContent = 'No digest called "' + setKey + '". Check the link on the home page.';
+    return;
+  }
+
+  var activeTab = SET.tabs[0];
+  var papers = [];
+  var cache = {};
+
+  document.title = SET.title + ' | Clinical Oncology Tools';
+  $('set-title').textContent = SET.title;
+  $('set-subtitle').textContent = SET.subtitle;
+
+  /* --- Build controls from config ------------------------ */
+  $('tab-bar').innerHTML = SET.tabs.map(function (t, i) {
+    return '<button class="tab-btn" role="tab" data-id="' + esc(t.id) + '" ' +
+           'aria-selected="' + (i === 0) + '">' + esc(t.label) + '</button>';
+  }).join('');
+
+  $('type-filter').innerHTML = window.DIGEST_TYPES.map(function (t) {
+    return '<option value="' + esc(t.value) + '">' + esc(t.label) + '</option>';
+  }).join('');
+
+  $('range-filter').innerHTML = window.DIGEST_RANGES.map(function (r) {
+    return '<option value="' + r.value + '"' + (r.default ? ' selected' : '') + '>' +
+           esc(r.label) + '</option>';
+  }).join('');
+
+  /* --- Rendering ----------------------------------------- */
+  function showState(msg, kind) {
+    var el = $('state');
+    el.hidden = false;
+    el.className = 'state' + (kind === 'error' ? ' state-error' : '');
+    el.innerHTML = kind === 'loading'
+      ? '<div class="spinner"></div>' + esc(msg)
+      : esc(msg);
+    $('results').innerHTML = '';
+  }
+
+  function render(list) {
+    $('state').hidden = true;
+    $('count').textContent = list.length + (list.length === 1 ? ' result' : ' results');
+    $('fetch-time').textContent = new Date().toLocaleString('en-GB',
+      { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+    if (!list.length) {
+      showState('Nothing matched. Try a longer date range or a broader article type.');
+      return;
+    }
+
+    $('results').innerHTML = list.map(function (p) {
+      return '<article class="result-item">' +
+        '<button class="result-toggle" data-pmid="' + esc(p.pmid) + '" ' +
+          'aria-expanded="false" style="all:unset; cursor:pointer; display:block; width:100%;">' +
+          '<h2 class="result-title">' + esc(p.title) + '</h2>' +
+          '<div class="result-sub">' + esc(p.authorsShort) + '</div>' +
+        '</button>' +
+        '<div class="result-meta">' +
+          '<span class="result-source">' + esc(p.journal) + '</span>' +
+          (p.highImpact ? '<span class="badge badge-high">High impact</span>' : '') +
+          '<span class="mono" style="font-size:var(--fs-2xs); color:var(--ink-muted);">' + esc(p.date) + '</span>' +
+          '<a class="badge-link" style="margin-left:auto;" target="_blank" rel="noopener" ' +
+            'href="https://pubmed.ncbi.nlm.nih.gov/' + esc(p.pmid) + '/">PMID ' + esc(p.pmid) + '</a>' +
+          (p.doi ? '<a class="badge-link" target="_blank" rel="noopener" href="https://doi.org/' + esc(p.doi) + '">DOI</a>' : '') +
+        '</div>' +
+        '<div class="drawer" id="drawer-' + esc(p.pmid) + '">' +
+          '<div class="drawer-text" id="abs-' + esc(p.pmid) + '">Loading abstract…</div>' +
+          '<div class="drawer-footer">' +
+            '<button type="button" class="cite-btn" data-pmid="' + esc(p.pmid) + '">Copy citation</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  function applyFilter() {
+    var q = $('filter').value.toLowerCase().trim();
+    if (!q) return render(papers);
+    render(papers.filter(function (p) {
+      return (p.title + ' ' + p.authorsFull + ' ' + p.journal).toLowerCase().indexOf(q) !== -1;
+    }));
+  }
+
+  /* --- Loading ------------------------------------------- */
+  function load(tab, force) {
+    activeTab = tab;
+    document.documentElement.style.setProperty('--accent', tab.accent || SET.accent);
+    Array.prototype.forEach.call($('tab-bar').children, function (b) {
+      b.setAttribute('aria-selected', String(b.dataset.id === tab.id));
+    });
+    $('filter').value = '';
+
+    var typeFilter = $('type-filter').value;
+    var days = $('range-filter').value;
+    var query = tab.query + typeFilter;
+    var key = tab.id + '|' + typeFilter + '|' + days;
+
+    $('query-text').textContent = query + '\n\nPublished in the last ' + days +
+      ' days (since ' + PubMed.daysAgo(days) + ')';
+
+    if (!force && cache[key]) { papers = cache[key]; render(papers); return; }
+
+    showState('Querying PubMed…', 'loading');
+    PubMed.search({
+      query: query, days: days, retmax: 40, highImpact: SET.highImpact
+    }).then(function (results) {
+      papers = results;
+      cache[key] = results;
+      render(results);
+    }).catch(function (err) {
+      showState('Could not reach PubMed. ' + err.message +
+                ' If this persists, NCBI may be rate-limiting — wait a moment and refresh.', 'error');
+    });
+  }
+
+  /* --- Events -------------------------------------------- */
+  $('tab-bar').addEventListener('click', function (e) {
+    var btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    var tab = SET.tabs.filter(function (t) { return t.id === btn.dataset.id; })[0];
+    if (tab) load(tab);
+  });
+
+  $('filter').addEventListener('input', applyFilter);
+  $('type-filter').addEventListener('change', function () { load(activeTab, true); });
+  $('range-filter').addEventListener('change', function () { load(activeTab, true); });
+  $('refresh-btn').addEventListener('click', function () { load(activeTab, true); });
+
+  $('csv-btn').addEventListener('click', function () {
+    if (!papers.length) return;
+    PubMed.download(
+      [setKey, activeTab.id, new Date().toISOString().slice(0, 10)].join('-') + '.csv',
+      PubMed.toCSV(papers)
+    );
+  });
+
+  $('results').addEventListener('click', function (e) {
+    var cite = e.target.closest('.cite-btn');
+    if (cite) {
+      var p = papers.filter(function (x) { return x.pmid === cite.dataset.pmid; })[0];
+      navigator.clipboard.writeText(PubMed.citation(p)).then(function () {
+        cite.textContent = 'Copied';
+        setTimeout(function () { cite.textContent = 'Copy citation'; }, 1800);
+      });
+      return;
+    }
+
+    var toggle = e.target.closest('.result-toggle');
+    if (!toggle) return;
+    var pmid = toggle.dataset.pmid;
+    var drawer = $('drawer-' + pmid);
+    var open = drawer.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    if (!open) return;
+
+    var paper = papers.filter(function (x) { return x.pmid === pmid; })[0];
+    if (paper.abstract) { $('abs-' + pmid).textContent = paper.abstract; return; }
+    PubMed.abstract(pmid).then(function (text) {
+      paper.abstract = text;
+      $('abs-' + pmid).textContent = text;
+    }).catch(function () {
+      $('abs-' + pmid).textContent = 'Could not load the abstract. Open the PubMed record instead.';
+    });
+  });
+
+  load(SET.tabs[0]);
+});
+</script>
+</body>
+</html>
