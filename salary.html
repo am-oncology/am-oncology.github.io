@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NHS pay calculator | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<script src="assets/js/nav.js" data-tool="salary" defer></script>
+<style>
+  /* Page-specific only. Colour, type and spacing come from theme.css. */
+  :root {
+    --tr-fast: 0.15s;
+    /* These four were referenced by the donut, legend and breakdown but
+       never defined, so every deduction segment rendered with no colour —
+       which is why only "Take-home" was visible on the chart. */
+    --c-tax:     var(--amber);
+    --c-ni:      var(--blue);
+    --c-pension: var(--violet);
+    --c-loan:    var(--red);
+  }
+
+  .layout {
+    display: grid; gap: var(--sp-5); grid-template-columns: 360px 1fr; align-items: start;
+    max-width: var(--maxw); margin: 0 auto;
+    padding: var(--sp-5) var(--sp-5) var(--sp-7);
+  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .layout { padding-left: var(--sp-4); padding-right: var(--sp-4); } }
+  .input-panel, .results-panel { min-width: 0; }
+
+  .field { margin-bottom: var(--sp-4); }
+  .field > .label { display: block; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-dim); margin-bottom: var(--sp-1); }
+  .field input, .field select { width: 100%; }
+  .row-2 { display: grid; gap: var(--sp-3); grid-template-columns: 1fr 1fr; }
+
+  .role-pills { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+  .role-pill {
+    font-size: var(--fs-xs); font-weight: 500; padding: var(--sp-2) var(--sp-3);
+    border: 1px solid var(--rule); border-radius: 999px;
+    background: var(--card); color: var(--ink-dim); cursor: pointer;
+  }
+  .role-pill:hover { border-color: var(--ink-muted); }
+  .role-pill.active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  .hero {
+    background: var(--brand-solid); color: var(--on-brand);
+    border-radius: var(--radius-lg); padding: var(--sp-5); margin-bottom: var(--sp-4);
+  }
+  .hero-eyebrow { font-size: var(--fs-2xs); text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.75; }
+  .hero-amount { font-family: var(--font-mono); font-size: var(--fs-2xl); font-weight: 600; line-height: 1.1; margin: var(--sp-2) 0 var(--sp-4); }
+  .hero-grid { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+  .hero-stat { font-size: var(--fs-xs); opacity: 0.9; }
+  .hero-stat strong { display: block; font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: 600; opacity: 1; }
+
+  .tabs { display: flex; gap: var(--sp-1); background: var(--card-2); border-radius: var(--radius); padding: var(--sp-1); margin-bottom: var(--sp-4); }
+  .tab-btn { flex: 1; border: none; background: transparent; color: var(--ink-muted); font-weight: 600; font-size: var(--fs-sm); border-radius: var(--radius); cursor: pointer; }
+  .tab-btn:hover { background: transparent; color: var(--ink); }
+  .tab-btn.active { background: var(--card); color: var(--accent); box-shadow: var(--shadow); }
+  .tab-pane, .hidden { display: none; }
+  .tab-pane.active { display: block; }
+
+  .breakdown {
+    display: flex; flex-direction: column;
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow);
+    padding: var(--sp-4);
+  }
+  /* Three real columns. Flex + space-between could never align these,
+     because each row sized its own cells independently. */
+  .bkd-row {
+    display: grid; grid-template-columns: 1fr 6.5em 6.5em;
+    gap: var(--sp-3); align-items: baseline;
+    padding: var(--sp-2) 0; border-bottom: 1px solid var(--rule-soft); font-size: var(--fs-sm);
+  }
+  .bkd-row:last-child { border-bottom: none; }
+  .bkd-row span:nth-child(2), .bkd-row span:nth-child(3) {
+    font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right;
+  }
+  @media (max-width: 420px) {
+    .bkd-row { grid-template-columns: 1fr 5.5em; }
+    .bkd-row span:nth-child(3) { display: none; }   /* drop Monthly column */
+  }
+
+  .rate-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); align-items: start; }
+  @media (max-width: 480px) { .rate-row { grid-template-columns: 1fr; } }
+  .rate-card { border: 1px solid var(--rule); border-radius: var(--radius); padding: var(--sp-3); margin-bottom: var(--sp-3); }
+  .rate-card-marginal { border-left: 3px solid var(--accent); }
+  .rate-val { font-family: var(--font-mono); font-weight: 600; }
+  .rate-keep { color: var(--green); font-family: var(--font-mono); }
+
+  .tier-table { width: 100%; }
+  .tier-row { display: grid; grid-template-columns: 1fr auto auto; gap: var(--sp-3);
+    padding: var(--sp-2) var(--sp-3); border-radius: var(--radius); font-size: var(--fs-sm); }
+  .tier-row.active-tier { background: var(--accent-soft); font-weight: 600; }
+
+  .legend { display: flex; gap: var(--sp-4); flex-wrap: wrap; font-size: var(--fs-xs); color: var(--ink-muted); margin-top: var(--sp-3); }
+  .leg-item { display: flex; align-items: center; gap: var(--sp-2); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  .chart-card {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow);
+    padding: var(--sp-4); margin-bottom: var(--sp-4);
+    display: flex; align-items: center; gap: var(--sp-5); flex-wrap: wrap;
+  }
+  .chart-card #donut { flex-shrink: 0; }
+  .chart-card .legend { flex: 1 1 200px; margin-top: 0; flex-direction: column; gap: var(--sp-2); }
+  .chart-card .leg-item { width: 100%; }
+  .chart-card .leg-item span:first-of-type { flex: 1; }
+  .chart-card .leg-item span:last-child { min-width: 3.2em; text-align: right; }
+
+  .badges { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin: var(--sp-4) 0; }
+
+  .p-tag, .np-tag {
+    font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0.05rem var(--sp-2); border-radius: var(--radius-pill); margin-left: var(--sp-2);
+    white-space: nowrap; vertical-align: middle;
+  }
+  .p-tag  { background: var(--green-soft); color: var(--green); }
+  .np-tag { background: var(--card-2);     color: var(--ink-muted); }
+
+  .ani-card { border-left: 3px solid var(--ink-muted); }
+  .ani-card.is-under { border-left-color: var(--green); }
+  .ani-card.is-close { border-left-color: var(--amber); }
+  .ani-card.is-over  { border-left-color: var(--red); }
+  .ani-head { display: flex; align-items: flex-start; gap: var(--sp-3); }
+  .ani-amount { font-family: var(--font-mono); font-size: var(--fs-xl); font-weight: 600; }
+  .ani-flag { margin-left: auto; text-align: right; font-size: var(--fs-xs); font-weight: 700; }
+  .is-under .ani-flag { color: var(--green); }
+  .is-close .ani-flag { color: var(--amber); }
+  .is-over  .ani-flag { color: var(--red); }
+  .ani-note { font-size: var(--fs-xs); color: var(--ink-muted); margin-top: var(--sp-3); max-width: 62ch; }
+  .ani-bar { height: 6px; background: var(--card-2); border-radius: var(--radius-pill);
+    overflow: hidden; margin: var(--sp-4) 0 var(--sp-3); }
+  .ani-bar-fill { height: 100%; border-radius: var(--radius-pill); transition: width 0.3s var(--ease); }
+  .is-under .ani-bar-fill { background: var(--green); }
+  .is-close .ani-bar-fill { background: var(--amber); }
+  .is-over  .ani-bar-fill { background: var(--red); }
+  .ani-headroom { font-size: var(--fs-sm); color: var(--ink-dim); }
+  .ani-headroom strong { font-family: var(--font-mono); }
+  .ani-headroom ul { margin: var(--sp-2) 0 0; padding-left: var(--sp-4); }
+  .ani-headroom li { margin-bottom: var(--sp-1); }
+  .badge-blue { background: var(--blue-soft); color: var(--blue); }
+  .badge-purple { background: var(--accent-soft); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Working life</div>
+      <h1>NHS pay calculator</h1>
+      <p>Take-home pay for the 2026/27 medical and dental pay scales in England, with pension tiers, tax bands and student loan plans.</p>
+    </div>
+    <div class="masthead-meta">
+      <div>2026/27 scales</div>
+      <div>England</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="layout">
+  <aside class="input-panel">
+    <div class="eyebrow">Role</div>
+    <div class="role-pills">
+      <button class="role-pill active" data-role="resident" onclick="setRole('resident')">Resident</button>
+      <button class="role-pill" data-role="consultant" onclick="setRole('consultant')">Consultant</button>
+      <button class="role-pill" data-role="sas" onclick="setRole('sas')">SAS</button>
+    </div>
+    <div class="field">
+      <label for="grade-select" class="label">Grade / pay node</label>
+      <select id="grade-select"></select>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setTab(0)">Pay</button>
+      <button class="tab-btn" onclick="setTab(1)">Deductions</button>
+    </div>
+    <div class="tab-pane active" id="tab-0">
+      <div id="res-fields">
+        <div class="notice">Enter under 40 hrs for automatic LTFT scaling.</div>
+        <div class="row-2">
+          <div class="field">
+            <label for="res-hours" class="label">Weekly hours <span class="np-tag">&gt;40 not pensionable</span></label>
+            <input type="number" id="res-hours" value="40" step="0.5" min="0" max="48">
+          </div>
+          <div class="field">
+            <label for="res-nights" class="label">Night hours <span class="np-tag">not pensionable</span></label>
+            <input type="number" id="res-nights" value="0" step="0.5" min="0">
+          </div>
+        </div>
+        <div class="notice notice-warn" style="margin-top: -6px; margin-bottom: 14px;">
+          <strong>Duplication Check:</strong> Night hours are a subset of (included within) the total weekly hours. They trigger the 37% premium shift allowance enhancement without double-counting base time.
+        </div>
+        <div class="row-2" style="margin-bottom: 14px;">
+          <div class="field">
+            <label for="res-weekend" class="label">Weekend rota &mdash; full-time <span class="np-tag">not pensionable</span></label>
+            <select id="res-weekend">
+              <option value="0" data-denom="0">Less than 1 in 8 (0%)</option>
+              <option value="0.03" data-denom="8">1 in 8 (3%)</option>
+              <option value="0.04" data-denom="7">1 in 7 (4%)</option>
+              <option value="0.05" data-denom="6">1 in 6 (5%)</option>
+              <option value="0.06" data-denom="5">1 in 5 (6%)</option>
+              <option value="0.075" data-denom="4">1 in 4 (7.5%)</option>
+              <option value="0.10" data-denom="3">1 in 3 (10%)</option>
+              <option value="0.15" data-denom="2">1 in 2 (15%)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="res-nroc" class="label">NROC on-call <span class="p-tag">pensionable</span></label>
+            <select id="res-nroc">
+              <option value="0">None</option>
+              <option value="0.08">NROC (8% of full-time basic)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="ltft-rota" style="display:none;">
+          <div class="notice notice-warn" style="margin-bottom: 14px;">
+            <strong>LTFT allowances are not scaled by your hours.</strong> Weekend and on-call
+            allowances are pro-rated by your share of the <em>rota</em>, not your percentage of
+            full time. Enter how often you are actually on.
+          </div>
+          <div class="row-2" style="margin-bottom: 14px;">
+            <div class="field">
+              <label for="res-weekend-mine" class="label">Your weekends &mdash; 1 in</label>
+              <input type="number" id="res-weekend-mine" value="0" step="1" min="0">
+              <div class="field-hint">Leave 0 if same as full-time rota.</div>
+            </div>
+            <div class="field">
+              <label for="res-oncall-ft" class="label">On-call &mdash; full-time 1 in</label>
+              <input type="number" id="res-oncall-ft" value="0" step="1" min="0">
+            </div>
+          </div>
+          <div class="row-2" style="margin-bottom: 14px;">
+            <div class="field">
+              <label for="res-oncall-mine" class="label">Your on-call &mdash; 1 in</label>
+              <input type="number" id="res-oncall-mine" value="0" step="1" min="0">
+              <div class="field-hint">Leave 0 if same as full-time rota.</div>
+            </div>
+            <div class="field">
+              <label for="res-ltft-pct" class="label">Agreed LTFT %</label>
+              <input type="number" id="res-ltft-pct" value="0" step="1" min="0" max="100">
+              <div class="field-hint">
+                Your agreed percentage, e.g. 60. This is relative to your rota's full-time
+                hours, which may exceed 40 &mdash; so it is not always hours &divide; 40.
+                Leave 0 to derive it. Used for London weighting and flexible pay premia.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="res-london" class="label">London weighting <span class="p-tag">pensionable</span></label>
+            <select id="res-london">
+              <option value="0">None</option>
+              <option value="149">Fringe (£149)</option>
+              <option value="527">Outer London (£527)</option>
+              <option value="2162">Inner London (£2,162)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fpp-amount" class="label">Annual FPP (£) <span class="np-tag">not pensionable</span></label>
+            <input type="number" id="fpp-amount" value="0" step="100" min="0">
+          </div>
+        </div>
+        <div class="notice" style="margin-top: 4px; margin-bottom: 14px;">FPP is taxable but non-pensionable, automatically pro-rated if LTFT.</div>
+        <div class="field" style="margin-top: 4px;">
+          <label for="res-ddrb" class="label">Model DDRB Uplift (%)</label>
+          <input type="number" id="res-ddrb" value="0" step="0.5" min="0" max="30">
+          <div style="font-size:0.68rem;color:var(--ink-muted);margin-top:2px;">Applies an annual uplift percentage onto the final calculated resident total.</div>
+        </div>
+      </div>
+      <div id="con-fields" class="hidden">
+        <div class="notice">Enter under 10 PAs for automatic LTFT pro-rata scaling.</div>
+        <div class="row-2">
+          <div class="field"><label for="con-pas" class="label">Total PAs <span class="np-tag">&gt;10 not pensionable</span></label><input type="number" id="con-pas" value="10" step="0.25" min="1" max="20">
+            <div class="field-hint" id="pa-warn" style="display:none;"></div></div>
+          <div class="field"><label for="con-oncall" class="label">On-call supplement <span class="p-tag">pensionable</span></label>
+            <select id="con-oncall">
+              <option value="0">None (0%)</option>
+              <option value="0.01">Cat B low (1%)</option>
+              <option value="0.02">Cat B med (2%)</option>
+              <option value="0.03">Cat A low/B high (3%)</option>
+              <option value="0.05">Cat A med (5%)</option>
+              <option value="0.08">Cat A high (8%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="row-2" style="margin-top: 10px;">
+          <div class="field">
+            <label for="con-london" class="label">London weighting <span class="p-tag">pensionable</span></label>
+            <select id="con-london">
+              <option value="0">None</option>
+              <option value="149">Fringe (£149)</option>
+              <option value="527">Outer London (£527)</option>
+              <option value="2162">Inner London (£2,162)</option>
+            </select>
+          </div>
+          <div class="field" id="ncia-field">
+            <label for="con-ncias" class="label">NCIA <span class="np-tag">not pensionable</span></label>
+            <select id="con-ncias">
+              <option value="0">None</option>
+              <option value="21000">Level N1 (£21,000)</option>
+              <option value="31500">Level N2 (£31,500)</option>
+              <option value="42000">Level N3 (£42,000)</option>
+            </select>
+          </div>
+        </div>
+        <div class="eyebrow" style="margin-top:14px">Additional non-pensionable income</div>
+        <div class="row-2">
+          <div class="field"><label for="con-wli" class="label">Waiting list initiative (WLI) (£/yr)</label><input type="number" id="con-wli" value="0" step="500" min="0"></div>
+          <div class="field"><label for="con-resp" class="label">Other supplements (£/yr)</label><input type="number" id="con-resp" value="0" step="500" min="0"></div>
+        </div>
+        <div class="field" style="margin-top: 14px;">
+          <label for="con-ddrb" class="label">Model DDRB Uplift (%)</label>
+          <input type="number" id="con-ddrb" value="0" step="0.5" min="0" max="30">
+          <div style="font-size:0.68rem;color:var(--ink-muted);margin-top:2px;">Optional — models a hypothetical future award on top of today's rates</div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-pane" id="tab-1">
+      <div class="eyebrow" style="margin-top:0">NHS pension</div>
+      <div class="field">
+        <label for="pension-opt" class="label">Pension scheme</label>
+        <select id="pension-opt"><option value="yes">Opted in</option><option value="no">Opted out</option></select>
+      </div>
+      <div class="tier-table" id="tier-table"></div>
+      <div class="eyebrow">Deductions & Sacrifices</div>
+      <div class="row-2">
+        <div class="field">
+          <label for="loan-plan" class="label">Student loan repayment plan</label>
+          <select id="loan-plan">
+            <option value="none">None</option>
+            <option value="plan1">Plan 1</option>
+            <option value="plan2">Plan 2</option>
+            <option value="plan4">Plan 4 (Scotland)</option>
+            <option value="plan5">Plan 5</option>
+            <option value="pgl">Postgraduate (PGL)</option>
+            <option value="plan2pgl">Plan 2 + PGL</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sal-sac" class="label">Salary Sacrifice Schemes (£/yr)</label>
+          <input type="number" id="sal-sac" value="0" step="250" min="0">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="prof-fees" class="label">Professional fees (£/yr)</label>
+          <input type="number" id="prof-fees" value="0" step="50" min="0">
+          <div class="field-hint" id="prof-fees-hint">
+            GMC, BMA, MDU/MPS, royal college &mdash; bodies on HMRC's approved List 3.
+            Relief is on income tax only, not National Insurance.
+          </div>
+        </div>
+        <div class="field">
+          <label for="gift-aid" class="label">Gift Aid donations (£/yr)</label>
+          <input type="number" id="gift-aid" value="0" step="100" min="0">
+          <div class="field-hint">Enter what you actually donated; grossed up by 25% automatically. Reduces adjusted net income.</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main class="results-panel">
+    <div class="hero">
+      <div class="hero-eyebrow">Monthly take-home</div>
+      <div class="hero-amount" id="out-monthly">£0</div>
+      <div class="hero-grid">
+        <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL NET</div><div id="out-net-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
+        <div class="hero-stat"><div style="opacity:0.65;font-size:0.7rem;">ANNUAL GROSS</div><div id="out-gross-ann" style="font-weight:700;font-size:1.05rem;">£0</div></div>
+      </div>
+    </div>
+    <div class="rate-row">
+      <div class="rate-card"><div style="font-size:var(--fs-2xs);color:var(--ink-muted);font-weight:600;">EFFECTIVE RATE</div><div class="rate-val" id="out-eff">0%</div></div>
+      <div class="rate-card rate-card-marginal"><div style="font-size:var(--fs-2xs);color:var(--amber);font-weight:600;">MARGINAL RATE</div><div class="rate-val" style="color:var(--amber);" id="out-marg">0%</div><div class="rate-keep" id="out-marg-keep"></div></div>
+    </div>
+    <div class="card ani-card" id="ani-card">
+      <div class="ani-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:var(--sp-1);">Adjusted net income</div>
+          <div class="ani-amount" id="out-ani">£0</div>
+        </div>
+        <div class="ani-flag" id="ani-flag"></div>
+      </div>
+      <div class="ani-note">
+        Gross taxable pay after pension, salary sacrifice and Gift Aid — the figure HMRC
+        tests against £100,000 for Tax-Free Childcare and the funded 15/30 hours.
+        Assessed <strong>per parent</strong>, and there is no taper: £1 over loses the lot.
+      </div>
+      <div class="ani-bar"><div class="ani-bar-fill" id="ani-bar-fill"></div></div>
+      <div class="ani-headroom" id="ani-headroom"></div>
+    </div>
+
+    <div class="badges" id="badges"></div>
+    <div class="chart-card">
+      <div id="donut" style="flex-shrink:0;"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="breakdown">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-weight:700;color:var(--ink-muted);font-size:0.72rem;">BREAKDOWN</div>
+        <button class="btn" id="copy-bkd-btn" onclick="copyBreakdown()">Copy as text</button>
+      </div>
+      <div class="bkd-row" style="color:var(--ink-muted);font-weight:600;border:none;">
+        <span>Item</span>
+        <span style="text-align:right">Annual</span>
+        <span style="text-align:right">Monthly</span>
+      </div>
+      <div id="bkd-rows"></div>
+    </div>
+    <p style="font-size:0.7rem;color:var(--ink-muted);text-align:center;margin-top:10px;">Estimates only — England 2026/27 rates.</p>
+  </main>
+</div>
+<script>
+/* --- CORE DATA MODELS --- */
+const SCALES = {
+  /* Resident: DHSC Table 1, "2026 to 2027 (DDRB plus NPR)" column.
+     Source: gov.uk offer to BMA UKRDC, published 17 June 2026 (backdated
+     to 1 Apr 2026). NOTE 3a/3b, 4b/4c and 5b/5c are equal in 2026/27 and
+     only diverge at the April 2027 stage-2 figures shown in brackets. */
+  resident:   [
+    { name: '1: FY1',      base: 41226 },
+    { name: '2: FY2',      base: 47610 },
+    { name: '3a: ST1/CT1', base: 55355 },   // 2027/28: 55534
+    { name: '3b: ST2/CT2', base: 55355 },   // 2027/28: 56925
+    { name: '4a: ST3/CT3', base: 67325 },
+    { name: '4b: ST4/CT4', base: 67998 },   // 2027/28: 69345
+    { name: '4c: ST5',     base: 67998 },   // 2027/28: 71415
+    { name: '5a: ST6',     base: 76582 },
+    { name: '5b: ST7',     base: 77348 },   // 2027/28: 78660
+    { name: '5c: ST8',     base: 77348 }    // 2027/28: 80730
+  ],
+  /* Consultant 2003 contract thresholds, +3.5% DDRB from 1 Apr 2026. */
+  consultant: [
+    { name: '1: Year 1-3',   base: 113565 },
+    { name: '2a: Year 4',    base: 120249 },
+    { name: '2b: Year 5-8',  base: 123672 },
+    { name: '3: Year 9-14',  base: 135645 },
+    { name: '4: Year 15+',   base: 150569 }
+  ],
+  /* SAS, England 2026/27. Specialty doctor 63,696-102,689; specialist
+     grade 104,401-115,341. Only the scale endpoints are listed: the 2021
+     SAS contract has intermediate pay points not modelled here. */
+  sas: [
+    { name: 'Specialty doctor - min',  base: 63696 },
+    { name: 'Specialty doctor - max',  base: 102689 },
+    { name: 'Specialist grade - min',  base: 104401 },
+    { name: 'Specialist grade - max',  base: 115341 }
+  ]
+};
+const RATES_2026_27 = {
+  weeksPerYear: 52.143,
+  nightPremiumRate: 0.37,
+  personalAllowance: 12570,
+  paTaperThreshold: 100000,
+  paTaperRate: 0.5,
+  basicRateBand: 50270,
+  basicRate: 0.20,
+  higherRateBand: 125140,
+  higherRate: 0.40,
+  additionalRate: 0.45,
+  /* NI is assessed per pay period, not annually. NHS staff are paid
+     monthly, so the effective annual thresholds are 12x the monthly ones
+     (£1,048 and £4,189), which are a few pounds off the headline annual
+     figures. Using the monthly basis makes the result match a payslip. */
+  niMonthlyPrimaryThreshold: 1048,
+  niMonthlyUpperEarningsLimit: 4189,
+  niMainRate: 0.08,
+  niAdditionalRate: 0.02
+};
+// Thresholds verified against NHS Employers' published 2026/27 member
+// contribution table (uplifted 3.8% CPI from 2025/26; rates unchanged
+// since April 2024; the lowest tier boundary is frozen by design so
+// members near the bottom don't lose out on tax relief).
+const PENSION_TIERS = [
+  { max: 13259, rate: 0.052 }, { max: 28854, rate: 0.065 }, { max: 35155, rate: 0.083 },
+  { max: 52778, rate: 0.098 }, { max: 67668, rate: 0.107 }, { max: Infinity, rate: 0.125 }
+];
+/* 2026/27 thresholds (HMRC). Plan 1 and Plan 2 both rose this April;
+   Plan 5 and PGL are frozen. Plan 4 is Scotland-only. */
+const LOAN_PLANS = {
+  plan1: { th: 26900, r: 0.09 },
+  plan2: { th: 29385, r: 0.09 },
+  plan4: { th: 33795, r: 0.09 },
+  plan5: { th: 25000, r: 0.09 },
+  pgl:   { th: 21000, r: 0.06 }
+};
+let role = 'resident';
+let lastState = null;
+/* --- UTILITIES --- */
+const g = id => document.getElementById(id);
+const fv = (id, def = 0) => {
+  const n = parseFloat(g(id)?.value);
+  /* Clamp at zero: `min` on an <input> is advisory, so a pasted or typed
+     negative still reads back and would flow into the maths. */
+  return isNaN(n) ? def : Math.max(0, n);
+};
+const fmt = v => `£${Math.round(v).toLocaleString('en-GB')}`;
+/* --- PURE MATH FUNCTIONS --- */
+const getPensionRate = pay => PENSION_TIERS.find(t => Math.max(0, pay) <= t.max).rate;
+function calcDeductions(gross, pensionable, plan, optIn, profFees) {
+  const R = RATES_2026_27;
+  const pension = optIn === 'yes' ? pensionable * getPensionRate(pensionable) : 0;
+  // Tax
+  /* Allowable professional subscriptions reduce TAXABLE pay only. For a
+     PAYE doctor the relief arrives as a tax-code adjustment, which does not
+     touch NI or student loan deductions — both of those are calculated on
+     gross pay. So this is netted off here and nowhere else. */
+  let tax = 0, inc = gross - pension - (profFees || 0);
+  let pa = inc > R.paTaperThreshold ? Math.max(0, R.personalAllowance - (inc - R.paTaperThreshold) * R.paTaperRate) : R.personalAllowance;
+  let rem = Math.max(0, inc - pa);
+  // The basic-rate band is a FIXED £37,700 wide (i.e. basicRateBand - the
+  // FULL personal allowance), regardless of how much allowance has been
+  // tapered away. Using the taper-reduced `pa` here instead of the full
+  // allowance was the bug: it silently widened the 20% band for anyone
+  // between the £100k taper start and full withdrawal at £125,140,
+  // understating tax by up to ~£3,143/year once PA reaches zero.
+  const basicBandWidth = R.basicRateBand - R.personalAllowance;   // always £37,700
+  const basic = Math.min(rem, Math.max(0, basicBandWidth));
+  tax += basic * R.basicRate; rem -= basic;
+
+  /* The additional rate starts at £125,140 of INCOME, not of income-after-
+     allowances. So in taxable terms the 40% band runs from £37,700 up to
+     (£125,140 − personal allowance), and it therefore GROWS as the
+     allowance tapers away — from £74,870 at a full allowance to £87,440
+     once the allowance reaches zero.
+     The previous formula capped it at a flat £74,870, pushing £12,570 into
+     the 45% band that belonged at 40% and overstating tax by up to £628.50
+     for anyone above about £116,760. */
+  const higherBandWidth = Math.max(0, R.higherRateBand - pa - basicBandWidth);
+  if (rem > 0) {
+    const higher = Math.min(rem, higherBandWidth);
+    tax += higher * R.higherRate; rem -= higher;
+  }
+  if (rem > 0) tax += rem * R.additionalRate;
+  // NI
+  let ni = 0;
+  /* Assessed monthly, then annualised — see the note on the thresholds. */
+  const mGross = gross / 12;
+  const mPT = R.niMonthlyPrimaryThreshold, mUEL = R.niMonthlyUpperEarningsLimit;
+  const mMain = Math.min(Math.max(0, mGross - mPT), mUEL - mPT) * R.niMainRate;
+  const mAdd  = Math.max(0, mGross - mUEL) * R.niAdditionalRate;
+  ni = (mMain + mAdd) * 12;
+  // Loan
+  let loan = 0;
+  if (plan === 'plan2pgl') loan = Math.max(0, gross - LOAN_PLANS.plan2.th) * LOAN_PLANS.plan2.r
+                               + Math.max(0, gross - LOAN_PLANS.pgl.th)   * LOAN_PLANS.pgl.r;
+  else if (LOAN_PLANS[plan]) loan = Math.max(0, gross - LOAN_PLANS[plan].th) * LOAN_PLANS[plan].r;
+  return { pension, tax, ni, loan, total: pension + tax + ni + loan };
+}
+/* --- MAIN CONTROLLER --- */
+function clampInputs() {
+  document.querySelectorAll('input[type="number"]').forEach(el => {
+    if (el.value === '') return;
+    const v = parseFloat(el.value);
+    if (isNaN(v)) return;
+    let clamped = v;
+    if (el.min !== '' && clamped < parseFloat(el.min)) clamped = parseFloat(el.min);
+    if (el.max !== '' && clamped > parseFloat(el.max)) clamped = parseFloat(el.max);
+    if (clamped !== v) el.value = clamped;
+  });
+}
+function calculate() {
+  clampInputs();
+  const gradeIdx = parseInt(g('grade-select').value) || 0;
+  const ddrb = 1 + ((role === 'resident' ? fv('res-ddrb') : fv('con-ddrb')) / 100);
+  const baseFT = SCALES[role][gradeIdx].base;
+  const london = role === 'resident' ? fv('res-london') : fv('con-london');
+  let pensionable = 0, nonPensionable = 0, isLTFT = false, fppDisplay = 0;
+  if (role === 'resident') {
+    const hours = fv('res-hours', 40);
+    isLTFT = hours > 0 && hours < 40;
+    const ltftBlock = g('ltft-rota');
+    if (ltftBlock) ltftBlock.style.display = isLTFT ? 'block' : 'none';
+    const baseHourlyRate = baseFT / (40 * RATES_2026_27.weeksPerYear);
+    const calculatedBasePay = baseHourlyRate * hours * RATES_2026_27.weeksPerYear;
+
+    /* Whole-time ceiling: for resident doctors only basic pay for up to
+       40 hours a week is pensionable. Hours beyond that are "ignored for
+       pension purposes" — no contributions, no accrual.
+       Source: BMA pensionable service guide for secondary care doctors. */
+    const pensionableBasePay = baseHourlyRate * Math.min(hours, 40) * RATES_2026_27.weeksPerYear;
+    const excessHoursPay = calculatedBasePay - pensionableBasePay;
+
+    /* Flat £1,000 LTFT allowance — "paid in full and not pro-rated in any
+       way" (BMA LTFT pay explainer). Treated as NON-pensionable: it
+       recognises the increased training costs of working less than full
+       time rather than paying for duties, so it reads as an expense-type
+       allowance. NOTE: unlike the other pensionability rules in this file,
+       this one is not backed by an explicit published source — it is a
+       considered judgement. Revisit if NHSBSA or the BMA state otherwise. */
+    const ltftSupplement = isLTFT ? 1000 : 0;
+
+    /* ── LTFT allowances are pro-rated by ROTA SHARE, not by hours ──────
+       "An allowance paid pro-rata to the value of the full-time allowance,
+       based on your work schedule's proportion of full-time commitment to
+       the weekend rota — NOT your percentage of full time."
+       So the cash value is a percentage of the FULL-TIME basic salary,
+       then multiplied by (full-time frequency / your frequency).
+       Source: BMA LTFT trainees' pay explained. */
+    const ftBasic = baseFT;
+    const wkFtDenom   = Number(g('res-weekend').selectedOptions[0].dataset.denom || 0);
+    const wkMineDenom = fv('res-weekend-mine');
+    const wkRatio = (isLTFT && wkFtDenom > 0 && wkMineDenom > 0)
+      ? (wkFtDenom / wkMineDenom) : 1;
+    const weekendPay = ftBasic * fv('res-weekend') * wkRatio;
+
+    const ocFtDenom   = fv('res-oncall-ft');
+    const ocMineDenom = fv('res-oncall-mine');
+    const ocRatio = (isLTFT && ocFtDenom > 0 && ocMineDenom > 0)
+      ? (ocFtDenom / ocMineDenom) : 1;
+    const nrocPay = ftBasic * fv('res-nroc') * ocRatio;
+
+    /* London weighting and flexible pay premia are pro-rated by the AGREED
+       LTFT percentage — which is measured against the work schedule's
+       full-time hours, not the 40-hour reference used for basic pay. Where
+       the full-time rota exceeds 40 h/wk these differ, so take the agreed
+       figure when given rather than deriving it. */
+    const agreedPct = fv('res-ltft-pct') > 0
+      ? fv('res-ltft-pct') / 100
+      : Math.min(1, hours / 40);
+    const londonPaid = isLTFT ? london * agreedPct : london;
+
+    pensionable = (pensionableBasePay + nrocPay) * ddrb + londonPaid;
+
+    const nightPay = fv('res-nights') * baseHourlyRate * RATES_2026_27.nightPremiumRate * RATES_2026_27.weeksPerYear;
+    /* Flexible pay premia are "taxable, non-pensionable and made annually
+       until you complete your clinical training", and "paid pro-rata for
+       less than full time (LTFT) trainees".
+       Source: BMA, Training flexible pay premia (England).
+       Confirmed by a practising consultant; do not 'fix' this. */
+    let fpp = fv('fpp-amount');
+    if (isLTFT) fpp *= agreedPct;
+    nonPensionable = (excessHoursPay + weekendPay + nightPay + fpp + ltftSupplement) * ddrb;
+    fppDisplay = fpp * ddrb;
+  } else {
+    const pas = fv('con-pas', 10);
+    isLTFT = pas < 10;
+    const warn = g('pa-warn');
+    if (warn) {
+      if (pas > 12) {
+        warn.style.display = 'block';
+        warn.style.color = 'var(--amber)';
+        warn.textContent = pas > 14
+          ? `${pas} PAs is well beyond a standard job plan (10, commonly up to 12). Check this is what you mean.`
+          : `${pas} PAs exceeds the usual 10-12. Additional PAs need agreement in your job plan.`;
+      } else {
+        warn.style.display = 'none';
+      }
+    }
+    const basic = isLTFT ? baseFT * (pas / 10) : baseFT;
+    /* The on-call availability supplement is pensionable (BMA guide lists
+       "intensity payments/on call supplements" and "availability
+       supplements" as pensionable income). */
+    const ocPay = basic * fv('con-oncall');
+    /* London weighting is a fixed sum, pro-rated for less-than-full-time. */
+    const londonPaid = isLTFT ? london * (pas / 10) : london;
+    pensionable = (basic + ocPay) * ddrb + londonPaid;
+    /* Additional PAs beyond the standard 10 are NOT pensionable — they sit
+       in the non-pensionable bucket below alongside WLI and other extras.
+       Confirmed by a practising consultant; do not 'fix' this. */
+    const extraPA = isLTFT ? 0 : (pas - 10) * (baseFT / 10);
+    const ncias = role === 'consultant' ? fv('con-ncias') : 0;
+    const wli = fv('con-wli');
+    const resp = fv('con-resp');
+    /* Extra PAs beyond 10 and new clinical impact awards are both
+       non-pensionable, as are WLI and other one-off supplements. */
+    nonPensionable = (extraPA + ncias + wli + resp) * ddrb;
+  }
+  const origPensionable = pensionable;
+  const origGross = pensionable + nonPensionable;
+  const salSac = fv('sal-sac');
+  pensionable = Math.max(0, origPensionable - salSac);
+  const gross = Math.max(0, origGross - salSac);
+  const extras = nonPensionable - fppDisplay;
+  const plan = g('loan-plan').value, optIn = g('pension-opt').value;
+  const profFees = fv('prof-fees');
+  const ded = calcDeductions(gross, pensionable, plan, optIn, profFees);
+  const net = gross - ded.total;
+
+  /* ── ADJUSTED NET INCOME ──────────────────────────────────────────
+     The figure HMRC tests against £100,000 for Tax-Free Childcare and
+     the funded 15/30 hours. Salary sacrifice is already out of `gross`.
+     NHS pension is a net pay arrangement, so contributions reduce
+     taxable pay directly. Gift Aid is deducted at its grossed-up value. */
+  const giftAidGross = fv('gift-aid') / 0.8;
+  /* Allowable employment expenses reduce taxable employment income, which
+     feeds into total income and therefore adjusted net income — so
+     professional fees give a small amount of headroom on the £100k test. */
+  const ani = Math.max(0, gross - ded.pension - giftAidGross - profFees);
+
+  /* What the relief is actually worth: the tax you would have paid on the
+     same income without claiming. Shown so the figure is concrete rather
+     than an abstract "reduces taxable pay". */
+  const feeRelief = profFees > 0
+    ? calcDeductions(gross, pensionable, plan, optIn, 0).tax - ded.tax
+    : 0;
+  const CHILDCARE_LIMIT = 100000;
+  const aniHeadroom = CHILDCARE_LIMIT - ani;
+
+  /* Almost all extra work a consultant picks up is NON-pensionable —
+     additional PAs beyond 10, WLI, bank and most locum — so £1 earned is
+     £1 straight onto adjusted net income. A rise in *basic* pensionable
+     pay adds less, because the contribution comes off before the test.
+     Solved numerically because crossing a tier changes the rate. */
+  let pensionableHeadroom = 0;
+  if (aniHeadroom > 0 && optIn === 'yes') {
+    let lo = 0, hi = aniHeadroom * 2.5;
+    for (let i = 0; i < 40; i++) {
+      const mid = (lo + hi) / 2;
+      const testPensionable = pensionable + mid;
+      const testAni = (gross + mid) - testPensionable * getPensionRate(testPensionable) - giftAidGross;
+      if (testAni > CHILDCARE_LIMIT) hi = mid; else lo = mid;
+    }
+    pensionableHeadroom = lo;
+  } else if (aniHeadroom > 0) {
+    pensionableHeadroom = aniHeadroom;
+  }
+  const dedNext = calcDeductions(gross + 100, pensionable + 100, plan, optIn, profFees);
+  const marginal = dedNext.total - ded.total;
+  /* NHS pension tiers are NOT marginal: crossing a boundary re-rates your
+     ENTIRE pensionable pay, so the next £100 can cost far more than £100.
+     That is real, but it is a cliff edge, not a marginal rate — flag it
+     rather than printing a nonsensical "you keep £-310". */
+  const crossesTier = optIn === 'yes' &&
+    getPensionRate(pensionable) !== getPensionRate(pensionable + 100);
+
+  /* The £100 marginal test above only catches you in the last £100 before a
+     boundary, so on its own it almost never fires. Also report how far the
+     next tier is and what crossing it would cost, so the cliff is visible
+     while there is still a decision to make. */
+  let tierGap = null, tierCost = null, nextTierPct = null;
+  if (optIn === 'yes') {
+    const curRate = getPensionRate(pensionable);
+    const idx = PENSION_TIERS.findIndex(t => Math.max(0, pensionable) <= t.max);
+    const band = PENSION_TIERS[idx], next = PENSION_TIERS[idx + 1];
+    if (band && next && band.max !== Infinity) {
+      tierGap = band.max - pensionable;
+      nextTierPct = next.rate * 100;
+      /* Crossing re-rates ALL pensionable pay, not just the excess. */
+      tierCost = (next.rate - curRate) * band.max;
+    }
+  }
+  const effective = gross > 0 ? (ded.total / gross) * 100 : 0;
+  updateUI({ gross, pensionable, origPensionable, extras, fpp: fppDisplay, salSac, net, ded, marginal, effective, isLTFT, optIn, crossesTier, tierGap, tierCost, nextTierPct,
+             ani, aniHeadroom, pensionableHeadroom, giftAidGross, profFees, feeRelief });
+  updateURL();
+}
+/* --- VIEW UPDATES --- */
+const BREAKDOWN_ROWS = [
+  { key: 'origPensionable', label: 'Pensionable pay (Inc. London)' },
+  { key: 'extras', label: 'Non-pensionable extras', hideIfZero: true },
+  { key: 'fpp', label: 'Flexible pay premium', hideIfZero: true },
+  { key: 'salSac', label: '− Salary sacrifice', hideIfZero: true, colorVar: '--c-tax' },
+  { key: 'gross', label: 'Gross taxable pay', bold: true },
+  { key: 'ded.pension', label: '− NHS pension', colorVar: '--c-pension' },
+  { key: 'profFees', label: '− Professional fees', hideIfZero: true },
+  { key: 'giftAidGross', label: '− Gift Aid (grossed up)', hideIfZero: true },
+  { key: 'ani', label: '= Adjusted net income', bold: true },
+  { key: 'ded.tax', label: '− Income tax', colorVar: '--c-tax' },
+  { key: 'ded.ni', label: '− National insurance', colorVar: '--c-ni' },
+  { key: 'ded.loan', label: '− Student loan', colorVar: '--c-loan', hideIfZero: true },
+  { key: 'net', label: '= Take-home pay', bold: true, colorVar: '--green' }
+];
+const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
+function renderBreakdown(st) {
+  g('bkd-rows').innerHTML = BREAKDOWN_ROWS.map(row => {
+    const val = getPath(st, row.key);
+    if (row.hideIfZero && !val) return '';
+    const style = [row.bold ? 'font-weight:700' : '', row.colorVar ? `color:var(${row.colorVar})` : ''].filter(Boolean).join(';');
+    return `<div class="bkd-row" style="${style}"><span>${row.label}</span><span style="text-align:right">${fmt(val)}</span><span style="text-align:right">${fmt(val/12)}</span></div>`;
+  }).join('');
+}
+function updateUI(st) {
+  lastState = st;
+  const uiMap = {
+    'out-monthly': fmt(st.net / 12), 'out-gross-sub': `${fmt(st.gross)} gross/yr`,
+    'out-net-ann': fmt(st.net), 'out-gross-ann': fmt(st.gross),
+    'out-eff': `${st.effective.toFixed(1)}%`, 'out-marg': `${st.marginal.toFixed(1)}%`
+  };
+  for (const [id, val] of Object.entries(uiMap)) if (g(id)) g(id).textContent = val;
+  if (g('out-marg-keep')) {
+    const el = g('out-marg-keep');
+    if (st.crossesTier) {
+      el.textContent = 'Pension tier cliff edge: the next £100 pushes your whole pensionable pay into a higher contribution tier, so you take home LESS. Check before agreeing extra work.';
+      el.style.color = 'var(--red)';
+    } else if (st.tierGap !== null && st.tierGap < 3000) {
+      el.innerHTML =
+        `you keep £${Math.round(100 - st.marginal)} of your next £100 of extra work<br>` +
+        `<span style="color:var(--amber)">Pension tier cliff ${fmt(st.tierGap)} away: ` +
+        `another ${fmt(st.tierGap)} of <em>pensionable</em> pay moves you to ` +
+        `${st.nextTierPct.toFixed(1)}%, re-rating your whole pensionable pay and costing ` +
+        `about ${fmt(st.tierCost)} a year.</span>`;
+      el.style.color = '';
+    } else {
+      el.textContent = `you keep £${Math.round(100 - st.marginal)} of your next £100 of extra work`;
+      el.style.color = '';
+    }
+  }
+  renderBreakdown(st);
+  renderANI(st);
+  const feeHint = g('prof-fees-hint');
+  if (feeHint) {
+    feeHint.innerHTML = st.profFees > 0
+      ? `Relief worth <strong>${fmt(st.feeRelief)}</strong> a year at your marginal rate &mdash; ` +
+        `an effective cost of ${fmt(st.profFees - st.feeRelief)}. Income tax only, not National Insurance.`
+      : "GMC, BMA, MDU/MPS, royal college &mdash; bodies on HMRC's approved List 3. " +
+        "Relief is on income tax only, not National Insurance.";
+  }
+  g('badges').innerHTML = (st.optIn === 'yes' ? `<span class="badge badge-blue">Pension tier: ${(getPensionRate(st.pensionable)*100).toFixed(1)}%</span>` : '') +
+                          (st.isLTFT ? `<span class="badge badge-purple">LTFT Pro-rata</span>` : '');
+  let tierHTML = '';
+  if (st.optIn === 'yes') {
+    const activeRate = getPensionRate(st.pensionable);
+    const idx = PENSION_TIERS.findIndex(t => st.pensionable <= t.max);
+    const t = PENSION_TIERS[idx];
+    const prevMax = idx > 0 ? PENSION_TIERS[idx-1].max : 0;
+    const label = t.max === Infinity ? `Earnings over £${prevMax.toLocaleString()}` : `Earnings between £${(prevMax+1).toLocaleString()} and £${t.max.toLocaleString()}`;
+    tierHTML = `<div class="tier-row active-tier"><span>${label}</span><span>${(t.rate*100).toFixed(1)}%</span><span>✓ Active</span></div>`;
+  } else {
+    tierHTML = `<div class="tier-row" style="color:var(--ink-muted)"><span>Opted out of pension tracking</span><span>0.0%</span><span></span></div>`;
+  }
+  g('tier-table').innerHTML = `<div style="font-weight:700; color:var(--ink-muted); font-size:0.7rem; margin-bottom:5px;">ACTIVE PENSION TIER</div>` + tierHTML;
+  drawDonut(st.net, st.ded);
+}
+function renderANI(st) {
+  const card = g('ani-card');
+  if (!card) return;
+  const LIMIT = 100000;
+  g('out-ani').textContent = fmt(st.ani);
+
+  const over  = st.aniHeadroom < 0;
+  const close = !over && st.aniHeadroom <= 5000;
+  card.classList.toggle('is-over',  over);
+  card.classList.toggle('is-close', close);
+  card.classList.toggle('is-under', !over && !close);
+
+  g('ani-bar-fill').style.width = Math.min(100, (st.ani / LIMIT) * 100) + '%';
+
+  const flag = g('ani-flag');
+  const room = g('ani-headroom');
+
+  if (over) {
+    flag.innerHTML = 'OVER THE LIMIT<br><span style="font-weight:400;">childcare support lost</span>';
+    const shortfall = Math.abs(st.aniHeadroom);
+    room.innerHTML =
+      `You are <strong>${fmt(shortfall)}</strong> over the £100,000 threshold. ` +
+      `Tax-Free Childcare (up to £2,000 per child) and the funded 15/30 hours are both lost, ` +
+      `and you are inside the personal-allowance taper, so the next £100 of pay is taxed at an ` +
+      `effective 60%.` +
+      `<ul><li>About <strong>${fmt(shortfall)}</strong> more into additional pension, ` +
+      `salary sacrifice, or Gift Aid would bring you back under.</li></ul>`;
+  } else {
+    flag.innerHTML = `${fmt(st.aniHeadroom)}<br><span style="font-weight:400;">below the limit</span>`;
+    const wli = st.aniHeadroom;
+    const pa  = st.pensionableHeadroom;
+    let extra = '';
+    if (st.optIn === 'yes' && pa > wli + 50) {
+      extra = `<li>By contrast, <strong>${fmt(pa)}</strong> of extra <em>pensionable</em> pay — ` +
+              `a rise in basic salary rather than extra sessions — because the pension ` +
+              `contribution comes off before the test.</li>`;
+    }
+    room.innerHTML =
+      `Before you cross £100,000 you could take on roughly ` +
+      `<strong>${fmt(wli)}</strong> of extra work.` +
+      `<ul><li>Additional PAs beyond 10, WLI, bank and most locum work are all ` +
+      `<em>non-pensionable</em>, so every pound counts against the threshold in full.</li>${extra}</ul>`;
+  }
+}
+
+function drawDonut(net, ded) {
+  const segs = [
+    { l: 'Take-home', v: net, c: 'var(--green)' }, { l: 'Income tax', v: ded.tax, c: 'var(--c-tax)' },
+    { l: 'NI', v: ded.ni, c: 'var(--c-ni)' }, { l: 'Pension', v: ded.pension, c: 'var(--c-pension)' },
+    { l: 'Loan', v: ded.loan, c: 'var(--c-loan)' }
+  ].filter(s => s.v > 0);
+  const total = segs.reduce((a, s) => a + s.v, 0), C = 2 * Math.PI * 46;
+  let svg = `<svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" fill="none" stroke="var(--rule)" stroke-width="18"/>`;
+  if (total <= 0) {
+    svg += `<text x="60" y="64" text-anchor="middle" font-size="12" fill="var(--ink-muted)">No data</text></svg>`;
+    g('donut').innerHTML = svg;
+    g('legend').innerHTML = '';
+    return;
+  }
+  let off = 0;
+  segs.forEach(s => {
+    const dash = (s.v / total) * C;
+    svg += `<circle cx="60" cy="60" r="46" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${dash} ${C-dash}" transform="rotate(${-90 + (off/C)*360} 60 60)"/>`;
+    off += dash;
+  });
+  svg += `<text x="60" y="55" text-anchor="middle" font-size="11" fill="var(--ink-muted)">home</text><text x="60" y="70" text-anchor="middle" font-size="14" fill="var(--ink)" font-weight="700">${Math.round(net/total*100)}%</text></svg>`;
+  g('donut').innerHTML = svg;
+  g('legend').innerHTML = segs.map(s => `<div class="leg-item"><div class="leg-dot" style="background:${s.c}"></div><span>${s.l}</span><span style="font-weight:700">£${Math.round(s.v).toLocaleString()}</span><span style="color:var(--ink-muted)">${Math.round(s.v/total*100)}%</span></div>`).join('');
+}
+/* --- STATE MANAGEMENT --- */
+function setRole(r) {
+  role = r;
+  document.querySelectorAll('.role-pill').forEach(p => p.classList.toggle('active', p.dataset.role === r));
+  g('res-fields').classList.toggle('hidden', r !== 'resident');
+  g('con-fields').classList.toggle('hidden', r === 'resident');
+  g('ncia-field').classList.toggle('hidden', r === 'sas');
+  g('grade-select').innerHTML = SCALES[role].map((s, i) => `<option value="${i}">${s.name} — £${s.base.toLocaleString()}</option>`).join('');
+  calculate();
+}
+function setTab(i) {
+  document.querySelectorAll('.tab-btn').forEach((b, j) => b.classList.toggle('active', i === j));
+  document.querySelectorAll('.tab-pane').forEach((p, j) => p.classList.toggle('active', i === j));
+}
+function copyToClipboard(text, btnId) {
+  if (!navigator.clipboard) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = g(btnId);
+    if (!btn) return;
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = original, 1500);
+  }).catch(() => {});
+}
+function copyBreakdown() {
+  if (!lastState) return;
+  const st = lastState;
+  const gradeName = SCALES[role][parseInt(g('grade-select').value) || 0].name;
+  const rowLines = BREAKDOWN_ROWS
+    .filter(row => !row.hideIfZero || getPath(st, row.key))
+    .map(row => `${row.label}: ${fmt(getPath(st, row.key))}`);
+  const lines = [
+    `NHS Doctor Salary Calculator — England 2026/27 (estimate)`,
+    `Role: ${role.charAt(0).toUpperCase() + role.slice(1)} — ${gradeName}`,
+    ``,
+    ...rowLines,
+    ``,
+    `Monthly take-home: ${fmt(st.net / 12)}`,
+    `Effective rate: ${st.effective.toFixed(1)}% · Marginal rate: ${st.marginal.toFixed(1)}%`,
+    ``,
+    `Estimates only — verify against the current Pay & Conditions Circular and your payslip.`
+  ];
+  copyToClipboard(lines.join('\n'), 'copy-bkd-btn');
+}
+const URL_FIELDS = ['res-hours','res-nights','res-weekend','res-nroc','con-pas','con-oncall','con-ncias','con-resp','con-wli','res-london','con-london','res-ddrb','con-ddrb','pension-opt','fpp-amount','loan-plan','sal-sac','gift-aid','prof-fees','res-weekend-mine','res-oncall-ft','res-oncall-mine','res-ltft-pct'];
+function updateURL() {
+  const p = new URLSearchParams();
+  URL_FIELDS.forEach(id => { const el = g(id); if (el && el.value != 0 && el.value !== 'none') p.set(id, el.value); });
+  p.set('role', role); p.set('grade', g('grade-select').value);
+  history.replaceState({}, '', location.pathname + '?' + p.toString());
+}
+function restoreFromURL() {
+  const p = new URLSearchParams(location.search);
+  setRole(p.get('role') || 'resident');
+  URL_FIELDS.forEach(id => { if (p.has(id) && g(id)) g(id).value = p.get(id); });
+  if (p.has('grade') && g('grade-select')) g('grade-select').value = p.get('grade');
+  calculate();
+}
+/* --- INIT --- */
+document.querySelectorAll('select, input').forEach(el => el.addEventListener('input', calculate));
+
+restoreFromURL();
+</script>
+
+<div class="disclaimer">
+  <strong>An estimate, not a payslip.</strong> This models the published pay scales, tax bands,
+  National Insurance and pension tiers, but it cannot know your circumstances — additional
+  programmed activities, on-call supplements, salary sacrifice, tax code adjustments, prior-year
+  reconciliations and part-time arrangements all change the answer. Check against your ESR payslip
+  and speak to payroll or an accountant before making financial decisions.
+  <a href="index.html">All tools</a>
+</div>
+
+</body>
+</html>
