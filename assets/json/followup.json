@@ -1,0 +1,112 @@
+{
+  "_comment": "EDIT SCHEDULES HERE, NOT IN followup.html. Each preset is a list of items measured from an anchor. 'n' + 'u' give the offset (u = w weeks, m months, d days). 'prefDay' forces a weekday: 0 = use the page default, 1-5 = Mon-Fri. 'from' names the anchor: 'index' (the start date, the default), 'treatment' (the optional end-of-treatment date), or the 'ref' of another item in the same preset — which makes this item move whenever that one does. Give an item a 'ref' only if something else anchors to it. Every preset below is anchored entirely to 'index', which reproduces the dates this tool produced before anchors existed; switch an item to a dependent anchor only when you have decided that is what the protocol means.",
+
+  "presets": [
+    {
+      "id": "rectal",
+      "name": "Rectal post-TNT",
+      "items": [
+        { "n": 4,  "u": "w", "label": "Post-TNT review TC",          "prefDay": 0, "from": "index" },
+        { "n": 8,  "u": "w", "label": "CT CAP + MRI pelvis",         "prefDay": 0, "from": "index" },
+        { "n": 10, "u": "w", "label": "MDT review",                  "prefDay": 0, "from": "index" },
+        { "n": 12, "u": "w", "label": "Post-MDT review F2F + ctDNA", "prefDay": 0, "from": "index" }
+      ]
+    },
+    {
+      "id": "anal1",
+      "name": "Anal post-CRT",
+      "note": "High risk · T3-4 or N1",
+      "items": [
+        { "n": 6,   "u": "w", "label": "6w: Clinical review TC",      "prefDay": 4, "from": "index" },
+        { "n": 12,  "u": "w", "label": "3m: MRI pelvis",              "prefDay": 0, "from": "index", "ref": "mri3m" },
+        { "n": 14,  "u": "w", "label": "3m: Anal MDT",                "prefDay": 4, "from": "index" },
+        { "n": 14,  "u": "w", "label": "3m: Clinical review F2F",     "prefDay": 4, "from": "index" },
+        { "n": 26,  "u": "w", "label": "6m: MRI pelvis + FDG PET CT", "prefDay": 0, "from": "index", "ref": "mri6m" },
+        { "n": 28,  "u": "w", "label": "6m: Anal MDT",                "prefDay": 4, "from": "index" },
+        { "n": 28,  "u": "w", "label": "6m: Clinical review F2F",     "prefDay": 4, "from": "index" },
+        { "n": 39,  "u": "w", "label": "9m: Clinical review F2F",     "prefDay": 4, "from": "index" },
+        { "n": 52,  "u": "w", "label": "1y: MRI pelvis + FDG PET CT", "prefDay": 0, "from": "index", "ref": "mri1y" },
+        { "n": 54,  "u": "w", "label": "1y: Clinical review F2F",     "prefDay": 4, "from": "index" },
+        { "n": 12,  "u": "m", "label": "1y: HRA at HUH HANS",         "prefDay": 0, "from": "index" },
+        { "n": 65,  "u": "w", "label": "1y3m: Clinical review F2F",   "prefDay": 4, "from": "index" },
+        { "n": 78,  "u": "w", "label": "1y6m: MRI pelvis",            "prefDay": 0, "from": "index", "ref": "mri18m" },
+        { "n": 80,  "u": "w", "label": "1y6m: Clinical review F2F",   "prefDay": 4, "from": "index" },
+        { "n": 91,  "u": "w", "label": "1y6m: Clinical review F2F",   "prefDay": 4, "from": "index" },
+        { "n": 104, "u": "w", "label": "2y: MRI pelvis + CT CAP",     "prefDay": 0, "from": "index", "ref": "mri2y" },
+        { "n": 106, "u": "w", "label": "2y: Clinical review F2F",     "prefDay": 4, "from": "index" },
+        { "n": 130, "u": "w", "label": "MRI pelvis",                  "prefDay": 0, "from": "index" },
+        { "n": 132, "u": "w", "label": "Clinical review F2F",         "prefDay": 0, "from": "index" },
+        { "n": 156, "u": "w", "label": "MRI pelvis + CT CAP",         "prefDay": 0, "from": "index" },
+        { "n": 158, "u": "w", "label": "Clinical review F2F",         "prefDay": 0, "from": "index" },
+        { "n": 208, "u": "w", "label": "Clinical review F2F",         "prefDay": 0, "from": "index" },
+        { "n": 260, "u": "w", "label": "Clinical review F2F",         "prefDay": 0, "from": "index" }
+      ]
+    },
+    {
+      "id": "anal2",
+      "name": "Anal post-CRT",
+      "note": "Low risk · T1-2 and N0",
+      "items": [
+        { "n": 6,  "u": "w", "label": "Clinical review TC",                        "prefDay": 0, "from": "index" },
+        { "n": 11, "u": "w", "label": "MRI pelvis",                                "prefDay": 0, "from": "index" },
+        { "n": 13, "u": "w", "label": "Anal MDT",                                  "prefDay": 4, "from": "index" },
+        { "n": 13, "u": "w", "label": "Clinical review F2F",                       "prefDay": 0, "from": "index" },
+        { "n": 26, "u": "w", "label": "MRI pelvis + FDG PET CT",                   "prefDay": 0, "from": "index" },
+        { "n": 28, "u": "w", "label": "Anal MDT",                                  "prefDay": 4, "from": "index" },
+        { "n": 28, "u": "w", "label": "Clinical review F2F",                       "prefDay": 0, "from": "index" },
+        { "n": 9,  "u": "m", "label": "Clinical review F2F",                       "prefDay": 0, "from": "index" },
+        { "n": 12, "u": "m", "label": "MRI pelvis + CT CAP + Clinical review F2F", "prefDay": 0, "from": "index" },
+        { "n": 12, "u": "m", "label": "HRA at HUH HANS",                           "prefDay": 0, "from": "index" },
+        { "n": 18, "u": "m", "label": "MRI pelvis + Clinical review F2F",          "prefDay": 0, "from": "index" },
+        { "n": 24, "u": "m", "label": "MRI pelvis + CT CAP + Clinical review F2F", "prefDay": 0, "from": "index" },
+        { "n": 30, "u": "m", "label": "MRI pelvis + Clinical review F2F",          "prefDay": 0, "from": "index" },
+        { "n": 36, "u": "m", "label": "MRI pelvis + CT CAP + Clinical review F2F", "prefDay": 0, "from": "index" }
+      ]
+    },
+    {
+      "id": "cxb1",
+      "name": "Papillon CXB → EBRT",
+      "note": "Tumour < 3 cm",
+      "items": [
+        { "n": 0,  "u": "w", "label": "CXB #1",                          "prefDay": 0, "from": "index" },
+        { "n": 2,  "u": "w", "label": "CXB #2",                          "prefDay": 0, "from": "index" },
+        { "n": 4,  "u": "w", "label": "CXB #3",                          "prefDay": 0, "from": "index" },
+        { "n": 7,  "u": "w", "label": "EBRT start",                      "prefDay": 0, "from": "index" },
+        { "n": 11, "u": "w", "label": "EBRT end",                        "prefDay": 5, "from": "index", "ref": "ebrtEnd" },
+        { "n": 17, "u": "w", "label": "F/up clinic",                     "prefDay": 0, "from": "index" },
+        { "n": 23, "u": "w", "label": "MRI pelvis + CT CAP + Flexi sig", "prefDay": 0, "from": "index" },
+        { "n": 25, "u": "m", "label": "CRC MDT",                         "prefDay": 2, "from": "index" },
+        { "n": 26, "u": "m", "label": "F/up clinic",                     "prefDay": 0, "from": "index" }
+      ]
+    },
+    {
+      "id": "cxb2",
+      "name": "Papillon EBRT → CXB",
+      "note": "Tumour > 3 cm",
+      "items": [
+        { "n": 0,  "u": "w", "label": "EBRT start",                      "prefDay": 0, "from": "index" },
+        { "n": 5,  "u": "w", "label": "EBRT end",                        "prefDay": 5, "from": "index", "ref": "ebrtEnd" },
+        { "n": 10, "u": "w", "label": "CXB #1",                          "prefDay": 0, "from": "index" },
+        { "n": 12, "u": "w", "label": "CXB #2",                          "prefDay": 0, "from": "index" },
+        { "n": 14, "u": "w", "label": "CXB #3",                          "prefDay": 0, "from": "index" },
+        { "n": 20, "u": "w", "label": "F/up clinic",                     "prefDay": 0, "from": "index" },
+        { "n": 26, "u": "w", "label": "MRI pelvis + CT CAP + Flexi sig", "prefDay": 0, "from": "index" },
+        { "n": 28, "u": "m", "label": "CRC MDT",                         "prefDay": 2, "from": "index" },
+        { "n": 29, "u": "m", "label": "F/up clinic",                     "prefDay": 0, "from": "index" }
+      ]
+    }
+  ],
+
+  "quickAdd": [
+    { "n": 4,  "u": "w" },
+    { "n": 6,  "u": "w" },
+    { "n": 8,  "u": "w" },
+    { "n": 9,  "u": "w" },
+    { "n": 3,  "u": "m" },
+    { "n": 6,  "u": "m" },
+    { "n": 9,  "u": "m" },
+    { "n": 12, "u": "m", "label": "1 year",   "text": "1 year" },
+    { "n": 18, "u": "m", "label": "18 months", "text": "18m" },
+    { "n": 24, "u": "m", "label": "2 years",  "text": "2 years" }
+  ]
+}
