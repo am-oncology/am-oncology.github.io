@@ -70,11 +70,10 @@
   .builder-body { padding: var(--sp-4); border-top: 1px solid var(--rule); background: var(--card);
     border-radius: 0 0 var(--radius) var(--radius); }
 
-  /* ── Interval list ───────────────────────────────────────────── */
-  .interval-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-top: var(--sp-4); }
+  /* ── Interval list (inside the disclosure) ───────────────────── */
   .interval-count { margin-left: auto; font-size: var(--fs-xs); color: var(--ink-muted);
     font-family: var(--font-mono); }
-  .interval-list { display: flex; flex-direction: column; gap: var(--sp-2); margin: var(--sp-3) 0; }
+  .interval-list { display: flex; flex-direction: column; gap: var(--sp-2); }
   .interval-item {
     display: flex; align-items: center; gap: var(--sp-3);
     background: var(--paper); border: 1px solid var(--rule);
@@ -252,17 +251,15 @@
       <button type="button" class="quick-tag" data-n="24" data-u="m" data-label="2 years">2 years</button>
     </div>
 
-    <div class="interval-head">
-      <span class="eyebrow" style="margin-bottom:0;">Current intervals</span>
-      <span class="interval-count" id="interval-count">none set</span>
-    </div>
-    <div id="interval-list" class="interval-list" aria-live="polite"></div>
-
     <details class="builder" id="builder-details">
       <summary>
-        <span class="builder-title">Add a custom interval</span>
+        <span class="builder-title">Intervals</span>
+        <span class="interval-count" id="interval-count">none set</span>
       </summary>
       <div class="builder-body">
+        <div id="interval-list" class="interval-list" aria-live="polite"></div>
+        <hr class="divider">
+        <div class="eyebrow">Add a custom interval</div>
         <div class="controls">
           <div class="form-field">
             <label class="field-label" for="interval-num">Number</label>
@@ -732,7 +729,7 @@ function renderIntervalList() {
 
   if (!n) {
     el.innerHTML = '<div class="interval-empty">No intervals yet — pick a preset, ' +
-                   'use quick add, or open “Add a custom interval”.</div>';
+                   'use quick add, or add one below.</div>';
     return;
   }
   el.innerHTML = intervals.map(function (i) {
