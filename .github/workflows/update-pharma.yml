@@ -1,4 +1,4 @@
-name: Update radar
+name: Update pharma
 
 on:
   schedule:
