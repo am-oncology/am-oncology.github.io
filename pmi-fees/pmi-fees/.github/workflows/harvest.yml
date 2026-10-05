@@ -1,0 +1,66 @@
+name: Nightly fee harvest
+
+on:
+  schedule:
+    - cron: "30 2 * * *"      # 02:30 UTC every night
+  workflow_dispatch:           # "Run workflow" button for an immediate refresh
+
+permissions:
+  contents: write              # commit the refreshed data
+  issues: write                # open an issue when fees change
+
+concurrency:
+  group: harvest
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Offline tests
+        run: python -m tests.test_harvest
+
+      - name: Harvest
+        run: python -m harvest.run_all
+
+      - name: Keep debug files from this run
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-${{ github.run_id }}
+          path: debug/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Commit refreshed data
+        if: always()
+        run: |
+          git config user.name  "fee-harvest-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/data manual
+          if git diff --cached --quiet; then
+            echo "No data changes."
+          else
+            git commit -m "Fee harvest $(date -u +%F)"
+            git pull --rebase
+            git push
+          fi
+
+      - name: Open an issue if fees changed
+        if: hashFiles('changes_summary.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Fee changes detected $(date -u +%F)" --body-file changes_summary.md
