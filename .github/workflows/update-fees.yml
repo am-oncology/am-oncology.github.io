@@ -1,4 +1,4 @@
-name: Nightly fee harvest
+name: Update fees
 
 on:
   schedule:
