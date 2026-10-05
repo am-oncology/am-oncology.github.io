@@ -1,4 +1,4 @@
-name: Update consent library
+name: Update consent
 
 on:
   schedule:
