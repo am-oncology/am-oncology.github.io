@@ -1,0 +1,55 @@
+{
+ "as_of": "2026-10-05T17:34:01Z",
+ "runtime_seconds": 286.2,
+ "demo": false,
+ "price_coverage": "62/70",
+ "missing_prices": [
+  "AKRO",
+  "APLS",
+  "EXAS",
+  "FOLD",
+  "NUVL",
+  "SAGE",
+  "SWTX",
+  "VERV"
+ ],
+ "edgar_coverage": 62,
+ "trials_coverage": 70,
+ "trials_matched_companies": 67,
+ "trials_rejected_studies": 0,
+ "news_articles": 57,
+ "ineligible": [
+  {
+   "ticker": "FOLD",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "AKRO",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "APLS",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "NUVL",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "SWTX",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "VERV",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "SAGE",
+   "reason": "no price data returned"
+  },
+  {
+   "ticker": "EXAS",
+   "reason": "no price data returned"
+  }
+ ]
+}
