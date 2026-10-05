@@ -119,17 +119,6 @@
             "Admin"
             ]  
         },
-        {
-          "id": "pharma",
-          "name": "Biotech radar",
-          "href": "https://am-oncology.github.io/pharma/",
-          "external": true,
-          "desc": "Pharma and biotech triage combining price factors, trial readouts, SEC filings and news.",
-          "accent": "#BE185D",
-          "tags": [
-            "Admin", "External"
-            ]
-        }
       ]
     }
   ]
