@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The browser enforces this: the page can only talk to its own site, so patient details cannot be sent anywhere. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Consent pack</title>
+<link rel="stylesheet" href="styles.css">
+<script src="vendor/pdf-lib.min.js" defer></script>
+<script src="vendor/pdf.min.js" defer></script>
+<script src="vendor/jszip.min.js" defer></script>
+<script src="engine.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div>
+      <h1>Consent pack</h1>
+      <p class="lede">Enter the patient's details once. They are written into every RCR and CRUK consent form you choose, and the Macmillan leaflets are added, ready to print.</p>
+    </div>
+    <p class="privacy">Patient details stay in this browser tab. Nothing is uploaded or saved, and they are cleared when you close the tab or after 20 minutes without use.</p>
+  </div>
+</header>
+
+<main class="wrap layout">
+  <div class="col-left">
+    <section class="panel" aria-labelledby="patient-h">
+      <h2 id="patient-h">Patient</h2>
+      <label for="paste" class="field-label">Paste from the patient record</label>
+      <textarea id="paste" rows="4" spellcheck="false" autocomplete="off" placeholder="For example&#10;SMITH, John&#10;MRN: 8307265   NHS: 943 476 5919&#10;DOB: 16/09/1975"></textarea>
+
+      <figure class="sticker is-empty" id="sticker" aria-live="polite" aria-label="Patient label preview">
+        <p class="sticker-name" id="sticker-name">No patient yet</p>
+        <p class="sticker-line" id="sticker-line1">Paste details above or type them below</p>
+        <p class="sticker-line" id="sticker-line2"></p>
+      </figure>
+
+      <ul class="warnings" id="warnings"></ul>
+
+      <div class="grid2">
+        <div><label class="field-label" for="p-surname">Surname</label><input id="p-surname" autocomplete="off"></div>
+        <div><label class="field-label" for="p-forenames">First names</label><input id="p-forenames" autocomplete="off"></div>
+        <div><label class="field-label" for="p-dob">Date of birth</label><input id="p-dob" placeholder="DD/MM/YYYY" autocomplete="off"></div>
+        <div><label class="field-label" for="p-nhs">NHS number</label><input id="p-nhs" inputmode="numeric" autocomplete="off"></div>
+        <div><label class="field-label" for="p-mrn">Hospital number</label><input id="p-mrn" autocomplete="off"></div>
+        <div class="align-end"><label class="check"><input type="checkbox" id="pref-caps"> Surname in capitals</label></div>
+      </div>
+      <div class="row-end"><button type="button" class="btn-quiet" id="clear-patient">Clear patient</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="clin-h">
+      <h2 id="clin-h">Clinician</h2>
+      <div class="preset-row">
+        <label class="field-label" for="preset-select">Saved details</label>
+        <div class="preset-controls">
+          <select id="preset-select"></select>
+          <button type="button" class="btn-small" id="preset-save">Save as…</button>
+          <button type="button" class="btn-small btn-quiet" id="preset-delete">Delete</button>
+        </div>
+      </div>
+      <label class="field-label" for="c-name">Responsible consultant</label>
+      <input id="c-name" placeholder="Dr A Example">
+      <label class="field-label" for="c-job">Job title</label>
+      <input id="c-job" placeholder="Consultant Clinical Oncologist">
+      <label class="field-label" for="c-hospital">Hospital or Trust</label>
+      <input id="c-hospital" placeholder="Barts Health NHS Trust">
+      <label class="check"><input type="checkbox" id="c-same" checked> I'm taking consent myself</label>
+      <div id="taker-fields" hidden>
+        <label class="field-label" for="t-name">Consent taken by</label>
+        <input id="t-name">
+        <label class="field-label" for="t-job">Their job title</label>
+        <input id="t-job">
+      </div>
+      <label class="check"><input type="checkbox" id="pref-date"> Add today's date beside the clinician's signature</label>
+      <p class="hint">Clinician details are remembered on this computer. Patient details never are.</p>
+    </section>
+  </div>
+
+  <div class="col-right">
+    <section class="panel" aria-labelledby="lib-h">
+      <div class="panel-head">
+        <h2 id="lib-h">Forms and leaflets</h2>
+        <p class="meta" id="library-status">Loading library…</p>
+      </div>
+      <div class="bundles" id="bundles" aria-label="Saved bundles"></div>
+      <input type="search" id="search" class="search" placeholder="Search by site, regimen or drug: rectal, capecitabine, temozolomide…" autocomplete="off">
+      <div class="filters" role="group" aria-label="Show">
+        <button type="button" class="filter is-on" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="filter" data-filter="rcr" aria-pressed="false">RCR radiotherapy</button>
+        <button type="button" class="filter" data-filter="cruk" aria-pressed="false">CRUK SACT</button>
+        <button type="button" class="filter" data-filter="macmillan" aria-pressed="false">Macmillan leaflets</button>
+        <button type="button" class="filter" data-filter="custom" aria-pressed="false">Local</button>
+      </div>
+      <div class="results" id="results" aria-live="polite"></div>
+    </section>
+
+    <section class="panel pack" aria-labelledby="pack-h">
+      <div class="panel-head">
+        <h2 id="pack-h">This pack</h2>
+        <p class="meta" id="pack-count"></p>
+      </div>
+      <ol class="pack-list" id="pack-list"></ol>
+      <div class="suggestions" id="suggestions"></div>
+      <div class="pack-tools">
+        <button type="button" class="btn-small" id="bundle-save">Save as bundle</button>
+        <label class="btn-small btn-file">Add a PDF from this computer<input type="file" id="local-file" accept="application/pdf,.pdf" multiple></label>
+        <button type="button" class="btn-small btn-quiet" id="pack-clear">Empty pack</button>
+      </div>
+      <button type="button" class="btn-primary btn-wide" id="build">Fill forms</button>
+      <p class="build-status" id="build-status" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <section class="review" id="review" hidden aria-labelledby="review-h">
+    <div class="review-head">
+      <div>
+        <h2 id="review-h">Check and download</h2>
+        <p class="meta">Check where each detail has landed. Drag a box to move it, or drag its right edge to resize. Choices you change here are remembered for every form from the same source with the same printed label.</p>
+      </div>
+      <div class="downloads">
+        <button type="button" class="btn-primary" id="open-print" disabled>Open print pack</button>
+        <button type="button" class="btn-secondary" id="dl-zip">Download all (ZIP)</button>
+        <button type="button" class="btn-quiet" id="next-patient">Next patient</button>
+      </div>
+    </div>
+    <div id="docs"></div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Consent forms are published by the Royal College of Radiologists and by Cancer Research UK with Guy's and St Thomas' NHS Foundation Trust. Leaflets are © Macmillan Cancer Support. The library is refreshed weekly; check the source sites if a form looks out of date.</p>
+  <p class="foot-tools">
+    <button type="button" class="link" id="export-settings">Export my settings</button>
+    <label class="link">Import settings<input type="file" id="import-settings" accept="application/json,.json"></label>
+    <button type="button" class="link" id="reset-learned">Forget field adjustments</button>
+    <label class="check inline"><input type="checkbox" id="pref-welsh"> Show Welsh-language forms</label>
+  </p>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
