@@ -1,0 +1,38 @@
+{
+  "run": "2026-10-08T16:52:07.817Z",
+  "sources": {
+    "rcr": {
+      "ok": true,
+      "listed": 27,
+      "added": 27,
+      "updated": 0,
+      "unchanged": 0,
+      "removed": 0,
+      "failed": []
+    },
+    "cruk": {
+      "ok": true,
+      "listed": 402,
+      "added": 402,
+      "updated": 0,
+      "unchanged": 0,
+      "removed": 0,
+      "failed": []
+    },
+    "macmillan": {
+      "ok": true,
+      "listed": 494,
+      "added": 494,
+      "updated": 0,
+      "unchanged": 0,
+      "removed": 0,
+      "failed": []
+    }
+  },
+  "ok": true,
+  "counts": {
+    "rcr": 27,
+    "cruk": 402,
+    "macmillan": 494
+  }
+}

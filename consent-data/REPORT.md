@@ -1,0 +1,809 @@
+# Consent form update report
+
+Run: 2026-10-08T16:52:07.817Z  
+Overall: OK
+
+| Source | Listed | Added | Updated | Unchanged | Removed | Failed | Problem |
+|---|---|---|---|---|---|---|---|
+| rcr | 27 | 27 | 0 | 0 | 0 | 0 |  |
+| cruk | 402 | 402 | 0 | 0 | 0 | 0 |  |
+| macmillan | 494 | 494 | 0 | 0 | 0 | 0 |  |
+
+## Forms with details that could not be placed (402 of 429)
+
+These still work; the tool tells the clinician which boxes to complete by hand.
+
+- **Generic SACT form** (cruk, Generic forms) — missing: patient name, hospital
+- **Generic checkpoint inhibitor immunotherapy form** (cruk, Generic forms) — missing: patient name, hospital
+- **Carboplatin-Etoposide** (cruk, Brain/CNS cancers) — missing: patient name, hospital
+- **Lomustine** (cruk, Brain/CNS cancers) — missing: patient name, hospital
+- **Procarbazine-Lomustine-Vincristine (PCV)** (cruk, Brain/CNS cancers) — missing: patient name, hospital
+- **Temozolomide** (cruk, Brain/CNS cancers) — missing: patient name, hospital
+- **Temozolomide+Radiotherapy** (cruk, Brain/CNS cancers) — missing: patient name, hospital
+- **Abemaciclib** (cruk, Breast cancers) — missing: patient name, hospital
+- **AC (Doxorubicin - Cyclophosphamide)** (cruk, Breast cancers) — missing: patient name, hospital
+- **AC-Docetaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **Alpelisib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Atezolizumab - Paclitaxel albumin-bound** (cruk, Breast cancers) — missing: patient name, hospital
+- **Capivasertib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Capecitabine** (cruk, Breast cancers) — missing: patient name, hospital
+- **Capecitabine - Pertuzumab-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **Carboplatin** (cruk, Breast cancers) — missing: patient name, hospital
+- **Carboplatin, Paclitaxel and EC with Pembrolizumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **CMF** (cruk, Breast cancers) — missing: patient name, hospital
+- **Cyclophosphamide-Methotrexate** (cruk, Breast cancers) — missing: patient name, hospital
+- **Docetaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **Docetaxel-Capecitabine** (cruk, Breast cancers) — missing: patient name, hospital
+- **Doxorubicin** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC (Epirubicin-Cyclophosphamide)** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-Carboplatin-Paclitaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-Docetaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-Docetaxel-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-Paclitaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-Paclitaxel-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-PPH** (cruk, Breast cancers) — missing: patient name, hospital
+- **EC-TPH** (cruk, Breast cancers) — missing: patient name, hospital
+- **Elacestrant** (cruk, Breast cancers) — missing: patient name, hospital
+- **Epirubicin** (cruk, Breast cancers) — missing: patient name, hospital
+- **Epirubicin-CMF** (cruk, Breast cancers) — missing: patient name, hospital
+- **Eribulin** (cruk, Breast cancers) — missing: patient name, hospital
+- **Everolimus** (cruk, Breast cancers) — missing: patient name, hospital
+- **Gemcitabine - Capecitabine** (cruk, Breast cancers) — missing: patient name, hospital
+- **Gemcitabine-Carboplatin** (cruk, Breast cancers) — missing: patient name, hospital
+- **Gemcitabine-Paclitaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **Kadcyla® (trastuzumab emtansine)** (cruk, Breast cancers) — missing: patient name, hospital
+- **Liposomal doxorubicin (Myocet®)** (cruk, Breast cancers) — missing: patient name, hospital
+- **Liposomal doxorubicin (Myocet®)-Cyclophosphamide** (cruk, Breast cancers) — missing: patient name, hospital
+- **MMM** (cruk, Breast cancers) — missing: patient name, hospital
+- **Neratinib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Olaparib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Paclitaxel albumin-bound** (cruk, Breast cancers) — missing: patient name, hospital
+- **Paclitaxel albumin-bound - Carboplatin** (cruk, Breast cancers) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **Paclitaxel - Pertuzumab-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **Paclitaxel-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **Palbociclib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Pembrolizumab - Paclitaxel** (cruk, Breast cancers) — missing: patient name, hospital
+- **Pembrolizumab – Paclitaxel Albumin Bound** (cruk, Breast cancers) — missing: patient name, hospital
+- **Pertuzumab-Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **Ribociclib** (cruk, Breast cancers) — missing: patient name, hospital
+- **Sacituzumab Govitecan** (cruk, Breast cancers) — missing: patient name, hospital
+- **Talazoparib** (cruk, Breast cancers) — missing: patient name, hospital
+- **TC** (cruk, Breast cancers) — missing: patient name, hospital
+- **TCarboH** (cruk, Breast cancers) — missing: patient name, hospital
+- **TCarboPH** (cruk, Breast cancers) — missing: patient name, hospital
+- **TPH** (cruk, Breast cancers) — missing: patient name, hospital
+- **Trastuzumab** (cruk, Breast cancers) — missing: patient name, hospital
+- **Trastuzumab Deruxtecan** (cruk, Breast cancers) — missing: patient name, hospital
+- **Tucatinib, trastuzumab and capecitabine** (cruk, Breast cancers) — missing: patient name, hospital
+- **Vinorelbine (IV)** (cruk, Breast cancers) — missing: patient name, hospital
+- **Vinorelbine (Oral)** (cruk, Breast cancers) — missing: patient name, hospital
+- **Vinorelbine-Capecitabine** (cruk, Breast cancers) — missing: patient name, hospital
+- **Bevacizumab with Capecitabine** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with chemotherapy** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with Fluorouracil Modified De Gramont** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with Irinotecan - Fluorouracil (FOLFIRI)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with Oxaliplatin - Capecitabine (CAPOX)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with Oxaliplatin - Fluorouracil (FOLFOX)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Bevacizumab with Oxaliplatin - Irinotecan - Fluorouracil (FOLFOXIRI)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Cetuximab with FOLFOX** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Cetuximab with FOLFIRI** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Capecitabine** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Capecitabine and Mitomycin** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Capecitabine and Mitomycin with Radiotherapy** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Capecitabine with Radiotherapy** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Carboplatin and Paclitaxel** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Cisplatin and Capecitabine** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Cisplatin and Fluorouracil** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Encorafenib and Cetuximab** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Fluorouracil Modified de Gramont** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Fluorouracil and Folinic Acid Weekly** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Fluorouracil PVI +/- Radiotherapy** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Fruquintinib** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Irinotecan** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Irinotecan Capecitabine (CAPIRI)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Irinotecan Fluorouracil (FOLFIRI)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Mitomycin and Fluorouracil Radiotherapy** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Nivolumab and Ipilimumab** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Oxaliplatin and Capecitabine (CAPOX)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Oxaliplatin-Fluorouracil (FOLFOX)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Oxaliplatin-Irinotecan-Fluorouracil (FOLFOXIRI)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Oxaliplatin-Raltitraxed (TOMOX)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Panitumumab with FOLFOX** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Panitunumab with FOLFIRI** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Raltitrexed** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Regorafenib** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Trifluridine and Tipiracil (lonsurf®)** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Trifluridine and Tipiracil (lonsurf®) and Bevacizumab** (cruk, Colorectal cancer) — missing: patient name, hospital
+- **Imatinib** (cruk, Gastrointestinal stromal tumors (GIST)) — missing: patient name, hospital
+- **Regorafenib** (cruk, Gastrointestinal stromal tumors (GIST)) — missing: patient name, hospital
+- **Ripretinib** (cruk, Gastrointestinal stromal tumors (GIST)) — missing: patient name, hospital
+- **Sunitinib** (cruk, Gastrointestinal stromal tumors (GIST)) — missing: patient name, hospital
+- **BEP** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Bevacizumab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin-Etoposide** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin-Paclitaxel** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin-Paclitaxel - Dostarlimab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin-Paclitaxel-Pembrolizumab (+/- Bevacizumab)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cemiplimab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin + Radiotherapy** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin-Etoposide** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin-Fluorouracil + Radiotherapy** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin-Paclitaxel** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin-Topotecan** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cisplatin-Paclitaxel - Pembrolizumab (+/- Bevacizumab)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Cyclophosphamide (oral)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Dostarlimab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Doxorubicin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Doxorubicin-Cisplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Durvalumab with Carboplatin and Paclitaxel (+/- Olaparib)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Etoposide (oral)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Gemcitabine** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Gemcitabine-Carboplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Gemcitabine-Cisplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Lenvatinib - Pembrolizumab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Mirvetuximab soravtansine** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Niraparib** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Olaparib** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Olaparib - Bevacizumab** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Pegylated liposomal doxorubicin (Caelyx)** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Pegylated liposomal doxorubicin (Caelyx) - Carboplatin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Rucaparib** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Tisotumab vedotin** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Trametinib** (cruk, Gynaecological cancers) — missing: patient name, hospital
+- **Carboplatin + Radiotherapy** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Carboplatin-Fluorouracil** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Carboplatin-Paclitaxel** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cetuximab** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cetuximab - Carboplatin - Fluorouracil** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cetuximab - Cisplatin - Fluorouracil** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cetuximab + Radiotherapy** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cisplatin + Radiotherapy** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Cisplatin-Fluorouracil** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Docetaxel** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **ECarboF (epirubicin-carboplatin-fluorouracil)** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **ECF** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Gemcitabine-Carboplatin** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Gemcitabine-Cisplatin** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Methotrexate** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Nivolumab** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **TCarboF** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **TPF** (cruk, Head and neck cancers) — missing: patient name, hospital
+- **Atezolizumab and Bevacizumab** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Cabozantinib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Capecitabine +/- Radiotherapy** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Doxorubicin** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Durvalumab with Gemcitabine and Cisplatin** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Durvalumab with Tremelimumab** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Fluorouracil (Modified de Gramont)** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **FOLFOX (Oxaliplatin and Fluorouracil)** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **FOLFIRINOX** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Futibatinib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Gemcitabine** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Gemcitabine-Capecitabine** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Gemcitabine and Carboplatin** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Gemcitabine and Cisplatin** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Gemcitabine-Paclitaxel albumin-bound (Abraxane®)** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Ivosidenib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Lenvatinib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Pemigatinib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Regorafenib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Sorafenib** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Zanidatamab** (cruk, Hepato Pancreato Biliary (HPB) cancers) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Kaposi sarcoma) — missing: patient name, hospital
+- **Pegylated Liposomal Doxorubicin (Caelyx)** (cruk, Kaposi sarcoma) — missing: patient name, hospital
+- **Afatinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Alectinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Amivantamab with Carboplatin and Pemetrexed** (cruk, Lung cancer) — missing: patient name, hospital
+- **Amivantamab with Lazertinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Atezolizumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Atezolizumab, Bevacizumab, Carboplatin and Paclitaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Atezolizumab, Carboplatin and Etoposide** (cruk, Lung cancer) — missing: patient name, hospital
+- **Brigatinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **CAP (cyclophosphamide-doxorubicin-cisplatin)** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin-Etoposide** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin and Paclitaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin, Paclitaxel and Pembrolizumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin, Paclitaxel and Nivolumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin-Pemetrexed** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin, Pemetrexed and Nivolumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin, Pemetrexed and Pembrolizumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Carboplatin-Vinorelbine** (cruk, Lung cancer) — missing: patient name, hospital
+- **CAV (cyclophosphamide-doxorubicin-vincristine)** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cemiplimab with Carboplatin and Paclitaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cemiplimab with Carboplatin and Pemetrexed** (cruk, Lung cancer) — missing: patient name, hospital
+- **Ceritinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cisplatin-Etoposide** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cisplatin-Pemetrexed** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cisplatin-Pemetrexed-Pembrolizumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Cisplatin-Vinorelbine** (cruk, Lung cancer) — missing: patient name, hospital
+- **Crizotinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Dacomitinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Dabrafenib and Trametinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Docetaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Durvalumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Durvalumab with Carboplatin and Etoposide** (cruk, Lung cancer) — missing: patient name, hospital
+- **Durvalumab with Cisplatin and Etoposide** (cruk, Lung cancer) — missing: patient name, hospital
+- **Encorafenib with Binimetinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Erlotinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Gefitinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Gemcitabine** (cruk, Lung cancer) — missing: patient name, hospital
+- **Gemcitabine-Carboplatin** (cruk, Lung cancer) — missing: patient name, hospital
+- **Gemcitabine-Cisplatin** (cruk, Lung cancer) — missing: patient name, hospital
+- **Ipilimumab and Nivolumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Larotrectinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Lorlatinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Nintedanib-Docetaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Nivolumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Osimertinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Osimertinib with Pemetrexed and Carboplatin** (cruk, Lung cancer) — missing: patient name, hospital
+- **Osimertinib with Pemetrexed and Cisplatin** (cruk, Lung cancer) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Lung cancer) — missing: patient name, hospital
+- **Ramucirumab-Docetaxel** (cruk, Lung cancer) — missing: patient name, hospital
+- **Selpercatinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Sotorasib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Tepotinib** (cruk, Lung cancer) — missing: patient name, hospital
+- **Topotecan (oral)** (cruk, Lung cancer) — missing: patient name, hospital
+- **Vinorelbine (IV)** (cruk, Lung cancer) — missing: patient name, hospital
+- **Vinorelbine (oral)** (cruk, Lung cancer) — missing: patient name, hospital
+- **Dabrafenib** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Dabrafenib-Trametinib** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Dacarbazine** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Encorafenib-Binimetinib** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Ipilimumab** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Ipilimumab-Nivolumab** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Nivolumab** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Nivolumab with Relatlimab** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Talimogene laherparepvec (Imlygic®)** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Tebentafusp** (cruk, Melanoma skin cancer) — missing: patient name, hospital
+- **Capecitabine and Streptozocin** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Capecitabine and Temozolomide** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Carboplatin and Etoposide** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Cisplatin and Etoposide** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Cyclophosphamide, Vincristine and Dacarbazine (CVD)** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Etoposide, Doxorubicin, Cisplatin (EDP) +/- Mitotane** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Everolimus** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Fluorouracil, Carboplatin and Streptozocin (FCarboSt)** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Fluorouracil, Cisplatin and Streptozocin (FCisSt)** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Fluorouracil and Irinotecan (FOLFIRI)** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Gemcitabine and Capecitabine** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Mitotane** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Oxaliplatin, Irinotecan and Fluorouracil (FOLFOXIRI)** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Sunitinib** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Temozolomide** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **177-Lutetium Dotatate** (cruk, Neuroendocrine and adrenal cancers) — missing: patient name, hospital
+- **Capecitabine with Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Carboplatin and Capecitabine +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Carboplatin and Fluorouracil +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **CAPOX (Capecitabine and Oxaliplatin)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Cisplatin and Capecitabine +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Cisplatin and Fluorouracil +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Cisplatin-Capecitabine-Trastuzumab** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Cisplatin-Fluorouracil-Trastuzumab** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Docetaxel** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Durvalumab with FLOT** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Fluorouracil PVI + Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **FOLFOX (Fluorouracil and Oxaliplatin) +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **FOLFIRI (Fluorouracil and Irinotecan)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **FLOT** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **HOF (Trastuzumab, Oxaliplatin and Fluorouracil)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **HOX (Capecitabine, Oxaliplatin and Trastuzumab)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Irinotecan** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Nivolumab** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Nivolumab with CAPOX (Capecitabine and Oxaliplatin)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Nivolumab with FOLFOX (Fluorouracil and Oxaliplatin)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Paclitaxel and Carboplatin +/- Radiotherapy** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Pembrolizumab with CAPOX (Capecitabine and Oxaliplatin)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Pembrolizumab with FOLFOX (Fluorouracil and Oxaliplatin)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Trifluridine and Tipiracil (Lonsurf)** (cruk, Oesophago-gastric cancers) — missing: patient name, hospital
+- **Carboplatin - Etoposide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Cyclophosphamide - Etoposide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Cyclophosphamide - Oral prednisolone** (cruk, Sarcoma) — missing: patient name, hospital
+- **Cyclophosphamide - Topotecan** (cruk, Sarcoma) — missing: patient name, hospital
+- **Dacarbazine** (cruk, Sarcoma) — missing: patient name, hospital
+- **Doxorubicin - Cisplatin** (cruk, Sarcoma) — missing: patient name, hospital
+- **Doxorubicin - Dacarbazine** (cruk, Sarcoma) — missing: patient name, hospital
+- **Doxorubicin - Ifosfamide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Doxorubicin** (cruk, Sarcoma) — missing: patient name, hospital
+- **Etoposide (Oral)** (cruk, Sarcoma) — missing: patient name, hospital
+- **Gemcitabine - Dacarbazine** (cruk, Sarcoma) — missing: patient name, hospital
+- **Gemcitabine - Docetaxel** (cruk, Sarcoma) — missing: patient name, hospital
+- **Gemcitabine** (cruk, Sarcoma) — missing: patient name, hospital
+- **IE and Methotrexate** (cruk, Sarcoma) — missing: patient name, hospital
+- **IE** (cruk, Sarcoma) — missing: patient name, hospital
+- **Ifosfamide** (cruk, Sarcoma) — missing: patient name, hospital
+- **IVA** (cruk, Sarcoma) — missing: patient name, hospital
+- **IVADo - IVA** (cruk, Sarcoma) — missing: patient name, hospital
+- **MAP** (cruk, Sarcoma) — missing: patient name, hospital
+- **Mifamurtide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Sarcoma) — missing: patient name, hospital
+- **Pegylated Liposomal Doxorubicin and Ifosfamide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Pegylated Liposomal Doxorubicin** (cruk, Sarcoma) — missing: patient name, hospital
+- **Trabectedine** (cruk, Sarcoma) — missing: patient name, hospital
+- **VA** (cruk, Sarcoma) — missing: patient name, hospital
+- **VAC** (cruk, Sarcoma) — missing: patient name, hospital
+- **VAI** (cruk, Sarcoma) — missing: patient name, hospital
+- **VDC and IE** (cruk, Sarcoma) — missing: patient name, hospital
+- **VIDE** (cruk, Sarcoma) — missing: patient name, hospital
+- **Vincristine and Cyclophosphamide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Vinorelbine and Cyclophosphamide** (cruk, Sarcoma) — missing: patient name, hospital
+- **Vinorelbine (Oral)** (cruk, Sarcoma) — missing: patient name, hospital
+- **VIT** (cruk, Sarcoma) — missing: patient name, hospital
+- **Alemtuzumab** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Avelumab** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Bexarotene** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Carboplatin-Etoposide** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Capecitabine-Cisplatin** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Cemiplimab** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Chlorambucil +/- Prednisolone** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **CHOP 21** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **CHOP 21 + Rituximab (CHOP-R)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Cisplatin-Fluorouracil** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **CVP (Cyclophosphamide-Vincristine-Prednisolone)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Epirubicin** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Etoposide (Oral)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Gemcitabine** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Interferon alfa-2a (Roferon-A®)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Liposomal Doxorubicin (Caelyx®)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Methotrexate (Oral)** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Pentostatin** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Rituximab** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Vismodegib** (cruk, Skin cancer (non-melanoma)) — missing: patient name, hospital
+- **Cabozantinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Dabrafenib and Trametinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Entrectinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Larotrectinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Lenvatinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Selpercatinib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Sorafenib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Vandetanib** (cruk, Thyroid cancer) — missing: patient name, hospital
+- **Atezolizumab** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Avelumab** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Accelerated M-VAC (methotrexate-vinblastine-doxorubicin-cisplatin)** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Carboplatin-Paclitaxel** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Durvalumab with Gemcitabine and Cisplatin** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Enfortumab vedotin with Pembrolizumab** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Erdafitinib** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Gemcitabine-Carboplatin** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Gemcitabine-Cisplatin** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Gemcitabine-Radiotherapy** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Mitomycin-Fluorouracil +/- Radiotherapy** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Nivolumab** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Paclitaxel** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Urology-Bladder cancer) — missing: patient name, hospital
+- **BEP (Bleomycin-Etoposide-Cisplatin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **Carboplatin** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **Carboplatin (Etoposide-Bleomycin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **EP (Etoposide-Cisplatin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **TIP (Paclitaxel-Ifosfamide-Cisplatin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **VIP (Etoposide-Ifosfamide-Cisplatin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **VeIP (Vinblastine-Ifosfamide-Cisplatin)** (cruk, Urology-Germ cell cancer) — missing: patient name, hospital
+- **Abiraterone with Prednisolone** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Apalutamide** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Cabazitaxel with Prednisolone** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Darolutamide** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Darolutamide and Docetaxel with ADT** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Docetaxel with Prednisolone** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Enzalutamide** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Olaparib** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Olaparib with Abiraterone and Prednisolone** (cruk, Urology-Prostate cancer) — missing: patient name, hospital
+- **Avelumab - Axitinib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Axitinib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Belzutifan** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Cabozantinib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Cabozantinib - Nivolumab** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Everolimus** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Gemcitabine-Doxorubicin** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Lenvatinib-Everolimus** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Lenvatinib - Pembrolizumab** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Nivolumab** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Nivolumab - Ipilimumab** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Pazopanib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Pembrolizumab** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Sunitinib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Tivozanib** (cruk, Urology-Renal cell cancer) — missing: patient name, hospital
+- **Carboplatin-Etoposide** (cruk, Urology-Small cell cancer) — missing: patient name, hospital
+- **Cisplatin-Etoposide** (cruk, Urology-Small cell cancer) — missing: patient name, hospital
+- **Denosumab** (cruk, Supportive medicines) — missing: patient name, hospital
+- **Zoledronic acid** (cruk, Supportive medicines) — missing: patient name, hospital
+- **in this document** (cruk, Will the consent forms be made available electronically?) — missing: patient name, date of birth, NHS number / identifier, hospital, clinician name
+
+## Forms with no tick boxes found (389)
+
+- Generic SACT form (cruk)
+- Generic checkpoint inhibitor immunotherapy form (cruk)
+- Carboplatin-Etoposide (cruk)
+- Lomustine (cruk)
+- Procarbazine-Lomustine-Vincristine (PCV) (cruk)
+- Temozolomide (cruk)
+- Temozolomide+Radiotherapy (cruk)
+- Abemaciclib (cruk)
+- AC (Doxorubicin - Cyclophosphamide) (cruk)
+- AC-Docetaxel (cruk)
+- Alpelisib (cruk)
+- Atezolizumab - Paclitaxel albumin-bound (cruk)
+- Capivasertib (cruk)
+- Capecitabine (cruk)
+- Capecitabine - Pertuzumab-Trastuzumab (cruk)
+- Carboplatin (cruk)
+- Carboplatin, Paclitaxel and EC with Pembrolizumab (cruk)
+- CMF (cruk)
+- Cyclophosphamide-Methotrexate (cruk)
+- Docetaxel (cruk)
+- Docetaxel-Capecitabine (cruk)
+- Doxorubicin (cruk)
+- EC (Epirubicin-Cyclophosphamide) (cruk)
+- EC-Carboplatin-Paclitaxel (cruk)
+- EC-Docetaxel (cruk)
+- EC-Docetaxel-Trastuzumab (cruk)
+- EC-Paclitaxel (cruk)
+- EC-Paclitaxel-Trastuzumab (cruk)
+- EC-PPH (cruk)
+- EC-TPH (cruk)
+- Elacestrant (cruk)
+- Epirubicin (cruk)
+- Epirubicin-CMF (cruk)
+- Eribulin (cruk)
+- Everolimus (cruk)
+- Gemcitabine - Capecitabine (cruk)
+- Gemcitabine-Carboplatin (cruk)
+- Gemcitabine-Paclitaxel (cruk)
+- Kadcyla® (trastuzumab emtansine) (cruk)
+- Liposomal doxorubicin (Myocet®) (cruk)
+- Liposomal doxorubicin (Myocet®)-Cyclophosphamide (cruk)
+- MMM (cruk)
+- Neratinib (cruk)
+- Olaparib (cruk)
+- Paclitaxel albumin-bound (cruk)
+- Paclitaxel albumin-bound - Carboplatin (cruk)
+- Paclitaxel (cruk)
+- Paclitaxel - Pertuzumab-Trastuzumab (cruk)
+- Paclitaxel-Trastuzumab (cruk)
+- Palbociclib (cruk)
+- Pembrolizumab - Paclitaxel (cruk)
+- Pembrolizumab – Paclitaxel Albumin Bound (cruk)
+- Pertuzumab-Trastuzumab (cruk)
+- Ribociclib (cruk)
+- Sacituzumab Govitecan (cruk)
+- Talazoparib (cruk)
+- TC (cruk)
+- TCarboH (cruk)
+- TCarboPH (cruk)
+- TPH (cruk)
+- Trastuzumab (cruk)
+- Trastuzumab Deruxtecan (cruk)
+- Tucatinib, trastuzumab and capecitabine (cruk)
+- Vinorelbine (IV) (cruk)
+- Vinorelbine (Oral) (cruk)
+- Vinorelbine-Capecitabine (cruk)
+- Bevacizumab with Capecitabine (cruk)
+- Bevacizumab with chemotherapy (cruk)
+- Bevacizumab with Fluorouracil Modified De Gramont (cruk)
+- Bevacizumab with Irinotecan - Fluorouracil (FOLFIRI) (cruk)
+- Bevacizumab with Oxaliplatin - Capecitabine (CAPOX) (cruk)
+- Bevacizumab with Oxaliplatin - Fluorouracil (FOLFOX) (cruk)
+- Bevacizumab with Oxaliplatin - Irinotecan - Fluorouracil (FOLFOXIRI) (cruk)
+- Cetuximab with FOLFOX (cruk)
+- Cetuximab with FOLFIRI (cruk)
+- Capecitabine (cruk)
+- Capecitabine and Mitomycin (cruk)
+- Capecitabine and Mitomycin with Radiotherapy (cruk)
+- Capecitabine with Radiotherapy (cruk)
+- Carboplatin and Paclitaxel (cruk)
+- Cisplatin and Capecitabine (cruk)
+- Cisplatin and Fluorouracil (cruk)
+- Encorafenib and Cetuximab (cruk)
+- Fluorouracil Modified de Gramont (cruk)
+- Fluorouracil and Folinic Acid Weekly (cruk)
+- Fluorouracil PVI +/- Radiotherapy (cruk)
+- Fruquintinib (cruk)
+- Irinotecan (cruk)
+- Irinotecan Capecitabine (CAPIRI) (cruk)
+- Irinotecan Fluorouracil (FOLFIRI) (cruk)
+- Mitomycin and Fluorouracil Radiotherapy (cruk)
+- Nivolumab and Ipilimumab (cruk)
+- Oxaliplatin and Capecitabine (CAPOX) (cruk)
+- Oxaliplatin-Fluorouracil (FOLFOX) (cruk)
+- Oxaliplatin-Irinotecan-Fluorouracil (FOLFOXIRI) (cruk)
+- Oxaliplatin-Raltitraxed (TOMOX) (cruk)
+- Panitumumab with FOLFOX (cruk)
+- Panitunumab with FOLFIRI (cruk)
+- Pembrolizumab (cruk)
+- Raltitrexed (cruk)
+- Regorafenib (cruk)
+- Trifluridine and Tipiracil (lonsurf®) (cruk)
+- Trifluridine and Tipiracil (lonsurf®) and Bevacizumab (cruk)
+- Imatinib (cruk)
+- Regorafenib (cruk)
+- Ripretinib (cruk)
+- Sunitinib (cruk)
+- BEP (cruk)
+- Bevacizumab (cruk)
+- Carboplatin (cruk)
+- Carboplatin-Etoposide (cruk)
+- Carboplatin-Paclitaxel (cruk)
+- Carboplatin-Paclitaxel - Dostarlimab (cruk)
+- Carboplatin-Paclitaxel-Pembrolizumab (+/- Bevacizumab) (cruk)
+- Cemiplimab (cruk)
+- Cisplatin (cruk)
+- Cisplatin + Radiotherapy (cruk)
+- Cisplatin-Etoposide (cruk)
+- Cisplatin-Fluorouracil + Radiotherapy (cruk)
+- Cisplatin-Paclitaxel (cruk)
+- Cisplatin-Topotecan (cruk)
+- Cisplatin-Paclitaxel - Pembrolizumab (+/- Bevacizumab) (cruk)
+- Cyclophosphamide (oral) (cruk)
+- Dostarlimab (cruk)
+- Doxorubicin (cruk)
+- Doxorubicin-Cisplatin (cruk)
+- Durvalumab with Carboplatin and Paclitaxel (+/- Olaparib) (cruk)
+- Etoposide (oral) (cruk)
+- Gemcitabine (cruk)
+- Gemcitabine-Carboplatin (cruk)
+- Gemcitabine-Cisplatin (cruk)
+- Lenvatinib - Pembrolizumab (cruk)
+- Mirvetuximab soravtansine (cruk)
+- Niraparib (cruk)
+- Olaparib (cruk)
+- Olaparib - Bevacizumab (cruk)
+- Paclitaxel (cruk)
+- Pegylated liposomal doxorubicin (Caelyx) (cruk)
+- Pegylated liposomal doxorubicin (Caelyx) - Carboplatin (cruk)
+- Rucaparib (cruk)
+- Tisotumab vedotin (cruk)
+- Trametinib (cruk)
+- Carboplatin + Radiotherapy (cruk)
+- Carboplatin-Fluorouracil (cruk)
+- Carboplatin-Paclitaxel (cruk)
+- Cetuximab (cruk)
+- Cetuximab - Carboplatin - Fluorouracil (cruk)
+- Cetuximab - Cisplatin - Fluorouracil (cruk)
+- Cetuximab + Radiotherapy (cruk)
+- Cisplatin + Radiotherapy (cruk)
+- Cisplatin-Fluorouracil (cruk)
+- Docetaxel (cruk)
+- ECarboF (epirubicin-carboplatin-fluorouracil) (cruk)
+- ECF (cruk)
+- Gemcitabine-Carboplatin (cruk)
+- Gemcitabine-Cisplatin (cruk)
+- Methotrexate (cruk)
+- Nivolumab (cruk)
+- Pembrolizumab (cruk)
+- TCarboF (cruk)
+- TPF (cruk)
+- Atezolizumab and Bevacizumab (cruk)
+- Cabozantinib (cruk)
+- Capecitabine +/- Radiotherapy (cruk)
+- Doxorubicin (cruk)
+- Durvalumab with Gemcitabine and Cisplatin (cruk)
+- Durvalumab with Tremelimumab (cruk)
+- Fluorouracil (Modified de Gramont) (cruk)
+- FOLFOX (Oxaliplatin and Fluorouracil) (cruk)
+- FOLFIRINOX (cruk)
+- Futibatinib (cruk)
+- Gemcitabine (cruk)
+- Gemcitabine-Capecitabine (cruk)
+- Gemcitabine and Carboplatin (cruk)
+- Gemcitabine and Cisplatin (cruk)
+- Gemcitabine-Paclitaxel albumin-bound (Abraxane®) (cruk)
+- Ivosidenib (cruk)
+- Lenvatinib (cruk)
+- Pemigatinib (cruk)
+- Regorafenib (cruk)
+- Sorafenib (cruk)
+- Zanidatamab (cruk)
+- Paclitaxel (cruk)
+- Pegylated Liposomal Doxorubicin (Caelyx) (cruk)
+- Afatinib (cruk)
+- Alectinib (cruk)
+- Amivantamab with Carboplatin and Pemetrexed (cruk)
+- Amivantamab with Lazertinib (cruk)
+- Atezolizumab (cruk)
+- Atezolizumab, Bevacizumab, Carboplatin and Paclitaxel (cruk)
+- Atezolizumab, Carboplatin and Etoposide (cruk)
+- Brigatinib (cruk)
+- CAP (cyclophosphamide-doxorubicin-cisplatin) (cruk)
+- Carboplatin-Etoposide (cruk)
+- Carboplatin and Paclitaxel (cruk)
+- Carboplatin, Paclitaxel and Pembrolizumab (cruk)
+- Carboplatin, Paclitaxel and Nivolumab (cruk)
+- Carboplatin-Pemetrexed (cruk)
+- Carboplatin, Pemetrexed and Nivolumab (cruk)
+- Carboplatin, Pemetrexed and Pembrolizumab (cruk)
+- Carboplatin-Vinorelbine (cruk)
+- CAV (cyclophosphamide-doxorubicin-vincristine) (cruk)
+- Cemiplimab with Carboplatin and Paclitaxel (cruk)
+- Cemiplimab with Carboplatin and Pemetrexed (cruk)
+- Ceritinib (cruk)
+- Cisplatin-Etoposide (cruk)
+- Cisplatin-Pemetrexed (cruk)
+- Cisplatin-Pemetrexed-Pembrolizumab (cruk)
+- Cisplatin-Vinorelbine (cruk)
+- Crizotinib (cruk)
+- Dacomitinib (cruk)
+- Dabrafenib and Trametinib (cruk)
+- Docetaxel (cruk)
+- Durvalumab (cruk)
+- Durvalumab with Carboplatin and Etoposide (cruk)
+- Durvalumab with Cisplatin and Etoposide (cruk)
+- Encorafenib with Binimetinib (cruk)
+- Erlotinib (cruk)
+- Gefitinib (cruk)
+- Gemcitabine (cruk)
+- Gemcitabine-Carboplatin (cruk)
+- Gemcitabine-Cisplatin (cruk)
+- Ipilimumab and Nivolumab (cruk)
+- Larotrectinib (cruk)
+- Lorlatinib (cruk)
+- Nintedanib-Docetaxel (cruk)
+- Nivolumab (cruk)
+- Osimertinib (cruk)
+- Osimertinib with Pemetrexed and Carboplatin (cruk)
+- Osimertinib with Pemetrexed and Cisplatin (cruk)
+- Pembrolizumab (cruk)
+- Ramucirumab-Docetaxel (cruk)
+- Selpercatinib (cruk)
+- Sotorasib (cruk)
+- Tepotinib (cruk)
+- Topotecan (oral) (cruk)
+- Vinorelbine (IV) (cruk)
+- Vinorelbine (oral) (cruk)
+- Dabrafenib (cruk)
+- Dabrafenib-Trametinib (cruk)
+- Dacarbazine (cruk)
+- Encorafenib-Binimetinib (cruk)
+- Ipilimumab (cruk)
+- Ipilimumab-Nivolumab (cruk)
+- Nivolumab (cruk)
+- Nivolumab with Relatlimab (cruk)
+- Pembrolizumab (cruk)
+- Talimogene laherparepvec (Imlygic®) (cruk)
+- Tebentafusp (cruk)
+- Capecitabine and Streptozocin (cruk)
+- Capecitabine and Temozolomide (cruk)
+- Carboplatin and Etoposide (cruk)
+- Cisplatin and Etoposide (cruk)
+- Cyclophosphamide, Vincristine and Dacarbazine (CVD) (cruk)
+- Etoposide, Doxorubicin, Cisplatin (EDP) +/- Mitotane (cruk)
+- Everolimus (cruk)
+- Fluorouracil, Carboplatin and Streptozocin (FCarboSt) (cruk)
+- Fluorouracil, Cisplatin and Streptozocin (FCisSt) (cruk)
+- Fluorouracil and Irinotecan (FOLFIRI) (cruk)
+- Gemcitabine and Capecitabine (cruk)
+- Mitotane (cruk)
+- Oxaliplatin, Irinotecan and Fluorouracil (FOLFOXIRI) (cruk)
+- Sunitinib (cruk)
+- Temozolomide (cruk)
+- 177-Lutetium Dotatate (cruk)
+- Capecitabine with Radiotherapy (cruk)
+- Carboplatin and Capecitabine +/- Radiotherapy (cruk)
+- Carboplatin and Fluorouracil +/- Radiotherapy (cruk)
+- CAPOX (Capecitabine and Oxaliplatin) (cruk)
+- Cisplatin and Capecitabine +/- Radiotherapy (cruk)
+- Cisplatin and Fluorouracil +/- Radiotherapy (cruk)
+- Cisplatin-Capecitabine-Trastuzumab (cruk)
+- Cisplatin-Fluorouracil-Trastuzumab (cruk)
+- Docetaxel (cruk)
+- Durvalumab with FLOT (cruk)
+- Fluorouracil PVI + Radiotherapy (cruk)
+- FOLFOX (Fluorouracil and Oxaliplatin) +/- Radiotherapy (cruk)
+- FOLFIRI (Fluorouracil and Irinotecan) (cruk)
+- FLOT (cruk)
+- HOF (Trastuzumab, Oxaliplatin and Fluorouracil) (cruk)
+- HOX (Capecitabine, Oxaliplatin and Trastuzumab) (cruk)
+- Irinotecan (cruk)
+- Nivolumab (cruk)
+- Nivolumab with CAPOX (Capecitabine and Oxaliplatin) (cruk)
+- Nivolumab with FOLFOX (Fluorouracil and Oxaliplatin) (cruk)
+- Paclitaxel (cruk)
+- Paclitaxel and Carboplatin +/- Radiotherapy (cruk)
+- Pembrolizumab (cruk)
+- Pembrolizumab with CAPOX (Capecitabine and Oxaliplatin) (cruk)
+- Pembrolizumab with FOLFOX (Fluorouracil and Oxaliplatin) (cruk)
+- Trifluridine and Tipiracil (Lonsurf) (cruk)
+- Carboplatin - Etoposide (cruk)
+- Cyclophosphamide - Etoposide (cruk)
+- Cyclophosphamide - Oral prednisolone (cruk)
+- Cyclophosphamide - Topotecan (cruk)
+- Dacarbazine (cruk)
+- Doxorubicin - Cisplatin (cruk)
+- Doxorubicin - Dacarbazine (cruk)
+- Doxorubicin - Ifosfamide (cruk)
+- Doxorubicin (cruk)
+- Etoposide (Oral) (cruk)
+- Gemcitabine - Dacarbazine (cruk)
+- Gemcitabine - Docetaxel (cruk)
+- Gemcitabine (cruk)
+- IE and Methotrexate (cruk)
+- IE (cruk)
+- Ifosfamide (cruk)
+- IVA (cruk)
+- IVADo - IVA (cruk)
+- MAP (cruk)
+- Mifamurtide (cruk)
+- Paclitaxel (cruk)
+- Pegylated Liposomal Doxorubicin and Ifosfamide (cruk)
+- Pegylated Liposomal Doxorubicin (cruk)
+- Trabectedine (cruk)
+- VA (cruk)
+- VAC (cruk)
+- VAI (cruk)
+- VDC and IE (cruk)
+- VIDE (cruk)
+- Vincristine and Cyclophosphamide (cruk)
+- Vinorelbine and Cyclophosphamide (cruk)
+- Vinorelbine (Oral) (cruk)
+- VIT (cruk)
+- Avelumab (cruk)
+- Carboplatin-Etoposide (cruk)
+- Capecitabine-Cisplatin (cruk)
+- Cemiplimab (cruk)
+- Cisplatin-Fluorouracil (cruk)
+- Epirubicin (cruk)
+- Vismodegib (cruk)
+- Cabozantinib (cruk)
+- Dabrafenib and Trametinib (cruk)
+- Entrectinib (cruk)
+- Larotrectinib (cruk)
+- Lenvatinib (cruk)
+- Selpercatinib (cruk)
+- Sorafenib (cruk)
+- Vandetanib (cruk)
+- Atezolizumab (cruk)
+- Avelumab (cruk)
+- Accelerated M-VAC (methotrexate-vinblastine-doxorubicin-cisplatin) (cruk)
+- Carboplatin-Paclitaxel (cruk)
+- Durvalumab with Gemcitabine and Cisplatin (cruk)
+- Enfortumab vedotin with Pembrolizumab (cruk)
+- Erdafitinib (cruk)
+- Gemcitabine-Carboplatin (cruk)
+- Gemcitabine-Cisplatin (cruk)
+- Gemcitabine-Radiotherapy (cruk)
+- Mitomycin-Fluorouracil +/- Radiotherapy (cruk)
+- Nivolumab (cruk)
+- Paclitaxel (cruk)
+- Pembrolizumab (cruk)
+- BEP (Bleomycin-Etoposide-Cisplatin) (cruk)
+- Carboplatin (cruk)
+- Carboplatin (Etoposide-Bleomycin) (cruk)
+- EP (Etoposide-Cisplatin) (cruk)
+- TIP (Paclitaxel-Ifosfamide-Cisplatin) (cruk)
+- VIP (Etoposide-Ifosfamide-Cisplatin) (cruk)
+- VeIP (Vinblastine-Ifosfamide-Cisplatin) (cruk)
+- Abiraterone with Prednisolone (cruk)
+- Apalutamide (cruk)
+- Cabazitaxel with Prednisolone (cruk)
+- Darolutamide (cruk)
+- Darolutamide and Docetaxel with ADT (cruk)
+- Docetaxel with Prednisolone (cruk)
+- Enzalutamide (cruk)
+- Olaparib (cruk)
+- Olaparib with Abiraterone and Prednisolone (cruk)
+- Avelumab - Axitinib (cruk)
+- Axitinib (cruk)
+- Belzutifan (cruk)
+- Cabozantinib (cruk)
+- Cabozantinib - Nivolumab (cruk)
+- Everolimus (cruk)
+- Gemcitabine-Doxorubicin (cruk)
+- Lenvatinib-Everolimus (cruk)
+- Lenvatinib - Pembrolizumab (cruk)
+- Nivolumab (cruk)
+- Nivolumab - Ipilimumab (cruk)
+- Pazopanib (cruk)
+- Pembrolizumab (cruk)
+- Sunitinib (cruk)
+- Tivozanib (cruk)
+- Carboplatin-Etoposide (cruk)
+- Cisplatin-Etoposide (cruk)
+- Denosumab (cruk)
+- Zoledronic acid (cruk)
+- in this document (cruk)
