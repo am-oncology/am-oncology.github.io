@@ -1,13 +1,13 @@
 # Consent form update report
 
-Run: 2026-10-08T16:52:07.817Z  
+Run: 2026-10-08T21:02:36.940Z  
 Overall: OK
 
 | Source | Listed | Added | Updated | Unchanged | Removed | Failed | Problem |
 |---|---|---|---|---|---|---|---|
-| rcr | 27 | 27 | 0 | 0 | 0 | 0 |  |
-| cruk | 402 | 402 | 0 | 0 | 0 | 0 |  |
-| macmillan | 494 | 494 | 0 | 0 | 0 | 0 |  |
+| rcr | 27 | 0 | 0 | 27 | 0 | 0 |  |
+| cruk | 402 | 0 | 0 | 402 | 0 | 0 |  |
+| macmillan | 494 | 0 | 8 | 486 | 0 | 0 |  |
 
 ## Forms with details that could not be placed (402 of 429)
 
