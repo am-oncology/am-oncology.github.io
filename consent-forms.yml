@@ -1,0 +1,103 @@
+name: Update consent forms
+
+# Weekly refresh of the documents behind consent.html:
+#   - RCR national radiotherapy consent forms
+#   - CRUK SACT consent forms (adult, non-haematology)
+#   - Macmillan treatment and drug pages, as PDFs (used with Macmillan's permission)
+# Only changed files are committed. If any source cannot be refreshed, the
+# previous copies stay in place and an issue is opened so it gets noticed.
+
+on:
+  schedule:
+    - cron: '17 4 * * 1'        # Mondays 04:17 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Re-process every form and re-render every leaflet'
+        type: boolean
+        default: false
+      skip_macmillan:
+        description: 'Skip the Macmillan leaflets this run'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: consent-forms
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: scripts/consent/package-lock.json
+
+      - name: Install dependencies
+        working-directory: scripts/consent
+        run: npm ci
+
+      - name: Install headless browser (for Macmillan pages)
+        if: ${{ !inputs.skip_macmillan }}
+        working-directory: scripts/consent
+        run: npx playwright install --with-deps chromium
+
+      - name: Fetch and convert
+        env:
+          FORCE: ${{ inputs.force && '1' || '' }}
+          SKIP_MACMILLAN: ${{ inputs.skip_macmillan && '1' || '' }}
+        run: node scripts/consent/update.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name  "consent-forms-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add consent-data
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Weekly consent form update ($(date -u +%Y-%m-%d))"
+            git pull --rebase --autostash
+            git push
+          fi
+
+      - name: Open or update an issue if anything failed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const status = JSON.parse(fs.readFileSync('consent-data/status.json', 'utf8'));
+            const title = 'Consent form update needs attention';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: 'consent-update',
+            });
+            const existing = open.find((i) => i.title === title);
+            if (status.ok) {
+              if (existing) {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number, body: `Resolved by run ${status.run}.` });
+                await github.rest.issues.update({ owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existing.number, state: 'closed' });
+              }
+              return;
+            }
+            const report = fs.readFileSync('consent-data/REPORT.md', 'utf8');
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `The weekly consent form update on ${status.run} could not refresh everything. ` +
+              `The previous copies are still being served.\n\nRun log: ${run}\n\n${report}`.slice(0, 60000);
+            if (existing) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['consent-update'] });
+            }
