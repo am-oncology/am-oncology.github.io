@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consent pack builder | Clinical Oncology Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/theme.css">
+<script src="assets/js/nav.js" data-tool="consent" defer></script>
+<script src="assets/vendor/pdf-lib.min.js" defer></script>
+<script src="assets/vendor/jszip.min.js" defer></script>
+<script src="assets/js/consent-core.js" defer></script>
+<script src="assets/js/consent.js" defer></script>
+<style>
+  /* Page-specific layout only. Colour, type, spacing and radii come from theme.css. */
+  .form-field { display: flex; flex-direction: column; min-width: 0; }
+  .form-field input, .form-field select { width: 100%; }
+  .field-grid { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .field-grid-wide { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .divider { border: none; border-top: 1px solid var(--rule-soft); margin: var(--sp-4) 0; }
+  textarea.paste { width: 100%; min-height: 96px; resize: vertical; font-family: var(--font-mono); font-size: var(--fs-xs); }
+  .hint-ok  { color: var(--green); }
+  .hint-bad { color: var(--red); }
+  .hint-warn { color: var(--amber); }
+  input.needs-entry { border-style: dashed; border-color: var(--amber); }
+  input.invalid { border-color: var(--red); }
+  .row-between { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; }
+  .row-between .spacer { flex: 1; }
+  .small { font-size: var(--fs-xs); color: var(--ink-muted); }
+  .check-line { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-sm); color: var(--ink-dim); cursor: pointer; }
+
+  /* Document picker */
+  .doc-groups { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); max-height: 520px; overflow-y: auto; padding-right: var(--sp-1); }
+  .doc-group { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--card-2); }
+  .doc-group > summary {
+    display: flex; align-items: center; gap: var(--sp-3); padding: var(--sp-2) var(--sp-4);
+    cursor: pointer; list-style: none; user-select: none; font-size: var(--fs-sm); font-weight: 600;
+  }
+  .doc-group > summary::-webkit-details-marker { display: none; }
+  .doc-group > summary::before { content: '\25B8'; color: var(--ink-muted); transition: transform 0.18s var(--ease); }
+  .doc-group[open] > summary::before { transform: rotate(90deg); }
+  .doc-group .count { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .doc-list { background: var(--card); border-top: 1px solid var(--rule); border-radius: 0 0 var(--radius) var(--radius); }
+  .doc-row { display: flex; align-items: flex-start; gap: var(--sp-3); padding: var(--sp-2) var(--sp-4); border-bottom: 1px solid var(--rule-soft); cursor: pointer; }
+  .doc-row:last-child { border-bottom: none; }
+  .doc-row:hover { background: var(--card-2); }
+  .doc-row input { margin-top: 3px; flex-shrink: 0; }
+  .doc-title { font-size: var(--fs-sm); color: var(--ink); }
+  .doc-meta { font-size: var(--fs-2xs); color: var(--ink-muted); margin-top: 2px; }
+
+  /* Pack */
+  .pack-list { display: flex; flex-direction: column; gap: var(--sp-3); }
+  .pack-item { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: var(--sp-3) var(--sp-4); background: var(--card); }
+  .pack-item.leaflet { border-left-color: var(--ink-muted); }
+  .pack-head { display: flex; align-items: flex-start; gap: var(--sp-3); }
+  .pack-title { font-size: var(--fs-sm); font-weight: 600; }
+  .pack-sub { font-size: var(--fs-2xs); color: var(--ink-muted); margin-top: 2px; }
+  .icon-btn { margin-left: auto; min-height: 30px; padding: var(--sp-1) var(--sp-3); font-size: var(--fs-xs); flex-shrink: 0; }
+  .chip-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; align-items: center; margin-top: var(--sp-3); }
+  .chip-btn { min-height: 28px; padding: 0.1rem var(--sp-3); font-size: var(--fs-xs); background: var(--paper); }
+  .chip-btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .ticks { margin-top: var(--sp-3); border: 1px solid var(--rule); border-radius: var(--radius); }
+  .ticks > summary { padding: var(--sp-2) var(--sp-3); cursor: pointer; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-dim); }
+  .tick-body { border-top: 1px solid var(--rule); padding: var(--sp-2) var(--sp-3); }
+  .tick-row { display: flex; align-items: flex-start; gap: var(--sp-3); padding: var(--sp-2) 0; border-bottom: 1px solid var(--rule-soft); font-size: var(--fs-sm); cursor: pointer; }
+  .tick-row:last-of-type { border-bottom: none; }
+  .tick-row input { margin-top: 3px; flex-shrink: 0; }
+  .tick-text { flex: 1; color: var(--ink-dim); }
+  .tick-why { font-size: var(--fs-2xs); color: var(--ink-muted); display: block; margin-top: 2px; }
+  .tick-row.changed .tick-why::after { content: ' · changed by you'; color: var(--accent); }
+  .tick-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-2); }
+  .tick-actions button { min-height: 28px; font-size: var(--fs-xs); padding: 0.1rem var(--sp-3); }
+
+  /* Output */
+  .out-list { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); }
+  .out-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-2) var(--sp-3); border: 1px solid var(--rule); border-radius: var(--radius); background: var(--paper); }
+  .out-name { flex: 1; min-width: 200px; font-size: var(--fs-sm); }
+  .out-row button { min-height: 30px; font-size: var(--fs-xs); padding: var(--sp-1) var(--sp-3); }
+  .out-warn { flex-basis: 100%; font-size: var(--fs-xs); color: var(--amber); }
+
+  .live-indicator { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-2xs); color: var(--ink-muted); }
+  .st-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-muted); flex-shrink: 0; }
+  .st-ok { background: var(--green); } .st-bad { background: var(--amber); } .st-err { background: var(--red); }
+
+  @media (max-width: 640px) {
+    .pack-head { flex-wrap: wrap; }
+    .icon-btn { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="eyebrow">Consent</div>
+      <h1>Consent pack builder</h1>
+      <p>Fills national RCR radiotherapy and CRUK SACT consent forms with the patient's and clinician's details, and adds Macmillan information sheets. Each document downloads as its own PDF, still editable.</p>
+    </div>
+    <div class="masthead-meta">
+      <div class="live-indicator"><span class="st-dot" id="st-dot"></span><span id="st-text">Loading forms…</span></div>
+      <div id="st-counts"></div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+
+  <div class="notice notice-info" style="margin-bottom: var(--sp-4);">
+    <strong>Patient details never leave this browser tab.</strong> They are not saved, uploaded or sent anywhere, and are cleared when you press <em>New patient</em> or close the tab. Only your own clinician details are remembered on this computer, if you choose.
+  </div>
+  <div id="update-notice"></div>
+
+  <!-- ① PATIENT -->
+  <div class="card" id="patient-card">
+    <div class="step-head">
+      <span class="step-num">1</span><span class="step-title">Patient</span>
+      <span class="spacer" style="flex:1"></span>
+      <button type="button" id="new-patient-btn" class="btn-danger" style="min-height:30px; font-size: var(--fs-xs);">New patient</button>
+    </div>
+
+    <label class="field-label" for="paste">Paste the patient banner or label</label>
+    <textarea id="paste" class="paste" autocomplete="off" spellcheck="false"
+      placeholder="SURNAME, Firstname&#10;MRN: 10126432&#10;NHS: 943-476-5919&#10;DOB: 10/10/1952"></textarea>
+    <div class="row-between" style="margin-top: var(--sp-2);">
+      <button type="button" id="parse-btn" class="btn-primary">Read details</button>
+      <span class="small" id="parse-msg" role="status" aria-live="polite">Pasting reads the details automatically. Check every box below.</span>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field-grid">
+      <div class="form-field">
+        <label class="field-label" for="p-surname">Surname</label>
+        <input type="text" id="p-surname" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="p-forenames">First name(s)</label>
+        <input type="text" id="p-forenames" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="p-dob">Date of birth</label>
+        <input type="text" id="p-dob" autocomplete="off" placeholder="dd/mm/yyyy" inputmode="numeric">
+        <span class="field-hint" id="h-dob"></span>
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="p-nhs">NHS number</label>
+        <input type="text" id="p-nhs" autocomplete="off" inputmode="numeric" placeholder="000 000 0000">
+        <span class="field-hint" id="h-nhs"></span>
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="p-mrn">MRN</label>
+        <input type="text" id="p-mrn" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="form-field">
+        <span class="field-label" id="sex-label">Sex</span>
+        <div class="seg-toggle" role="group" aria-labelledby="sex-label" id="sex-toggle">
+          <button type="button" data-sex="F" aria-pressed="false">Female</button>
+          <button type="button" data-sex="M" aria-pressed="false">Male</button>
+          <button type="button" data-sex="" aria-pressed="true">Not set</button>
+        </div>
+        <span class="field-hint">Decides sex-specific ticks</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② CLINICIAN -->
+  <div class="card" id="clinician-card">
+    <div class="step-head"><span class="step-num">2</span><span class="step-title">Clinician taking consent</span></div>
+    <div class="field-grid field-grid-wide">
+      <div class="form-field">
+        <label class="field-label" for="c-name">Name</label>
+        <input type="text" id="c-name" autocomplete="name">
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="c-role">Job title</label>
+        <input type="text" id="c-role" placeholder="e.g. Consultant Clinical Oncologist">
+      </div>
+      <div class="form-field">
+        <label class="field-label" for="c-site">Treating hospital / site</label>
+        <input type="text" id="c-site" list="site-list" placeholder="e.g. St Bartholomew's Hospital">
+        <datalist id="site-list">
+          <option value="St Bartholomew's Hospital">
+          <option value="Barts Cancer Centre, St Bartholomew's Hospital">
+          <option value="The Royal London Hospital">
+          <option value="Whipps Cross Hospital">
+          <option value="Newham University Hospital">
+        </datalist>
+      </div>
+    </div>
+    <details style="margin-top: var(--sp-4);">
+      <summary class="small" style="cursor:pointer;">Responsible consultant, if not you <span class="badge">optional</span></summary>
+      <div class="field-grid field-grid-wide" style="margin-top: var(--sp-3);">
+        <div class="form-field">
+          <label class="field-label" for="c-consultant">Responsible consultant</label>
+          <input type="text" id="c-consultant">
+        </div>
+        <div class="form-field">
+          <label class="field-label" for="c-consultant-role">Their job title</label>
+          <input type="text" id="c-consultant-role">
+        </div>
+      </div>
+      <p class="field-hint">Used for the forms' "responsible consultant / health professional" box. Left blank, your own name and title are used.</p>
+    </details>
+    <hr class="divider">
+    <div class="row-between">
+      <label class="check-line"><input type="checkbox" id="c-remember" checked> Remember my details on this computer</label>
+      <span class="spacer"></span>
+      <button type="button" id="c-forget" style="min-height:30px; font-size: var(--fs-xs);">Forget my details</button>
+    </div>
+  </div>
+
+  <!-- ③ DOCUMENTS -->
+  <div class="card" id="docs-card">
+    <div class="step-head"><span class="step-num">3</span><span class="step-title">Choose forms and information</span></div>
+    <div class="controls">
+      <div class="seg-toggle" role="group" aria-label="Document type" id="src-toggle">
+        <button type="button" data-src="rcr" aria-pressed="true">Radiotherapy · RCR</button>
+        <button type="button" data-src="cruk" aria-pressed="false">SACT · CRUK</button>
+        <button type="button" data-src="macmillan" aria-pressed="false">Information · Macmillan</button>
+      </div>
+      <input type="text" id="doc-search" class="grow" placeholder="Search, e.g. capecitabine, brain, SABR" aria-label="Search documents" autocomplete="off">
+    </div>
+    <div class="doc-groups" id="doc-groups">
+      <div class="state"><div class="spinner"></div>Loading forms…</div>
+    </div>
+  </div>
+
+  <!-- ④ PACK -->
+  <div class="card" id="pack-card">
+    <div class="step-head"><span class="step-num">4</span><span class="step-title">Pack contents and tick boxes</span></div>
+    <div id="pack-list" class="pack-list"></div>
+  </div>
+
+  <!-- ⑤ BUILD -->
+  <div class="card" id="build-card">
+    <div class="step-head"><span class="step-num">5</span><span class="step-title">Build</span></div>
+    <div class="row-between">
+      <button type="button" id="build-btn" class="btn-primary">Build pack</button>
+      <button type="button" id="zip-btn" disabled>Download all (.zip)</button>
+      <span class="small" id="build-msg" role="status" aria-live="polite"></span>
+    </div>
+    <div id="build-issues"></div>
+    <div id="out-list" class="out-list"></div>
+  </div>
+
+</main>
+
+<div class="disclaimer">
+  <strong>Check every completed form before it is signed.</strong> Details are placed by reading each form's printed labels, which is reliable but not infallible; any box the tool could not place is listed against the form so it can be completed by hand. Tick boxes are suggestions only — review each one with the patient. Forms are copied weekly, unaltered, from the
+  <a href="https://www.rcr.ac.uk/our-services/management-service-delivery/national-radiotherapy-consent-forms/" rel="noopener" target="_blank">Royal College of Radiologists</a> (national radiotherapy consent forms) and
+  <a href="https://www.cancerresearchuk.org/health-professional/treatment-and-other-post-diagnosis-issues/consent-forms-for-sact-systemic-anti-cancer-therapy" rel="noopener" target="_blank">Cancer Research UK</a> (SACT consent forms, developed with Guy's and St Thomas' NHS Foundation Trust). The content of the SACT forms was developed by Cancer Research UK and Guy's and St Thomas' NHS Foundation Trust, which accept no responsibility for any claim, damages or other liability arising from the forms or their use. Information sheets are &copy; Macmillan Cancer Support, reproduced with permission. Check the review date on each form and use local versions where your Trust requires them.
+  <a href="index.html">All tools</a>
+</div>
+
+</body>
+</html>

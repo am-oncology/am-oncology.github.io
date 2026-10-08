@@ -1,0 +1,66 @@
+{
+  "_comment": "Default tick rules for consent.html. Each tick box found on a form is tested against these rules in order; the first match decides its default. 'match' is tested against the box's label (question + option). 'prompt' and 'option' test the question and the option separately (for Yes/No rows). tick: always | female | male | known (ticked once sex is chosen) | never. Anything that matches no rule is left blank for the clinician to review. Every default can be changed on the page before the pack is built.",
+  "rules": [
+    {
+      "id": "no-pregnancy-risk-confirmation",
+      "match": "no (risk|chance|possibility) (that )?I (could|might|may) be pregnant|I am not pregnant",
+      "tick": "never",
+      "note": "The patient confirms this themselves"
+    },
+    {
+      "id": "leaflet-yes",
+      "prompt": "information (leaflet|sheet|booklet)|leaflet.*(given|provided)",
+      "option": "^yes\\b",
+      "tick": "always",
+      "note": "The pack includes an information leaflet"
+    },
+    {
+      "id": "leaflet-no",
+      "prompt": "information (leaflet|sheet|booklet)|leaflet.*(given|provided)",
+      "option": "^no\\b",
+      "tick": "never"
+    },
+    {
+      "id": "patient-decisions",
+      "match": "copy of (the |this )?(consent )?form|pacemaker|defibrillator|\\bICD\\b|interpreter|witness|no further questions|wish to (go ahead|proceed)|\\bI (agree|consent)\\b|photograph|research|tissue|stor(e|age) of|smok",
+      "tick": "never",
+      "note": "Patient decision or confirmation"
+    },
+    {
+      "id": "treatment-intent",
+      "match": "^(radical|adjuvant|neo-?adjuvant|palliative|curative|disease ?/? ?symptom control|symptom control|disease control)\\b",
+      "tick": "never",
+      "note": "Choose the treatment intent"
+    },
+    {
+      "id": "yes-no",
+      "option": "^(yes|no)\\b",
+      "tick": "never",
+      "note": "Choose yes or no"
+    },
+    {
+      "id": "conceive-any-sex",
+      "match": "conceive a child|sperm or eggs|eggs or sperm|fertility|contracepti",
+      "tick": "known",
+      "note": "Applies to all patients"
+    },
+    {
+      "id": "avoid-pregnancy",
+      "match": "(should|must) not (become|get) pregnant|avoid (becoming|getting) pregnant|not (to )?become pregnant|pregnancy test",
+      "tick": "female",
+      "note": "Female patient"
+    },
+    {
+      "id": "female-specific",
+      "match": "breast ?-?feed|egg (storage|collection|freezing)|menopaus|menstrua|\\bperiods?\\b|vagina|ovar(y|ies|ian)|womb|uter(us|ine)",
+      "tick": "female",
+      "note": "Female patient"
+    },
+    {
+      "id": "male-specific",
+      "match": "father a child|partner (becoming|becomes|to become) pregnant|get (a|your) partner pregnant|donat(e|ing) sperm|sperm (bank|storage|banking)|erectile|erection|testic|ejaculat",
+      "tick": "male",
+      "note": "Male patient"
+    }
+  ]
+}
