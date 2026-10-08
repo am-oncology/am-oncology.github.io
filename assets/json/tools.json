@@ -101,6 +101,19 @@
             "General",
             "Assessment"
           ]
+        },
+        {
+          "id": "consent",
+          "name": "Consent pack builder",
+          "href": "consent.html",
+          "desc": "Fills RCR radiotherapy and CRUK SACT consent forms with patient and clinician details and adds Macmillan information sheets. Patient details stay in your browser.",
+          "accent": "#DB2777",
+          "tags": [
+            "General",
+            "Consent",
+            "Radiotherapy",
+            "SACT"
+          ]
         }
       ]
     },
@@ -117,8 +130,8 @@
           "accent": "#005EB8",
           "tags": [
             "Admin"
-            ]  
-        },
+          ]
+        }
       ]
     }
   ]
