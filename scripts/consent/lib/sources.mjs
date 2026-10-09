@@ -16,14 +16,44 @@ const HEADING_SEL = [
   '[class*="accordion" i] button', '[class*="collapsible" i][class*="title" i]',
 ].join(', ');
 
-function walk($, onHeading, onLink) {
-  $(`${HEADING_SEL}, a`).each((_, el) => {
+/* Walk headings and links in document order. A heading *inside* a link is the
+   link's own title (the RCR page styles each download as a card with an <h4>),
+   so it must not start a new group — that is how Welsh titles became groups. */
+function walk($, onHeading, onLink, headingSel = HEADING_SEL) {
+  $(`${headingSel}, a`).each((_, el) => {
     const $el = $(el);
-    if (el.tagName === 'a' && !$el.is(HEADING_SEL)) { onLink($el); return; }
+    if (el.tagName === 'a') { onLink($el); return; }
+    if ($el.closest('a').length || $el.find('a[href$=".pdf"]').length) return;
     const text = cleanText($el.text());
-    if (!text || text.length > 90 || /^(show|hide|open|close|skip|menu|back)\b/i.test(text)) return;
+    if (!text || text.length > 90 || /^(show|hide|open|close|skip|menu|back|faqs?|supporting documents|consent form downloads|project acknowledgements|our services)\b/i.test(text)) return;
     onHeading(text);
   });
+}
+
+const WELSH = /welsh|cymraeg|ffurflen|caniat[aâ]d/i;
+
+/* "RCR Anal Cancer Radiotherapy Consent Form" → "Anal cancer";
+   "RCR Radiotherapy Consent for Brain Tumours" → "Brain tumours". */
+export function cleanRcrTitle(raw) {
+  let t = cleanText(raw)
+    .replace(/^RCR\s+/i, '')
+    .replace(/\bradiotherapy\s+consent\s+form\s*(for\s+|[:\u2013\u2014-]\s*)?/i, ' ')
+    .replace(/\bradiotherapy\s+consent\s+(for\s+)?/i, ' ')
+    .replace(/\s*\bconsent\s+form\b\s*/i, ' ')
+    .replace(/\bradiotherapy\s+(?=cancer\b)/i, '')
+    .replace(/\s+radiotherapy\s*$/i, '')
+    .trim()
+    .replace(/^benign skin cancer$/i, 'Benign skin conditions')
+    .replace(/\s+-\s+/g, ' \u2013 ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  if (!t) t = cleanText(raw);
+  // sentence case, keeping abbreviations (SRS, SABR, EBRT) and proper nouns as printed
+  t = t.split(' ').map((w, k) => {
+    if (/^[A-Z0-9()\/–-]{2,}$/.test(w) || /[A-Z].*[A-Z]/.test(w.slice(1))) return w;
+    return k === 0 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase();
+  }).join(' ');
+  return t;
 }
 
 function stripSize(t) {
@@ -39,14 +69,14 @@ export async function listRcr() {
     const href = $a.attr('href') || '';
     if (!/\.pdf(\?|#|$)/i.test(href)) return;
     const url = absUrl(href, RCR_PAGE);
-    const title = stripSize($a.text());
-    if (!url || seen.has(url) || !title) return;
-    if (/welsh/i.test(title) || /welsh/i.test(href)) return;               // English only
-    if (!/consent/i.test(title)) return;                                    // forms, not guidance
-    if (/implementation|development of|summary letter|acknowledg/i.test(title)) return;
+    const sourceTitle = stripSize($a.text());
+    if (!url || seen.has(url) || !sourceTitle) return;
+    if (WELSH.test(sourceTitle) || WELSH.test(href) || WELSH.test(group || '')) return; // English only
+    if (!/consent/i.test(sourceTitle)) return;                                         // forms, not guidance
+    if (/implementation|development of|summary letter|acknowledg/i.test(sourceTitle)) return;
     seen.add(url);
-    out.push({ title, group: cleanGroup(group) || 'Radiotherapy', url });
-  });
+    out.push({ title: cleanRcrTitle(sourceTitle), sourceTitle, group: cleanGroup(group) || 'Radiotherapy', url });
+  }, 'h2, h3');
   if (out.length < 10) throw new Error(`RCR page listed only ${out.length} forms — layout may have changed`);
   return out;
 }
@@ -66,9 +96,9 @@ export async function listCruk() {
     const url = absUrl(href, CRUK_PAGE);
     const title = stripSize($a.text());
     if (!url || seen.has(url) || !title) return;
-    if (group && CRUK_EXCLUDE_GROUP.test(group)) return;
-    if (/welsh/i.test(title) || /welsh/i.test(href)) return;
-    if (/guidance|faq|electronic consent|remote consent|healthcare improvement/i.test(title)) return;
+    if (group && (CRUK_EXCLUDE_GROUP.test(group) || /\?\s*$/.test(group))) return; // FAQ answers link to guidance
+    if (WELSH.test(title) || WELSH.test(href)) return;
+    if (/guidance|faq|electronic consent|remote consent|healthcare improvement|this document|^here$|download/i.test(title)) return;
     seen.add(url);
     out.push({ title, group: cleanGroup(group) || 'SACT', url });
   });

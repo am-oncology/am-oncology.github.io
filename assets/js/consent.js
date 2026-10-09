@@ -300,7 +300,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var out = {};
     Object.keys(def).forEach(function (k) {
       var o = item.overrides.hasOwnProperty(k);
-      out[k] = { on: o ? item.overrides[k] : def[k].on, why: def[k].why, changed: o && item.overrides[k] !== def[k].on };
+      out[k] = { on: o ? item.overrides[k] : def[k].on, why: def[k].why, action: def[k].action, changed: o && item.overrides[k] !== def[k].on };
     });
     return out;
   }
@@ -324,7 +324,7 @@ window.addEventListener('DOMContentLoaded', function () {
       if (!f) return '';
       var ticks = effectiveTicks(item);
       var nOn = 0, nReview = 0;
-      (f.ticks || []).forEach(function (t) { var s = ticks[C.tickKey(t)]; if (s.on) nOn++; else if (/review/i.test(s.why)) nReview++; });
+      (f.ticks || []).forEach(function (t) { var s = ticks[C.tickKey(t)]; if (s.on) nOn++; else if (s.action === 'review' && !s.changed) nReview++; });
 
       var warn = '';
       if (!f.fillable) warn = '<div class="notice notice-warn" style="margin-top:var(--sp-3);">This form could not be made fillable. It will be included as published — complete it by hand.</div>';
@@ -344,14 +344,23 @@ window.addEventListener('DOMContentLoaded', function () {
         tickHtml = '<details class="ticks"' + (item.ticksOpen ? ' open' : '') + ' data-ticks="' + esc(item.id) + '">' +
           '<summary>Tick boxes — ' + nOn + ' pre-ticked' + (nReview ? ', ' + nReview + ' to review' : '') + ' of ' + f.ticks.length + '</summary>' +
           '<div class="tick-body">' +
-          f.ticks.map(function (t) {
-            var k = C.tickKey(t), s = ticks[k];
-            return '<label class="tick-row' + (s.changed ? ' changed' : '') + '">' +
+          (function () {
+            var last = null;
+            return f.ticks.map(function (t) {
+              var k = C.tickKey(t), s = ticks[k];
+              // a small heading whenever the part of the form changes, so long lists stay readable
+              var sec = (t.section || '').split(' | ')[0];
+              var head = '';
+              var key = t.page + '|' + sec;
+              if (sec && key !== last) head = '<div class="tick-sec">Page ' + (t.page + 1) + ' \u00b7 ' + esc(sec) + '</div>';
+              last = key;
+              return head + '<label class="tick-row' + (s.changed ? ' changed' : '') + '">' +
               '<input type="checkbox" data-form="' + esc(item.id) + '" data-key="' + esc(k) + '"' +
                 (t.group ? ' data-group="' + esc(t.group) + '"' : '') + (s.on ? ' checked' : '') + '>' +
               '<span class="tick-text">' + esc(C.tickLabel(t)) +
               '<span class="tick-why">Page ' + (t.page + 1) + ' · ' + esc(s.why) + '</span></span></label>';
-          }).join('') +
+            }).join('');
+          })() +
           '<div class="tick-actions">' +
             '<button type="button" data-tick-all="' + esc(item.id) + '">Tick all still to review</button>' +
             '<button type="button" data-tick-reset="' + esc(item.id) + '">Back to suggested</button>' +
@@ -387,7 +396,7 @@ window.addEventListener('DOMContentLoaded', function () {
       f.ticks.forEach(function (t) {
         var k = C.tickKey(t);
         // only plain "review" boxes: never options in a Yes/No group, never deliberate blanks
-        if (!t0[k].on && /review/i.test(t0[k].why) && !t.group) it.overrides[k] = true;
+        if (!t0[k].on && t0[k].action === 'review' && !t.group && !t.matrix) it.overrides[k] = true;
       });
       it.ticksOpen = true; renderPack(); invalidateOutputs(); return;
     }

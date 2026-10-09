@@ -144,6 +144,17 @@
     return parts.join('   ');
   }
 
+  /* What goes in an empty "Patient identifier/label" box: a printed-label look. */
+  function patientLabel(p) {
+    var lines = [];
+    var name = clean([(p.surname || '').toUpperCase(), p.forenames].filter(Boolean).join(', '));
+    if (name) lines.push(name);
+    if (p.dob) lines.push('DOB: ' + p.dob);
+    if (p.nhs) lines.push('NHS: ' + nhsFormat(p.nhs));
+    if (p.mrn) lines.push('MRN: ' + p.mrn);
+    return lines.join('\n');
+  }
+
   function valueFor(role, data, form) {
     var p = data.patient || {}, c = data.clinician || {};
     var roles = {};
@@ -156,6 +167,7 @@
       case 'nhs': return p.nhs ? nhsFormat(p.nhs) : (p.mrn ? 'MRN ' + p.mrn : '');
       // A generic identifier box gets both numbers unless the form also has an NHS box.
       case 'identifier': return roles.nhs ? (p.mrn || '') : identifierText(p);
+      case 'patient_label': return patientLabel(p);
       case 'hospital': return c.site || '';
       case 'consultant': return c.consultant || c.name || '';
       case 'consultant_role': return c.consultant ? (c.consultantRole || '') : (c.role || '');
@@ -174,44 +186,62 @@
         id: r.id, tick: r.tick, note: r.note || '',
         match: r.match ? new RegExp(r.match, 'i') : null,
         prompt: r.prompt ? new RegExp(r.prompt, 'i') : null,
-        option: r.option ? new RegExp(r.option, 'i') : null
+        option: r.option ? new RegExp(r.option, 'i') : null,
+        section: r.section ? new RegExp(r.section, 'i') : null
       };
     });
   }
 
   function ruleFor(tick, compiled) {
     var opt = clean(tick.option), prompt = clean(tick.prompt || ''), line = clean(tick.line || '');
+    var section = clean(tick.section || '');
     var all = clean(prompt + ' ' + opt) || line;
     for (var i = 0; i < compiled.length; i++) {
       var r = compiled[i];
-      if (r.option || r.prompt) {
-        if (r.prompt && !r.prompt.test(prompt || line)) continue;
-        if (r.option && !r.option.test(opt)) continue;
-        return r;
-      }
-      if (r.match && r.match.test(all)) return r;
+      if (r.match && !r.match.test(all) && !r.match.test(opt)) continue;
+      if (r.prompt && !r.prompt.test(prompt || line)) continue;
+      if (r.option && !r.option.test(opt)) continue;
+      if (r.section && !r.section.test(section)) continue;
+      if (!r.match && !r.prompt && !r.option && !r.section) continue;
+      return r;
     }
     return null;
   }
 
-  /* Returns { name|name#value: {on, why, rule} } for one form. */
+  /* Returns { name|name#value: {on, why, action} } for one form.
+     action: always | female | male | known | review | never | statement */
   function defaultTicks(form, sex, rules) {
     var compiled = compile(rules);
     var out = {};
     (form.ticks || []).forEach(function (t) {
       var r = ruleFor(t, compiled);
-      var on = false, why = 'Not pre-ticked — review';
-      var action = r ? r.tick : 'review';
-      if (action === 'always') { on = true; why = r.note || 'Pre-ticked'; }
+      var action, note;
+      if (r) { action = r.tick; note = r.note; }
+      else if (!t.matrix && !t.group && clean(t.option).split(/\s+/).length >= 5) { action = 'always'; note = 'Statement or risk \u2014 pre-ticked'; }
+      else { action = 'review'; note = ''; }
+      // A row of options (Outpatient / Day unit / Inpatient) is a choice: a rule
+      // that only knows which part of the form it is in must not pick one.
+      if (t.group && r && r.section && !r.match && !r.option && !r.prompt && action === 'always') {
+        action = 'review'; note = 'Choose one';
+      }
+      // Grids (Expected / Common / Rare …) need a clinical judgement per row,
+      // unless the row is for the other sex.
+      if (t.matrix && action !== 'never') {
+        var otherSex = (action === 'female' && sex === 'M') || (action === 'male' && sex === 'F');
+        if (!otherSex) { action = 'review'; note = 'Choose how likely for this patient (one per row)'; }
+      }
+      var on = false, why;
+      if (action === 'always') { on = true; why = note || 'Pre-ticked'; }
       else if (action === 'female' || action === 'male') {
         var want = action === 'female' ? 'F' : 'M';
-        if (sex === want) { on = true; why = r.note || (action === 'female' ? 'Female patient' : 'Male patient'); }
+        if (sex === want) { on = true; why = note || (action === 'female' ? 'Female patient' : 'Male patient'); }
         else if (sex) { why = 'Not applicable (' + (sex === 'F' ? 'female' : 'male') + ' patient)'; }
-        else { why = 'Choose the patient’s sex to decide'; }
+        else { why = 'Choose the patient\u2019s sex to decide'; }
       } else if (action === 'known') {
-        if (sex) { on = true; why = r.note || 'Applies to all patients'; }
-        else { why = 'Choose the patient’s sex to decide'; }
-      } else if (action === 'never') { why = r.note || 'Left blank'; }
+        if (sex) { on = true; why = note || 'Applies to all patients'; }
+        else { why = 'Choose the patient\u2019s sex to decide'; }
+      } else if (action === 'never') { why = note || 'Left blank'; }
+      else { action = 'review'; why = note ? note + ' \u2014 review' : 'Not pre-ticked \u2014 review'; }
       out[tickKey(t)] = { on: on, why: why, action: action };
     });
     // only one option per group may be on
@@ -237,7 +267,7 @@
   // Helvetica can only draw WinAnsi characters; strip accents rather than fail.
   function winAnsi(s) {
     return String(s).normalize('NFKD').replace(/[̀-ͯ]/g, '')
-      .replace(/[^\x20-\x7E -ÿ‘’“”–—•€]/g, '?');
+      .replace(/[^\n\x20-\x7E -ÿ‘’“”–—•€]/g, '?');
   }
 
   async function fillPdf(bytes, form, data, ticks, PDFLib) {
@@ -245,6 +275,7 @@
     var pdfForm = doc.getForm();
     var problems = [];
 
+    var helv = await doc.embedFont(PDFLib.StandardFonts.Helvetica);
     (form.fields || []).forEach(function (f) {
       var v = valueFor(f.role, data, form);
       if (!v) return;
@@ -253,6 +284,23 @@
         var text = winAnsi(v);
         var max = tf.getMaxLength();
         if (max && text.length > max) text = text.slice(0, max);
+        var widget = tf.acroField.getWidgets()[0];
+        var rect = widget ? widget.getRectangle() : null;
+        if (rect) {
+          if (text.indexOf('\n') >= 0) {
+            // multi-line box: size so every line fits across and down
+            if (!tf.isMultiline()) tf.enableMultiline();
+            var rows = text.split('\n');
+            var widest = Math.max.apply(null, rows.map(function (r) { return helv.widthOfTextAtSize(r, 1); }));
+            var size = Math.min(9, (rect.width - 6) / widest, (rect.height - 4) / (rows.length * 1.2));
+            tf.setFontSize(Math.max(5, Math.floor(size * 2) / 2));
+          } else {
+            // one line: shrink long text so it is never cut off
+            var w1 = helv.widthOfTextAtSize(text, 1);
+            var fit = Math.min(10, (rect.width - 6) / w1, rect.height * 0.75);
+            if (fit < 9 || f.added) tf.setFontSize(Math.max(5, Math.floor(Math.min(9, fit) * 2) / 2));
+          }
+        }
         tf.setText(text);
       } catch (e) {
         problems.push('Could not fill "' + (f.label || f.role) + '"');
@@ -285,7 +333,8 @@
       } catch (e) { problems.push('Could not set option "' + name + '"'); }
     });
 
-    var bytesOut = await doc.save(); // regenerates appearances for the fields we set; form stays fillable
+    pdfForm.updateFieldAppearances(helv);
+    var bytesOut = await doc.save({ updateFieldAppearances: false }); // form stays fillable
     return { bytes: bytesOut, problems: problems };
   }
 

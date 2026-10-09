@@ -83,13 +83,13 @@ async function updateForms(source, prevForms) {
     const srcSha = sha256(bytes);
     if (prev && prev.srcSha === srcSha && prev.analyser === ANALYSER_VERSION && !FORCE &&
         await exists(path.join(DATA, prev.file))) {
-      out.push({ ...prev, title: item.title, group: item.group, url: item.url });
+      out.push({ ...prev, title: item.title, ...(item.sourceTitle ? { sourceTitle: item.sourceTitle } : {}), group: item.group, url: item.url });
       st.unchanged++;
       continue;
     }
 
     let res;
-    try { res = await analyseAndConvert(bytes, { title: item.title }); }
+    try { res = await analyseAndConvert(bytes); }
     catch (e) {
       st.failed.push({ title: item.title, error: 'analysis failed: ' + e.message });
       if (prev) out.push(prev);
@@ -100,7 +100,7 @@ async function updateForms(source, prevForms) {
     if (prev && prev.file !== file) await fs.rm(path.join(DATA, prev.file), { force: true });
 
     out.push({
-      id, source, group: item.group, title: item.title, url: item.url, file,
+      id, source, group: item.group, title: item.title, ...(item.sourceTitle ? { sourceTitle: item.sourceTitle } : {}), url: item.url, file,
       srcSha, analyser: ANALYSER_VERSION,
       updated: prev && prev.srcSha === srcSha ? (prev.updated || today) : today,
       review: res.review, version: res.version, pages: res.pages,

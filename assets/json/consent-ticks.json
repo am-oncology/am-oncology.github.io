@@ -1,11 +1,29 @@
 {
-  "_comment": "Default tick rules for consent.html. Each tick box found on a form is tested against these rules in order; the first match decides its default. 'match' is tested against the box's label (question + option). 'prompt' and 'option' test the question and the option separately (for Yes/No rows). tick: always | female | male | known (ticked once sex is chosen) | never. Anything that matches no rule is left blank for the clinician to review. Every default can be changed on the page before the pack is built.",
+  "_comment": "Default tick rules for consent.html. Every tick box on a form is tested against these rules in order and the first match decides its default. 'match' tests the box's whole label; 'prompt', 'option' and 'section' test the question, the option text and the part of the form the box is in (e.g. 'Common side effects:'). tick: always | female | male | known (ticked once sex is chosen) | review (left blank, flagged for the clinician) | never (left blank, e.g. the patient's own confirmations). Boxes that match nothing are ticked when they are a statement or risk (5+ words), otherwise left for review. Every default can be changed on the page before the pack is built.",
   "rules": [
     {
       "id": "no-pregnancy-risk-confirmation",
       "match": "no (risk|chance|possibility) (that )?I (could|might|may) be pregnant|I am not pregnant",
       "tick": "never",
       "note": "The patient confirms this themselves"
+    },
+    {
+      "id": "patient-or-third-party",
+      "match": "copy of (the |this )?(consent )?form|pacemaker|defibrillator|\\bICD\\b|interpreter|interpreted|witness|no further questions|wish(es)? to (go ahead|proceed)|\\bI (agree|consent)\\b|enough time to consider|unable to sign|advance decision|withdrawn consent|^other\\b|please state|smok|photograph|research|tissue (sample|storage|bank)|stor(e|age) of (tissue|samples?)",
+      "tick": "never",
+      "note": "For the patient, a witness or later in the pathway"
+    },
+    {
+      "id": "sex-female",
+      "option": "^female$",
+      "tick": "female",
+      "note": "Female patient"
+    },
+    {
+      "id": "sex-male",
+      "option": "^male$",
+      "tick": "male",
+      "note": "Male patient"
     },
     {
       "id": "leaflet-yes",
@@ -21,46 +39,82 @@
       "tick": "never"
     },
     {
-      "id": "patient-decisions",
-      "match": "copy of (the |this )?(consent )?form|pacemaker|defibrillator|\\bICD\\b|interpreter|witness|no further questions|wish to (go ahead|proceed)|\\bI (agree|consent)\\b|photograph|research|tissue|stor(e|age) of|smok",
-      "tick": "never",
-      "note": "Patient decision or confirmation"
+      "id": "leaflet-given",
+      "match": "^(patient )?information (leaflet|sheet|booklet)\\b",
+      "tick": "always",
+      "note": "The pack includes an information leaflet"
     },
     {
       "id": "treatment-intent",
       "match": "^(radical|adjuvant|neo-?adjuvant|palliative|curative|disease ?/? ?symptom control|symptom control|disease control)\\b",
-      "tick": "never",
+      "tick": "review",
       "note": "Choose the treatment intent"
     },
     {
+      "id": "choices",
+      "section": "^site\\b|aim of treatment|intended benefit|where the treatment|where will i have|protocol|guideline|concurrent|radiotherapy type|treatment type|name of proposed|course of treatment|route|duration|frequency|regimen|indication|additional procedures|dose|fraction",
+      "tick": "review",
+      "note": "Choose what applies to this patient"
+    },
+    {
+      "id": "pathway-choices",
+      "match": "clinical trial|separate consent form|^induction\\b|^maintenance\\b",
+      "tick": "review",
+      "note": "Tick if this applies"
+    },
+    {
+      "id": "particular-concerns",
+      "match": "particular importance|please write|details here",
+      "tick": "review",
+      "note": "Tick if discussed, and write the details"
+    },
+    {
       "id": "yes-no",
-      "option": "^(yes|no)\\b",
-      "tick": "never",
-      "note": "Choose yes or no"
+      "option": "^(yes|no|not available|n/?a)\\b",
+      "tick": "review",
+      "note": "Choose one"
+    },
+    {
+      "id": "risk-any-sex",
+      "match": "ovaries and sperm|make someone else pregnant|become pregnant or (father|make)|(partner|someone) .{0,20}pregnant",
+      "tick": "always",
+      "note": "Applies to all patients"
     },
     {
       "id": "conceive-any-sex",
-      "match": "conceive a child|sperm or eggs|eggs or sperm|fertility|contracepti",
+      "match": "conceive a child|sperm or eggs|eggs or sperm|contracepti",
       "tick": "known",
       "note": "Applies to all patients"
     },
     {
-      "id": "avoid-pregnancy",
-      "match": "(should|must) not (become|get) pregnant|avoid (becoming|getting) pregnant|not (to )?become pregnant|pregnancy test",
-      "tick": "female",
-      "note": "Female patient"
-    },
-    {
       "id": "female-specific",
-      "match": "breast ?-?feed|egg (storage|collection|freezing)|menopaus|menstrua|\\bperiods?\\b|vagina|ovar(y|ies|ian)|womb|uter(us|ine)",
+      "match": "(should|must) not (become|get) pregnant|avoid (becoming|getting) pregnant|not (to )?become pregnant|pregnancy test|breast ?-?feed|viable egg|egg (storage|collection|freezing)|menopaus|menstrua|\\bperiods?\\b|vagina|ovar(y|ies|ian)|womb|uter(us|ine)",
       "tick": "female",
       "note": "Female patient"
     },
     {
       "id": "male-specific",
-      "match": "father a child|partner (becoming|becomes|to become) pregnant|get (a|your) partner pregnant|donat(e|ing) sperm|sperm (bank|storage|banking)|erectile|erection|testic|ejaculat",
+      "match": "father a child|viable sperm|sperm (bank|storage|banking)|donat(e|ing) sperm|erectile|erection|testic|ejaculat|scrot",
       "tick": "male",
       "note": "Male patient"
+    },
+    {
+      "id": "side-effects",
+      "section": "side.?effect|these effects|risks?\\b|^(very )?common\\b|^less common|^uncommon|^expected|^rare|^occasional|^late|^early|long.?term|short.?term",
+      "tick": "always",
+      "note": "Side effect / risk discussed"
+    },
+    {
+      "id": "clinician-statements",
+      "match": "^I (have (discussed|explained)|confirm (that )?the patient has capacity)",
+      "tick": "always",
+      "note": "Health professional statement"
+    },
+    {
+      "id": "written-information",
+      "section": "written information|been provided",
+      "tick": "always",
+      "note": "Information given with the pack"
     }
   ]
 }

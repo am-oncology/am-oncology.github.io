@@ -34,8 +34,10 @@ amber notice.
 ## How the filling works
 
 - **RCR forms** are already fillable. Each existing field is named after the label printed next to it.
-- **CRUK forms** are flat. The script finds the printed labels and tick boxes and adds real form
-  fields over them. The printed text is never altered, so the CRUK footer and logo stay valid under
+- **CRUK forms** are flat. The script finds the printed labels (including curly-apostrophe
+  "Patient’s surname/family name"), the blank line that goes with each, and the Webdings tick-box
+  glyphs, and adds real form fields over them. The empty "Patient identifier/label" box on later
+  pages gets the patient's name, DOB, NHS number and MRN, like a printed label. The printed text is never altered, so the CRUK footer and logo stay valid under
   their terms. The disclaimer CRUK asks for is on the page.
 - **Macmillan pages** are rendered to PDF. Each page footer carries the line "© Macmillan Cancer
   Support. Reproduced with permission", plus the source URL and retrieval date. Keep the
@@ -46,16 +48,23 @@ amber notice.
 
 ## Tick rules
 
-`assets/json/consent-ticks.json` decides what is pre-ticked. The first matching rule wins:
+`assets/json/consent-ticks.json` decides what is pre-ticked. Rules are tested in order and the
+first match wins. A rule can test the box's label (`match`), the question and option separately
+(`prompt`, `option`), or the part of the form the box sits in (`section`, e.g. "Common side effects:").
 
 | tick | meaning |
 |---|---|
-| `always` | ticked (e.g. leaflet provided: Yes) |
-| `female` / `male` | ticked only for that sex |
+| `always` | ticked: side effects and risks, clinician statements ("I have discussed…"), information leaflet given |
+| `female` / `male` | ticked only for that sex (pregnancy, menopause, erectile function, Male/Female boxes) |
 | `known` | ticked once any sex is chosen (e.g. "should not conceive a child") |
-| `never` | left blank, e.g. patient confirmations, pacemaker, treatment intent |
+| `review` | left blank and flagged: treatment intent, site, where treatment is given, protocol Yes/No |
+| `never` | left blank: the patient's own confirmations, interpreter/witness, copy accepted, pacemaker |
 
-Boxes that match no rule are left blank and marked "review" on the page.
+Boxes that match no rule are ticked if they read as a statement or risk (5+ words) and otherwise
+left for review. A row of options on one line (Outpatient / Day unit / Inpatient) is never
+auto-picked from its section alone. RCR side-effect **grids** (Expected / Common / Less common /
+Rare columns) are left for the clinician, one choice per row, because the frequency is a clinical
+judgement. Rows for the other sex are left blank.
 
 ## Options
 
