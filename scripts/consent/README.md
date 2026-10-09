@@ -7,6 +7,7 @@ consent.html                          the tool page
 assets/js/consent.js                  page logic
 assets/js/consent-core.js             paste parsing, NHS number check, tick defaults, PDF filling
 assets/json/consent-ticks.json        default tick rules (edit here, not in code)
+assets/json/consent-presets.json      quick sets (e.g. rectal neoadjuvant): edit here
 assets/json/tools.json                now includes the "consent" entry
 assets/vendor/pdf-lib.min.js          bundled so NHS networks that block CDNs still work
 assets/vendor/jszip.min.js            (licences in assets/vendor/LICENSES.txt)
@@ -65,6 +66,18 @@ left for review. A row of options on one line (Outpatient / Day unit / Inpatient
 auto-picked from its section alone. RCR side-effect **grids** (Expected / Common / Less common /
 Rare columns) are left for the clinician, one choice per row, because the frequency is a clinical
 judgement. Rows for the other sex are left blank.
+
+## Quick sets and the combined PDF
+
+- `assets/json/consent-presets.json` lists the quick sets. Each item finds one document by a
+  pattern on its title (`t`), optionally also on its group (`g`, used where CRUK repeats a title
+  under several tumour sites). Because forms are found by title, a set keeps working when the weekly
+  update refreshes the files; if a title changes and nothing matches, the page says which item was
+  not found. Copy an existing block to add a set.
+- Users can also build a pack and press **Save current pack as a quick set**. That keeps only the
+  document IDs in that browser's localStorage, never anything about a patient.
+- After **Build pack** there is one combined PDF in pack order. The typed details and ticks are
+  flattened onto the page so it prints reliably; the separate PDFs stay fillable for edits.
 
 ## Options
 

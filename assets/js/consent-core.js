@@ -338,6 +338,33 @@
     return { bytes: bytesOut, problems: problems };
   }
 
+  /* One PDF for printing. copyPages() drops the form's field table, so each
+     filled form is flattened first (the typed values and ticks are drawn onto
+     the page); the separate PDFs stay fillable. parts: [{bytes, flatten, name}] */
+  async function mergePdfs(parts, PDFLib) {
+    var out = await PDFLib.PDFDocument.create();
+    var problems = [];
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      try {
+        var src = await PDFLib.PDFDocument.load(p.bytes, { ignoreEncryption: true });
+        if (p.flatten) {
+          try {
+            var helv = await src.embedFont(PDFLib.StandardFonts.Helvetica);
+            var fm = src.getForm();
+            fm.updateFieldAppearances(helv);
+            fm.flatten({ updateFieldAppearances: false });
+          } catch (e) { problems.push(p.name + ': could not flatten, fields may not print'); }
+        }
+        var pages = await out.copyPages(src, src.getPageIndices());
+        pages.forEach(function (pg) { out.addPage(pg); });
+      } catch (e) {
+        problems.push(p.name + ': left out of the combined PDF (' + e.message + ')');
+      }
+    }
+    return { bytes: await out.save(), problems: problems, pages: out.getPageCount() };
+  }
+
   function safeFileName(s) {
     return clean(s).replace(/[\\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').slice(0, 110);
   }
@@ -347,6 +374,6 @@
     parseDate: parseDate, formatDate: formatDate, ageOn: ageOn,
     parsePatient: parsePatient, fullName: fullName, identifierText: identifierText,
     valueFor: valueFor, defaultTicks: defaultTicks, tickKey: tickKey, tickLabel: tickLabel,
-    fillPdf: fillPdf, safeFileName: safeFileName, winAnsi: winAnsi
+    fillPdf: fillPdf, mergePdfs: mergePdfs, safeFileName: safeFileName, winAnsi: winAnsi
   };
 });

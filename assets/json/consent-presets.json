@@ -1,0 +1,92 @@
+{
+  "_comment": "Quick sets for consent.html. Each item finds ONE document in the catalogue: s = rcr | cruk | macmillan, t = regular expression tested against the title (case-insensitive), g = optional regular expression tested against the group heading (needed where CRUK uses the same title under several tumour sites). Edit freely; a set whose pattern finds nothing simply reports 'not found' on the page.",
+  "presets": [
+    {
+      "name": "Rectal: neoadjuvant capecitabine + RT",
+      "items": [
+        { "s": "rcr",       "t": "rectal" },
+        { "s": "cruk",      "t": "^capecitabine with radiotherapy$", "g": "colorectal" },
+        { "s": "macmillan", "t": "^chemoradiation for rectal cancer$" },
+        { "s": "macmillan", "t": "^capecitabine$" }
+      ]
+    },
+    {
+      "name": "Rectal: short-course RT then CAPOX (TNT)",
+      "items": [
+        { "s": "rcr",       "t": "rectal" },
+        { "s": "cruk",      "t": "^oxaliplatin and capecitabine \\(capox\\)$", "g": "colorectal" },
+        { "s": "macmillan", "t": "^radiotherapy for rectal cancer$" },
+        { "s": "macmillan", "t": "^xelox, capox or ox$" }
+      ]
+    },
+    {
+      "name": "Colorectal: CAPOX",
+      "items": [
+        { "s": "cruk",      "t": "^oxaliplatin and capecitabine \\(capox\\)$", "g": "colorectal" },
+        { "s": "macmillan", "t": "^xelox, capox or ox$" }
+      ]
+    },
+    {
+      "name": "Colorectal: FOLFOX",
+      "items": [
+        { "s": "cruk",      "t": "^oxaliplatin-fluorouracil \\(folfox\\)$", "g": "colorectal" },
+        { "s": "macmillan", "t": "^folfox$" }
+      ]
+    },
+    {
+      "name": "Anal: radical chemoRT (mitomycin + capecitabine)",
+      "items": [
+        { "s": "rcr",       "t": "anal" },
+        { "s": "cruk",      "t": "^capecitabine and mitomycin with radiotherapy$" },
+        { "s": "macmillan", "t": "^chemoradiation for anal cancer$" },
+        { "s": "macmillan", "t": "^capecitabine$" },
+        { "s": "macmillan", "t": "^mitomycin$" }
+      ]
+    },
+    {
+      "name": "Anal: radical chemoRT (mitomycin + 5FU)",
+      "items": [
+        { "s": "rcr",       "t": "anal" },
+        { "s": "cruk",      "t": "^mitomycin and fluorouracil radiotherapy$" },
+        { "s": "macmillan", "t": "^chemoradiation for anal cancer$" },
+        { "s": "macmillan", "t": "^mitomycin and fluorouracil \\(5fu\\) with radiotherapy$" }
+      ]
+    },
+    {
+      "name": "Oesophageal: carboplatin-paclitaxel + RT",
+      "items": [
+        { "s": "rcr",       "t": "oesophageal" },
+        { "s": "cruk",      "t": "^paclitaxel and carboplatin \\+/- radiotherapy$", "g": "oesophago" },
+        { "s": "macmillan", "t": "^radiotherapy for oesophageal cancer$" },
+        { "s": "macmillan", "t": "^paclitaxel and carboplatin$" }
+      ]
+    },
+    {
+      "name": "Cervix: cisplatin + RT",
+      "items": [
+        { "s": "rcr",       "t": "gynaecologic ebrt" },
+        { "s": "cruk",      "t": "^cisplatin \\+ radiotherapy$", "g": "gynaecolog" },
+        { "s": "macmillan", "t": "^radiotherapy for cervical cancer$" },
+        { "s": "macmillan", "t": "^cisplatin$" }
+      ]
+    },
+    {
+      "name": "Bladder: mitomycin-5FU + RT",
+      "items": [
+        { "s": "rcr",       "t": "bladder" },
+        { "s": "cruk",      "t": "^mitomycin-fluorouracil \\+/- radiotherapy$", "g": "bladder" },
+        { "s": "macmillan", "t": "^radical radiotherapy for bladder cancer$" },
+        { "s": "macmillan", "t": "^mitomycin and fluorouracil \\(5fu\\) with radiotherapy$" }
+      ]
+    },
+    {
+      "name": "Brain: temozolomide + RT",
+      "items": [
+        { "s": "rcr",       "t": "^(rcr radiotherapy consent for )?brain tumours$" },
+        { "s": "cruk",      "t": "^temozolomide\\+radiotherapy$" },
+        { "s": "macmillan", "t": "^radiotherapy for a brain tumour$" },
+        { "s": "macmillan", "t": "^temozolomide$" }
+      ]
+    }
+  ]
+}

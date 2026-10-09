@@ -75,6 +75,13 @@
   .tick-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-2); }
   .tick-actions button { min-height: 28px; font-size: var(--fs-xs); padding: 0.1rem var(--sp-3); }
 
+  .quick-sets .chip-row { margin-top: var(--sp-2); }
+  .chip-btn.saved { padding-right: var(--sp-2); }
+  .chip-x { margin-left: var(--sp-2); opacity: 0.6; cursor: pointer; }
+  .chip-x:hover { opacity: 1; color: var(--red); }
+  .combined { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-4); padding: var(--sp-3) var(--sp-4); border: 1px solid var(--accent); border-radius: var(--radius); background: var(--accent-soft); }
+  .combined[hidden] { display: none; }
+
   /* Output */
   .out-list { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); }
   .out-row { display: flex; align-items: center; gap: var(--sp-3); flex-wrap: wrap; padding: var(--sp-2) var(--sp-3); border: 1px solid var(--rule); border-radius: var(--radius); background: var(--paper); }
@@ -99,7 +106,7 @@
     <div>
       <div class="eyebrow">Consent</div>
       <h1>Consent pack builder</h1>
-      <p>Fills national RCR radiotherapy and CRUK SACT consent forms with the patient's and clinician's details, and adds Macmillan information sheets. Each document downloads as its own PDF, still editable.</p>
+      <p>Fills national RCR radiotherapy and CRUK SACT consent forms with the patient's and clinician's details, and adds Macmillan information sheets. Each document downloads as its own PDF, still editable, and there is one combined PDF for printing.</p>
     </div>
     <div class="masthead-meta">
       <div class="live-indicator"><span class="st-dot" id="st-dot"></span><span id="st-text">Loading forms…</span></div>
@@ -217,6 +224,17 @@
   <!-- ③ DOCUMENTS -->
   <div class="card" id="docs-card">
     <div class="step-head"><span class="step-num">3</span><span class="step-title">Choose forms and information</span></div>
+    <div class="quick-sets">
+      <div class="field-label">Quick sets <span class="small">adds the usual forms and leaflets; remove any you don't need</span></div>
+      <div class="chip-row" id="preset-row"></div>
+      <div class="row-between" style="margin-top: var(--sp-2);">
+        <span class="small" id="preset-msg" role="status" aria-live="polite"></span>
+        <span class="spacer"></span>
+        <button type="button" id="preset-save" class="chip-btn">Save current pack as a quick set</button>
+        <button type="button" id="pack-clear" class="chip-btn">Clear pack</button>
+      </div>
+    </div>
+    <hr class="divider">
     <div class="controls">
       <div class="seg-toggle" role="group" aria-label="Document type" id="src-toggle">
         <button type="button" data-src="rcr" aria-pressed="true">Radiotherapy · RCR</button>
@@ -245,6 +263,15 @@
       <span class="small" id="build-msg" role="status" aria-live="polite"></span>
     </div>
     <div id="build-issues"></div>
+    <div id="combined" class="combined" hidden>
+      <div>
+        <div class="pack-title">One combined PDF for printing</div>
+        <div class="pack-sub" id="combined-sub"></div>
+      </div>
+      <span class="spacer" style="flex:1"></span>
+      <button type="button" id="comb-open" class="btn-primary">Open / print</button>
+      <button type="button" id="comb-dl">Download</button>
+    </div>
     <div id="out-list" class="out-list"></div>
   </div>
 

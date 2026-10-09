@@ -38,6 +38,10 @@ window.addEventListener('DOMContentLoaded', function () {
   var source = 'rcr';
   var pack = [];           // [{ id, kind: 'form'|'leaflet', overrides: {tickKey: bool} }]
   var outputs = [];        // [{ name, url, blob }]
+  var combined = null;     // { name, url, blob } the one-PDF print copy
+  var presets = [];        // from consent-presets.json
+  var userPresets = [];    // [{ name, items: [{id, kind}] }] kept in this browser; ids only, never patient data
+  var PRESET_KEY = 'cot-consent-presets';
   var pdfCache = {};       // file path → ArrayBuffer (forms are public, caching them is fine)
 
   /* ════ Clinician details (the only thing persisted) ══════════ */
@@ -293,6 +297,74 @@ window.addEventListener('DOMContentLoaded', function () {
     renderPack(); renderDocs(); invalidateOutputs();
   }
 
+  /* ════ Quick sets ═══════════════════════════════════════════ */
+  function loadUserPresets() {
+    try { userPresets = JSON.parse(localStorage.getItem(PRESET_KEY) || '[]') || []; } catch (e) { userPresets = []; }
+  }
+  function saveUserPresets() {
+    try { localStorage.setItem(PRESET_KEY, JSON.stringify(userPresets)); } catch (e) {}
+  }
+  function findOne(spec) {
+    var t = new RegExp(spec.t, 'i'), g = spec.g ? new RegExp(spec.g, 'i') : null;
+    var list = spec.s === 'macmillan' ? catalogue.leaflets : catalogue.forms.filter(function (f) { return f.source === spec.s; });
+    for (var i = 0; i < list.length; i++) {
+      var x = list[i];
+      if (t.test(x.title || '') && (!g || g.test(x.group || ''))) return { id: x.id, kind: spec.s === 'macmillan' ? 'leaflet' : 'form' };
+    }
+    return null;
+  }
+  function renderPresets() {
+    var row = $('preset-row');
+    if (!presets.length && !userPresets.length) { row.innerHTML = '<span class="small">None defined.</span>'; return; }
+    row.innerHTML = presets.map(function (p, i) {
+      return '<button type="button" class="chip-btn" data-preset="' + i + '">+ ' + esc(p.name) + '</button>';
+    }).join('') + userPresets.map(function (p, i) {
+      return '<span class="chip-btn saved" data-upreset="' + i + '" role="group">' +
+        '<button type="button" data-upreset-use="' + i + '" style="all:unset;cursor:pointer;">+ ' + esc(p.name) + '</button>' +
+        '<span class="chip-x" data-upreset-del="' + i + '" title="Delete this saved set" role="button" aria-label="Delete ' + esc(p.name) + '">\u00d7</span></span>';
+    }).join('');
+  }
+  function addMany(list, label) {
+    var added = 0, had = 0;
+    list.forEach(function (it) {
+      if (inPack(it.id)) { had++; return; }
+      pack.push({ id: it.id, kind: it.kind, overrides: {} }); added++;
+    });
+    renderPack(); renderDocs(); invalidateOutputs(true);
+    return label + ': ' + added + ' added' + (had ? ', ' + had + ' already in the pack' : '') + '.';
+  }
+  $('preset-row').addEventListener('click', function (e) {
+    var b;
+    if ((b = e.target.closest('[data-preset]'))) {
+      var p = presets[+b.dataset.preset], found = [], missing = [];
+      p.items.forEach(function (spec) { var r = findOne(spec); if (r) found.push(r); else missing.push(spec.t.replace(/[\^$]|\\/g, '')); });
+      var msg = addMany(found, p.name);
+      if (missing.length) msg += ' Not found in the current forms: ' + missing.join('; ') + '.';
+      $('preset-msg').textContent = msg;
+    } else if ((b = e.target.closest('[data-upreset-del]'))) {
+      userPresets.splice(+b.dataset.upresetDel, 1); saveUserPresets(); renderPresets();
+    } else if ((b = e.target.closest('[data-upreset-use]'))) {
+      var u = userPresets[+b.dataset.upresetUse];
+      var ok = u.items.filter(function (it) { return it.kind === 'leaflet' ? leafletById[it.id] : formById[it.id]; });
+      var m2 = addMany(ok, u.name);
+      if (ok.length < u.items.length) m2 += ' ' + (u.items.length - ok.length) + ' no longer exist.';
+      $('preset-msg').textContent = m2;
+    }
+  });
+  $('preset-save').addEventListener('click', function () {
+    if (!pack.length) { $('preset-msg').textContent = 'Add some documents to the pack first.'; return; }
+    var name = (prompt('Name for this quick set (the forms and leaflets only; nothing about the patient is saved):') || '').trim();
+    if (!name) return;
+    userPresets = userPresets.filter(function (p) { return p.name !== name; });
+    userPresets.push({ name: name, items: pack.map(function (it) { return { id: it.id, kind: it.kind }; }) });
+    saveUserPresets(); renderPresets();
+    $('preset-msg').textContent = 'Saved "' + name + '" on this computer.';
+  });
+  $('pack-clear').addEventListener('click', function () {
+    pack = []; renderPack(); renderDocs(); invalidateOutputs(true);
+    $('preset-msg').textContent = 'Pack cleared.';
+  });
+
   /* ════ Pack and tick review ═════════════════════════════════ */
   function effectiveTicks(item) {
     var form = formById[item.id];
@@ -427,9 +499,11 @@ window.addEventListener('DOMContentLoaded', function () {
 
   /* ════ Build ════════════════════════════════════════════════ */
   function invalidateOutputs(silent) {
-    if (!outputs.length) return;
+    if (!outputs.length && !combined) return;
     outputs.forEach(function (o) { URL.revokeObjectURL(o.url); });
     outputs = [];
+    if (combined) { URL.revokeObjectURL(combined.url); combined = null; }
+    $('combined').hidden = true;
     $('out-list').innerHTML = '';
     $('build-issues').innerHTML = '';
     $('zip-btn').disabled = true;
@@ -489,7 +563,7 @@ window.addEventListener('DOMContentLoaded', function () {
         if (item.kind === 'leaflet') {
           var l = leafletById[item.id];
           return getPdf(l.file).then(function (buf) {
-            results.push({ name: base + ' - Macmillan - ' + C.safeFileName(l.title) + '.pdf', bytes: buf, problems: [] });
+            results.push({ name: base + ' - Macmillan - ' + C.safeFileName(l.title) + '.pdf', bytes: buf, problems: [], flatten: false });
           });
         }
         var f = formById[item.id];
@@ -500,12 +574,27 @@ window.addEventListener('DOMContentLoaded', function () {
         }).then(function (r) {
           var problems = r.problems.slice();
           if (f.missing && f.missing.length) problems.push('Complete by hand: ' + f.missing.map(missingName).join(', '));
-          results.push({ name: base + ' - ' + label + '.pdf', bytes: r.bytes, problems: problems });
+          results.push({ name: base + ' - ' + label + '.pdf', bytes: r.bytes, problems: problems, flatten: true });
         });
       }).catch(function (err) {
         results.push({ name: (formById[item.id] || leafletById[item.id] || {}).title || item.id, error: err.message });
       });
     }, Promise.resolve()).then(function () {
+      var good = results.filter(function (r) { return !r.error; });
+      if (!good.length) return null;
+      $('build-msg').textContent = 'Combining into one PDF…';
+      return C.mergePdfs(good.map(function (r) { return { bytes: r.bytes, flatten: r.flatten, name: r.name }; }), window.PDFLib)
+        .catch(function (e) { return { error: e.message }; });
+    }).then(function (merged) {
+      if (merged && !merged.error) {
+        var cb = new Blob([merged.bytes], { type: 'application/pdf' });
+        combined = { name: base + ' - consent pack (print).pdf', blob: cb, url: URL.createObjectURL(cb) };
+        $('combined-sub').textContent = merged.pages + ' pages, in the order of the pack. Typed details and ticks are fixed onto the page, so use the separate files if you still need to edit.' +
+          (merged.problems.length ? ' Note: ' + merged.problems.join('; ') : '');
+        $('combined').hidden = false;
+      } else if (merged && merged.error) {
+        $('build-issues').innerHTML += '<div class="notice notice-warn" style="margin-top:var(--sp-3);">The combined PDF could not be made (' + esc(merged.error) + '). The separate files are fine.</div>';
+      }
       outputs = results.filter(function (r) { return !r.error; }).map(function (r) {
         var blob = new Blob([r.bytes], { type: 'application/pdf' });
         return { name: r.name, blob: blob, url: URL.createObjectURL(blob), problems: r.problems };
@@ -537,6 +626,8 @@ window.addEventListener('DOMContentLoaded', function () {
     if ((b = e.target.closest('[data-open]'))) window.open(outputs[+b.dataset.open].url, '_blank', 'noopener');
     else if ((b = e.target.closest('[data-dl]'))) { var o = outputs[+b.dataset.dl]; download(o.blob, o.name); }
   });
+  $('comb-open').addEventListener('click', function () { if (combined) window.open(combined.url, '_blank', 'noopener'); });
+  $('comb-dl').addEventListener('click', function () { if (combined) download(combined.blob, combined.name); });
   $('zip-btn').addEventListener('click', function () {
     if (!outputs.length || !window.JSZip) return;
     var zip = new window.JSZip();
@@ -549,19 +640,22 @@ window.addEventListener('DOMContentLoaded', function () {
   // Nothing about the patient should outlive the tab.
   window.addEventListener('pagehide', function () {
     outputs.forEach(function (o) { URL.revokeObjectURL(o.url); });
+    if (combined) URL.revokeObjectURL(combined.url);
     Object.keys(P_FIELDS).forEach(function (k) { $(P_FIELDS[k]).value = ''; });
     $('paste').value = '';
   });
 
   /* ════ Init ═════════════════════════════════════════════════ */
   loadClinician();
+  loadUserPresets();
   validatePatient();
   renderPack();
 
   Promise.all([
     loadJSON(DATA + 'catalogue.json').catch(function () { return null; }),
     loadJSON(DATA + 'status.json').catch(function () { return null; }),
-    loadJSON('assets/json/consent-ticks.json').catch(function () { return { rules: [] }; })
+    loadJSON('assets/json/consent-ticks.json').catch(function () { return { rules: [] }; }),
+    loadJSON('assets/json/consent-presets.json').catch(function () { return { presets: [] }; })
   ]).then(function (res) {
     if (res[0]) catalogue = res[0];
     catalogue.forms = catalogue.forms || [];
@@ -569,6 +663,8 @@ window.addEventListener('DOMContentLoaded', function () {
     catalogue.forms.forEach(function (f) { formById[f.id] = f; });
     catalogue.leaflets.forEach(function (l) { leafletById[l.id] = l; });
     rules = res[2].rules || [];
+    presets = (res[3] && res[3].presets) || [];
+    renderPresets();
     paintStatus(res[1]);
     renderDocs();
   });
