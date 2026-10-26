@@ -1,5 +1,5 @@
 {
-  "run": "2026-10-19T09:52:39.556Z",
+  "run": "2026-10-26T10:17:02.421Z",
   "sources": {
     "rcr": {
       "ok": true,
@@ -12,19 +12,19 @@
     },
     "cruk": {
       "ok": true,
-      "listed": 402,
-      "added": 2,
-      "updated": 4,
-      "unchanged": 396,
-      "removed": 1,
+      "listed": 403,
+      "added": 1,
+      "updated": 0,
+      "unchanged": 402,
+      "removed": 0,
       "failed": []
     },
     "macmillan": {
       "ok": true,
       "listed": 495,
-      "added": 1,
-      "updated": 38,
-      "unchanged": 456,
+      "added": 0,
+      "updated": 49,
+      "unchanged": 446,
       "removed": 0,
       "failed": []
     }
@@ -32,7 +32,7 @@
   "ok": true,
   "counts": {
     "rcr": 27,
-    "cruk": 402,
+    "cruk": 403,
     "macmillan": 495
   }
 }

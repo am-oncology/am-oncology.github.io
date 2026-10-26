@@ -1,9 +1,9 @@
 {
-  "generated": "2026-10-19T09:52:39.556Z",
+  "generated": "2026-10-26T10:17:02.421Z",
   "analyserVersion": 4,
   "counts": {
     "rcr": 27,
-    "cruk": 402,
+    "cruk": 403,
     "macmillan": 495
   },
   "forms": [
@@ -25204,6 +25204,745 @@
           "option": "Patient has withdrawn consent",
           "prompt": "",
           "line": "Patient has withdrawn consent all patients are fully informed when consenting",
+          "section": "Important notes: (tick if applicable)"
+        }
+      ],
+      "missing": [],
+      "notes": [],
+      "suggest": []
+    },
+    {
+      "id": "cruk-generic-forms-translated-bengali-interlinear-form",
+      "source": "cruk",
+      "group": "Generic forms translated",
+      "title": "Bengali Interlinear form",
+      "url": "https://assets.ctfassets.net/u7vsjnoopqo5/5TAkXzEIxiSwuXOZ4Voez0/396b5da938003f814380439690dff2bb/Interlinear_Bengali_Generic_SACT.pdf",
+      "file": "forms/cruk/cruk-generic-forms-translated-bengali-interlinear-form.pdf",
+      "srcSha": "c48d3c0684fe7b4fb4f403fbaa3782ea8a7e082ad70b5c23de166d1592f387ad",
+      "analyser": 4,
+      "updated": "2026-10-26",
+      "review": "July-29",
+      "version": "6; Review date: July-29",
+      "pages": 9,
+      "fillable": true,
+      "fields": [
+        {
+          "name": "cot_surname_1",
+          "role": "surname",
+          "page": 0,
+          "label": "Patient’s surname/family name:",
+          "added": true
+        },
+        {
+          "name": "cot_forenames_2",
+          "role": "forenames",
+          "page": 0,
+          "label": "Patient’s first name(s)",
+          "added": true
+        },
+        {
+          "name": "cot_dob_3",
+          "role": "dob",
+          "page": 0,
+          "label": "Date of birth:",
+          "added": true
+        },
+        {
+          "name": "cot_nhs_4",
+          "role": "nhs",
+          "page": 0,
+          "label": "NHS number:",
+          "added": true
+        },
+        {
+          "name": "cot_hospital_5",
+          "role": "hospital",
+          "page": 0,
+          "label": "Hospital/NHS Trust/NHS Board:",
+          "added": true
+        },
+        {
+          "name": "cot_clin_name_6",
+          "role": "clin_name",
+          "page": 5,
+          "label": "Name (PRINT)",
+          "added": true
+        },
+        {
+          "name": "cot_clin_role_7",
+          "role": "clin_role",
+          "page": 5,
+          "label": "Job title",
+          "added": true
+        },
+        {
+          "name": "cot_identifier_8",
+          "role": "identifier",
+          "page": 6,
+          "label": "Patient identifier/label !রাগী",
+          "added": true
+        },
+        {
+          "name": "cot_identifier_9",
+          "role": "identifier",
+          "page": 7,
+          "label": "Patient identifier/label !রাগী",
+          "added": true
+        },
+        {
+          "name": "cot_identifier_10",
+          "role": "identifier",
+          "page": 8,
+          "label": "Patient identifier/label !রাগী",
+          "added": true
+        }
+      ],
+      "ticks": [
+        {
+          "name": "cot_tick_1",
+          "kind": "check",
+          "page": 0,
+          "option": "Intravenous",
+          "prompt": "ওষুধ 8হেনর মাধ/ম(<েলা) (>েযাজ/ সব<েলােত Bটক িচD িদন):",
+          "line": "Intravenous Subcutaneous Oral Other:",
+          "section": "ওষুধ 8হেনর মাধ/ম(<েলা) (>েযাজ/ সব<েলােত Bটক িচD িদন):",
+          "group": "p0y178"
+        },
+        {
+          "name": "cot_tick_2",
+          "kind": "check",
+          "page": 0,
+          "option": "Subcutaneous",
+          "prompt": "ওষুধ 8হেনর মাধ/ম(<েলা) (>েযাজ/ সব<েলােত Bটক িচD িদন):",
+          "line": "Intravenous Subcutaneous Oral Other:",
+          "group": "p0y178"
+        },
+        {
+          "name": "cot_tick_3",
+          "kind": "check",
+          "page": 0,
+          "option": "Oral",
+          "prompt": "ওষুধ 8হেনর মাধ/ম(<েলা) (>েযাজ/ সব<েলােত Bটক িচD িদন):",
+          "line": "Intravenous Subcutaneous Oral Other:",
+          "group": "p0y178"
+        },
+        {
+          "name": "cot_tick_4",
+          "kind": "check",
+          "page": 0,
+          "option": "Other:",
+          "prompt": "ওষুধ 8হেনর মাধ/ম(<েলা) (>েযাজ/ সব<েলােত Bটক িচD িদন):",
+          "line": "Intravenous Subcutaneous Oral Other:",
+          "section": "িবেশষ !েয়াজনীয়তা:",
+          "group": "p0y178"
+        },
+        {
+          "name": "cot_tick_5",
+          "kind": "check",
+          "page": 1,
+          "option": "A separate consent form must be completed for radiotherapy ,রিডেয়ােথরািপর জনB এক9ট পৃথক সdিত ফম .পূরণ করেত হেব",
+          "prompt": "",
+          "line": "A separate consent form must be completed for radiotherapy",
+          "section": "িচিকৎসার সময়কাল (সাইেকেলর সংখ/া):"
+        },
+        {
+          "name": "cot_tick_6",
+          "kind": "check",
+          "page": 1,
+          "option": "Participation in a clinical trial (trial name): গেবষণামূলক িচিকৎসা কায .5েম অংশfহণ(পরী@ার নাম):",
+          "prompt": "",
+          "line": "Participation in a clinical trial (trial name):",
+          "section": "িচিকৎসার সময়কাল (সাইেকেলর সংখ/া):"
+        },
+        {
+          "name": "cot_tick_7",
+          "kind": "check",
+          "page": 1,
+          "option": "Outpatient",
+          "prompt": "আমার িচিকৎসা Kকাথায় হেব?",
+          "line": "Outpatient Day unit/case Inpatient Other:",
+          "section": "Where will I have treatment?",
+          "group": "p1y610"
+        },
+        {
+          "name": "cot_tick_8",
+          "kind": "check",
+          "page": 1,
+          "option": "Day unit/case",
+          "prompt": "আমার িচিকৎসা Kকাথায় হেব?",
+          "line": "Outpatient Day unit/case Inpatient Other:",
+          "group": "p1y610"
+        },
+        {
+          "name": "cot_tick_9",
+          "kind": "check",
+          "page": 1,
+          "option": "Inpatient",
+          "prompt": "আমার িচিকৎসা Kকাথায় হেব?",
+          "line": "Outpatient Day unit/case Inpatient Other:",
+          "group": "p1y610"
+        },
+        {
+          "name": "cot_tick_10",
+          "kind": "check",
+          "page": 1,
+          "option": "Other:",
+          "prompt": "আমার িচিকৎসা Kকাথায় হেব?",
+          "line": "Outpatient Day unit/case Inpatient Other:",
+          "group": "p1y610"
+        },
+        {
+          "name": "cot_tick_11",
+          "kind": "check",
+          "page": 1,
+          "option": "Curative – to give you the best possible chance of being cured.",
+          "prompt": "",
+          "line": "Curative – to give you the best possible chance of being cured.",
+          "section": "The intended benefits (there are no guarantees about outcome)"
+        },
+        {
+          "name": "cot_tick_12",
+          "kind": "check",
+          "page": 1,
+          "option": "Disease control or palliative – the aim is not to cure, but to control or shrink the disease and improve both quality of life and survival.",
+          "prompt": "",
+          "line": "Disease control or palliative – the aim is not to cure, but to control or shrink the disease and improve",
+          "section": "The intended benefits (there are no guarantees about outcome)"
+        },
+        {
+          "name": "cot_tick_13",
+          "kind": "check",
+          "page": 1,
+          "option": "Adjuvant – therapy given after surgery or radiotherapy to reduce the risk of the cancer coming back.",
+          "prompt": "",
+          "line": "Adjuvant – therapy given after surgery or radiotherapy to reduce the risk of the cancer coming back.",
+          "section": "both quality of life and survival."
+        },
+        {
+          "name": "cot_tick_14",
+          "kind": "check",
+          "page": 1,
+          "option": "Neo-adjuvant – therapy given before surgery or radiotherapy to shrink the cancer, allow treatment and reduce the risk of the cancer coming back িনও-অBাডজুেভw – অেxাপচার বা ,রিডেয়ােথরািপর আেগ ,দওয়া হয় এমন িচিকৎসা, যার উেSশB হেলা কBাyােরর পিরমাণ tাস করা, িচিকৎসা সoব করা এবং কBাyার আবার িফের আসার ঝুঁিক কমােনা।",
+          "prompt": "",
+          "line": "Neo-adjuvant – therapy given before surgery or radiotherapy to shrink the cancer, allow treatment",
+          "section": "both quality of life and survival."
+        },
+        {
+          "name": "cot_tick_15",
+          "kind": "check",
+          "page": 2,
+          "option": "I confirm the patient has capacity to give consent.",
+          "prompt": "",
+          "line": "I confirm the patient has capacity to give consent.",
+          "section": "!া#$ %পশাজীবীর িববৃিত"
+        },
+        {
+          "name": "cot_tick_16",
+          "kind": "check",
+          "page": 2,
+          "option": "I have explained the course of treatment and intended benefit to the patient.",
+          "prompt": "",
+          "line": "I have explained the course of treatment and intended benefit to the patient.",
+          "section": "!া#$ %পশাজীবীর িববৃিত"
+        },
+        {
+          "name": "cot_tick_17",
+          "kind": "check",
+          "page": 2,
+          "option": "An increased risk of infection due to low white blood cells – it is harder to fight infection and you can become very ill.",
+          "prompt": "",
+          "line": "An increased risk of infection due Anaemia (low red blood cells). Hearing changes or ringing in",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_18",
+          "kind": "check",
+          "page": 2,
+          "option": "Anaemia (low red blood cells).",
+          "prompt": "",
+          "line": "An increased risk of infection due Anaemia (low red blood cells). Hearing changes or ringing in",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_19",
+          "kind": "check",
+          "page": 2,
+          "option": "Hearing changes or ringing in the ears.",
+          "prompt": "",
+          "line": "An increased risk of infection due Anaemia (low red blood cells). Hearing changes or ringing in",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_20",
+          "kind": "check",
+          "page": 2,
+          "option": "Bruising or bleeding.",
+          "prompt": "",
+          "line": "Bruising or bleeding.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_21",
+          "kind": "check",
+          "page": 2,
+          "option": "Problems with the eyes.",
+          "prompt": "",
+          "line": ",ত রHকিণকা কেম যাওয়ার কারেণ Problems with the eyes.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_22",
+          "kind": "check",
+          "page": 2,
+          "option": "Feeling sick (nausea) and/or",
+          "prompt": "",
+          "line": "Feeling sick (nausea) and/or",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_23",
+          "kind": "check",
+          "page": 2,
+          "option": "Allergic reactions.",
+          "prompt": "",
+          "line": "অসুV ,বাধ করা (বিমভাব) এবং/অথবা Allergic reactions.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_24",
+          "kind": "check",
+          "page": 2,
+          "option": "Changes in how well your lungs work.",
+          "prompt": "",
+          "line": "Sore mouth and ulcers. Changes in how well your",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_25",
+          "kind": "check",
+          "page": 2,
+          "option": "Sore mouth and ulcers.",
+          "prompt": "",
+          "line": "Sore mouth and ulcers. Changes in how well your",
+          "section": "You may have one or more of the side effects listed",
+          "group": "p2y443"
+        },
+        {
+          "name": "cot_tick_26",
+          "kind": "check",
+          "page": 2,
+          "option": "If you have a severe infection, this can be life threatening.",
+          "prompt": "",
+          "line": "If you have a severe infection,",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_27",
+          "kind": "check",
+          "page": 2,
+          "option": "Diarrhoea.",
+          "prompt": "",
+          "line": "Contact your doctor or Diarrhoea.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_28",
+          "kind": "check",
+          "page": 2,
+          "option": "Changes in how well your heart works.",
+          "prompt": "",
+          "line": "hospital straight away if: পাতলা পায়খানা। Changes in how well your",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_29",
+          "kind": "check",
+          "page": 2,
+          "option": "Constipation.",
+          "prompt": "",
+          "line": "আপনার যিদ <bতর সংaমণ থােক Constipation.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_30",
+          "kind": "check",
+          "page": 2,
+          "option": "Changes in how well your kidneys work.",
+          "prompt": "",
+          "line": "হেত পাের। সরাসির আপনার ডা_ার Changes in how well your",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_31",
+          "kind": "check",
+          "page": 2,
+          "option": "Changes in taste.",
+          "prompt": "",
+          "line": "Changes in taste.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_32",
+          "kind": "check",
+          "page": 2,
+          "option": "Loss of appetite.",
+          "prompt": "• your temperature goes",
+          "line": "• your temperature goes Loss of appetite. Changes in how well your liver",
+          "section": "You may have one or more of the side effects listed",
+          "group": "p2y327"
+        },
+        {
+          "name": "cot_tick_33",
+          "kind": "check",
+          "page": 2,
+          "option": "Changes in how well your liver works.",
+          "prompt": "",
+          "line": "• your temperature goes Loss of appetite. Changes in how well your liver",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_34",
+          "kind": "check",
+          "page": 2,
+          "option": "Hair thinning or hair loss.",
+          "prompt": "",
+          "line": "Hair thinning or hair loss.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_35",
+          "kind": "check",
+          "page": 2,
+          "option": "Build-up of fluid.",
+          "prompt": "",
+          "line": "চ;ল পাতলা হওয়া বা চ;ল পড়া। Build-up of fluid.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_36",
+          "kind": "check",
+          "page": 2,
+          "option": "Skin rashes.",
+          "prompt": "",
+          "line": "আপনার Kকেমােথরািপ Bটেমর Skin rashes.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_37",
+          "kind": "check",
+          "page": 2,
+          "option": "Tumour lysis syndrome.",
+          "prompt": "",
+          "line": "Tumour lysis syndrome.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_38",
+          "kind": "check",
+          "page": 2,
+          "option": "Nail changes.",
+          "prompt": "",
+          "line": "Nail changes. 9টউমার লাইিসস িসনেাম।",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_39",
+          "kind": "check",
+          "page": 2,
+          "option": "Difficulty sleeping.",
+          "prompt": "",
+          "line": "চেল যায় Difficulty sleeping.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_40",
+          "kind": "check",
+          "page": 2,
+          "option": "Inflammation of the hands",
+          "prompt": "",
+          "line": "• you suddenly feel unwell Inflammation of the hands ঘুমােত অসুিবধা।",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_41",
+          "kind": "check",
+          "page": 2,
+          "option": "Unstable blood sugars.",
+          "prompt": "",
+          "line": "(even with a normal and feet. Unstable blood sugars.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_42",
+          "kind": "check",
+          "page": 2,
+          "option": "আপিন হঠাৎ অসুo Kবাধ কেরন",
+          "prompt": "",
+          "line": "আপিন হঠাৎ অসুo Kবাধ কেরন Numbness or tingling in the",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_43",
+          "kind": "check",
+          "page": 2,
+          "option": "A risk of a second cancer.",
+          "prompt": "",
+          "line": "A risk of a second cancer.",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_44",
+          "kind": "check",
+          "page": 2,
+          "option": "Flu-like symptoms",
+          "prompt": "",
+          "line": "Flu-like symptoms",
+          "section": "You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_45",
+          "kind": "check",
+          "page": 2,
+          "option": "Tiredness and feeling weak. হওয়া !াি$ ও দুব *লঅনুভব করা।",
+          "prompt": "",
+          "line": "Tiredness and feeling weak. হওয়া",
+          "section": "কbন যিদ: | You may have one or more of the side effects listed"
+        },
+        {
+          "name": "cot_tick_46",
+          "kind": "check",
+          "page": 3,
+          "option": "Changes in your memory,",
+          "prompt": "Other information:",
+          "line": "Other information: Changes in your memory, Some anti-cancer medicines can",
+          "group": "p3y738"
+        },
+        {
+          "name": "cot_tick_47",
+          "kind": "check",
+          "page": 3,
+          "option": "Some anti-cancer medicines can",
+          "prompt": "Other information:",
+          "line": "Other information: Changes in your memory, Some anti-cancer medicines can",
+          "section": "!রাগী শনা(কারী/!লেবল",
+          "group": "p3y737"
+        },
+        {
+          "name": "cot_tick_48",
+          "kind": "check",
+          "page": 3,
+          "option": "Anti-sickness medications may",
+          "prompt": "",
+          "line": "Anti-sickness medications may",
+          "section": "অন$ান$ তথ$: concentration, ability to think"
+        },
+        {
+          "name": "cot_tick_49",
+          "kind": "check",
+          "page": 3,
+          "option": "Steroids can cause higher blood পিরবত.ন। এর অেনক কারণ থাকেত sugars, difficulty sleeping, weight gain, weaker bones, agitation, indigestion.",
+          "prompt": "",
+          "line": "Steroids can cause higher blood পিরবত.ন। এর অেনক কারণ থাকেত",
+          "section": "cause constipation,headaches."
+        },
+        {
+          "name": "cot_tick_50",
+          "kind": "check",
+          "page": 3,
+          "option": "Some anti-cancer medicines may",
+          "prompt": "",
+          "line": "Some anti-cancer medicines may",
+          "section": "menopause."
+        },
+        {
+          "name": "cot_tick_51",
+          "kind": "check",
+          "page": 3,
+          "option": "Cancer and its treatment can increase your risk of a blood clot (thrombosis), causing pain, colour changes or swelling in an arm or leg, chest pain, breathlessness, or",
+          "prompt": "",
+          "line": "Cancer and its treatment can not to become pregnant or make",
+          "section": "treatment, diagnosis or both."
+        },
+        {
+          "name": "cot_tick_52",
+          "kind": "check",
+          "page": 3,
+          "option": "Growth factor (GCSF) injections leg, chest pain, breathlessness, or contraception.",
+          "prompt": "",
+          "line": "Growth factor (GCSF) injections leg, chest pain, breathlessness, or contraception.",
+          "section": "agitation, indigestion."
+        },
+        {
+          "name": "cot_tick_53",
+          "kind": "check",
+          "page": 3,
+          "option": "Complications of treatment can",
+          "prompt": "",
+          "line": "Complications of treatment can",
+          "section": "afterwards. Use effective"
+        },
+        {
+          "name": "cot_tick_54",
+          "kind": "check",
+          "page": 3,
+          "option": "All intravenous drugs may leak ,কােনা উপসগ .থাকেল সরাসির আপনার out of the vein and damage the tissue around it while being given (extravasation). It’s uncommon but important to deal",
+          "prompt": "",
+          "line": "All intravenous drugs may leak ,কােনা উপসগ .থাকেল সরাসির আপনার",
+          "section": "injection site. কBাyার এবং এর িচিকৎসা আপনার রH"
+        },
+        {
+          "name": "cot_tick_55",
+          "kind": "check",
+          "page": 3,
+          "option": "You may have blood tests to check for viruses such as Hepatitis B, Hepatitis C, HIV, or more unusual infections.",
+          "prompt": "",
+          "line": "the tissue around it while You may have blood tests to death. The risks are different for",
+          "section": "away if you have any symptoms."
+        },
+        {
+          "name": "cot_tick_56",
+          "kind": "check",
+          "page": 4,
+          "option": "I have discussed the intended benefit and risks of the recommended treatment, and of any available alternative treatments (including no treatment).",
+          "prompt": "",
+          "line": "I have discussed the intended benefit and risks of the recommended treatment, and of any available",
+          "section": "অন/ Kকােনা ঝুঁিক এবং তথ/: | Any other risks and information:"
+        },
+        {
+          "name": "cot_tick_57",
+          "kind": "check",
+          "page": 4,
+          "option": "I have discussed the side effects of the recommended treatment, which could affect the patient straight away or in the future, and that there may be some side effects not listed because they are rare or have not yet been reported. Each patient may experience side effects differently.",
+          "prompt": "",
+          "line": "I have discussed the side effects of the recommended treatment, which could affect the patient straight",
+          "section": "alternative treatments (including no treatment). | Any other risks and information:"
+        },
+        {
+          "name": "cot_tick_58",
+          "kind": "check",
+          "page": 4,
+          "option": "I have discussed what the treatment is likely to involve (including inpatient/outpatient treatment, timing of the treatment, blood and any additional tests, follow-up appointments etc) and location.",
+          "prompt": "",
+          "line": "I have discussed what the treatment is likely to involve (including inpatient/outpatient treatment, timing",
+          "section": "not yet been reported. Each patient may experience side effects differently."
+        },
+        {
+          "name": "cot_tick_59",
+          "kind": "check",
+          "page": 4,
+          "option": "I have explained to the patient, that they have the right to stop this treatment at any time and should contact the responsible consultant or team if they wish to do so.",
+          "prompt": "",
+          "line": "I have explained to the patient, that they have the right to stop this treatment at any time and should",
+          "section": "of the treatment, blood and any additional tests, follow-up appointments etc) and location. | not yet been reported. Each patient may experience side effects differently."
+        },
+        {
+          "name": "cot_tick_60",
+          "kind": "check",
+          "page": 4,
+          "option": "I have discussed concerns of particular importance to the patient in regard to treatment ,রাগীর জনB িচিকৎসা সং5া6 িবেশষ ]IYপূণ .,য উে]েলা আেছ ,স]েলা িনেয় আিম আেলাচনা কেরিছ। (please write details here): (অনুfহ কের এখােন িব\"ািরত িলখুন):",
+          "prompt": "",
+          "line": "I have discussed concerns of particular importance to the patient in regard to treatment",
+          "section": "contact the responsible consultant or team if they wish to do so. | not yet been reported. Each patient may experience side effects differently."
+        },
+        {
+          "name": "cot_tick_61",
+          "kind": "check",
+          "page": 4,
+          "option": "Yes",
+          "prompt": "িচিকৎসা বBবVাপনা িনেদ.িশকা/,!ােটাকল অনুসরণ করা হেয়েছ (অনুfহ কের 9টক িদন)::",
+          "line": "Yes No Not available If No please document reason here:",
+          "section": "িচিকৎসা বBবVাপনা িনেদ.িশকা/,!ােটাকল অনুসরণ করা হেয়েছ (অনুfহ কের 9টক িদন):: | not yet been reported. Each patient may experience side effects differently.",
+          "group": "p4y284"
+        },
+        {
+          "name": "cot_tick_62",
+          "kind": "check",
+          "page": 4,
+          "option": "No",
+          "prompt": "িচিকৎসা বBবVাপনা িনেদ.িশকা/,!ােটাকল অনুসরণ করা হেয়েছ (অনুfহ কের 9টক িদন)::",
+          "line": "Yes No Not available If No please document reason here:",
+          "section": "not yet been reported. Each patient may experience side effects differently.",
+          "group": "p4y284"
+        },
+        {
+          "name": "cot_tick_63",
+          "kind": "check",
+          "page": 4,
+          "option": "Not available If No please document reason here: উপলr Kনই",
+          "prompt": "",
+          "line": "Yes No Not available If No please document reason here:",
+          "section": "not yet been reported. Each patient may experience side effects differently."
+        },
+        {
+          "name": "cot_tick_64",
+          "kind": "check",
+          "page": 5,
+          "option": "Information leaflet for:",
+          "prompt": "",
+          "line": "Information leaflet for:",
+          "section": "িনেs উেtখ করা িলিখত তথ/ সরবরাহ করা হেয়েছ:"
+        },
+        {
+          "name": "cot_tick_65",
+          "kind": "check",
+          "page": 5,
+          "option": "24 hour alert card or SACT advice service contact details ২৪ ঘwার সতক.তা কাড. অথবা সBা পরামশ .পিরেষবার ,যাগােযােগর তথB",
+          "prompt": "",
+          "line": "24 hour alert card or SACT advice service",
+          "section": "এই িবষয় সsেক. তেথBর িলফেলট:"
+        },
+        {
+          "name": "cot_tick_66",
+          "kind": "check",
+          "page": 5,
+          "option": "SACT treatment record",
+          "prompt": "",
+          "line": "SACT treatment record",
+          "section": "contact details"
+        },
+        {
+          "name": "cot_tick_67",
+          "kind": "check",
+          "page": 5,
+          "option": "Other, please state:",
+          "prompt": "",
+          "line": "Other, please state:",
+          "section": "(cruk.org/treatment-record)"
+        },
+        {
+          "name": "cot_tick_68",
+          "kind": "check",
+          "page": 6,
+          "option": "I have had enough time to consider my options and make a decision about treatment.",
+          "prompt": "",
+          "line": "I have had enough time to consider my options and make a decision about treatment.",
+          "section": "right to change your mind at any time, including after you have signed this form."
+        },
+        {
+          "name": "cot_tick_69",
+          "kind": "check",
+          "page": 6,
+          "option": "I agree to the course of treatment described on this form.",
+          "prompt": "",
+          "line": "I agree to the course of treatment described on this form.",
+          "section": "right to change your mind at any time, including after you have signed this form."
+        },
+        {
+          "name": "cot_tick_70",
+          "kind": "check",
+          "page": 6,
+          "option": "See also advance decision to refuse treatment িচিকৎসা !তBাখBান করার অিfম িসUা6ও ,দখুন",
+          "prompt": "",
+          "line": "On behalf of the team treating the patient, I See also advance decision to refuse treatment",
+          "section": "Important notes: (tick if applicable)"
+        },
+        {
+          "name": "cot_tick_71",
+          "kind": "check",
+          "page": 6,
+          "option": "Patient has withdrawn consent",
+          "prompt": "",
+          "line": "treatment/procedures to go ahead. Patient has withdrawn consent",
           "section": "Important notes: (tick if applicable)"
         }
       ],
@@ -268088,8 +268827,8 @@
       "title": "Amivantamab (Rybrevant®) and lazertinib (Lazcluze®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/amivantamab-and-lazertinib",
       "file": "leaflets/macmillan/mac-amivantamab-and-lazertinib.pdf",
-      "textHash": "ab099082e19106d7ba9bfff8f4beaaadd3dade7255b5b5f10cb31a08ebf1eec3",
-      "retrieved": "2026-10-08",
+      "textHash": "76b8b94b0e4543bc09639a98277e746ede3c4b51437ed33bc7050056032209f4",
+      "retrieved": "2026-10-26",
       "review": "01 August 2026",
       "nextReview": "01 August 2028",
       "keys": [
@@ -268190,8 +268929,8 @@
       "title": "Asciminib (Scemblix®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/asciminib",
       "file": "leaflets/macmillan/mac-asciminib.pdf",
-      "textHash": "901f349027d126167edaeba1163ddd23a350c8a5df5d5f8e083fa589e8214edd",
-      "retrieved": "2026-10-08",
+      "textHash": "7e35067c2e7a6645d03c2a27a5f2ed00990f096f5a9eae4762fff65ad324bae5",
+      "retrieved": "2026-10-26",
       "review": "01 April 2026",
       "nextReview": "01 April 2028",
       "keys": [
@@ -268265,8 +269004,8 @@
       "title": "Avelumab (Bavencio®) and axitinib",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/avelumab-and-axitinib",
       "file": "leaflets/macmillan/mac-avelumab-and-axitinib.pdf",
-      "textHash": "4d0d916a00485d85b8887c887fa780f0e55b1b8d87f4214f7fbf2cc30fdfaa00",
-      "retrieved": "2026-10-08",
+      "textHash": "709457e6cf9ff53f1eb3733a9216c230601a5d84c7c522308556fb89549faa8e",
+      "retrieved": "2026-10-26",
       "review": "01 November 2025",
       "nextReview": "01 November 2027",
       "keys": [
@@ -268280,10 +269019,10 @@
       "title": "Axicabtagene ciloleucel (Yescarta®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/axicabtagene-ciloleucel",
       "file": "leaflets/macmillan/mac-axicabtagene-ciloleucel.pdf",
-      "textHash": "607c6db383dfc634d265392f78bac6d75df2ab196c747820a941f08b48c5186d",
-      "retrieved": "2026-10-19",
-      "review": "01 April 2024",
-      "nextReview": "01 October 2026",
+      "textHash": "97c232b1c27514c4f16b3930ccbbd537c9fb59c2dc21ec3ff63df9e3c363500a",
+      "retrieved": "2026-10-26",
+      "review": "01 May 2026",
+      "nextReview": "01 May 2028",
       "keys": [
         "axicabtagene ciloleucel",
         "yescarta"
@@ -268436,8 +269175,8 @@
       "title": "Belzutifan (WELIREG®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/belzutifan",
       "file": "leaflets/macmillan/mac-belzutifan.pdf",
-      "textHash": "51b178eb1a9df0239c70cfbf2b5089429d8a6203ebe469f2a16d899d16fb64ec",
-      "retrieved": "2026-10-08",
+      "textHash": "3da4605fddcbc860278223a0b918fc6832c19d89ba6029fbf56a70bdbd8e6829",
+      "retrieved": "2026-10-26",
       "review": "01 July 2026",
       "nextReview": "01 July 2028",
       "keys": [
@@ -268693,8 +269432,8 @@
       "title": "Brexucabtagene autoleucel (Tecartus®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/brexucabtagene-autoleucel",
       "file": "leaflets/macmillan/mac-brexucabtagene-autoleucel.pdf",
-      "textHash": "6e4c7e0d01df647caba2b133583ac5be6ec552f6c4396a8ec7160cb621b684b8",
-      "retrieved": "2026-10-19",
+      "textHash": "56896bdc71f283cf4770d2e823c74a43d14a44f31764f8265bfc5ca48e8b2341",
+      "retrieved": "2026-10-26",
       "review": "01 May 2026",
       "nextReview": "01 May 2028",
       "keys": [
@@ -269036,8 +269775,8 @@
       "title": "Carboplatin/paclitaxel, EC + pembrolizumab",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/carboplatin-paclitaxel-ec-pembrolizumab",
       "file": "leaflets/macmillan/mac-carboplatin-paclitaxel-ec-pembrolizumab.pdf",
-      "textHash": "f0aa8440be98424c354573cef356961404a631427c7e2c65d2f024a16c826912",
-      "retrieved": "2026-10-08",
+      "textHash": "43209c8f1bafbcffe830af2160ffc1aba6855aa114dd79cea37559c7516c6847",
+      "retrieved": "2026-10-26",
       "review": "01 February 2026",
       "nextReview": "01 February 2028",
       "keys": [
@@ -269549,8 +270288,8 @@
       "title": "Chemotherapy for vulval cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/chemotherapy-for-vulval-cancer",
       "file": "leaflets/macmillan/mac-chemotherapy-for-vulval-cancer.pdf",
-      "textHash": "14946e12823f15db1add2df910262e5c705dbac6cb4c1a820d1bce2f413fcef8",
-      "retrieved": "2026-10-08",
+      "textHash": "13263d717b916a954b80c453e35e9b0aa6c04d80ad5a6fa58de072e10687c408",
+      "retrieved": "2026-10-26",
       "review": "30 April 2021",
       "nextReview": "30 April 2024",
       "keys": [
@@ -269664,8 +270403,8 @@
       "title": "Clodronate",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/clodronate",
       "file": "leaflets/macmillan/mac-clodronate.pdf",
-      "textHash": "1250aa9642c54ea8ccf798fe1f662b4615ba3a293ebf4813aa4383fadedfda37",
-      "retrieved": "2026-10-08",
+      "textHash": "ebc44945895b172f39543523f142e7a9611c17b6e3d508ff1aae9aab5f93ce0a",
+      "retrieved": "2026-10-26",
       "review": "01 November 2024",
       "nextReview": "01 November 2026",
       "keys": [
@@ -269863,8 +270602,8 @@
       "title": "Dacomitinib (Vizimpro®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/dacomitinib",
       "file": "leaflets/macmillan/mac-dacomitinib.pdf",
-      "textHash": "4c5d79c110cae910d1035c7fec5599ba4c5dbbb61d02ea347e6cc5c7a5189eaf",
-      "retrieved": "2026-10-08",
+      "textHash": "a1c21ab0798ee4553949bdb4073bbf380755cb67ed72020f490907426b3d6d79",
+      "retrieved": "2026-10-26",
       "review": "01 February 2024",
       "nextReview": "01 February 2026",
       "keys": [
@@ -269907,8 +270646,8 @@
       "title": "Daratumumab, lenalidomide, dexamethasone (DRd)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/daratumumab-lenalidomide-dexamethasone",
       "file": "leaflets/macmillan/mac-daratumumab-lenalidomide-dexamethasone.pdf",
-      "textHash": "d0b49562a0508374efc56e66ae430eb7a16bee1962591dcab992e2838cace84f",
-      "retrieved": "2026-10-19",
+      "textHash": "7387d595d4a5498a477f86c7be21b51d727b53d34ff47f451242eecddf79e2c7",
+      "retrieved": "2026-10-26",
       "review": "01 January 2025",
       "nextReview": "01 January 2027",
       "keys": [
@@ -270078,8 +270817,8 @@
       "title": "Dostarlimab, carboplatin and paclitaxel",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/dostarlimab-carboplatin-paclitaxel",
       "file": "leaflets/macmillan/mac-dostarlimab-carboplatin-paclitaxel.pdf",
-      "textHash": "6bbc43d34f3fe3efb9546acf718513dce959329834806636ca5a2fc4d156573c",
-      "retrieved": "2026-10-08",
+      "textHash": "ac90b438bc5ab52dc5c5ce729ebefde2bb8b3f2e199f117cb7cd2239e326e6d6",
+      "retrieved": "2026-10-26",
       "review": "01 March 2026",
       "nextReview": "01 March 2028",
       "keys": [
@@ -270149,8 +270888,8 @@
       "title": "Durvalumab (Imfinzi®) and tremelimumab (Imjudo®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/durvalumab-and-tremelimumab",
       "file": "leaflets/macmillan/mac-durvalumab-and-tremelimumab.pdf",
-      "textHash": "e1b144052c4f0981b8091a1565ddb1bd30ec5b321dfa60e266e2059b0a36fc15",
-      "retrieved": "2026-10-19",
+      "textHash": "7f3cb1f6e8df3d67769a0c02246b2ed73712c912405de49941194209cd58a902",
+      "retrieved": "2026-10-26",
       "review": "01 March 2026",
       "nextReview": "01 March 2028",
       "keys": [
@@ -270165,8 +270904,8 @@
       "title": "Durvalumab (Imfinzi®) with carboplatin and paclitaxel",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/durvalumab-with-carboplatin-and-paclitaxel",
       "file": "leaflets/macmillan/mac-durvalumab-with-carboplatin-and-paclitaxel.pdf",
-      "textHash": "260db0becfae6080f400c0108a4ce43dbbf83ea3b0b9620e3bc800e788581a86",
-      "retrieved": "2026-10-08",
+      "textHash": "41790809cb06925c62a24d0ccfe18ee9b51d72e07654d6bce94f934b130a795b",
+      "retrieved": "2026-10-26",
       "review": "01 March 2026",
       "nextReview": "01 March 2028",
       "keys": [
@@ -270180,8 +270919,8 @@
       "title": "Durvalumab (Imfinzi®) with cisplatin and gemcitabine",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/durvalumab-with-cisplatin-and-gemcitabine",
       "file": "leaflets/macmillan/mac-durvalumab-with-cisplatin-and-gemcitabine.pdf",
-      "textHash": "2e4f6ea680b8497a7b80f9dfe49b92cce1ea194ee007f6ff156bcc3444001675",
-      "retrieved": "2026-10-08",
+      "textHash": "71ad0eda37dce8d8d2fb98832ddbc5d9c6fd7c3e336cb93a5e81b6e890a5efe6",
+      "retrieved": "2026-10-26",
       "review": "01 January 2025",
       "nextReview": "01 January 2027",
       "keys": [
@@ -270277,8 +271016,8 @@
       "title": "Elranatamab (Elrexfio®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/elranatamab",
       "file": "leaflets/macmillan/mac-elranatamab.pdf",
-      "textHash": "1504c93257ce7964a8e7a3cc7a717b7f5ebd4238e51de05740042d10eb6ccaf4",
-      "retrieved": "2026-10-08",
+      "textHash": "db6d6f717d657d33e325d2d51b31f188ca9982490630b808e02bb90c822c1d09",
+      "retrieved": "2026-10-26",
       "review": "01 October 2024",
       "nextReview": "01 October 2026",
       "keys": [
@@ -270353,8 +271092,8 @@
       "title": "Enfortumab vedotin with pembrolizumab",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/enfortumab-vedotin-with-pembrolizumab",
       "file": "leaflets/macmillan/mac-enfortumab-vedotin-with-pembrolizumab.pdf",
-      "textHash": "047189a49460546232755fbf42f789c92f22be6d797824cdaa72224c6921aa85",
-      "retrieved": "2026-10-08",
+      "textHash": "a2f3718c1e11512ea83123a445bc2aae291ff0c2683d65896846fbbdd684b384",
+      "retrieved": "2026-10-26",
       "review": "01 March 2026",
       "nextReview": "01 March 2028",
       "keys": [
@@ -270396,8 +271135,8 @@
       "title": "Epcoritamab (Tepkinly®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/epcoritamab",
       "file": "leaflets/macmillan/mac-epcoritamab.pdf",
-      "textHash": "e31ca160ccae9642d79dc158279a34e8f5074be8de747d75c9cc670ecf79e630",
-      "retrieved": "2026-10-08",
+      "textHash": "d09e70368e79e4902ccfc14f325e1e69afd2d15970beca9658db635aa47005c6",
+      "retrieved": "2026-10-26",
       "review": "01 July 2026",
       "nextReview": "01 July 2028",
       "keys": [
@@ -270684,8 +271423,8 @@
       "title": "Fruquintinib (Fruzaqla®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/fruquintinib",
       "file": "leaflets/macmillan/mac-fruquintinib.pdf",
-      "textHash": "3f45312f521462ecdbbbe1e1ea3b6332889c306bca8190e5511a5b345a059771",
-      "retrieved": "2026-10-08",
+      "textHash": "7b2c35a5afe1d155b7b0b2cac6bddb40d3265028e7b9f5143b5e1e72730bdd1b",
+      "retrieved": "2026-10-26",
       "review": "01 July 2025",
       "nextReview": "01 July 2027",
       "keys": [
@@ -270843,8 +271582,8 @@
       "title": "Gemtuzumab ozogamicin (Mylotarg®) with daunorubicin and cytarabine (DA)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/gemtuzumab-ozogamicin-with-daunorubicin-and-cytarabine",
       "file": "leaflets/macmillan/mac-gemtuzumab-ozogamicin-with-daunorubicin-and-cytarabine.pdf",
-      "textHash": "5673025c27e6f9df3637be745320c19bfb49887b6582e3f426637fc38b090a38",
-      "retrieved": "2026-10-19",
+      "textHash": "ae9dc289ac1719e3cc793577ad45675b64e312352800f7767e7e5f519abd15ce",
+      "retrieved": "2026-10-26",
       "review": "01 September 2024",
       "nextReview": "01 September 2026",
       "keys": [
@@ -271006,8 +271745,8 @@
       "title": "Hormonal therapy for advanced prostate cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/hormonal-therapy-for-advanced-prostate-cancer",
       "file": "leaflets/macmillan/mac-hormonal-therapy-for-advanced-prostate-cancer.pdf",
-      "textHash": "1677a4e4c9317570e412bb7a57f14f46f703fe351960aa237f65a0133bc07252",
-      "retrieved": "2026-10-12",
+      "textHash": "d00f06b8331c25c115ec6a5c07b4d732ee5a2294e606021a5123d6ce05db49d1",
+      "retrieved": "2026-10-26",
       "review": "01 February 2025",
       "nextReview": "01 February 2028",
       "keys": [
@@ -271188,8 +271927,8 @@
       "title": "Ibandronic acid",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/ibandronic-acid",
       "file": "leaflets/macmillan/mac-ibandronic-acid.pdf",
-      "textHash": "f7e66cf003c8ff03c0f62b71b60aa10f1e979a1b70996f63333b07c8ce8d66c7",
-      "retrieved": "2026-10-08",
+      "textHash": "f7a1a674c411f6db00663c2df5f08f25a79ff8ec6b898da7a987c786a1b98ce3",
+      "retrieved": "2026-10-26",
       "review": "01 January 2025",
       "nextReview": "01 January 2027",
       "keys": [
@@ -271217,8 +271956,8 @@
       "title": "Ibrutinib and venetoclax",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/ibrutinib-and-venetoclax",
       "file": "leaflets/macmillan/mac-ibrutinib-and-venetoclax.pdf",
-      "textHash": "4cb039d9801084e834ec33f3609aa8823d410f45c9220cc30a792ae99e0ee999",
-      "retrieved": "2026-10-08",
+      "textHash": "e81753c0c06d779557585e3f9846af0e7bed2c446eb6be3468ee15fcf71b2da8",
+      "retrieved": "2026-10-26",
       "review": "01 March 2024",
       "nextReview": "01 March 2026",
       "keys": [
@@ -271358,8 +272097,8 @@
       "title": "Inotuzumab ozogamicin (Besponsa®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/inotuzumab-ozogamicin",
       "file": "leaflets/macmillan/mac-inotuzumab-ozogamicin.pdf",
-      "textHash": "6046473751c9851906a23cfd8fa735c5de5aa78af0459884dd673fcab18b03c5",
-      "retrieved": "2026-10-19",
+      "textHash": "26a4d79af38f4d47dd5cffc6eea76e829b7671f0bf97b03dbd4c01fef2e111ad",
+      "retrieved": "2026-10-26",
       "review": "01 October 2023",
       "nextReview": "01 October 2025",
       "keys": [
@@ -271443,8 +272182,8 @@
       "title": "Ivosidenib",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/ivosidenib",
       "file": "leaflets/macmillan/mac-ivosidenib.pdf",
-      "textHash": "9eafaf035d97e2e67ecb55d7f727b8e5860cf4f2ae03607bb3a622f8d9425115",
-      "retrieved": "2026-10-08",
+      "textHash": "ee26faa0edb19b1af66c3e7a58be8fc065ebbf7b2c2d8f8a7c6f8f68105b1712",
+      "retrieved": "2026-10-26",
       "review": "01 February 2025",
       "nextReview": "01 August 2027",
       "keys": [
@@ -271457,8 +272196,8 @@
       "title": "Ivosidenib (Tibsovo®) and azacitidine",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/ivosidenib-and-azacitidine",
       "file": "leaflets/macmillan/mac-ivosidenib-and-azacitidine.pdf",
-      "textHash": "a1afeb88f9d961e7c4d0f96f11c06f3bb4c502618ba3c32a71488aed8aa68127",
-      "retrieved": "2026-10-08",
+      "textHash": "30515f89c8e6bf7ff5680f824c2e0334e9cef64561bb3278eb4fa99df31d8d36",
+      "retrieved": "2026-10-26",
       "review": "01 April 2025",
       "nextReview": "01 April 2027",
       "keys": [
@@ -271573,8 +272312,8 @@
       "title": "Leuprorelin (Prostap®) for breast cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/leuprorelin-for-breast-cancer",
       "file": "leaflets/macmillan/mac-leuprorelin-for-breast-cancer.pdf",
-      "textHash": "8e55b1b2cefab4a7c003242f49447add8df0ff0072239327430d1786ee952797",
-      "retrieved": "2026-10-08",
+      "textHash": "4c3157a83cb049aec3d2efbfb24ade26e234ddabeb349c667be27aca3c2d1ae3",
+      "retrieved": "2026-10-26",
       "review": "01 January 2025",
       "nextReview": "01 January 2027",
       "keys": [
@@ -271660,8 +272399,8 @@
       "title": "Loncastuximab tesirine (Zynlonta®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/loncastuximab-tesirine",
       "file": "leaflets/macmillan/mac-loncastuximab-tesirine.pdf",
-      "textHash": "7cc1ff47932214f78c59ea2ddd56692b9490c15c0bdbfe2bc79bbae19b659db2",
-      "retrieved": "2026-10-08",
+      "textHash": "c633117ddbad602a24e6f081136622a6aad84ef9468bb4310fd772d5f2af781a",
+      "retrieved": "2026-10-26",
       "review": "01 June 2026",
       "nextReview": "01 June 2028",
       "keys": [
@@ -272081,8 +272820,8 @@
       "title": "Nivolumab (OPDIVO®) with FOLFOX",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/nivolumab-with-folfox",
       "file": "leaflets/macmillan/mac-nivolumab-with-folfox.pdf",
-      "textHash": "858050310613607a61a71bdb53382fbe66933c6f8e3a5ce849562db75055e3b4",
-      "retrieved": "2026-10-19",
+      "textHash": "09604d4c92bd7feecec114a194f37b7e166a9117cf805606e49bbda79a8eb686",
+      "retrieved": "2026-10-26",
       "review": "01 June 2026",
       "nextReview": "01 June 2028",
       "keys": [
@@ -272111,8 +272850,8 @@
       "title": "Nivolumab (Opdivo®), capecitabine and oxaliplatin",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/nivolumab-capecitabine-and-oxaliplatin",
       "file": "leaflets/macmillan/mac-nivolumab-capecitabine-and-oxaliplatin.pdf",
-      "textHash": "f3fafbddb98fd30bd0a603b47d873c3307c581bdae2f973d5653638768c5e5ba",
-      "retrieved": "2026-10-08",
+      "textHash": "eb21bfd25f1949d5a128744ea6f74a7c503cebc0a994b13eab96a18fb10014f6",
+      "retrieved": "2026-10-26",
       "review": "01 September 2024",
       "nextReview": "01 September 2027",
       "keys": [
@@ -272140,8 +272879,8 @@
       "title": "Nivolumab-relatlimab (Opdualag®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/nivolumab-relatlimab",
       "file": "leaflets/macmillan/mac-nivolumab-relatlimab.pdf",
-      "textHash": "b0b6a36acf1fc6b45d2231e92a0e29bc25f259093c7b96935cd8142d988448ca",
-      "retrieved": "2026-10-19",
+      "textHash": "74817f9a2c1d2978d9af43a8b89255aa46adae105a8a95f39ed9b1114dc73421",
+      "retrieved": "2026-10-26",
       "review": "01 October 2024",
       "nextReview": "01 October 2026",
       "keys": [
@@ -272184,8 +272923,8 @@
       "title": "Oesophagectomy",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/oesophagectomy",
       "file": "leaflets/macmillan/mac-oesophagectomy.pdf",
-      "textHash": "2041718c8c1180a7b23b23f65cf7a2934d27754a3268f5176f909a6f627a17ef",
-      "retrieved": "2026-10-12",
+      "textHash": "858cf8a4a5548642b0c7bb78fb694b513406925debdcd716687032c766606020",
+      "retrieved": "2026-10-26",
       "review": "01 November 2024",
       "nextReview": "01 November 2027",
       "keys": [
@@ -272356,10 +273095,10 @@
       "title": "Pamidronate",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/pamidronate-aredia",
       "file": "leaflets/macmillan/mac-pamidronate-aredia.pdf",
-      "textHash": "75c22e283b868431b0711f9e35265ee613bad4560fa55e94450b17ae64b1ba0a",
-      "retrieved": "2026-10-08",
-      "review": "01 September 2024",
-      "nextReview": "01 September 2026",
+      "textHash": "9e10024684185a42d5648d5d0bb6600e41007dfad74dfdc05f0e71a8781930b5",
+      "retrieved": "2026-10-26",
+      "review": "01 September 2026",
+      "nextReview": "01 September 2028",
       "keys": [
         "pamidronate"
       ]
@@ -272427,8 +273166,8 @@
       "title": "Pelvic exenteration for men and people assigned male at birth",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/pelvic-exenteration-for-men",
       "file": "leaflets/macmillan/mac-pelvic-exenteration-for-men.pdf",
-      "textHash": "42a9790e62ca69fced74189f3fffa8a2fe129f2c680e230e248c0e55020d7262",
-      "retrieved": "2026-10-19",
+      "textHash": "ba83fbf83313584bd0418a45ab2e054d146d7f22ad7d93982cd9a894121f058b",
+      "retrieved": "2026-10-26",
       "review": "01 March 2023",
       "nextReview": "01 March 2027",
       "keys": [
@@ -272470,8 +273209,8 @@
       "title": "Pembrolizumab, capecitabine and oxaliplatin",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/pembrolizumab-capecitabine-and-oxaliplatin",
       "file": "leaflets/macmillan/mac-pembrolizumab-capecitabine-and-oxaliplatin.pdf",
-      "textHash": "754ea4334de25fb925d2b7f5f6607c4ce85f9f72e0c3426f27e09d919bd78fd1",
-      "retrieved": "2026-10-08",
+      "textHash": "763b4ba374b2c39dfa331eb76438bcd7c3259ba46200b6df841a7c98199eb0f6",
+      "retrieved": "2026-10-26",
       "review": "01 February 2026",
       "nextReview": "01 February 2028",
       "keys": [
@@ -272526,8 +273265,8 @@
       "title": "Pemigatinib (Pemazyre®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/pemigatinib",
       "file": "leaflets/macmillan/mac-pemigatinib.pdf",
-      "textHash": "0b3761027723fc5227b3b32c17df82754d16a6d70aa073011123c0572f16b7e6",
-      "retrieved": "2026-10-08",
+      "textHash": "8d94c32344d8fe94212e4a2e6225c47eb6c005ad1b5d9b35c8dffac165d34eb1",
+      "retrieved": "2026-10-26",
       "review": "01 November 2024",
       "nextReview": "01 November 2026",
       "keys": [
@@ -272741,8 +273480,8 @@
       "title": "R-GDP",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/r-gdp",
       "file": "leaflets/macmillan/mac-r-gdp.pdf",
-      "textHash": "30a8b32ecbf5653617cff85d343622334de0b84cc9af3f3de07796462410ec31",
-      "retrieved": "2026-10-08",
+      "textHash": "075bceb0730045d51ab78c4a529cc20481334e457809ad28c68f0f970b8c234c",
+      "retrieved": "2026-10-26",
       "review": "01 November 2025",
       "nextReview": "01 November 2027",
       "keys": [
@@ -273121,8 +273860,8 @@
       "title": "Radiotherapy for soft tissue sarcoma",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/radiotherapy-for-soft-tissue-sarcoma",
       "file": "leaflets/macmillan/mac-radiotherapy-for-soft-tissue-sarcoma.pdf",
-      "textHash": "d4c66a7cc02acf33638efae499188c36d14add069dfb0814c547e8f5b913e295",
-      "retrieved": "2026-10-19",
+      "textHash": "7ab599e78296c4cd93d3385f5d554907bac06f3021a864ca3d2bf5eb738b7b40",
+      "retrieved": "2026-10-26",
       "review": "01 August 2022",
       "nextReview": "01 August 2025",
       "keys": [
@@ -273177,8 +273916,8 @@
       "title": "Radiotherapy for vaginal cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/radiotherapy-for-vaginal-cancer",
       "file": "leaflets/macmillan/mac-radiotherapy-for-vaginal-cancer.pdf",
-      "textHash": "8f2d471a090731f51f816414d2b1cb0c1ae600d307182a00518490ac76b0976d",
-      "retrieved": "2026-10-19",
+      "textHash": "83cee4d20d8a7ee2ad3e29360b11d9ea8d58aa5d15b05932033b3cad58f5e636",
+      "retrieved": "2026-10-26",
       "review": "01 March 2025",
       "nextReview": "01 March 2028",
       "keys": [
@@ -273191,8 +273930,8 @@
       "title": "Radiotherapy for vulval cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/radiotherapy-for-vulval-cancer",
       "file": "leaflets/macmillan/mac-radiotherapy-for-vulval-cancer.pdf",
-      "textHash": "db2aa1703f3b1184e380074cd5379c9e4f855ec0e093c137a985c77f612b629f",
-      "retrieved": "2026-10-19",
+      "textHash": "ce6c4ee66aee77ac3e25d444245d2b8b22fc07f4659a1aa8ef5b8b5bc191377d",
+      "retrieved": "2026-10-26",
       "review": "30 April 2021",
       "nextReview": "30 April 2024",
       "keys": [
@@ -273367,8 +274106,8 @@
       "title": "SD (selinexor and dexamethasone)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/sd",
       "file": "leaflets/macmillan/mac-sd.pdf",
-      "textHash": "abaa438ea643da98d037045143b9d536d4ae0cfdc4dd20bcc38e4fae9652b467",
-      "retrieved": "2026-10-08",
+      "textHash": "b28f7699c587b5a03c8a04926e71dd6f3a46bfaa1bb3d2bdf04261e5ee205e55",
+      "retrieved": "2026-10-26",
       "review": "01 September 2025",
       "nextReview": "01 September 2027",
       "keys": [
@@ -273381,8 +274120,8 @@
       "title": "SVD (selinexor, bortezomib, dexamethasone)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/svd",
       "file": "leaflets/macmillan/mac-svd.pdf",
-      "textHash": "b229d82fc001b53c9117698192666bb4ca1cc63de5bfb49a717c5580064dab01",
-      "retrieved": "2026-10-08",
+      "textHash": "d2be2d68ae402fc635a02e6ad4aff32a01ec21c63c6abc30d82a7906b1ab6794",
+      "retrieved": "2026-10-26",
       "review": "01 October 2024",
       "nextReview": "01 October 2026",
       "keys": [
@@ -273457,8 +274196,8 @@
       "title": "Sotorasib (Lumykras®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/sotorasib",
       "file": "leaflets/macmillan/mac-sotorasib.pdf",
-      "textHash": "e43dda933d802c9b2866b3498a8af74e9a2752f820733e381c93012304b4146a",
-      "retrieved": "2026-10-08",
+      "textHash": "50a06dc019addfbacb0c35c91c30bfc8332308812c685c004b2a2e85bb0c2523",
+      "retrieved": "2026-10-26",
       "review": "01 January 2026",
       "nextReview": "01 January 2028",
       "keys": [
@@ -274008,8 +274747,8 @@
       "title": "Surgery for vulval cancer",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/surgery-for-vulval-cancer",
       "file": "leaflets/macmillan/mac-surgery-for-vulval-cancer.pdf",
-      "textHash": "42e2686ff8408437db25e87b71440676b1b4806944b3c19462572d23e151f149",
-      "retrieved": "2026-10-08",
+      "textHash": "b4a48079e243f4f5909c454f5057d4e25efe900d8391ea75aec8cedc291fa8b1",
+      "retrieved": "2026-10-26",
       "review": "30 April 2021",
       "nextReview": "30 April 2024",
       "keys": [
@@ -274102,15 +274841,16 @@
     {
       "id": "mac-talazoparib",
       "source": "macmillan",
-      "title": "Talazoparib",
+      "title": "Talazoparib (Talzenna®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/talazoparib",
       "file": "leaflets/macmillan/mac-talazoparib.pdf",
-      "textHash": "cf085d55475ac088793b8375445e481e2df8c48c958e44113cad68708fee6472",
-      "retrieved": "2026-10-08",
+      "textHash": "e29af324f72761c2948e092c397b0e036782307c3f1245164e730efe79958497",
+      "retrieved": "2026-10-26",
       "review": "01 December 2024",
       "nextReview": "01 December 2026",
       "keys": [
-        "talazoparib"
+        "talazoparib",
+        "talzenna"
       ]
     },
     {
@@ -274388,8 +275128,8 @@
       "title": "Tebentafusp (Kimmtrak®)",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/tebentafusp",
       "file": "leaflets/macmillan/mac-tebentafusp.pdf",
-      "textHash": "e73bbcd6367c1478815bf441bc81fb2bdd938e2e411b572da2465195408846d7",
-      "retrieved": "2026-10-08",
+      "textHash": "8f57f15391ff2c812cd0b125e27688c1b53fb26833b9085778b47ee1691e071f",
+      "retrieved": "2026-10-26",
       "review": "01 August 2025",
       "nextReview": "01 August 2027",
       "keys": [
@@ -274735,8 +275475,8 @@
       "title": "Tucatinib, trastuzumab and capecitabine",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/tucatinib-trastuzumab-and-capecitabine",
       "file": "leaflets/macmillan/mac-tucatinib-trastuzumab-and-capecitabine.pdf",
-      "textHash": "63eb77ae064144204303a185209415858d9e7724a0ee091de58117a316c02b1a",
-      "retrieved": "2026-10-08",
+      "textHash": "c74a20ea17a28b4263568947ee6acee4f10ff431173a5f57bb544ec60d488d4a",
+      "retrieved": "2026-10-26",
       "review": "01 January 2024",
       "nextReview": "01 January 2026",
       "keys": [
@@ -274850,8 +275590,8 @@
       "title": "Venetoclax and obinutuzumab",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/venetoclax-and-obinutuzumab",
       "file": "leaflets/macmillan/mac-venetoclax-and-obinutuzumab.pdf",
-      "textHash": "dbc40769ac548a7262a4b4cefe801c6891f164b3276b60274e9538fec86b1a6c",
-      "retrieved": "2026-10-08",
+      "textHash": "cd11b4daa3f5c5622648a946df237334afbf546335790c1b9928b1191a2b7b93",
+      "retrieved": "2026-10-26",
       "review": "01 February 2026",
       "nextReview": "01 February 2028",
       "keys": [
@@ -274992,8 +275732,8 @@
       "title": "Zoledronic acid",
       "url": "https://www.macmillan.org.uk/cancer-information-and-support/treatments-and-drugs/zoledronic-acid",
       "file": "leaflets/macmillan/mac-zoledronic-acid.pdf",
-      "textHash": "ed0b419596565a111ff681e1db28bad0b74a073c35072ed5d55a7319cf94aed2",
-      "retrieved": "2026-10-08",
+      "textHash": "38fabc9554dcbd34f289a9e9b25ddfb9e58f90d75b4800c9e9ef9d1d703b77da",
+      "retrieved": "2026-10-26",
       "review": "01 January 2025",
       "nextReview": "01 January 2027",
       "keys": [
