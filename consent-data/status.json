@@ -1,5 +1,5 @@
 {
-  "run": "2026-11-02T12:21:38.669Z",
+  "run": "2026-11-09T12:50:28.531Z",
   "sources": {
     "rcr": {
       "ok": true,
@@ -13,23 +13,24 @@
     "cruk": {
       "ok": true,
       "listed": 408,
-      "added": 15,
-      "updated": 7,
-      "unchanged": 386,
-      "removed": 10,
+      "added": 0,
+      "updated": 0,
+      "unchanged": 408,
+      "removed": 0,
       "failed": []
     },
     "macmillan": {
-      "ok": true,
-      "listed": 495,
+      "ok": false,
+      "listed": 0,
       "added": 0,
-      "updated": 12,
-      "unchanged": 483,
+      "updated": 0,
+      "unchanged": 0,
       "removed": 0,
-      "failed": []
+      "failed": [],
+      "error": "Found only 0 Macmillan treatment pages (sitemap 0, A–Z 0) — site may be blocking automated access or has changed"
     }
   },
-  "ok": true,
+  "ok": false,
   "counts": {
     "rcr": 27,
     "cruk": 408,
