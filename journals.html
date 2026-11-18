@@ -105,11 +105,9 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Date Range</div>
       <select class="sidebar-select" id="date-range">
-        <option value="90">Last 3 Months</option>
-        <option value="180">Last 6 Months</option>
-        <option value="365" selected>Last 1 Year</option>
-        <option value="730">Last 2 Years</option>
-        <option value="1825">Last 5 Years</option>
+        <option value="7">Last 1 Week</option>
+        <option value="30">Last 1 Month</option>
+        <option value="90" selected>Last 3 Months</option>
       </select>
     </div>
     <div class="sidebar-section">
@@ -228,7 +226,7 @@ const JOURNALS = [
     pubmedTitle: 'Strahlenther Onkol',
     category: 'radonc',
     color: '#9D174D',
-    defaultOn: false
+    defaultOn: true
   },
   // Physics
   {
@@ -293,15 +291,6 @@ const JOURNALS = [
     pubmedTitle: 'Ann Oncol',
     category: 'oncol',
     color: '#065F46',
-    defaultOn: false
-  },
-  {
-    key: 'eur_urol',
-    name: 'European Urology',
-    short: 'Eur Urol',
-    pubmedTitle: 'Eur Urol',
-    category: 'oncol',
-    color: '#1D4ED8',
     defaultOn: false
   },
 ];
